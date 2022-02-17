@@ -6,7 +6,7 @@
 
 runtimes=(
   polkadot
-  kusama
+  axctest
   westend
 )
 

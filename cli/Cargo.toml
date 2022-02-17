@@ -56,7 +56,7 @@ try-runtime = [ "service/try-runtime" ]
 #
 # Validators require the native runtime currently
 polkadot-native = [ "service/polkadot-native" ]
-kusama-native = [ "service/kusama-native" ]
+axctest-native = [ "service/axctest-native" ]
 westend-native = [ "service/westend-native" ]
 rococo-native = [ "service/rococo-native" ]
 

@@ -3,7 +3,7 @@
 Native runtimes:
 
 - Polkadot: **<%= polkadot_runtime %>**
-- Kusama: **<%= kusama_runtime %>**
+- AxiaTest: **<%= axctest_runtime %>**
 - Westend: **<%= westend_runtime %>**
 
 This release was tested against the following versions of `rustc`. Other versions may work.
@@ -15,7 +15,7 @@ WASM runtimes built with [<%= polkadot_json['info']['generator']['name'] %> v<%=
 
 Proposal hashes:
 * `polkadot_runtime-v<%= polkadot_runtime %>.compact.compressed.wasm`: `<%= polkadot_json['runtimes']['compressed']['prop'] %>`
-* `kusama_runtime-v<%= kusama_runtime %>.compact.compressed.wasm`: `<%= kusama_json['runtimes']['compressed']['prop'] %>`
+* `axctest_runtime-v<%= axctest_runtime %>.compact.compressed.wasm`: `<%= axctest_json['runtimes']['compressed']['prop'] %>`
 
 <% unless misc_changes.empty? %>
 ## Changes

@@ -7,7 +7,7 @@ Implementation of a <https://polkadot.network> node in Rust based on the Axlib f
 
 [axlib-repo]: https://github.com/paritytech/axlib
 
-This repo contains runtimes for the Polkadot, Kusama, and Westend networks. The README provides
+This repo contains runtimes for the Polkadot, AxiaTest, and Westend networks. The README provides
 information about installing the `polkadot` binary and developing on the codebase. For more
 specific guides, like how to be a validator, see the
 [Polkadot Wiki](https://wiki.polkadot.network/docs/getting-started).
@@ -126,7 +126,7 @@ If you want to reproduce other steps of CI process you can use the following
 
 ## Networks
 
-This repo supports runtimes for Polkadot, Kusama, and Westend.
+This repo supports runtimes for Polkadot, AxiaTest, and Westend.
 
 ### Connect to Polkadot Mainnet
 
@@ -140,17 +140,17 @@ You can see your node on [telemetry] (set a custom name with `--name "my custom 
 
 [telemetry]: https://telemetry.polkadot.io/#list/Polkadot
 
-### Connect to the "Kusama" Canary Network
+### Connect to the "AxiaTest" Canary Network
 
-Connect to the global Kusama canary network by running:
+Connect to the global AxiaTest canary network by running:
 
 ```bash
-./target/release/polkadot --chain=kusama
+./target/release/polkadot --chain=axctest
 ```
 
 You can see your node on [telemetry] (set a custom name with `--name "my custom name"`).
 
-[telemetry]: https://telemetry.polkadot.io/#list/Kusama
+[telemetry]: https://telemetry.polkadot.io/#list/AxiaTest
 
 ### Connect to the Westend Testnet
 
@@ -166,7 +166,7 @@ You can see your node on [telemetry] (set a custom name with `--name "my custom 
 
 ### Obtaining DOTs
 
-If you want to do anything on Polkadot, Kusama, or Westend, then you'll need to get an account and
+If you want to do anything on Polkadot, AxiaTest, or Westend, then you'll need to get an account and
 some DOT, KSM, or WND tokens, respectively. See the
 [claims instructions](https://claims.polkadot.network/) for Polkadot if you have DOTs to claim. For
 Westend's WND tokens, see the faucet

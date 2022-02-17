@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        runtime: ["polkadot", "kusama", "westend"]
+        runtime: ["polkadot", "axctest", "westend"]
     steps:
       - uses: actions/checkout@v2
       - name: Cache target dir
@@ -98,7 +98,7 @@ jobs:
     needs: ["publish-draft-release"]
     strategy:
       matrix:
-        runtime: ["polkadot", "kusama", "westend"]
+        runtime: ["polkadot", "axctest", "westend"]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2

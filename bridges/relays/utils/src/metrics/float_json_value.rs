@@ -114,7 +114,7 @@ mod tests {
 	#[test]
 	fn parse_service_response_works() {
 		assert_eq!(
-			parse_service_response("$.kusama.usd", r#"{"kusama":{"usd":433.05}}"#).map_err(drop),
+			parse_service_response("$.axctest.usd", r#"{"axctest":{"usd":433.05}}"#).map_err(drop),
 			Ok(433.05),
 		);
 	}

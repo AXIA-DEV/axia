@@ -83,7 +83,7 @@ impl AxlibCli for Cli {
 	fn load_spec(&self, id: &str) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
 		let id = if id == "" {
 			let n = get_exec_name().unwrap_or_default();
-			["polkadot", "kusama", "westend", "rococo"]
+			["polkadot", "axctest", "westend", "rococo"]
 				.iter()
 				.cloned()
 				.find(|&chain| n.starts_with(chain))
@@ -92,16 +92,16 @@ impl AxlibCli for Cli {
 			id
 		};
 		Ok(match id {
-			"kusama" => Box::new(service::chain_spec::kusama_config()?),
-			#[cfg(feature = "kusama-native")]
-			"kusama-dev" => Box::new(service::chain_spec::kusama_development_config()?),
-			#[cfg(feature = "kusama-native")]
-			"kusama-local" => Box::new(service::chain_spec::kusama_local_testnet_config()?),
-			#[cfg(feature = "kusama-native")]
-			"kusama-staging" => Box::new(service::chain_spec::kusama_staging_testnet_config()?),
-			#[cfg(not(feature = "kusama-native"))]
-			name if name.starts_with("kusama-") && !name.ends_with(".json") =>
-				Err(format!("`{}` only supported with `kusama-native` feature enabled.", name))?,
+			"axctest" => Box::new(service::chain_spec::axctest_config()?),
+			#[cfg(feature = "axctest-native")]
+			"axctest-dev" => Box::new(service::chain_spec::axctest_development_config()?),
+			#[cfg(feature = "axctest-native")]
+			"axctest-local" => Box::new(service::chain_spec::axctest_local_testnet_config()?),
+			#[cfg(feature = "axctest-native")]
+			"axctest-staging" => Box::new(service::chain_spec::axctest_staging_testnet_config()?),
+			#[cfg(not(feature = "axctest-native"))]
+			name if name.starts_with("axctest-") && !name.ends_with(".json") =>
+				Err(format!("`{}` only supported with `axctest-native` feature enabled.", name))?,
 			"polkadot" => Box::new(service::chain_spec::polkadot_config()?),
 			#[cfg(feature = "polkadot-native")]
 			"polkadot-dev" | "dev" => Box::new(service::chain_spec::polkadot_development_config()?),
@@ -147,8 +147,8 @@ impl AxlibCli for Cli {
 				// we use the chain spec for the specific chain.
 				if self.run.force_rococo || chain_spec.is_rococo() || chain_spec.is_wococo() {
 					Box::new(service::RococoChainSpec::from_json_file(path)?)
-				} else if self.run.force_kusama || chain_spec.is_kusama() {
-					Box::new(service::KusamaChainSpec::from_json_file(path)?)
+				} else if self.run.force_axctest || chain_spec.is_axctest() {
+					Box::new(service::AxiaTestChainSpec::from_json_file(path)?)
 				} else if self.run.force_westend || chain_spec.is_westend() {
 					Box::new(service::WestendChainSpec::from_json_file(path)?)
 				} else {
@@ -159,9 +159,9 @@ impl AxlibCli for Cli {
 	}
 
 	fn native_runtime_version(spec: &Box<dyn service::ChainSpec>) -> &'static RuntimeVersion {
-		#[cfg(feature = "kusama-native")]
-		if spec.is_kusama() {
-			return &service::kusama_runtime::VERSION
+		#[cfg(feature = "axctest-native")]
+		if spec.is_axctest() {
+			return &service::axctest_runtime::VERSION
 		}
 
 		#[cfg(feature = "westend-native")]
@@ -177,7 +177,7 @@ impl AxlibCli for Cli {
 		#[cfg(not(all(
 			feature = "rococo-native",
 			feature = "westend-native",
-			feature = "kusama-native"
+			feature = "axctest-native"
 		)))]
 		let _ = spec;
 
@@ -187,13 +187,13 @@ impl AxlibCli for Cli {
 		}
 
 		#[cfg(not(feature = "polkadot-native"))]
-		panic!("No runtime feature (polkadot, kusama, westend, rococo) is enabled")
+		panic!("No runtime feature (polkadot, axctest, westend, rococo) is enabled")
 	}
 }
 
 fn set_default_ss58_version(spec: &Box<dyn service::ChainSpec>) {
-	let ss58_version = if spec.is_kusama() {
-		Ss58AddressFormatRegistry::KusamaAccount
+	let ss58_version = if spec.is_axctest() {
+		Ss58AddressFormatRegistry::AxiaTestAccount
 	} else if spec.is_westend() {
 		Ss58AddressFormatRegistry::AxlibAccount
 	} else {
@@ -205,7 +205,7 @@ fn set_default_ss58_version(spec: &Box<dyn service::ChainSpec>) {
 }
 
 const DEV_ONLY_ERROR_PATTERN: &'static str =
-	"can only use subcommand with --chain [polkadot-dev, kusama-dev, westend-dev, rococo-dev, wococo-dev], got ";
+	"can only use subcommand with --chain [polkadot-dev, axctest-dev, westend-dev, rococo-dev, wococo-dev], got ";
 
 fn ensure_dev(spec: &Box<dyn service::ChainSpec>) -> std::result::Result<(), String> {
 	if spec.is_dev() {
@@ -235,11 +235,11 @@ fn run_node_inner(cli: Cli, overseer_gen: impl service::OverseerGen) -> Result<(
 		Some((cli.run.grandpa_pause[0], cli.run.grandpa_pause[1]))
 	};
 
-	if chain_spec.is_kusama() {
+	if chain_spec.is_axctest() {
 		info!("----------------------------");
 		info!("This chain is not in any way");
 		info!("      endorsed by the       ");
-		info!("     KUSAMA FOUNDATION      ");
+		info!("     AXIATEST FOUNDATION      ");
 		info!("----------------------------");
 	}
 
@@ -382,10 +382,10 @@ pub fn run() -> Result<()> {
 
 			ensure_dev(chain_spec).map_err(Error::Other)?;
 
-			#[cfg(feature = "kusama-native")]
-			if chain_spec.is_kusama() {
+			#[cfg(feature = "axctest-native")]
+			if chain_spec.is_axctest() {
 				return Ok(runner.sync_run(|config| {
-					cmd.run::<service::kusama_runtime::Block, service::KusamaExecutorDispatch>(
+					cmd.run::<service::axctest_runtime::Block, service::AxiaTestExecutorDispatch>(
 						config,
 					)
 					.map_err(|e| Error::AxlibCli(e))
@@ -413,7 +413,7 @@ pub fn run() -> Result<()> {
 				})?)
 			}
 			#[cfg(not(feature = "polkadot-native"))]
-			panic!("No runtime feature (polkadot, kusama, westend, rococo) is enabled")
+			panic!("No runtime feature (polkadot, axctest, westend, rococo) is enabled")
 		},
 		Some(Subcommand::Key(cmd)) => Ok(cmd.run(&cli)?),
 		#[cfg(feature = "try-runtime")]
@@ -429,11 +429,11 @@ pub fn run() -> Result<()> {
 
 			ensure_dev(chain_spec).map_err(Error::Other)?;
 
-			#[cfg(feature = "kusama-native")]
-			if chain_spec.is_kusama() {
+			#[cfg(feature = "axctest-native")]
+			if chain_spec.is_axctest() {
 				return runner.async_run(|config| {
 					Ok((
-						cmd.run::<service::kusama_runtime::Block, service::KusamaExecutorDispatch>(
+						cmd.run::<service::axctest_runtime::Block, service::AxiaTestExecutorDispatch>(
 							config,
 						)
 						.map_err(Error::AxlibCli),
@@ -468,7 +468,7 @@ pub fn run() -> Result<()> {
 				})
 			}
 			#[cfg(not(feature = "polkadot-native"))]
-			panic!("No runtime feature (polkadot, kusama, westend, rococo) is enabled")
+			panic!("No runtime feature (polkadot, axctest, westend, rococo) is enabled")
 		},
 		#[cfg(not(feature = "try-runtime"))]
 		Some(Subcommand::TryRuntime) => Err(Error::Other(

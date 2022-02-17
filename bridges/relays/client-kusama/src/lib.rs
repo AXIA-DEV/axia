@@ -14,35 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Types used to connect to the Kusama chain.
+//! Types used to connect to the AxiaTest chain.
 
 use relay_axlib_client::{Chain, ChainBase};
 use std::time::Duration;
 
-/// Kusama header id.
-pub type HeaderId = relay_utils::HeaderId<bp_kusama::Hash, bp_kusama::BlockNumber>;
+/// AxiaTest header id.
+pub type HeaderId = relay_utils::HeaderId<bp_axctest::Hash, bp_axctest::BlockNumber>;
 
-/// Kusama chain definition
+/// AxiaTest chain definition
 #[derive(Debug, Clone, Copy)]
-pub struct Kusama;
+pub struct AxiaTest;
 
-impl ChainBase for Kusama {
-	type BlockNumber = bp_kusama::BlockNumber;
-	type Hash = bp_kusama::Hash;
-	type Hasher = bp_kusama::Hasher;
-	type Header = bp_kusama::Header;
+impl ChainBase for AxiaTest {
+	type BlockNumber = bp_axctest::BlockNumber;
+	type Hash = bp_axctest::Hash;
+	type Hasher = bp_axctest::Hasher;
+	type Header = bp_axctest::Header;
 }
 
-impl Chain for Kusama {
-	const NAME: &'static str = "Kusama";
+impl Chain for AxiaTest {
+	const NAME: &'static str = "AxiaTest";
 	const AVERAGE_BLOCK_INTERVAL: Duration = Duration::from_secs(6);
 
-	type AccountId = bp_kusama::AccountId;
-	type Index = bp_kusama::Nonce;
-	type SignedBlock = bp_kusama::SignedBlock;
+	type AccountId = bp_axctest::AccountId;
+	type Index = bp_axctest::Nonce;
+	type SignedBlock = bp_axctest::SignedBlock;
 	type Call = ();
-	type Balance = bp_kusama::Balance;
+	type Balance = bp_axctest::Balance;
 }
 
-/// Kusama header type used in headers sync.
-pub type SyncHeader = relay_axlib_client::SyncHeader<bp_kusama::Header>;
+/// AxiaTest header type used in headers sync.
+pub type SyncHeader = relay_axlib_client::SyncHeader<bp_axctest::Header>;

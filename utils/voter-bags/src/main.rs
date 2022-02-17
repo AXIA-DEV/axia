@@ -21,7 +21,7 @@
 //! quantity of bags, or if the existential deposit changes, etc.
 
 use generate_bags::generate_thresholds;
-use kusama_runtime::Runtime as KusamaRuntime;
+use axctest_runtime::Runtime as AxiaTestRuntime;
 use polkadot_runtime::Runtime as PolkadotRuntime;
 use std::path::{Path, PathBuf};
 use structopt::{clap::arg_enum, StructOpt};
@@ -31,7 +31,7 @@ arg_enum! {
 	#[derive(Debug)]
 	enum Runtime {
 		Westend,
-		Kusama,
+		AxiaTest,
 		Polkadot,
 	}
 }
@@ -42,7 +42,7 @@ impl Runtime {
 	) -> Box<dyn FnOnce(usize, &Path, u128, u128) -> Result<(), std::io::Error>> {
 		match self {
 			Runtime::Westend => Box::new(generate_thresholds::<WestendRuntime>),
-			Runtime::Kusama => Box::new(generate_thresholds::<KusamaRuntime>),
+			Runtime::AxiaTest => Box::new(generate_thresholds::<AxiaTestRuntime>),
 			Runtime::Polkadot => Box::new(generate_thresholds::<PolkadotRuntime>),
 		}
 	}

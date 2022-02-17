@@ -97,7 +97,7 @@ This mechanism should result in a good load distribution and therefore a rather
 optimal distribution path.
 
 With these optimizations, distribution of payloads in the size of up to 3 to 4
-MB should work with Kusama validator specifications. For scaling up even more,
+MB should work with AxiaTest validator specifications. For scaling up even more,
 runtime upgrades and message passing should be done off chain at some point.
 
 Flood protection considerations: For making DoS attacks slightly harder on this

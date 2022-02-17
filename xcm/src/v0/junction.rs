@@ -29,8 +29,8 @@ pub enum NetworkId {
 	Named(Vec<u8>),
 	/// The Polkadot Relay chain
 	Polkadot,
-	/// Kusama.
-	Kusama,
+	/// AxiaTest.
+	AxiaTest,
 }
 
 /// An identifier of a pluralistic body.

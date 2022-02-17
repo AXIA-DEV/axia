@@ -17,12 +17,12 @@
 //!
 //! THIS FILE WAS AUTO-GENERATED USING THE AXLIB BENCHMARK CLI VERSION 4.0.0-dev
 //! DATE: 2021-10-20, STEPS: `50`, REPEAT: 20, LOW RANGE: `[]`, HIGH RANGE: `[]`
-//! EXECUTION: Some(Wasm), WASM-EXECUTION: Compiled, CHAIN: Some("kusama-dev"), DB CACHE: 128
+//! EXECUTION: Some(Wasm), WASM-EXECUTION: Compiled, CHAIN: Some("axctest-dev"), DB CACHE: 128
 
 // Executed Command:
 // target/release/polkadot
 // benchmark
-// --chain=kusama-dev
+// --chain=axctest-dev
 // --steps=50
 // --repeat=20
 // --pallet=runtime_parachains::initializer
@@ -31,7 +31,7 @@
 // --wasm-execution=compiled
 // --heap-pages=4096
 // --header=./file_header.txt
-// --output=./runtime/kusama/src/weights/runtime_parachains_initializer.rs
+// --output=./runtime/axctest/src/weights/runtime_parachains_initializer.rs
 
 
 #![cfg_attr(rustfmt, rustfmt_skip)]

@@ -3235,7 +3235,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "kusama-runtime"
+name = "axctest-runtime"
 version = "0.9.12"
 dependencies = [
  "axlib-wasm-builder",
@@ -6032,7 +6032,7 @@ dependencies = [
  "beefy-primitives",
  "frame-benchmarking",
  "frame-system-rpc-runtime-api",
- "kusama-runtime",
+ "axctest-runtime",
  "pallet-mmr-primitives",
  "pallet-transaction-payment-rpc-runtime-api",
  "polkadot-primitives",
@@ -6950,7 +6950,7 @@ dependencies = [
  "frame-system-rpc-runtime-api",
  "futures 0.3.17",
  "hex-literal",
- "kusama-runtime",
+ "axctest-runtime",
  "kvdb",
  "kvdb-rocksdb",
  "log",
@@ -7299,7 +7299,7 @@ name = "polkadot-voter-bags"
 version = "0.9.0"
 dependencies = [
  "generate-bags",
- "kusama-runtime",
+ "axctest-runtime",
  "polkadot-runtime",
  "sp-io",
  "structopt",
@@ -7865,7 +7865,7 @@ version = "0.9.12"
 dependencies = [
  "frame-election-provider-support",
  "frame-support",
- "kusama-runtime",
+ "axctest-runtime",
  "log",
  "pallet-bags-list",
  "pallet-election-provider-multi-phase",
@@ -10195,7 +10195,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "jsonrpsee-ws-client",
- "kusama-runtime",
+ "axctest-runtime",
  "log",
  "pallet-balances",
  "pallet-election-provider-multi-phase",

@@ -6,7 +6,7 @@ on:
     inputs:
       reference_url:
         description: The WebSocket url of the reference node
-        default: wss://kusama-rpc.polkadot.io
+        default: wss://axctest-rpc.polkadot.io
         required: true
       binary_url:
         description: A url to a Linux binary for the node containing the runtime to test
@@ -14,7 +14,7 @@ on:
         required: true
       chain:
         description: The name of the chain under test. Usually, you would pass a local chain
-        default: kusama-local
+        default: axctest-local
         required: true
 
 jobs:

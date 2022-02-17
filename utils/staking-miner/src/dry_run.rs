@@ -158,5 +158,5 @@ macro_rules! dry_run_cmd_for { ($runtime:ident) => { paste::paste! {
 }}}
 
 dry_run_cmd_for!(polkadot);
-dry_run_cmd_for!(kusama);
+dry_run_cmd_for!(axctest);
 dry_run_cmd_for!(westend);

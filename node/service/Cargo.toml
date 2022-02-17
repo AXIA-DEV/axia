@@ -85,7 +85,7 @@ polkadot-node-network-protocol = { path = "../network/protocol" }
 
 # Polkadot Runtimes
 polkadot-runtime = { path = "../../runtime/polkadot", optional = true }
-kusama-runtime = { path = "../../runtime/kusama", optional = true }
+axctest-runtime = { path = "../../runtime/axctest", optional = true }
 westend-runtime = { path = "../../runtime/westend", optional = true }
 rococo-runtime = { path = "../../runtime/rococo", optional = true }
 
@@ -158,19 +158,19 @@ light-node = []
 #
 # Validators require the native runtime currently
 polkadot-native = [ "polkadot-runtime", "polkadot-client/polkadot" ]
-kusama-native = [ "kusama-runtime", "polkadot-client/kusama" ]
+axctest-native = [ "axctest-runtime", "polkadot-client/axctest" ]
 westend-native = [ "westend-runtime", "polkadot-client/westend" ]
 rococo-native = [ "rococo-runtime", "polkadot-client/rococo" ]
 
 runtime-benchmarks = [
 	"polkadot-runtime/runtime-benchmarks",
-	"kusama-runtime/runtime-benchmarks",
+	"axctest-runtime/runtime-benchmarks",
 	"westend-runtime/runtime-benchmarks",
 	"rococo-runtime/runtime-benchmarks"
 ]
 try-runtime = [
 	"polkadot-runtime/try-runtime",
-	"kusama-runtime/try-runtime",
+	"axctest-runtime/try-runtime",
 	"westend-runtime/try-runtime",
 	"rococo-runtime/try-runtime",
 ]

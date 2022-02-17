@@ -80,9 +80,9 @@ pub struct RunCmd {
 	#[structopt(flatten)]
 	pub base: sc_cli::RunCmd,
 
-	/// Force using Kusama native runtime.
-	#[structopt(long = "force-kusama")]
-	pub force_kusama: bool,
+	/// Force using AxiaTest native runtime.
+	#[structopt(long = "force-axctest")]
+	pub force_axctest: bool,
 
 	/// Force using Westend native runtime.
 	#[structopt(long = "force-westend")]

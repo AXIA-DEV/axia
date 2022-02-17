@@ -42,7 +42,7 @@ pub type FullClient<RuntimeApi, ExecutorDispatch> =
 
 #[cfg(not(any(
 	feature = "rococo",
-	feature = "kusama",
+	feature = "axctest",
 	feature = "westend",
 	feature = "polkadot"
 )))]
@@ -65,20 +65,20 @@ impl sc_executor::NativeExecutionDispatch for PolkadotExecutorDispatch {
 	}
 }
 
-#[cfg(feature = "kusama")]
-/// The native executor instance for Kusama.
-pub struct KusamaExecutorDispatch;
+#[cfg(feature = "axctest")]
+/// The native executor instance for AxiaTest.
+pub struct AxiaTestExecutorDispatch;
 
-#[cfg(feature = "kusama")]
-impl sc_executor::NativeExecutionDispatch for KusamaExecutorDispatch {
+#[cfg(feature = "axctest")]
+impl sc_executor::NativeExecutionDispatch for AxiaTestExecutorDispatch {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
 	fn dispatch(method: &str, data: &[u8]) -> Option<Vec<u8>> {
-		kusama_runtime::api::dispatch(method, data)
+		axctest_runtime::api::dispatch(method, data)
 	}
 
 	fn native_version() -> sc_executor::NativeVersion {
-		kusama_runtime::native_version()
+		axctest_runtime::native_version()
 	}
 }
 
@@ -198,7 +198,7 @@ where
 
 /// Execute something with the client instance.
 ///
-/// As there exist multiple chains inside Polkadot, like Polkadot itself, Kusama, Westend etc,
+/// As there exist multiple chains inside Polkadot, like Polkadot itself, AxiaTest, Westend etc,
 /// there can exist different kinds of client types. As these client types differ in the generics
 /// that are being used, we can not easily return them from a function. For returning them from a
 /// function there exists [`Client`]. However, the problem on how to use this client instance still
@@ -247,8 +247,8 @@ macro_rules! with_client {
 			Self::Polkadot($client) => { $( $code )* },
 			#[cfg(feature = "westend")]
 			Self::Westend($client) => { $( $code )* },
-			#[cfg(feature = "kusama")]
-			Self::Kusama($client) => { $( $code )* },
+			#[cfg(feature = "axctest")]
+			Self::AxiaTest($client) => { $( $code )* },
 			#[cfg(feature = "rococo")]
 			Self::Rococo($client) => { $( $code )* },
 		}
@@ -264,8 +264,8 @@ pub enum Client {
 	Polkadot(Arc<FullClient<polkadot_runtime::RuntimeApi, PolkadotExecutorDispatch>>),
 	#[cfg(feature = "westend")]
 	Westend(Arc<FullClient<westend_runtime::RuntimeApi, WestendExecutorDispatch>>),
-	#[cfg(feature = "kusama")]
-	Kusama(Arc<FullClient<kusama_runtime::RuntimeApi, KusamaExecutorDispatch>>),
+	#[cfg(feature = "axctest")]
+	AxiaTest(Arc<FullClient<axctest_runtime::RuntimeApi, AxiaTestExecutorDispatch>>),
 	#[cfg(feature = "rococo")]
 	Rococo(Arc<FullClient<rococo_runtime::RuntimeApi, RococoExecutorDispatch>>),
 }

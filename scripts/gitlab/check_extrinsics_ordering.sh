@@ -11,7 +11,7 @@ RELEASE_WS=ws://localhost:9945
 
 runtimes=(
   "westend"
-  "kusama"
+  "axctest"
   "polkadot"
 )
 

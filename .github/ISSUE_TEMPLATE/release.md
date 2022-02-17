@@ -7,7 +7,7 @@ title: Polkadot {{ env.VERSION }} Release checklist
 
 This is the release checklist for Polkadot {{ env.VERSION }}. **All** following
 checks should be completed before publishing a new release of the
-Polkadot/Kusama/Westend runtime or client. The current release candidate can be
+Polkadot/AxiaTest/Westend runtime or client. The current release candidate can be
 checked out with `git checkout release-{{ env.VERSION }}`
 
 ### Runtime Releases
@@ -51,7 +51,7 @@ candidate branch or started an additional release candidate branch (rc-2, rc-3, 
 
 ### Burn In
 
-Ensure that Parity DevOps has run the new release on Westend, Kusama, and
+Ensure that Parity DevOps has run the new release on Westend, AxiaTest, and
 Polkadot validators for at least 12 hours prior to publishing the release.
 
 ### Build Artifacts
@@ -125,13 +125,13 @@ date to include them.
 
 There are three benchmarking machines reserved for updating the weights at
 release-time. To initialise a benchmark run for each production runtime
-(westend, kusama, polkadot):
+(westend, axctest, polkadot):
 * Go to https://gitlab.parity.io/parity/polkadot/-/pipelines?page=1&scope=branches&ref=master
 * Click the link to the last pipeline run for master
 * Start each of the manual jobs:
   * 'update_westend_weights'
   * 'update_polkadot_weights'
-  * 'update_kusama_weights'
+  * 'update_axctest_weights'
 * When these jobs have completed (it takes a few hours), a git PATCH file will
     be available to download as an artifact. 
 * On your local machine, branch off master

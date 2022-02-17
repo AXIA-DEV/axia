@@ -1,5 +1,5 @@
 [package]
-name = "relay-kusama-client"
+name = "relay-axctest-client"
 version = "0.1.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -13,7 +13,7 @@ relay-utils = { path = "../utils" }
 
 # Bridge dependencies
 
-bp-kusama = { path = "../../primitives/chain-kusama" }
+bp-axctest = { path = "../../primitives/chain-axctest" }
 
 # Axlib Dependencies
 

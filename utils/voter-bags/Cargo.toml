@@ -10,5 +10,5 @@ sp-io = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 structopt = "0.3.21"
 
 westend-runtime = { path = "../../runtime/westend" }
-kusama-runtime = { path = "../../runtime/kusama" }
+axctest-runtime = { path = "../../runtime/axctest" }
 polkadot-runtime = { path = "../../runtime/polkadot" }

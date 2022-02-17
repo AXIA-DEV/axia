@@ -33,7 +33,7 @@ beefy-primitives = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = 
 
 # Polkadot Runtimes
 polkadot-runtime = { path = "../../runtime/polkadot", optional = true }
-kusama-runtime = { path = "../../runtime/kusama", optional = true }
+axctest-runtime = { path = "../../runtime/axctest", optional = true }
 westend-runtime = { path = "../../runtime/westend", optional = true }
 rococo-runtime = { path = "../../runtime/rococo", optional = true }
 
@@ -42,6 +42,6 @@ polkadot-primitives = { path = "../../primitives" }
 [features]
 default = ["polkadot"]
 polkadot = ["polkadot-runtime"]
-kusama = ["kusama-runtime"]
+axctest = ["axctest-runtime"]
 rococo = ["rococo-runtime"]
 westend = ["westend-runtime"]

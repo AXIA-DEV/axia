@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Polkadot. If not, see <http://www.gnu.org/licenses/>.
 
-//! Tests for the Kusama Runtime Configuration
+//! Tests for the AxiaTest Runtime Configuration
 
 use crate::*;
 use frame_support::weights::{GetDispatchInfo, WeightToFeePolynomial};

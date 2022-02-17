@@ -80,13 +80,13 @@ pub use polkadot_client::RococoExecutorDispatch;
 #[cfg(feature = "westend-native")]
 pub use polkadot_client::WestendExecutorDispatch;
 
-#[cfg(feature = "kusama-native")]
-pub use polkadot_client::KusamaExecutorDispatch;
+#[cfg(feature = "axctest-native")]
+pub use polkadot_client::AxiaTestExecutorDispatch;
 
 #[cfg(feature = "polkadot-native")]
 pub use polkadot_client::PolkadotExecutorDispatch;
 
-pub use chain_spec::{KusamaChainSpec, PolkadotChainSpec, RococoChainSpec, WestendChainSpec};
+pub use chain_spec::{AxiaTestChainSpec, PolkadotChainSpec, RococoChainSpec, WestendChainSpec};
 pub use consensus_common::{block_validation::Chain, Proposal, SelectChain};
 #[cfg(feature = "full-node")]
 pub use polkadot_client::{
@@ -113,8 +113,8 @@ pub use sp_runtime::{
 	},
 };
 
-#[cfg(feature = "kusama-native")]
-pub use kusama_runtime;
+#[cfg(feature = "axctest-native")]
+pub use axctest_runtime;
 #[cfg(feature = "polkadot-native")]
 pub use polkadot_runtime;
 #[cfg(feature = "rococo-native")]
@@ -234,14 +234,14 @@ pub enum Error {
 	DatabasePathRequired,
 
 	#[cfg(feature = "full-node")]
-	#[error("Expected at least one of polkadot, kusama, westend or rococo runtime feature")]
+	#[error("Expected at least one of polkadot, axctest, westend or rococo runtime feature")]
 	NoRuntime,
 }
 
 /// Can be called for a `Configuration` to identify which network the configuration targets.
 pub trait IdentifyVariant {
-	/// Returns if this is a configuration for the `Kusama` network.
-	fn is_kusama(&self) -> bool;
+	/// Returns if this is a configuration for the `AxiaTest` network.
+	fn is_axctest(&self) -> bool;
 
 	/// Returns if this is a configuration for the `Westend` network.
 	fn is_westend(&self) -> bool;
@@ -257,8 +257,8 @@ pub trait IdentifyVariant {
 }
 
 impl IdentifyVariant for Box<dyn ChainSpec> {
-	fn is_kusama(&self) -> bool {
-		self.id().starts_with("kusama") || self.id().starts_with("ksm")
+	fn is_axctest(&self) -> bool {
+		self.id().starts_with("axctest") || self.id().starts_with("ksm")
 	}
 	fn is_westend(&self) -> bool {
 		self.id().starts_with("westend") || self.id().starts_with("wnd")
@@ -450,8 +450,8 @@ where
 		client.clone(),
 	);
 
-	let grandpa_hard_forks = if config.chain_spec.is_kusama() {
-		grandpa_support::kusama_hard_forks()
+	let grandpa_hard_forks = if config.chain_spec.is_axctest() {
+		grandpa_support::axctest_hard_forks()
 	} else {
 		Vec::new()
 	};
@@ -780,8 +780,8 @@ where
 	let (dispute_req_receiver, cfg) = IncomingRequest::get_config_receiver();
 	config.network.request_response_protocols.push(cfg);
 
-	let grandpa_hard_forks = if config.chain_spec.is_kusama() {
-		grandpa_support::kusama_hard_forks()
+	let grandpa_hard_forks = if config.chain_spec.is_axctest() {
+		grandpa_support::axctest_hard_forks()
 	} else {
 		Vec::new()
 	};
@@ -1338,9 +1338,9 @@ pub fn new_chain_ops(
 		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; rococo_runtime, RococoExecutorDispatch, Rococo)
 	}
 
-	#[cfg(feature = "kusama-native")]
-	if config.chain_spec.is_kusama() {
-		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; kusama_runtime, KusamaExecutorDispatch, Kusama)
+	#[cfg(feature = "axctest-native")]
+	if config.chain_spec.is_axctest() {
+		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; axctest_runtime, AxiaTestExecutorDispatch, AxiaTest)
 	}
 
 	#[cfg(feature = "westend-native")]
@@ -1364,9 +1364,9 @@ pub fn build_light(config: Configuration) -> Result<(TaskManager, RpcHandlers), 
 		return new_light::<rococo_runtime::RuntimeApi, RococoExecutorDispatch>(config)
 	}
 
-	#[cfg(feature = "kusama-native")]
-	if config.chain_spec.is_kusama() {
-		return new_light::<kusama_runtime::RuntimeApi, KusamaExecutorDispatch>(config)
+	#[cfg(feature = "axctest-native")]
+	if config.chain_spec.is_axctest() {
+		return new_light::<axctest_runtime::RuntimeApi, AxiaTestExecutorDispatch>(config)
 	}
 
 	#[cfg(feature = "westend-native")]
@@ -1408,9 +1408,9 @@ pub fn build_full(
 		.map(|full| full.with_client(Client::Rococo))
 	}
 
-	#[cfg(feature = "kusama-native")]
-	if config.chain_spec.is_kusama() {
-		return new_full::<kusama_runtime::RuntimeApi, KusamaExecutorDispatch, _>(
+	#[cfg(feature = "axctest-native")]
+	if config.chain_spec.is_axctest() {
+		return new_full::<axctest_runtime::RuntimeApi, AxiaTestExecutorDispatch, _>(
 			config,
 			is_collator,
 			grandpa_pause,
@@ -1420,7 +1420,7 @@ pub fn build_full(
 			None,
 			overseer_gen,
 		)
-		.map(|full| full.with_client(Client::Kusama))
+		.map(|full| full.with_client(Client::AxiaTest))
 	}
 
 	#[cfg(feature = "westend-native")]

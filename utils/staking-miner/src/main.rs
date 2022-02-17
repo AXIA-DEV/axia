@@ -48,7 +48,7 @@ use structopt::StructOpt;
 
 pub(crate) enum AnyRuntime {
 	Polkadot,
-	Kusama,
+	AxiaTest,
 	Westend,
 }
 
@@ -126,12 +126,12 @@ fn signed_ext_builder_polkadot(
 	)
 }
 
-fn signed_ext_builder_kusama(
+fn signed_ext_builder_axctest(
 	nonce: Index,
 	tip: Balance,
 	era: sp_runtime::generic::Era,
-) -> kusama_runtime_exports::SignedExtra {
-	use kusama_runtime_exports::Runtime;
+) -> axctest_runtime_exports::SignedExtra {
+	use axctest_runtime_exports::Runtime;
 	(
 		frame_system::CheckSpecVersion::<Runtime>::new(),
 		frame_system::CheckTxVersion::<Runtime>::new(),
@@ -161,7 +161,7 @@ fn signed_ext_builder_westend(
 }
 
 construct_runtime_prelude!(polkadot);
-construct_runtime_prelude!(kusama);
+construct_runtime_prelude!(axctest);
 construct_runtime_prelude!(westend);
 
 // NOTE: this is no longer used extensively, most of the per-runtime stuff us delegated to
@@ -180,9 +180,9 @@ macro_rules! any_runtime {
 					use $crate::polkadot_runtime_exports::*;
 					$($code)*
 				},
-				$crate::AnyRuntime::Kusama => {
+				$crate::AnyRuntime::AxiaTest => {
 					#[allow(unused)]
-					use $crate::kusama_runtime_exports::*;
+					use $crate::axctest_runtime_exports::*;
 					$($code)*
 				},
 				$crate::AnyRuntime::Westend => {
@@ -207,9 +207,9 @@ macro_rules! any_runtime_unit {
 					use $crate::polkadot_runtime_exports::*;
 					let _ = $($code)*;
 				},
-				$crate::AnyRuntime::Kusama => {
+				$crate::AnyRuntime::AxiaTest => {
 					#[allow(unused)]
-					use $crate::kusama_runtime_exports::*;
+					use $crate::axctest_runtime_exports::*;
 					let _ = $($code)*;
 				},
 				$crate::AnyRuntime::Westend => {
@@ -559,16 +559,16 @@ async fn main() {
 				RUNTIME = AnyRuntime::Polkadot;
 			}
 		},
-		"kusama" | "kusama-dev" => {
+		"axctest" | "axctest-dev" => {
 			sp_core::crypto::set_default_ss58_version(
-				sp_core::crypto::Ss58AddressFormatRegistry::KusamaAccount.into(),
+				sp_core::crypto::Ss58AddressFormatRegistry::AxiaTestAccount.into(),
 			);
 			sub_tokens::dynamic::set_name("KSM");
 			sub_tokens::dynamic::set_decimal_points(1_000_000_000_000);
 			// safety: this program will always be single threaded, thus accessing global static is
 			// safe.
 			unsafe {
-				RUNTIME = AnyRuntime::Kusama;
+				RUNTIME = AnyRuntime::AxiaTest;
 			}
 		},
 		"westend" => {
@@ -635,11 +635,11 @@ mod tests {
 		let polkadot_version = any_runtime! { get_version::<Runtime>() };
 
 		unsafe {
-			RUNTIME = AnyRuntime::Kusama;
+			RUNTIME = AnyRuntime::AxiaTest;
 		}
-		let kusama_version = any_runtime! { get_version::<Runtime>() };
+		let axctest_version = any_runtime! { get_version::<Runtime>() };
 
 		assert_eq!(polkadot_version.spec_name, "polkadot".into());
-		assert_eq!(kusama_version.spec_name, "kusama".into());
+		assert_eq!(axctest_version.spec_name, "axctest".into());
 	}
 }

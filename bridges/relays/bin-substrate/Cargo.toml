@@ -21,7 +21,7 @@ structopt = "0.3"
 # Bridge dependencies
 
 bp-header-chain = { path = "../../primitives/header-chain" }
-bp-kusama = { path = "../../primitives/chain-kusama" }
+bp-axctest = { path = "../../primitives/chain-axctest" }
 bp-messages = { path = "../../primitives/messages" }
 bp-message-dispatch = { path = "../../primitives/message-dispatch" }
 bp-millau = { path = "../../primitives/chain-millau" }
@@ -38,7 +38,7 @@ headers-relay = { path = "../headers" }
 messages-relay = { path = "../messages" }
 millau-runtime = { path = "../../bin/millau/runtime" }
 pallet-bridge-messages = { path = "../../modules/messages" }
-relay-kusama-client = { path = "../client-kusama" }
+relay-axctest-client = { path = "../client-axctest" }
 relay-millau-client = { path = "../client-millau" }
 relay-polkadot-client = { path = "../client-polkadot" }
 relay-rialto-client = { path = "../client-rialto" }

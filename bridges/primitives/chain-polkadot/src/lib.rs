@@ -28,10 +28,10 @@ pub use bp_polkadot_core::*;
 /// Polkadot Chain
 pub type Polkadot = PolkadotLike;
 
-// We use this to get the account on Polkadot (target) which is derived from Kusama's (source)
+// We use this to get the account on Polkadot (target) which is derived from AxiaTest's (source)
 // account.
-pub fn derive_account_from_kusama_id(id: bp_runtime::SourceAccount<AccountId>) -> AccountId {
-	let encoded_id = bp_runtime::derive_account_id(bp_runtime::KUSAMA_CHAIN_ID, id);
+pub fn derive_account_from_axctest_id(id: bp_runtime::SourceAccount<AccountId>) -> AccountId {
+	let encoded_id = bp_runtime::derive_account_id(bp_runtime::AXIATEST_CHAIN_ID, id);
 	AccountIdConverter::convert(encoded_id)
 }
 

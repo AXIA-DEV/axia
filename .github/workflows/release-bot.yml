@@ -8,8 +8,8 @@ jobs:
     strategy:
       matrix:
         channel:
-        - '!LhjZccBOqFNYKLdmbb:polkadot.builders' # #KusamaValidatorLounge:polkadot.builders
-        - '!FMwxpQnYhRCNDRsYGI:matrix.parity.io' # #kusama-announcements:matrix.parity.io
+        - '!LhjZccBOqFNYKLdmbb:polkadot.builders' # #AxiaTestValidatorLounge:polkadot.builders
+        - '!FMwxpQnYhRCNDRsYGI:matrix.parity.io' # #axctest-announcements:matrix.parity.io
         - '!NZrbtteFeqYKCUGQtr:matrix.parity.io' # #polkadotvalidatorlounge:web3.foundation
         - '!UqHPWiCBGZWxrmYBkF:matrix.parity.io' # #polkadot-announcements:matrix.parity.io
         - '!NTogofoetwjbTwOoPi:matrix.parity.io' # Internal release-notes channel

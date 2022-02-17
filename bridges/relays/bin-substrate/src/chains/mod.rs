@@ -34,12 +34,12 @@ mod wococo;
 
 use relay_utils::metrics::{FloatJsonValueMetric, MetricsParams};
 
-pub(crate) fn add_polkadot_kusama_price_metrics<T: finality_relay::FinalitySyncPipeline>(
+pub(crate) fn add_polkadot_axctest_price_metrics<T: finality_relay::FinalitySyncPipeline>(
 	params: MetricsParams,
 ) -> anyhow::Result<MetricsParams> {
 	Ok(
 		relay_utils::relay_metrics(Some(finality_relay::metrics_prefix::<T>()), params)
-			// Polkadot/Kusama prices are added as metrics here, because atm we don't have Polkadot <-> Kusama
+			// Polkadot/AxiaTest prices are added as metrics here, because atm we don't have Polkadot <-> AxiaTest
 			// relays, but we want to test metrics/dashboards in advance
 			.standalone_metric(|registry, prefix| {
 				FloatJsonValueMetric::new(
@@ -56,9 +56,9 @@ pub(crate) fn add_polkadot_kusama_price_metrics<T: finality_relay::FinalitySyncP
 				FloatJsonValueMetric::new(
 					registry,
 					prefix,
-					"https://api.coingecko.com/api/v3/simple/price?ids=Kusama&vs_currencies=btc".into(),
-					"$.kusama.btc".into(),
-					"kusama_to_base_conversion_rate".into(),
+					"https://api.coingecko.com/api/v3/simple/price?ids=AxiaTest&vs_currencies=btc".into(),
+					"$.axctest.btc".into(),
+					"axctest_to_base_conversion_rate".into(),
 					"Rate used to convert from KSM to some BASE tokens".into(),
 				)
 			})
