@@ -1,0 +1,35 @@
+[package]
+name = "polkadot-collator-protocol"
+version = "0.9.12"
+authors = ["Parity Technologies <admin@parity.io>"]
+edition = "2018"
+
+[dependencies]
+always-assert = "0.1.2"
+derive_more = "0.99.14"
+futures = "0.3.17"
+futures-timer = "3"
+thiserror = "1.0.30"
+tracing = "0.1.29"
+
+sp-core = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+sp-runtime = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+sp-keystore = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+
+polkadot-primitives = { path = "../../../primitives" }
+polkadot-node-network-protocol = { path = "../../network/protocol" }
+polkadot-node-primitives = { path = "../../primitives" }
+polkadot-node-subsystem-util = { path = "../../subsystem-util" }
+polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../../subsystem" }
+
+[dev-dependencies]
+log = "0.4.13"
+env_logger = "0.9.0"
+assert_matches = "1.4.0"
+
+sp-core = { git = "https://github.com/purestake/substrate", features = ["std"] , branch = "moonbeam-polkadot-v0.9.12" }
+sp-keyring = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+sc-network = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+parity-scale-codec = { version = "2.3.1", features = ["std"]  }
+
+polkadot-subsystem-testhelpers = { package = "polkadot-node-subsystem-test-helpers", path = "../../subsystem-test-helpers" }
