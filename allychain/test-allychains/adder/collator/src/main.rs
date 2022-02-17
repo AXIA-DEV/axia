@@ -22,7 +22,7 @@ use axia_node_subsystem::messages::{CollationGenerationMessage, CollatorProtocol
 use axia_primitives::v1::Id as ParaId;
 use sc_cli::{Error as AxlibCliError, Role, AxlibCli};
 use sp_core::hexdisplay::HexDisplay;
-use test_parachain_adder_collator::Collator;
+use test_allychain_adder_collator::Collator;
 
 /// The allychain ID to collate for in case it wasn't set explicitly through CLI.
 const DEFAULT_PARA_ID: ParaId = ParaId::new(100);
@@ -81,7 +81,7 @@ fn main() -> Result<()> {
 							format!("0x{:?}", HexDisplay::from(&collator.validation_code()));
 
 						let para_id =
-							cli.run.parachain_id.map(ParaId::from).unwrap_or(DEFAULT_PARA_ID);
+							cli.run.allychain_id.map(ParaId::from).unwrap_or(DEFAULT_PARA_ID);
 
 						log::info!("Running adder collator for allychain id: {}", para_id);
 						log::info!("Genesis state: {}", genesis_head_hex);

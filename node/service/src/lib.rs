@@ -20,7 +20,7 @@
 
 pub mod chain_spec;
 mod grandpa_support;
-mod parachains_db;
+mod allychains_db;
 mod relay_chain_selection;
 
 #[cfg(feature = "full-node")]
@@ -53,7 +53,7 @@ pub use sp_core::traits::SpawnNamed;
 #[cfg(feature = "full-node")]
 pub use {
 	axia_overseer::{Handle, Overseer, OverseerConnector, OverseerHandle},
-	axia_primitives::v1::ParachainHost,
+	axia_primitives::v1::AllychainHost,
 	relay_chain_selection::SelectRelayChain,
 	sc_client_api::AuxStore,
 	sp_authority_discovery::AuthorityDiscoveryApi,
@@ -75,10 +75,10 @@ use telemetry::TelemetryWorker;
 use telemetry::{Telemetry, TelemetryWorkerHandle};
 
 #[cfg(feature = "betanet-native")]
-pub use axia_client::RococoExecutorDispatch;
+pub use axia_client::BetanetExecutorDispatch;
 
 #[cfg(feature = "alphanet-native")]
-pub use axia_client::WestendExecutorDispatch;
+pub use axia_client::AlphanetExecutorDispatch;
 
 #[cfg(feature = "axctest-native")]
 pub use axia_client::AxiaTestExecutorDispatch;
@@ -86,7 +86,7 @@ pub use axia_client::AxiaTestExecutorDispatch;
 #[cfg(feature = "axia-native")]
 pub use axia_client::AxiaExecutorDispatch;
 
-pub use chain_spec::{AxiaTestChainSpec, AxiaChainSpec, RococoChainSpec, WestendChainSpec};
+pub use chain_spec::{AxiaTestChainSpec, AxiaChainSpec, BetanetChainSpec, AlphanetChainSpec};
 pub use consensus_common::{block_validation::Chain, Proposal, SelectChain};
 #[cfg(feature = "full-node")]
 pub use axia_client::{
@@ -118,9 +118,9 @@ pub use axctest_runtime;
 #[cfg(feature = "axia-native")]
 pub use axia_runtime;
 #[cfg(feature = "betanet-native")]
-pub use rococo_runtime;
+pub use betanet_runtime;
 #[cfg(feature = "alphanet-native")]
-pub use westend_runtime;
+pub use alphanet_runtime;
 
 /// The maximum number of active leaves we forward to the [`Overseer`] on startup.
 #[cfg(any(test, feature = "full-node"))]
@@ -244,10 +244,10 @@ pub trait IdentifyVariant {
 	fn is_axctest(&self) -> bool;
 
 	/// Returns if this is a configuration for the `Alphanet` network.
-	fn is_westend(&self) -> bool;
+	fn is_alphanet(&self) -> bool;
 
 	/// Returns if this is a configuration for the `Betanet` network.
-	fn is_rococo(&self) -> bool;
+	fn is_betanet(&self) -> bool;
 
 	/// Returns if this is a configuration for the `Wococo` test network.
 	fn is_wococo(&self) -> bool;
@@ -260,10 +260,10 @@ impl IdentifyVariant for Box<dyn ChainSpec> {
 	fn is_axctest(&self) -> bool {
 		self.id().starts_with("axctest") || self.id().starts_with("axct")
 	}
-	fn is_westend(&self) -> bool {
+	fn is_alphanet(&self) -> bool {
 		self.id().starts_with("alphanet") || self.id().starts_with("wnd")
 	}
-	fn is_rococo(&self) -> bool {
+	fn is_betanet(&self) -> bool {
 		self.id().starts_with("betanet") || self.id().starts_with("rco")
 	}
 	fn is_wococo(&self) -> bool {
@@ -697,7 +697,7 @@ where
 	let backoff_authoring_blocks = {
 		let mut backoff = sc_consensus_slots::BackoffAuthoringOnFinalizedHeadLagging::default();
 
-		if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
+		if config.chain_spec.is_betanet() || config.chain_spec.is_wococo() {
 			// it's a testnet that's in flux, finality has stalled sometimes due
 			// to operational issues and it's annoying to slow down block
 			// production to 1 block per hour.
@@ -757,7 +757,7 @@ where
 	// Axlib nodes.
 	config.network.extra_sets.push(grandpa::grandpa_peers_set_config());
 
-	if chain_spec.is_rococo() || chain_spec.is_wococo() {
+	if chain_spec.is_betanet() || chain_spec.is_wococo() {
 		config.network.extra_sets.push(beefy_gadget::beefy_peers_set_config());
 	}
 
@@ -813,18 +813,18 @@ where
 		);
 	}
 
-	let parachains_db = crate::parachains_db::open_creating(
+	let allychains_db = crate::allychains_db::open_creating(
 		config.database.path().ok_or(Error::DatabasePathRequired)?.into(),
-		crate::parachains_db::CacheSizes::default(),
+		crate::allychains_db::CacheSizes::default(),
 	)?;
 
 	let availability_config = AvailabilityConfig {
-		col_data: crate::parachains_db::REAL_COLUMNS.col_availability_data,
-		col_meta: crate::parachains_db::REAL_COLUMNS.col_availability_meta,
+		col_data: crate::allychains_db::REAL_COLUMNS.col_availability_data,
+		col_meta: crate::allychains_db::REAL_COLUMNS.col_availability_meta,
 	};
 
 	let approval_voting_config = ApprovalVotingConfig {
-		col_data: crate::parachains_db::REAL_COLUMNS.col_approval_data,
+		col_data: crate::allychains_db::REAL_COLUMNS.col_approval_data,
 		slot_duration_millis: slot_duration.as_millis() as u64,
 	};
 
@@ -841,12 +841,12 @@ where
 	};
 
 	let chain_selection_config = ChainSelectionConfig {
-		col_data: crate::parachains_db::REAL_COLUMNS.col_chain_selection_data,
+		col_data: crate::allychains_db::REAL_COLUMNS.col_chain_selection_data,
 		stagnant_check_interval: chain_selection_subsystem::StagnantCheckInterval::never(),
 	};
 
 	let dispute_coordinator_config = DisputeCoordinatorConfig {
-		col_data: crate::parachains_db::REAL_COLUMNS.col_dispute_coordinator_data,
+		col_data: crate::allychains_db::REAL_COLUMNS.col_dispute_coordinator_data,
 	};
 
 	let rpc_handlers = service::spawn_tasks(service::SpawnTasksParams {
@@ -923,7 +923,7 @@ where
 					leaves: active_leaves,
 					keystore,
 					runtime_client: overseer_client.clone(),
-					parachains_db,
+					allychains_db,
 					network_service: network.clone(),
 					authority_discovery_service,
 					pov_req_receiver,
@@ -1004,7 +1004,7 @@ where
 				let client_clone = client_clone.clone();
 				let overseer_handle = overseer_handle.clone();
 				async move {
-					let allychain = axia_node_core_parachains_inherent::ParachainsInherentDataProvider::create(
+					let allychain = axia_node_core_allychains_inherent::AllychainsInherentDataProvider::create(
 						&*client_clone,
 						overseer_handle,
 						parent,
@@ -1045,7 +1045,7 @@ where
 		if role.is_authority() { Some(keystore_container.sync_keystore()) } else { None };
 
 	// We currently only run the BEEFY gadget on the Betanet and Wococo testnets.
-	if !disable_beefy && (chain_spec.is_rococo() || chain_spec.is_wococo()) {
+	if !disable_beefy && (chain_spec.is_betanet() || chain_spec.is_wococo()) {
 		let beefy_params = beefy_gadget::BeefyParams {
 			client: client.clone(),
 			backend: backend.clone(),
@@ -1334,8 +1334,8 @@ pub fn new_chain_ops(
 	let telemetry_worker_handle = None;
 
 	#[cfg(feature = "betanet-native")]
-	if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
-		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; rococo_runtime, RococoExecutorDispatch, Betanet)
+	if config.chain_spec.is_betanet() || config.chain_spec.is_wococo() {
+		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; betanet_runtime, BetanetExecutorDispatch, Betanet)
 	}
 
 	#[cfg(feature = "axctest-native")]
@@ -1344,8 +1344,8 @@ pub fn new_chain_ops(
 	}
 
 	#[cfg(feature = "alphanet-native")]
-	if config.chain_spec.is_westend() {
-		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; westend_runtime, WestendExecutorDispatch, Alphanet)
+	if config.chain_spec.is_alphanet() {
+		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; alphanet_runtime, AlphanetExecutorDispatch, Alphanet)
 	}
 
 	#[cfg(feature = "axia-native")]
@@ -1360,8 +1360,8 @@ pub fn new_chain_ops(
 #[cfg(feature = "light-node")]
 pub fn build_light(config: Configuration) -> Result<(TaskManager, RpcHandlers), Error> {
 	#[cfg(feature = "betanet-native")]
-	if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
-		return new_light::<rococo_runtime::RuntimeApi, RococoExecutorDispatch>(config)
+	if config.chain_spec.is_betanet() || config.chain_spec.is_wococo() {
+		return new_light::<betanet_runtime::RuntimeApi, BetanetExecutorDispatch>(config)
 	}
 
 	#[cfg(feature = "axctest-native")]
@@ -1370,8 +1370,8 @@ pub fn build_light(config: Configuration) -> Result<(TaskManager, RpcHandlers), 
 	}
 
 	#[cfg(feature = "alphanet-native")]
-	if config.chain_spec.is_westend() {
-		return new_light::<westend_runtime::RuntimeApi, WestendExecutorDispatch>(config)
+	if config.chain_spec.is_alphanet() {
+		return new_light::<alphanet_runtime::RuntimeApi, AlphanetExecutorDispatch>(config)
 	}
 
 	#[cfg(feature = "axia-native")]
@@ -1394,8 +1394,8 @@ pub fn build_full(
 	overseer_gen: impl OverseerGen,
 ) -> Result<NewFull<Client>, Error> {
 	#[cfg(feature = "betanet-native")]
-	if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
-		return new_full::<rococo_runtime::RuntimeApi, RococoExecutorDispatch, _>(
+	if config.chain_spec.is_betanet() || config.chain_spec.is_wococo() {
+		return new_full::<betanet_runtime::RuntimeApi, BetanetExecutorDispatch, _>(
 			config,
 			is_collator,
 			grandpa_pause,
@@ -1424,8 +1424,8 @@ pub fn build_full(
 	}
 
 	#[cfg(feature = "alphanet-native")]
-	if config.chain_spec.is_westend() {
-		return new_full::<westend_runtime::RuntimeApi, WestendExecutorDispatch, _>(
+	if config.chain_spec.is_alphanet() {
+		return new_full::<alphanet_runtime::RuntimeApi, AlphanetExecutorDispatch, _>(
 			config,
 			is_collator,
 			grandpa_pause,

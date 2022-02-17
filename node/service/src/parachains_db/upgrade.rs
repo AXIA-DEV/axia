@@ -24,7 +24,7 @@ use std::{
 type Version = u32;
 
 /// Version file name.
-const VERSION_FILE_NAME: &'static str = "parachain_db_version";
+const VERSION_FILE_NAME: &'static str = "allychain_db_version";
 
 /// Current db version.
 const CURRENT_VERSION: Version = 1;

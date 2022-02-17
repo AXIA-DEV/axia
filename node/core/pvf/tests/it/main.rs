@@ -19,7 +19,7 @@ use parity_scale_codec::Encode as _;
 use axia_node_core_pvf::{
 	start, Config, InvalidCandidate, Metrics, Pvf, ValidationError, ValidationHost,
 };
-use axia_parachain::primitives::{BlockData, ValidationParams, ValidationResult};
+use axia_allychain::primitives::{BlockData, ValidationParams, ValidationResult};
 use std::time::Duration;
 
 mod adder;

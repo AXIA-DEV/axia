@@ -31,7 +31,7 @@ digraph {
     CandidateDescriptor:collator -> CollatorId:w
     CandidateDescriptor:persisted_validation_data_hash -> PersistedValidationDataHash
 
-    Id [label="axia_parachain::primitives::Id"]
+    Id [label="axia_allychain::primitives::Id"]
     CollatorId [label="axia_primitives::v0::CollatorId"]
 
     PoVHash [label = "Hash", shape="doublecircle", fill="gray90"]
@@ -128,11 +128,11 @@ digraph {
         </table>
     >]
 
-    CandidateCommitments:upward_messages -> "axia_parachain::primitives::UpwardMessage":w
+    CandidateCommitments:upward_messages -> "axia_allychain::primitives::UpwardMessage":w
     CandidateCommitments:horizontal_messages -> "axia_core_primitives::v1::OutboundHrmpMessage":w
     CandidateCommitments:head_data -> HeadData:w
-    CandidateCommitments:horizontal_messages -> "axia_parachain::primitives::Id":w
-    CandidateCommitments:new_validation_code -> "axia_parachain::primitives::ValidationCode":w
+    CandidateCommitments:horizontal_messages -> "axia_allychain::primitives::Id":w
+    CandidateCommitments:new_validation_code -> "axia_allychain::primitives::ValidationCode":w
 
     PoV [label = <
         <table>
@@ -141,7 +141,7 @@ digraph {
         </table>
     >]
 
-    PoV:block_data -> "axia_parachain::primitives::BlockData":w
+    PoV:block_data -> "axia_allychain::primitives::BlockData":w
 
     BackedCandidate [label = <
         <table>
@@ -155,7 +155,7 @@ digraph {
     BackedCandidate:candidate -> CommittedCandidateReceipt:name
     BackedCandidate:validity_votes  -> "axia_primitives:v0:ValidityAttestation":w
 
-    HeadData [label = "axia_parachain::primitives::HeadData"]
+    HeadData [label = "axia_allychain::primitives::HeadData"]
 
     CoreIndex [label = <
         <table>

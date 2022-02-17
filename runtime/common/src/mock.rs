@@ -109,7 +109,7 @@ impl<T: frame_system::Config> Registrar for TestRegistrar<T> {
 		Ok(())
 	}
 
-	fn make_parachain(id: ParaId) -> DispatchResult {
+	fn make_allychain(id: ParaId) -> DispatchResult {
 		PARATHREADS.with(|x| {
 			let mut parathreads = x.borrow_mut();
 			match parathreads.binary_search(&id) {
@@ -117,13 +117,13 @@ impl<T: frame_system::Config> Registrar for TestRegistrar<T> {
 					parathreads.remove(i);
 					Ok(())
 				},
-				Err(_) => Err(DispatchError::Other("not parathread, so cannot `make_parachain`")),
+				Err(_) => Err(DispatchError::Other("not parathread, so cannot `make_allychain`")),
 			}
 		})?;
 		ALLYCHAINS.with(|x| {
 			let mut allychains = x.borrow_mut();
 			match allychains.binary_search(&id) {
-				Ok(_) => Err(DispatchError::Other("already allychain, so cannot `make_parachain`")),
+				Ok(_) => Err(DispatchError::Other("already allychain, so cannot `make_allychain`")),
 				Err(i) => {
 					allychains.insert(i, id);
 					Ok(())

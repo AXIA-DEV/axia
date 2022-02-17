@@ -72,34 +72,34 @@ pub fn derive_account_from_wococo_id(id: bp_runtime::SourceAccount<AccountId>) -
 	AccountIdConverter::convert(encoded_id)
 }
 
-/// Name of the `RococoFinalityApi::best_finalized` runtime method.
-pub const BEST_FINALIZED_ROCOCO_HEADER_METHOD: &str = "RococoFinalityApi_best_finalized";
-/// Name of the `RococoFinalityApi::is_known_header` runtime method.
-pub const IS_KNOWN_ROCOCO_HEADER_METHOD: &str = "RococoFinalityApi_is_known_header";
+/// Name of the `BetanetFinalityApi::best_finalized` runtime method.
+pub const BEST_FINALIZED_BETANET_HEADER_METHOD: &str = "BetanetFinalityApi_best_finalized";
+/// Name of the `BetanetFinalityApi::is_known_header` runtime method.
+pub const IS_KNOWN_BETANET_HEADER_METHOD: &str = "BetanetFinalityApi_is_known_header";
 
-/// Name of the `ToRococoOutboundLaneApi::estimate_message_delivery_and_dispatch_fee` runtime method.
-pub const TO_ROCOCO_ESTIMATE_MESSAGE_FEE_METHOD: &str =
-	"ToRococoOutboundLaneApi_estimate_message_delivery_and_dispatch_fee";
-/// Name of the `ToRococoOutboundLaneApi::message_details` runtime method.
-pub const TO_ROCOCO_MESSAGE_DETAILS_METHOD: &str = "ToRococoOutboundLaneApi_message_details";
-/// Name of the `ToRococoOutboundLaneApi::latest_generated_nonce` runtime method.
-pub const TO_ROCOCO_LATEST_GENERATED_NONCE_METHOD: &str = "ToRococoOutboundLaneApi_latest_generated_nonce";
-/// Name of the `ToRococoOutboundLaneApi::latest_received_nonce` runtime method.
-pub const TO_ROCOCO_LATEST_RECEIVED_NONCE_METHOD: &str = "ToRococoOutboundLaneApi_latest_received_nonce";
+/// Name of the `ToBetanetOutboundLaneApi::estimate_message_delivery_and_dispatch_fee` runtime method.
+pub const TO_BETANET_ESTIMATE_MESSAGE_FEE_METHOD: &str =
+	"ToBetanetOutboundLaneApi_estimate_message_delivery_and_dispatch_fee";
+/// Name of the `ToBetanetOutboundLaneApi::message_details` runtime method.
+pub const TO_BETANET_MESSAGE_DETAILS_METHOD: &str = "ToBetanetOutboundLaneApi_message_details";
+/// Name of the `ToBetanetOutboundLaneApi::latest_generated_nonce` runtime method.
+pub const TO_BETANET_LATEST_GENERATED_NONCE_METHOD: &str = "ToBetanetOutboundLaneApi_latest_generated_nonce";
+/// Name of the `ToBetanetOutboundLaneApi::latest_received_nonce` runtime method.
+pub const TO_BETANET_LATEST_RECEIVED_NONCE_METHOD: &str = "ToBetanetOutboundLaneApi_latest_received_nonce";
 
-/// Name of the `FromRococoInboundLaneApi::latest_received_nonce` runtime method.
-pub const FROM_ROCOCO_LATEST_RECEIVED_NONCE_METHOD: &str = "FromRococoInboundLaneApi_latest_received_nonce";
-/// Name of the `FromRococoInboundLaneApi::latest_onfirmed_nonce` runtime method.
-pub const FROM_ROCOCO_LATEST_CONFIRMED_NONCE_METHOD: &str = "FromRococoInboundLaneApi_latest_confirmed_nonce";
-/// Name of the `FromRococoInboundLaneApi::unrewarded_relayers_state` runtime method.
-pub const FROM_ROCOCO_UNREWARDED_RELAYERS_STATE: &str = "FromRococoInboundLaneApi_unrewarded_relayers_state";
+/// Name of the `FromBetanetInboundLaneApi::latest_received_nonce` runtime method.
+pub const FROM_BETANET_LATEST_RECEIVED_NONCE_METHOD: &str = "FromBetanetInboundLaneApi_latest_received_nonce";
+/// Name of the `FromBetanetInboundLaneApi::latest_onfirmed_nonce` runtime method.
+pub const FROM_BETANET_LATEST_CONFIRMED_NONCE_METHOD: &str = "FromBetanetInboundLaneApi_latest_confirmed_nonce";
+/// Name of the `FromBetanetInboundLaneApi::unrewarded_relayers_state` runtime method.
+pub const FROM_BETANET_UNREWARDED_RELAYERS_STATE: &str = "FromBetanetInboundLaneApi_unrewarded_relayers_state";
 
 sp_api::decl_runtime_apis! {
 	/// API for querying information about the finalized Betanet headers.
 	///
 	/// This API is implemented by runtimes that are bridging with the Betanet chain, not the
 	/// Betanet runtime itself.
-	pub trait RococoFinalityApi {
+	pub trait BetanetFinalityApi {
 		/// Returns number and hash of the best finalized header known to the bridge module.
 		fn best_finalized() -> (BlockNumber, Hash);
 		/// Returns true if the header is known to the runtime.
@@ -110,7 +110,7 @@ sp_api::decl_runtime_apis! {
 	///
 	/// This API is implemented by runtimes that are sending messages to Betanet chain, not the
 	/// Betanet runtime itself.
-	pub trait ToRococoOutboundLaneApi<OutboundMessageFee: Parameter, OutboundPayload: Parameter> {
+	pub trait ToBetanetOutboundLaneApi<OutboundMessageFee: Parameter, OutboundPayload: Parameter> {
 		/// Estimate message delivery and dispatch fee that needs to be paid by the sender on
 		/// this chain.
 		///
@@ -144,7 +144,7 @@ sp_api::decl_runtime_apis! {
 	///
 	/// This API is implemented by runtimes that are receiving messages from Betanet chain, not the
 	/// Betanet runtime itself.
-	pub trait FromRococoInboundLaneApi {
+	pub trait FromBetanetInboundLaneApi {
 		/// Returns nonce of the latest message, received by given lane.
 		fn latest_received_nonce(lane: LaneId) -> MessageNonce;
 		/// Nonce of the latest message that has been confirmed to the bridged chain.

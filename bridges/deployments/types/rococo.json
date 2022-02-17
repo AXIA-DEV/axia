@@ -1,14 +1,14 @@
 {
-	"Fee": "RococoBalance",
-	"Balance": "RococoBalance",
-	"BlockHash": "RococoBlockHash",
-	"BlockNumber": "RococoBlockNumber",
+	"Fee": "BetanetBalance",
+	"Balance": "BetanetBalance",
+	"BlockHash": "BetanetBlockHash",
+	"BlockNumber": "BetanetBlockNumber",
 	"BridgedBlockHash": "WococoBlockHash",
 	"BridgedBlockNumber": "WococoBlockNumber",
 	"BridgedHeader": "WococoHeader",
 	"Parameter": {
 		"_enum": {
-			"RococoToWococoConversionRate": "u128"
+			"BetanetToWococoConversionRate": "u128"
 		}
 	}
 }

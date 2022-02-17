@@ -120,7 +120,7 @@ pub mod pallet {
 		/// A para has won the right to a continuous set of lease periods as a allychain.
 		/// First balance is any extra amount reserved on top of the para's existing deposit.
 		/// Second balance is the total amount reserved.
-		/// `[parachain_id, leaser, period_begin, period_count, extra_reserved, total_amount]`
+		/// `[allychain_id, leaser, period_begin, period_count, extra_reserved, total_amount]`
 		Leased(
 			ParaId,
 			T::AccountId,
@@ -207,7 +207,7 @@ pub mod pallet {
 			match leases.first() {
 				// If the first element in leases is present, then it has a lease!
 				// We can try to onboard it.
-				Some(Some(_lease_info)) => T::Registrar::make_parachain(para)?,
+				Some(Some(_lease_info)) => T::Registrar::make_allychain(para)?,
 				// Otherwise, it does not have a lease.
 				Some(None) | None => return Err(Error::<T>::ParaNotOnboarding.into()),
 			};
@@ -224,7 +224,7 @@ impl<T: Config> Pallet<T> {
 	fn manage_lease_period_start(lease_period_index: LeasePeriodOf<T>) -> Weight {
 		Self::deposit_event(Event::<T>::NewLeasePeriod(lease_period_index));
 
-		let old_parachains = T::Registrar::allychains();
+		let old_allychains = T::Registrar::allychains();
 
 		// Figure out what chains need bringing on.
 		let mut allychains = Vec::new();
@@ -277,14 +277,14 @@ impl<T: Config> Pallet<T> {
 		allychains.sort();
 
 		for para in allychains.iter() {
-			if old_parachains.binary_search(para).is_err() {
+			if old_allychains.binary_search(para).is_err() {
 				// incoming.
-				let res = T::Registrar::make_parachain(*para);
+				let res = T::Registrar::make_allychain(*para);
 				debug_assert!(res.is_ok());
 			}
 		}
 
-		for para in old_parachains.iter() {
+		for para in old_allychains.iter() {
 			if allychains.binary_search(para).is_err() {
 				// outgoing.
 				let res = T::Registrar::make_parathread(*para);
@@ -293,7 +293,7 @@ impl<T: Config> Pallet<T> {
 		}
 
 		T::WeightInfo::manage_lease_period_start(
-			old_parachains.len() as u32,
+			old_allychains.len() as u32,
 			allychains.len() as u32,
 		)
 	}
@@ -399,7 +399,7 @@ impl<T: Config> Leaser<T::BlockNumber> for Pallet<T> {
 			// This will allow us to support onboarding new allychains in the middle of a lease period.
 			if current_lease_period == period_begin {
 				// Best effort. Not much we can do if this fails.
-				let _ = T::Registrar::make_parachain(para);
+				let _ = T::Registrar::make_allychain(para);
 			}
 
 			Self::deposit_event(Event::<T>::Leased(
@@ -1046,7 +1046,7 @@ mod benchmarking {
 			// C allychains are downgrading to parathreads
 			for i in 200 .. 200 + c {
 				let (para, leaser) = register_a_parathread::<T>(i);
-				T::Registrar::make_parachain(para)?;
+				T::Registrar::make_allychain(para)?;
 			}
 
 			T::Registrar::execute_pending_transitions();
@@ -1056,7 +1056,7 @@ mod benchmarking {
 			}
 
 			for i in 200 .. 200 + c {
-				assert!(T::Registrar::is_parachain(ParaId::from(i)));
+				assert!(T::Registrar::is_allychain(ParaId::from(i)));
 			}
 		}: {
 				Slots::<T>::manage_lease_period_start(period_begin);
@@ -1064,7 +1064,7 @@ mod benchmarking {
 			// All paras should have switched.
 			T::Registrar::execute_pending_transitions();
 			for i in 0 .. t {
-				assert!(T::Registrar::is_parachain(ParaId::from(i)));
+				assert!(T::Registrar::is_allychain(ParaId::from(i)));
 			}
 			for i in 200 .. 200 + c {
 				assert!(T::Registrar::is_parathread(ParaId::from(i)));
@@ -1110,7 +1110,7 @@ mod benchmarking {
 		}: _(RawOrigin::Signed(caller), para)
 		verify {
 			T::Registrar::execute_pending_transitions();
-			assert!(T::Registrar::is_parachain(para));
+			assert!(T::Registrar::is_allychain(para));
 		}
 
 		impl_benchmark_test_suite!(

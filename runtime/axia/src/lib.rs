@@ -27,13 +27,13 @@ use runtime_common::{
 	OffchainSolutionWeightLimit, RocksDbWeight, SlowAdjustingFeeUpdate,
 };
 
-use runtime_parachains::{
-	configuration as parachains_configuration, dmp as parachains_dmp, hrmp as parachains_hrmp,
-	inclusion as parachains_inclusion, initializer as parachains_initializer,
-	origin as parachains_origin, paras as parachains_paras,
-	paras_inherent as parachains_paras_inherent, reward_points as parachains_reward_points,
-	runtime_api_impl::v1 as parachains_runtime_api_impl, scheduler as parachains_scheduler,
-	session_info as parachains_session_info, shared as parachains_shared, ump as parachains_ump,
+use runtime_allychains::{
+	configuration as allychains_configuration, dmp as allychains_dmp, hrmp as allychains_hrmp,
+	inclusion as allychains_inclusion, initializer as allychains_initializer,
+	origin as allychains_origin, paras as allychains_paras,
+	paras_inherent as allychains_paras_inherent, reward_points as allychains_reward_points,
+	runtime_api_impl::v1 as allychains_runtime_api_impl, scheduler as allychains_scheduler,
+	session_info as allychains_session_info, shared as allychains_shared, ump as allychains_ump,
 };
 
 use authority_discovery_primitives::AuthorityId as AuthorityDiscoveryId;
@@ -375,7 +375,7 @@ parameter_types! {
 
 	// signed config
 	pub const SignedMaxSubmissions: u32 = 16;
-	// 40 DOTs fixed deposit..
+	// 40 AXCs fixed deposit..
 	pub const SignedDepositBase: Balance = deposit(2, 0);
 	// 0.01 AXC per KB of solution data.
 	pub const SignedDepositByte: Balance = deposit(0, 10) / 1024;
@@ -886,7 +886,7 @@ parameter_types! {
 }
 
 parameter_types! {
-	pub Prefix: &'static [u8] = b"Pay DOTs to the Axia account:";
+	pub Prefix: &'static [u8] = b"Pay AXCs to the Axia account:";
 }
 
 impl claims::Config for Runtime {
@@ -1102,55 +1102,55 @@ impl pallet_proxy::Config for Runtime {
 	type AnnouncementDepositFactor = AnnouncementDepositFactor;
 }
 
-impl parachains_origin::Config for Runtime {}
+impl allychains_origin::Config for Runtime {}
 
-impl parachains_configuration::Config for Runtime {
-	type WeightInfo = weights::runtime_parachains_configuration::WeightInfo<Runtime>;
+impl allychains_configuration::Config for Runtime {
+	type WeightInfo = weights::runtime_allychains_configuration::WeightInfo<Runtime>;
 }
 
-impl parachains_shared::Config for Runtime {}
+impl allychains_shared::Config for Runtime {}
 
-impl parachains_session_info::Config for Runtime {}
+impl allychains_session_info::Config for Runtime {}
 
-impl parachains_inclusion::Config for Runtime {
+impl allychains_inclusion::Config for Runtime {
 	type Event = Event;
 	type DisputesHandler = ();
-	type RewardValidators = parachains_reward_points::RewardValidatorsWithEraPoints<Runtime>;
+	type RewardValidators = allychains_reward_points::RewardValidatorsWithEraPoints<Runtime>;
 }
 
-impl parachains_paras::Config for Runtime {
+impl allychains_paras::Config for Runtime {
 	type Origin = Origin;
 	type Event = Event;
-	type WeightInfo = weights::runtime_parachains_paras::WeightInfo<Runtime>;
+	type WeightInfo = weights::runtime_allychains_paras::WeightInfo<Runtime>;
 }
 
 parameter_types! {
 	pub const FirstMessageFactorPercent: u64 = 100;
 }
 
-impl parachains_ump::Config for Runtime {
+impl allychains_ump::Config for Runtime {
 	type Event = Event;
 	type UmpSink = ();
 	type FirstMessageFactorPercent = FirstMessageFactorPercent;
 	type ExecuteOverweightOrigin = EnsureRoot<AccountId>;
 }
 
-impl parachains_dmp::Config for Runtime {}
+impl allychains_dmp::Config for Runtime {}
 
-impl parachains_hrmp::Config for Runtime {
+impl allychains_hrmp::Config for Runtime {
 	type Event = Event;
 	type Origin = Origin;
 	type Currency = Balances;
 }
 
-impl parachains_paras_inherent::Config for Runtime {}
+impl allychains_paras_inherent::Config for Runtime {}
 
-impl parachains_scheduler::Config for Runtime {}
+impl allychains_scheduler::Config for Runtime {}
 
-impl parachains_initializer::Config for Runtime {
+impl allychains_initializer::Config for Runtime {
 	type Randomness = pallet_babe::RandomnessFromOneEpochAgo<Runtime>;
 	type ForceOrigin = EnsureRoot<AccountId>;
-	type WeightInfo = weights::runtime_parachains_initializer::WeightInfo<Runtime>;
+	type WeightInfo = weights::runtime_allychains_initializer::WeightInfo<Runtime>;
 }
 
 parameter_types! {
@@ -1301,18 +1301,18 @@ construct_runtime! {
 		ElectionProviderMultiPhase: pallet_election_provider_multi_phase::{Pallet, Call, Storage, Event<T>, ValidateUnsigned} = 36,
 
 		// Allychains pallets. Start indices at 50 to leave room.
-		ParachainsOrigin: parachains_origin::{Pallet, Origin} = 50,
-		Configuration: parachains_configuration::{Pallet, Call, Storage, Config<T>} = 51,
-		ParasShared: parachains_shared::{Pallet, Call, Storage} = 52,
-		ParaInclusion: parachains_inclusion::{Pallet, Call, Storage, Event<T>} = 53,
-		ParaInherent: parachains_paras_inherent::{Pallet, Call, Storage, Inherent} = 54,
-		ParaScheduler: parachains_scheduler::{Pallet, Storage} = 55,
-		Paras: parachains_paras::{Pallet, Call, Storage, Event, Config} = 56,
-		Initializer: parachains_initializer::{Pallet, Call, Storage} = 57,
-		Dmp: parachains_dmp::{Pallet, Call, Storage} = 58,
-		Ump: parachains_ump::{Pallet, Call, Storage, Event} = 59,
-		Hrmp: parachains_hrmp::{Pallet, Call, Storage, Event<T>} = 60,
-		ParaSessionInfo: parachains_session_info::{Pallet, Storage} = 61,
+		AllychainsOrigin: allychains_origin::{Pallet, Origin} = 50,
+		Configuration: allychains_configuration::{Pallet, Call, Storage, Config<T>} = 51,
+		ParasShared: allychains_shared::{Pallet, Call, Storage} = 52,
+		ParaInclusion: allychains_inclusion::{Pallet, Call, Storage, Event<T>} = 53,
+		ParaInherent: allychains_paras_inherent::{Pallet, Call, Storage, Inherent} = 54,
+		ParaScheduler: allychains_scheduler::{Pallet, Storage} = 55,
+		Paras: allychains_paras::{Pallet, Call, Storage, Event, Config} = 56,
+		Initializer: allychains_initializer::{Pallet, Call, Storage} = 57,
+		Dmp: allychains_dmp::{Pallet, Call, Storage} = 58,
+		Ump: allychains_ump::{Pallet, Call, Storage, Event} = 59,
+		Hrmp: allychains_hrmp::{Pallet, Call, Storage, Event<T>} = 60,
+		ParaSessionInfo: allychains_session_info::{Pallet, Storage} = 61,
 
 		// Allychain Onboarding Pallets. Start indices at 70 to leave room.
 		Registrar: paras_registrar::{Pallet, Call, Storage, Event<T>} = 70,
@@ -1361,7 +1361,7 @@ pub type SignedPayload = generic::SignedPayload<Call, SignedExtra>;
 pub struct SetInitialHostConfiguration;
 impl OnRuntimeUpgrade for SetInitialHostConfiguration {
 	fn on_runtime_upgrade() -> frame_support::weights::Weight {
-		use parachains_configuration::HostConfiguration;
+		use allychains_configuration::HostConfiguration;
 
 		let active_config: HostConfiguration<BlockNumber> = HostConfiguration {
 			max_code_size: 10_485_760,
@@ -1376,13 +1376,13 @@ impl OnRuntimeUpgrade for SetInitialHostConfiguration {
 			max_pov_size: 5_242_880,
 			max_downward_message_size: 51_200,
 			ump_service_total_weight: 100_000_000_000,
-			hrmp_max_parachain_outbound_channels: 10,
+			hrmp_max_allychain_outbound_channels: 10,
 			hrmp_max_parathread_outbound_channels: 0,
 			hrmp_sender_deposit: deposit(1004, 100 * 1024),
 			hrmp_recipient_deposit: deposit(1004, 100 * 1024),
 			hrmp_channel_max_capacity: 1_000,
 			hrmp_channel_max_total_size: 102_400,
-			hrmp_max_parachain_inbound_channels: 10,
+			hrmp_max_allychain_inbound_channels: 10,
 			hrmp_max_parathread_inbound_channels: 0,
 			hrmp_channel_max_message_size: 102_400,
 			code_retention_period: EPOCH_DURATION_IN_SLOTS * 6,
@@ -1412,7 +1412,7 @@ impl OnRuntimeUpgrade for SetInitialHostConfiguration {
 		}
 
 		{
-			// At the moment, the `parachains_configuration` crate has already had one runtime
+			// At the moment, the `allychains_configuration` crate has already had one runtime
 			// storage migration (performed as part of [#3575]). As the result a call to
 			// `StorageVersion::get::<Configuration>` will return `Some(1)`
 			//
@@ -1516,46 +1516,46 @@ sp_api::impl_runtime_apis! {
 		}
 	}
 
-	impl primitives::v1::ParachainHost<Block, Hash, BlockNumber> for Runtime {
+	impl primitives::v1::AllychainHost<Block, Hash, BlockNumber> for Runtime {
 		fn validators() -> Vec<ValidatorId> {
-			parachains_runtime_api_impl::validators::<Runtime>()
+			allychains_runtime_api_impl::validators::<Runtime>()
 		}
 
 		fn validator_groups() -> (Vec<Vec<ValidatorIndex>>, GroupRotationInfo<BlockNumber>) {
-			parachains_runtime_api_impl::validator_groups::<Runtime>()
+			allychains_runtime_api_impl::validator_groups::<Runtime>()
 		}
 
 		fn availability_cores() -> Vec<CoreState<Hash, BlockNumber>> {
-			parachains_runtime_api_impl::availability_cores::<Runtime>()
+			allychains_runtime_api_impl::availability_cores::<Runtime>()
 		}
 
 		fn persisted_validation_data(para_id: ParaId, assumption: OccupiedCoreAssumption)
 			-> Option<PersistedValidationData<Hash, BlockNumber>> {
-			parachains_runtime_api_impl::persisted_validation_data::<Runtime>(para_id, assumption)
+			allychains_runtime_api_impl::persisted_validation_data::<Runtime>(para_id, assumption)
 		}
 
 		fn check_validation_outputs(
 			para_id: ParaId,
 			outputs: primitives::v1::CandidateCommitments,
 		) -> bool {
-			parachains_runtime_api_impl::check_validation_outputs::<Runtime>(para_id, outputs)
+			allychains_runtime_api_impl::check_validation_outputs::<Runtime>(para_id, outputs)
 		}
 
 		fn session_index_for_child() -> SessionIndex {
-			parachains_runtime_api_impl::session_index_for_child::<Runtime>()
+			allychains_runtime_api_impl::session_index_for_child::<Runtime>()
 		}
 
 		fn validation_code(para_id: ParaId, assumption: OccupiedCoreAssumption)
 			-> Option<ValidationCode> {
-			parachains_runtime_api_impl::validation_code::<Runtime>(para_id, assumption)
+			allychains_runtime_api_impl::validation_code::<Runtime>(para_id, assumption)
 		}
 
 		fn candidate_pending_availability(para_id: ParaId) -> Option<CommittedCandidateReceipt<Hash>> {
-			parachains_runtime_api_impl::candidate_pending_availability::<Runtime>(para_id)
+			allychains_runtime_api_impl::candidate_pending_availability::<Runtime>(para_id)
 		}
 
 		fn candidate_events() -> Vec<CandidateEvent<Hash>> {
-			parachains_runtime_api_impl::candidate_events::<Runtime, _>(|ev| {
+			allychains_runtime_api_impl::candidate_events::<Runtime, _>(|ev| {
 				match ev {
 					Event::ParaInclusion(ev) => {
 						Some(ev)
@@ -1566,25 +1566,25 @@ sp_api::impl_runtime_apis! {
 		}
 
 		fn session_info(index: SessionIndex) -> Option<SessionInfo> {
-			parachains_runtime_api_impl::session_info::<Runtime>(index)
+			allychains_runtime_api_impl::session_info::<Runtime>(index)
 		}
 
 		fn dmq_contents(recipient: ParaId) -> Vec<InboundDownwardMessage<BlockNumber>> {
-			parachains_runtime_api_impl::dmq_contents::<Runtime>(recipient)
+			allychains_runtime_api_impl::dmq_contents::<Runtime>(recipient)
 		}
 
 		fn inbound_hrmp_channels_contents(
 			recipient: ParaId
 		) -> BTreeMap<ParaId, Vec<InboundHrmpMessage<BlockNumber>>> {
-			parachains_runtime_api_impl::inbound_hrmp_channels_contents::<Runtime>(recipient)
+			allychains_runtime_api_impl::inbound_hrmp_channels_contents::<Runtime>(recipient)
 		}
 
 		fn validation_code_by_hash(hash: ValidationCodeHash) -> Option<ValidationCode> {
-			parachains_runtime_api_impl::validation_code_by_hash::<Runtime>(hash)
+			allychains_runtime_api_impl::validation_code_by_hash::<Runtime>(hash)
 		}
 
 		fn on_chain_votes() -> Option<ScrapedOnChainVotes<Hash>> {
-			parachains_runtime_api_impl::on_chain_votes::<Runtime>()
+			allychains_runtime_api_impl::on_chain_votes::<Runtime>()
 		}
 	}
 
@@ -1781,9 +1781,9 @@ sp_api::impl_runtime_apis! {
 			list_benchmark!(list, extra, runtime_common::claims, Claims);
 			list_benchmark!(list, extra, runtime_common::slots, Slots);
 			list_benchmark!(list, extra, runtime_common::paras_registrar, Registrar);
-			list_benchmark!(list, extra, runtime_parachains::configuration, Configuration);
-			list_benchmark!(list, extra, runtime_parachains::initializer, Initializer);
-			list_benchmark!(list, extra, runtime_parachains::paras, Paras);
+			list_benchmark!(list, extra, runtime_allychains::configuration, Configuration);
+			list_benchmark!(list, extra, runtime_allychains::initializer, Initializer);
+			list_benchmark!(list, extra, runtime_allychains::paras, Paras);
 			// Axlib
 			list_benchmark!(list, extra, pallet_balances, Balances);
 			list_benchmark!(list, extra, pallet_bounties, Bounties);
@@ -1856,9 +1856,9 @@ sp_api::impl_runtime_apis! {
 			add_benchmark!(params, batches, runtime_common::claims, Claims);
 			add_benchmark!(params, batches, runtime_common::slots, Slots);
 			add_benchmark!(params, batches, runtime_common::paras_registrar, Registrar);
-			add_benchmark!(params, batches, runtime_parachains::configuration, Configuration);
-			add_benchmark!(params, batches, runtime_parachains::initializer, Initializer);
-			add_benchmark!(params, batches, runtime_parachains::paras, Paras);
+			add_benchmark!(params, batches, runtime_allychains::configuration, Configuration);
+			add_benchmark!(params, batches, runtime_allychains::initializer, Initializer);
+			add_benchmark!(params, batches, runtime_allychains::paras, Paras);
 			// Axlib
 			add_benchmark!(params, batches, pallet_balances, Balances);
 			add_benchmark!(params, batches, pallet_bounties, Bounties);
@@ -2026,7 +2026,7 @@ mod test_fees {
 	#[test]
 	fn signed_deposit_is_sensible() {
 		// ensure this number does not change, or that it is checked after each change.
-		// a 1 MB solution should take (40 + 10) DOTs of deposit.
+		// a 1 MB solution should take (40 + 10) AXCs of deposit.
 		let deposit = SignedDepositBase::get() + (SignedDepositByte::get() * 1024 * 1024);
 		assert_eq_error_rate!(deposit, 50 * DOLLARS, DOLLARS);
 	}

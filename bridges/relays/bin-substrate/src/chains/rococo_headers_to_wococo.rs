@@ -16,22 +16,22 @@
 
 //! Betanet-to-Wococo headers sync entrypoint.
 
-use crate::chains::wococo_headers_to_rococo::MAXIMAL_BALANCE_DECREASE_PER_DAY;
+use crate::chains::wococo_headers_to_betanet::MAXIMAL_BALANCE_DECREASE_PER_DAY;
 use crate::finality_pipeline::{AxlibFinalitySyncPipeline, AxlibFinalityToAxlib};
 
 use bp_header_chain::justification::GrandpaJustification;
 use codec::Encode;
-use relay_rococo_client::{Betanet, SyncHeader as RococoSyncHeader};
+use relay_betanet_client::{Betanet, SyncHeader as BetanetSyncHeader};
 use relay_axlib_client::{Chain, TransactionSignScheme};
 use relay_utils::metrics::MetricsParams;
 use relay_wococo_client::{SigningParams as WococoSigningParams, Wococo};
 use sp_core::{Bytes, Pair};
 
 /// Betanet-to-Wococo finality sync pipeline.
-pub(crate) type RococoFinalityToWococo = AxlibFinalityToAxlib<Betanet, Wococo, WococoSigningParams>;
+pub(crate) type BetanetFinalityToWococo = AxlibFinalityToAxlib<Betanet, Wococo, WococoSigningParams>;
 
-impl AxlibFinalitySyncPipeline for RococoFinalityToWococo {
-	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_rococo::BEST_FINALIZED_ROCOCO_HEADER_METHOD;
+impl AxlibFinalitySyncPipeline for BetanetFinalityToWococo {
+	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_betanet::BEST_FINALIZED_BETANET_HEADER_METHOD;
 
 	type TargetChain = Wococo;
 
@@ -58,11 +58,11 @@ impl AxlibFinalitySyncPipeline for RococoFinalityToWococo {
 	fn make_submit_finality_proof_transaction(
 		&self,
 		transaction_nonce: <Wococo as Chain>::Index,
-		header: RococoSyncHeader,
-		proof: GrandpaJustification<bp_rococo::Header>,
+		header: BetanetSyncHeader,
+		proof: GrandpaJustification<bp_betanet::Header>,
 	) -> Bytes {
-		let call = relay_wococo_client::runtime::Call::BridgeGrandpaRococo(
-			relay_wococo_client::runtime::BridgeGrandpaRococoCall::submit_finality_proof(header.into_inner(), proof),
+		let call = relay_wococo_client::runtime::Call::BridgeGrandpaBetanet(
+			relay_wococo_client::runtime::BridgeGrandpaBetanetCall::submit_finality_proof(header.into_inner(), proof),
 		);
 		let genesis_hash = *self.target_client.genesis_hash();
 		let transaction = Wococo::sign_transaction(genesis_hash, &self.target_sign, transaction_nonce, call);

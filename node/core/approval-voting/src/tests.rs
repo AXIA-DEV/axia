@@ -24,7 +24,7 @@ use axia_node_subsystem::{
 };
 use axia_node_subsystem_test_helpers as test_helpers;
 use axia_node_subsystem_util::TimeoutExt;
-use axia_overseer::HeadSupportsParachains;
+use axia_overseer::HeadSupportsAllychains;
 use axia_primitives::v1::{
 	CandidateEvent, CoreIndex, GroupIndex, Header, Id as ParaId, ValidatorSignature,
 };
@@ -106,10 +106,10 @@ pub mod test_constants {
 	pub(crate) const TEST_CONFIG: DatabaseConfig = DatabaseConfig { col_data: DATA_COL };
 }
 
-struct MockSupportsParachains;
+struct MockSupportsAllychains;
 
-impl HeadSupportsParachains for MockSupportsParachains {
-	fn head_supports_parachains(&self, _head: &Hash) -> bool {
+impl HeadSupportsAllychains for MockSupportsAllychains {
+	fn head_supports_allychains(&self, _head: &Hash) -> bool {
 		true
 	}
 }
@@ -461,7 +461,7 @@ fn test_harness<T: Future<Output = VirtualOverseer>>(
 
 	let keystore = LocalKeystore::in_memory();
 	let _ = keystore.sr25519_generate_new(
-		axia_primitives::v1::PARACHAIN_KEY_TYPE_ID,
+		axia_primitives::v1::ALLYCHAIN_KEY_TYPE_ID,
 		Some(&Sr25519Keyring::Alice.to_seed()),
 	);
 

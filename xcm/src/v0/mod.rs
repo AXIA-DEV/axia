@@ -58,7 +58,7 @@ pub mod prelude {
 // TODO: #2841 #XCMENCODE Efficient encodings for MultiAssets, Vec<Order>, using initial byte values 128+ to encode
 //   the number of items in the vector.
 
-/// Basically just the XCM (more general) version of `ParachainDispatchOrigin`.
+/// Basically just the XCM (more general) version of `AllychainDispatchOrigin`.
 #[derive(Copy, Clone, Eq, PartialEq, Encode, Decode, Debug, TypeInfo)]
 pub enum OriginKind {
 	/// Origin should just be the native dispatch origin representation for the sender in the

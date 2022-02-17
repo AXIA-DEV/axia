@@ -35,7 +35,7 @@ pub trait Registrar {
 	fn allychains() -> Vec<ParaId>;
 
 	/// Return if a `ParaId` is a Allychain.
-	fn is_parachain(id: ParaId) -> bool {
+	fn is_allychain(id: ParaId) -> bool {
 		Self::allychains().binary_search(&id).is_ok()
 	}
 
@@ -44,7 +44,7 @@ pub trait Registrar {
 
 	/// Return if a `ParaId` is registered in the system.
 	fn is_registered(id: ParaId) -> bool {
-		Self::is_parathread(id) || Self::is_parachain(id)
+		Self::is_parathread(id) || Self::is_allychain(id)
 	}
 
 	/// Apply a lock to the para registration so that it cannot be modified by
@@ -68,7 +68,7 @@ pub trait Registrar {
 	fn deregister(id: ParaId) -> DispatchResult;
 
 	/// Elevate a para to allychain status.
-	fn make_parachain(id: ParaId) -> DispatchResult;
+	fn make_allychain(id: ParaId) -> DispatchResult;
 
 	/// Lower a para back to normal from allychain status.
 	fn make_parathread(id: ParaId) -> DispatchResult;

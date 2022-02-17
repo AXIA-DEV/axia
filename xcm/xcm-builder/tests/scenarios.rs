@@ -19,7 +19,7 @@ mod mock;
 use mock::{
 	axctest_like_with_balances, AccountId, Balance, Balances, BaseXcmWeight, XcmConfig, CENTS,
 };
-use axia_parachain::primitives::Id as ParaId;
+use axia_allychain::primitives::Id as ParaId;
 use sp_runtime::traits::AccountIdConversion;
 use xcm::latest::prelude::*;
 use xcm_executor::XcmExecutor;

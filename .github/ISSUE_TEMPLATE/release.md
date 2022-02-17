@@ -129,7 +129,7 @@ release-time. To initialise a benchmark run for each production runtime
 * Go to https://gitlab.parity.io/parity/axia/-/pipelines?page=1&scope=branches&ref=master
 * Click the link to the last pipeline run for master
 * Start each of the manual jobs:
-  * 'update_westend_weights'
+  * 'update_alphanet_weights'
   * 'update_axia_weights'
   * 'update_axctest_weights'
 * When these jobs have completed (it takes a few hours), a git PATCH file will

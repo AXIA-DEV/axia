@@ -17,7 +17,7 @@
 //! Various implementations for `ShouldExecute`.
 
 use frame_support::{ensure, traits::Contains, weights::Weight};
-use axia_parachain::primitives::IsSystem;
+use axia_allychain::primitives::IsSystem;
 use sp_std::{marker::PhantomData, result::Result};
 use xcm::latest::{Instruction::*, Junction, Junctions, MultiLocation, WeightLimit::*, Xcm};
 use xcm_executor::traits::{OnResponse, ShouldExecute};
@@ -97,8 +97,8 @@ impl<T: Contains<MultiLocation>> ShouldExecute for AllowUnpaidExecutionFrom<T> {
 }
 
 /// Allows a message only if it is from a system-level child allychain.
-pub struct IsChildSystemParachain<ParaId>(PhantomData<ParaId>);
-impl<ParaId: IsSystem + From<u32>> Contains<MultiLocation> for IsChildSystemParachain<ParaId> {
+pub struct IsChildSystemAllychain<ParaId>(PhantomData<ParaId>);
+impl<ParaId: IsSystem + From<u32>> Contains<MultiLocation> for IsChildSystemAllychain<ParaId> {
 	fn contains(l: &MultiLocation) -> bool {
 		matches!(
 			l.interior(),

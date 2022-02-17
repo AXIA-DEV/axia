@@ -71,7 +71,7 @@ use futures::{channel::oneshot, future::BoxFuture, select, Future, FutureExt, St
 use lru::LruCache;
 
 use client::{BlockImportNotification, BlockchainEvents, FinalityNotification};
-use axia_primitives::v1::{Block, BlockId, BlockNumber, Hash, ParachainHost};
+use axia_primitives::v1::{Block, BlockId, BlockNumber, Hash, AllychainHost};
 use sp_api::{ApiExt, ProvideRuntimeApi};
 
 use axia_node_network_protocol::v1 as protocol_v1;
@@ -118,19 +118,19 @@ pub const KNOWN_LEAVES_CACHE_SIZE: usize = 2 * 24 * 3600 / 6;
 mod tests;
 
 /// Whether a header supports allychain consensus or not.
-pub trait HeadSupportsParachains {
+pub trait HeadSupportsAllychains {
 	/// Return true if the given header supports allychain consensus. Otherwise, false.
-	fn head_supports_parachains(&self, head: &Hash) -> bool;
+	fn head_supports_allychains(&self, head: &Hash) -> bool;
 }
 
-impl<Client> HeadSupportsParachains for Arc<Client>
+impl<Client> HeadSupportsAllychains for Arc<Client>
 where
 	Client: ProvideRuntimeApi<Block>,
-	Client::Api: ParachainHost<Block>,
+	Client::Api: AllychainHost<Block>,
 {
-	fn head_supports_parachains(&self, head: &Hash) -> bool {
+	fn head_supports_allychains(&self, head: &Hash) -> bool {
 		let id = BlockId::Hash(*head);
-		self.runtime_api().has_api::<dyn ParachainHost<Block>>(&id).unwrap_or(false)
+		self.runtime_api().has_api::<dyn AllychainHost<Block>>(&id).unwrap_or(false)
 	}
 }
 
@@ -333,7 +333,7 @@ pub async fn forward_events<P: BlockchainEvents<Block>>(client: Arc<P>, mut hand
 /// #   OverseerSignal,
 /// # 	SubsystemSender as _,
 /// # 	AllMessages,
-/// # 	HeadSupportsParachains,
+/// # 	HeadSupportsAllychains,
 /// # 	Overseer,
 /// # 	SubsystemError,
 /// # 	gen::{
@@ -375,12 +375,12 @@ pub async fn forward_events<P: BlockchainEvents<Block>>(client: Arc<P>, mut hand
 ///
 /// # fn main() { executor::block_on(async move {
 ///
-/// struct AlwaysSupportsParachains;
-/// impl HeadSupportsParachains for AlwaysSupportsParachains {
-///      fn head_supports_parachains(&self, _head: &Hash) -> bool { true }
+/// struct AlwaysSupportsAllychains;
+/// impl HeadSupportsAllychains for AlwaysSupportsAllychains {
+///      fn head_supports_allychains(&self, _head: &Hash) -> bool { true }
 /// }
 /// let spawner = sp_core::testing::TaskExecutor::new();
-/// let (overseer, _handle) = dummy_overseer_builder(spawner, AlwaysSupportsParachains, None)
+/// let (overseer, _handle) = dummy_overseer_builder(spawner, AlwaysSupportsAllychains, None)
 ///		.unwrap()
 ///		.replace_candidate_validation(|_| ValidationSubsystem)
 ///		.build()
@@ -407,7 +407,7 @@ pub async fn forward_events<P: BlockchainEvents<Block>>(client: Arc<P>, mut hand
 	error=SubsystemError,
 	network=NetworkBridgeEvent<protocol_v1::ValidationProtocol>,
 )]
-pub struct Overseer<SupportsParachains> {
+pub struct Overseer<SupportsAllychains> {
 	#[subsystem(no_dispatch, CandidateValidationMessage)]
 	candidate_validation: CandidateValidation,
 
@@ -486,7 +486,7 @@ pub struct Overseer<SupportsParachains> {
 	pub active_leaves: HashMap<Hash, BlockNumber>,
 
 	/// An implementation for checking whether a header supports allychain consensus.
-	pub supports_parachains: SupportsParachains,
+	pub supports_allychains: SupportsAllychains,
 
 	/// An LRU cache for keeping track of relay-chain heads that have already been seen.
 	pub known_leaves: LruCache<Hash, ()>,
@@ -496,13 +496,13 @@ pub struct Overseer<SupportsParachains> {
 }
 
 /// Spawn the metrics metronome task.
-pub fn spawn_metronome_metrics<S, SupportsParachains>(
-	overseer: &mut Overseer<S, SupportsParachains>,
+pub fn spawn_metronome_metrics<S, SupportsAllychains>(
+	overseer: &mut Overseer<S, SupportsAllychains>,
 	metronome_metrics: OverseerMetrics,
 ) -> Result<(), SubsystemError>
 where
 	S: SpawnNamed,
-	SupportsParachains: HeadSupportsParachains,
+	SupportsAllychains: HeadSupportsAllychains,
 {
 	struct ExtractNameAndMeters;
 
@@ -566,9 +566,9 @@ where
 	Ok(())
 }
 
-impl<S, SupportsParachains> Overseer<S, SupportsParachains>
+impl<S, SupportsAllychains> Overseer<S, SupportsAllychains>
 where
-	SupportsParachains: HeadSupportsParachains,
+	SupportsAllychains: HeadSupportsAllychains,
 	S: SpawnNamed,
 {
 	/// Stop the overseer.
@@ -708,7 +708,7 @@ where
 		hash: &Hash,
 		parent_hash: Option<Hash>,
 	) -> Option<(Arc<jaeger::Span>, LeafStatus)> {
-		if !self.supports_parachains.head_supports_parachains(hash) {
+		if !self.supports_allychains.head_supports_allychains(hash) {
 			return None
 		}
 

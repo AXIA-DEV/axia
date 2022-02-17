@@ -990,7 +990,7 @@ mod tests {
 	use futures::executor::block_on;
 	use keyring::Sr25519Keyring;
 	use primitives::{
-		v0::PARACHAIN_KEY_TYPE_ID,
+		v0::ALLYCHAIN_KEY_TYPE_ID,
 		v1::{
 			BlockNumber, CandidateCommitments, CandidateDescriptor, CollatorId,
 			CompactStatement as Statement, Hash, SignedAvailabilityBitfield, SignedStatement,
@@ -1325,7 +1325,7 @@ mod tests {
 		for validator in validators.iter() {
 			SyncCryptoStore::sr25519_generate_new(
 				&*keystore,
-				PARACHAIN_KEY_TYPE_ID,
+				ALLYCHAIN_KEY_TYPE_ID,
 				Some(&validator.to_seed()),
 			)
 			.unwrap();
@@ -1581,7 +1581,7 @@ mod tests {
 		for validator in validators.iter() {
 			SyncCryptoStore::sr25519_generate_new(
 				&*keystore,
-				PARACHAIN_KEY_TYPE_ID,
+				ALLYCHAIN_KEY_TYPE_ID,
 				Some(&validator.to_seed()),
 			)
 			.unwrap();
@@ -1762,7 +1762,7 @@ mod tests {
 		for validator in validators.iter() {
 			SyncCryptoStore::sr25519_generate_new(
 				&*keystore,
-				PARACHAIN_KEY_TYPE_ID,
+				ALLYCHAIN_KEY_TYPE_ID,
 				Some(&validator.to_seed()),
 			)
 			.unwrap();
@@ -2315,7 +2315,7 @@ mod tests {
 		for validator in validators.iter() {
 			SyncCryptoStore::sr25519_generate_new(
 				&*keystore,
-				PARACHAIN_KEY_TYPE_ID,
+				ALLYCHAIN_KEY_TYPE_ID,
 				Some(&validator.to_seed()),
 			)
 			.unwrap();
@@ -2588,7 +2588,7 @@ mod tests {
 		for validator in validators.iter() {
 			SyncCryptoStore::sr25519_generate_new(
 				&*keystore,
-				PARACHAIN_KEY_TYPE_ID,
+				ALLYCHAIN_KEY_TYPE_ID,
 				Some(&validator.to_seed()),
 			)
 			.unwrap();
@@ -2689,7 +2689,7 @@ mod tests {
 		for validator in validators.iter() {
 			SyncCryptoStore::sr25519_generate_new(
 				&*keystore,
-				PARACHAIN_KEY_TYPE_ID,
+				ALLYCHAIN_KEY_TYPE_ID,
 				Some(&validator.to_seed()),
 			)
 			.unwrap();

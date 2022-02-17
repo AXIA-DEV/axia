@@ -37,7 +37,7 @@ pub use axia_core_primitives::v1::{
 };
 
 // Export some axia-allychain primitives
-pub use axia_parachain::primitives::{
+pub use axia_allychain::primitives::{
 	HeadData, HrmpChannelId, Id, UpwardMessage, ValidationCode, ValidationCodeHash,
 	LOWEST_PUBLIC_ID, LOWEST_USER_ID,
 };
@@ -45,7 +45,7 @@ pub use axia_parachain::primitives::{
 // Export some basic allychain primitives from v0.
 pub use crate::v0::{
 	CollatorId, CollatorSignature, CompactStatement, SigningContext, ValidatorId, ValidatorIndex,
-	ValidatorSignature, ValidityAttestation, PARACHAIN_KEY_TYPE_ID,
+	ValidatorSignature, ValidityAttestation, ALLYCHAIN_KEY_TYPE_ID,
 };
 
 #[cfg(feature = "std")]
@@ -222,7 +222,7 @@ pub mod well_known_keys {
 }
 
 /// Unique identifier for the Allychains Inherent
-pub const PARACHAINS_INHERENT_IDENTIFIER: InherentIdentifier = *b"parachn0";
+pub const ALLYCHAINS_INHERENT_IDENTIFIER: InherentIdentifier = *b"parachn0";
 
 /// The key type ID for allychain assignment key.
 pub const ASSIGNMENT_KEY_TYPE_ID: KeyTypeId = KeyTypeId(*b"asgn");
@@ -976,7 +976,7 @@ impl ApprovalVote {
 
 sp_api::decl_runtime_apis! {
 	/// The API for querying the state of allychains on-chain.
-	pub trait ParachainHost<H: Encode + Decode = Hash, N: Encode + Decode = BlockNumber> {
+	pub trait AllychainHost<H: Encode + Decode = Hash, N: Encode + Decode = BlockNumber> {
 		/// Get the current validators.
 		fn validators() -> Vec<ValidatorId>;
 

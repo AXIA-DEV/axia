@@ -20,7 +20,7 @@
 //! There is also the [`Client`] enum that combines all the different clients into one common structure.
 
 use axia_primitives::v1::{
-	AccountId, Balance, Block, BlockNumber, Hash, Header, Nonce, ParachainHost,
+	AccountId, Balance, Block, BlockNumber, Hash, Header, Nonce, AllychainHost,
 };
 use sc_client_api::{AuxStore, Backend as BackendT, BlockchainEvents, KeyIterator, UsageProvider};
 use sc_executor::NativeElseWasmExecutor;
@@ -84,35 +84,35 @@ impl sc_executor::NativeExecutionDispatch for AxiaTestExecutorDispatch {
 
 #[cfg(feature = "alphanet")]
 /// The native executor instance for Alphanet.
-pub struct WestendExecutorDispatch;
+pub struct AlphanetExecutorDispatch;
 
 #[cfg(feature = "alphanet")]
-impl sc_executor::NativeExecutionDispatch for WestendExecutorDispatch {
+impl sc_executor::NativeExecutionDispatch for AlphanetExecutorDispatch {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
 	fn dispatch(method: &str, data: &[u8]) -> Option<Vec<u8>> {
-		westend_runtime::api::dispatch(method, data)
+		alphanet_runtime::api::dispatch(method, data)
 	}
 
 	fn native_version() -> sc_executor::NativeVersion {
-		westend_runtime::native_version()
+		alphanet_runtime::native_version()
 	}
 }
 
 #[cfg(feature = "betanet")]
 /// The native executor instance for Betanet.
-pub struct RococoExecutorDispatch;
+pub struct BetanetExecutorDispatch;
 
 #[cfg(feature = "betanet")]
-impl sc_executor::NativeExecutionDispatch for RococoExecutorDispatch {
+impl sc_executor::NativeExecutionDispatch for BetanetExecutorDispatch {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
 	fn dispatch(method: &str, data: &[u8]) -> Option<Vec<u8>> {
-		rococo_runtime::api::dispatch(method, data)
+		betanet_runtime::api::dispatch(method, data)
 	}
 
 	fn native_version() -> sc_executor::NativeVersion {
-		rococo_runtime::native_version()
+		betanet_runtime::native_version()
 	}
 }
 
@@ -122,7 +122,7 @@ pub trait RuntimeApiCollection:
 	+ sp_api::ApiExt<Block>
 	+ sp_consensus_babe::BabeApi<Block>
 	+ sp_finality_grandpa::GrandpaApi<Block>
-	+ ParachainHost<Block>
+	+ AllychainHost<Block>
 	+ sp_block_builder::BlockBuilder<Block>
 	+ frame_system_rpc_runtime_api::AccountNonceApi<Block, AccountId, Nonce>
 	+ pallet_mmr_primitives::MmrApi<Block, <Block as BlockT>::Hash>
@@ -143,7 +143,7 @@ where
 		+ sp_api::ApiExt<Block>
 		+ sp_consensus_babe::BabeApi<Block>
 		+ sp_finality_grandpa::GrandpaApi<Block>
-		+ ParachainHost<Block>
+		+ AllychainHost<Block>
 		+ sp_block_builder::BlockBuilder<Block>
 		+ frame_system_rpc_runtime_api::AccountNonceApi<Block, AccountId, Nonce>
 		+ pallet_mmr_primitives::MmrApi<Block, <Block as BlockT>::Hash>
@@ -263,11 +263,11 @@ pub enum Client {
 	#[cfg(feature = "axia")]
 	Axia(Arc<FullClient<axia_runtime::RuntimeApi, AxiaExecutorDispatch>>),
 	#[cfg(feature = "alphanet")]
-	Alphanet(Arc<FullClient<westend_runtime::RuntimeApi, WestendExecutorDispatch>>),
+	Alphanet(Arc<FullClient<alphanet_runtime::RuntimeApi, AlphanetExecutorDispatch>>),
 	#[cfg(feature = "axctest")]
 	AxiaTest(Arc<FullClient<axctest_runtime::RuntimeApi, AxiaTestExecutorDispatch>>),
 	#[cfg(feature = "betanet")]
-	Betanet(Arc<FullClient<rococo_runtime::RuntimeApi, RococoExecutorDispatch>>),
+	Betanet(Arc<FullClient<betanet_runtime::RuntimeApi, BetanetExecutorDispatch>>),
 }
 
 impl ClientHandle for Client {

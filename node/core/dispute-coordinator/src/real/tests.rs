@@ -48,7 +48,7 @@ fn make_keystore(accounts: &[Sr25519Keyring]) -> LocalKeystore {
 
 	for s in accounts.iter().copied().map(|k| k.to_seed()) {
 		store
-			.sr25519_generate_new(axia_primitives::v1::PARACHAIN_KEY_TYPE_ID, Some(s.as_str()))
+			.sr25519_generate_new(axia_primitives::v1::ALLYCHAIN_KEY_TYPE_ID, Some(s.as_str()))
 			.unwrap();
 	}
 

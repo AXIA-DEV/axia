@@ -46,7 +46,7 @@ use runtime_common::{
 	auctions, crowdloan, impls::ToAuthor, paras_registrar, paras_sudo_wrapper, slots, xcm_sender,
 	BlockHashCount, BlockLength, BlockWeights, RocksDbWeight, SlowAdjustingFeeUpdate,
 };
-use runtime_parachains::{self, runtime_api_impl::v1 as runtime_api_impl};
+use runtime_allychains::{self, runtime_api_impl::v1 as runtime_api_impl};
 use scale_info::TypeInfo;
 use sp_core::{OpaqueMetadata, RuntimeDebug};
 use sp_runtime::{
@@ -64,12 +64,12 @@ use sp_std::{collections::btree_map::BTreeMap, prelude::*};
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
 
-use runtime_parachains::{
-	configuration as parachains_configuration, disputes as parachains_disputes,
-	dmp as parachains_dmp, hrmp as parachains_hrmp, inclusion as parachains_inclusion,
-	initializer as parachains_initializer, origin as parachains_origin, paras as parachains_paras,
-	paras_inherent as parachains_paras_inherent, scheduler as parachains_scheduler,
-	session_info as parachains_session_info, shared as parachains_shared, ump as parachains_ump,
+use runtime_allychains::{
+	configuration as allychains_configuration, disputes as allychains_disputes,
+	dmp as allychains_dmp, hrmp as allychains_hrmp, inclusion as allychains_inclusion,
+	initializer as allychains_initializer, origin as allychains_origin, paras as allychains_paras,
+	paras_inherent as allychains_paras_inherent, scheduler as allychains_scheduler,
+	session_info as allychains_session_info, shared as allychains_shared, ump as allychains_ump,
 };
 
 // use bridge_runtime_common::messages::{
@@ -78,14 +78,14 @@ use runtime_parachains::{
 
 pub use pallet_balances::Call as BalancesCall;
 
-use axia_parachain::primitives::Id as ParaId;
+use axia_allychain::primitives::Id as ParaId;
 
 use constants::{currency::*, fee::*, time::*};
 use frame_support::traits::InstanceFilter;
 use xcm::latest::prelude::*;
 use xcm_builder::{
 	AccountId32Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom, BackingToPlurality,
-	ChildParachainAsNative, ChildParachainConvertsVia, ChildSystemParachainAsSuperuser,
+	ChildAllychainAsNative, ChildAllychainConvertsVia, ChildSystemAllychainAsSuperuser,
 	CurrencyAdapter as XcmCurrencyAdapter, FixedWeightBounds, IsConcrete, LocationInverter,
 	SignedAccountId32AsNative, SignedToAccountId32, SovereignSignedViaLocation, UsingComponents,
 };
@@ -201,19 +201,19 @@ construct_runtime! {
 		AuthorityDiscovery: pallet_authority_discovery::{Pallet, Config},
 
 		// Allychains modules.
-		ParachainsOrigin: parachains_origin::{Pallet, Origin},
-		Configuration: parachains_configuration::{Pallet, Call, Storage, Config<T>},
-		ParasShared: parachains_shared::{Pallet, Call, Storage},
-		ParaInclusion: parachains_inclusion::{Pallet, Call, Storage, Event<T>},
-		ParaInherent: parachains_paras_inherent::{Pallet, Call, Storage, Inherent},
-		ParaScheduler: parachains_scheduler::{Pallet, Storage},
-		Paras: parachains_paras::{Pallet, Call, Storage, Event, Config},
-		Initializer: parachains_initializer::{Pallet, Call, Storage},
-		Dmp: parachains_dmp::{Pallet, Call, Storage},
-		Ump: parachains_ump::{Pallet, Call, Storage, Event},
-		Hrmp: parachains_hrmp::{Pallet, Call, Storage, Event<T>, Config},
-		ParaSessionInfo: parachains_session_info::{Pallet, Storage},
-		ParasDisputes: parachains_disputes::{Pallet, Call, Storage, Event<T>},
+		AllychainsOrigin: allychains_origin::{Pallet, Origin},
+		Configuration: allychains_configuration::{Pallet, Call, Storage, Config<T>},
+		ParasShared: allychains_shared::{Pallet, Call, Storage},
+		ParaInclusion: allychains_inclusion::{Pallet, Call, Storage, Event<T>},
+		ParaInherent: allychains_paras_inherent::{Pallet, Call, Storage, Inherent},
+		ParaScheduler: allychains_scheduler::{Pallet, Storage},
+		Paras: allychains_paras::{Pallet, Call, Storage, Event, Config},
+		Initializer: allychains_initializer::{Pallet, Call, Storage},
+		Dmp: allychains_dmp::{Pallet, Call, Storage},
+		Ump: allychains_ump::{Pallet, Call, Storage, Event},
+		Hrmp: allychains_hrmp::{Pallet, Call, Storage, Event<T>, Config},
+		ParaSessionInfo: allychains_session_info::{Pallet, Storage},
+		ParasDisputes: allychains_disputes::{Pallet, Call, Storage, Event<T>},
 
 		// Allychain Onboarding Pallets
 		Registrar: paras_registrar::{Pallet, Call, Storage, Event<T>, Config},
@@ -233,7 +233,7 @@ construct_runtime! {
 		// It might seem strange that we add both sides of the bridge to the same runtime. We do this because this
 		// runtime as shared by both the Betanet and Wococo chains. When running as Betanet we only use
 		// `BridgeWococoGrandpa`, and vice versa.
-		// BridgeRococoGrandpa: pallet_bridge_grandpa::{Pallet, Call, Storage, Config<T>} = 40,
+		// BridgeBetanetGrandpa: pallet_bridge_grandpa::{Pallet, Call, Storage, Config<T>} = 40,
 		// BridgeWococoGrandpa: pallet_bridge_grandpa::<Instance1>::{Pallet, Call, Storage, Config<T>} = 41,
 
 		// Validator Manager pallet.
@@ -241,9 +241,9 @@ construct_runtime! {
 
 		// Bridge messages support. The same story as with the bridge grandpa pallet above ^^^ - when we're
 		// running as Betanet we only use `BridgeWococoMessages`/`BridgeWococoMessagesDispatch`, and vice versa.
-		// BridgeRococoMessages: pallet_bridge_messages::{Pallet, Call, Storage, Event<T>, Config<T>} = 43,
+		// BridgeBetanetMessages: pallet_bridge_messages::{Pallet, Call, Storage, Event<T>, Config<T>} = 43,
 		// BridgeWococoMessages: pallet_bridge_messages::<Instance1>::{Pallet, Call, Storage, Event<T>, Config<T>} = 44,
-		// BridgeRococoMessagesDispatch: pallet_bridge_dispatch::{Pallet, Event<T>} = 45,
+		// BridgeBetanetMessagesDispatch: pallet_bridge_dispatch::{Pallet, Event<T>} = 45,
 		// BridgeWococoMessagesDispatch: pallet_bridge_dispatch::<Instance1>::{Pallet, Event<T>} = 46,
 
 		// A "council"
@@ -369,11 +369,11 @@ impl pallet_session::historical::Config for Runtime {
 	type FullIdentificationOf = FullIdentificationOf;
 }
 
-impl parachains_disputes::Config for Runtime {
+impl allychains_disputes::Config for Runtime {
 	type Event = Event;
 	type RewardValidators = ();
 	type PunishValidators = ();
-	type WeightInfo = weights::runtime_parachains_disputes::WeightInfo<Runtime>;
+	type WeightInfo = weights::runtime_allychains_disputes::WeightInfo<Runtime>;
 }
 
 parameter_types! {
@@ -571,42 +571,42 @@ impl pallet_authorship::Config for Runtime {
 	type EventHandler = ImOnline;
 }
 
-impl parachains_origin::Config for Runtime {}
+impl allychains_origin::Config for Runtime {}
 
-impl parachains_configuration::Config for Runtime {
-	type WeightInfo = weights::runtime_parachains_configuration::WeightInfo<Runtime>;
+impl allychains_configuration::Config for Runtime {
+	type WeightInfo = weights::runtime_allychains_configuration::WeightInfo<Runtime>;
 }
 
-impl parachains_shared::Config for Runtime {}
+impl allychains_shared::Config for Runtime {}
 
 /// Special `RewardValidators` that does nothing ;)
 pub struct RewardValidators;
-impl runtime_parachains::inclusion::RewardValidators for RewardValidators {
+impl runtime_allychains::inclusion::RewardValidators for RewardValidators {
 	fn reward_backing(_: impl IntoIterator<Item = ValidatorIndex>) {}
 	fn reward_bitfields(_: impl IntoIterator<Item = ValidatorIndex>) {}
 }
 
-impl parachains_inclusion::Config for Runtime {
+impl allychains_inclusion::Config for Runtime {
 	type Event = Event;
 	type DisputesHandler = ParasDisputes;
 	type RewardValidators = RewardValidators;
 }
 
-impl parachains_paras::Config for Runtime {
+impl allychains_paras::Config for Runtime {
 	type Origin = Origin;
 	type Event = Event;
-	type WeightInfo = weights::runtime_parachains_paras::WeightInfo<Runtime>;
+	type WeightInfo = weights::runtime_allychains_paras::WeightInfo<Runtime>;
 }
 
 parameter_types! {
 	pub const RocLocation: MultiLocation = Here.into();
-	pub const RococoNetwork: NetworkId = NetworkId::Axia;
+	pub const BetanetNetwork: NetworkId = NetworkId::Axia;
 	pub const Ancestry: MultiLocation = Here.into();
 	pub CheckAccount: AccountId = XcmPallet::check_account();
 }
 
 pub type SovereignAccountOf =
-	(ChildParachainConvertsVia<ParaId, AccountId>, AccountId32Aliases<RococoNetwork, AccountId>);
+	(ChildAllychainConvertsVia<ParaId, AccountId>, AccountId32Aliases<BetanetNetwork, AccountId>);
 
 pub type LocalAssetTransactor = XcmCurrencyAdapter<
 	// Use this currency:
@@ -623,9 +623,9 @@ pub type LocalAssetTransactor = XcmCurrencyAdapter<
 
 type LocalOriginConverter = (
 	SovereignSignedViaLocation<SovereignAccountOf, Origin>,
-	ChildParachainAsNative<parachains_origin::Origin, Origin>,
-	SignedAccountId32AsNative<RococoNetwork, Origin>,
-	ChildSystemParachainAsSuperuser<ParaId, Origin>,
+	ChildAllychainAsNative<allychains_origin::Origin, Origin>,
+	SignedAccountId32AsNative<BetanetNetwork, Origin>,
+	ChildSystemAllychainAsSuperuser<ParaId, Origin>,
 );
 
 parameter_types! {
@@ -636,24 +636,24 @@ parameter_types! {
 /// individual routers.
 pub type XcmRouter = (
 	// Only one router so far - use DMP to communicate with child allychains.
-	xcm_sender::ChildParachainRouter<Runtime, XcmPallet>,
+	xcm_sender::ChildAllychainRouter<Runtime, XcmPallet>,
 );
 
 parameter_types! {
 	pub const Betanet: MultiAssetFilter = Wild(AllOf { fun: WildFungible, id: Concrete(RocLocation::get()) });
-	pub const RococoForTick: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(100).into());
-	pub const RococoForTrick: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(110).into());
-	pub const RococoForTrack: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(120).into());
-	pub const RococoForStatemint: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(1001).into());
-	pub const RococoForCanvas: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(1002).into());
+	pub const BetanetForTick: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(100).into());
+	pub const BetanetForTrick: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(110).into());
+	pub const BetanetForTrack: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(120).into());
+	pub const BetanetForStatemint: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(1001).into());
+	pub const BetanetForCanvas: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(1002).into());
 	pub const MaxInstructions: u32 = 100;
 }
 pub type TrustedTeleporters = (
-	xcm_builder::Case<RococoForTick>,
-	xcm_builder::Case<RococoForTrick>,
-	xcm_builder::Case<RococoForTrack>,
-	xcm_builder::Case<RococoForStatemint>,
-	xcm_builder::Case<RococoForCanvas>,
+	xcm_builder::Case<BetanetForTick>,
+	xcm_builder::Case<BetanetForTrick>,
+	xcm_builder::Case<BetanetForTrack>,
+	xcm_builder::Case<BetanetForStatemint>,
+	xcm_builder::Case<BetanetForCanvas>,
 );
 
 parameter_types! {
@@ -707,7 +707,7 @@ pub type LocalOriginToLocation = (
 	// `Unit` body.
 	BackingToPlurality<Origin, pallet_collective::Origin<Runtime>, CollectiveBodyId>,
 	// And a usual Signed origin to be used in XCM as a corresponding AccountId32
-	SignedToAccountId32<Origin, AccountId, RococoNetwork>,
+	SignedToAccountId32<Origin, AccountId, BetanetNetwork>,
 );
 
 impl pallet_xcm::Config for Runtime {
@@ -729,32 +729,32 @@ impl pallet_xcm::Config for Runtime {
 	type AdvertisedXcmVersion = pallet_xcm::CurrentXcmVersion;
 }
 
-impl parachains_session_info::Config for Runtime {}
+impl allychains_session_info::Config for Runtime {}
 
 parameter_types! {
 	pub const FirstMessageFactorPercent: u64 = 100;
 }
 
-impl parachains_ump::Config for Runtime {
+impl allychains_ump::Config for Runtime {
 	type Event = Event;
-	type UmpSink = crate::parachains_ump::XcmSink<XcmExecutor<XcmConfig>, Runtime>;
+	type UmpSink = crate::allychains_ump::XcmSink<XcmExecutor<XcmConfig>, Runtime>;
 	type FirstMessageFactorPercent = FirstMessageFactorPercent;
 	type ExecuteOverweightOrigin = EnsureRoot<AccountId>;
 }
 
-impl parachains_dmp::Config for Runtime {}
+impl allychains_dmp::Config for Runtime {}
 
-impl parachains_hrmp::Config for Runtime {
+impl allychains_hrmp::Config for Runtime {
 	type Event = Event;
 	type Origin = Origin;
 	type Currency = Balances;
 }
 
-impl parachains_paras_inherent::Config for Runtime {}
+impl allychains_paras_inherent::Config for Runtime {}
 
-impl parachains_scheduler::Config for Runtime {}
+impl allychains_scheduler::Config for Runtime {}
 
-impl parachains_initializer::Config for Runtime {
+impl allychains_initializer::Config for Runtime {
 	type Randomness = pallet_babe::RandomnessFromOneEpochAgo<Runtime>;
 	type ForceOrigin = EnsureRoot<AccountId>;
 	type WeightInfo = ();
@@ -796,8 +796,8 @@ impl pallet_mmr::Config for Runtime {
 }
 
 pub struct ParasProvider;
-impl pallet_beefy_mmr::ParachainHeadsProvider for ParasProvider {
-	fn parachain_heads() -> Vec<(u32, Vec<u8>)> {
+impl pallet_beefy_mmr::AllychainHeadsProvider for ParasProvider {
+	fn allychain_heads() -> Vec<(u32, Vec<u8>)> {
 		Paras::allychains()
 			.into_iter()
 			.filter_map(|id| Paras::para_head(&id).map(|head| (id.into(), head.0)))
@@ -825,7 +825,7 @@ parameter_types! {
 impl pallet_beefy_mmr::Config for Runtime {
 	type LeafVersion = LeafVersion;
 	type BeefyAuthorityToMerkleLeaf = pallet_beefy_mmr::BeefyEcdsaToEthereum;
-	type ParachainHeads = ParasProvider;
+	type AllychainHeads = ParasProvider;
 }
 
 // parameter_types! {
@@ -842,9 +842,9 @@ impl pallet_beefy_mmr::Config for Runtime {
 // 	pub const HeadersToKeep: u32 = 7 * DAYS as u32;
 // }
 
-// pub type RococoGrandpaInstance = ();
+// pub type BetanetGrandpaInstance = ();
 // impl pallet_bridge_grandpa::Config for Runtime {
-// 	type BridgedChain = bp_rococo::Betanet;
+// 	type BridgedChain = bp_betanet::Betanet;
 // 	type MaxRequests = MaxRequests;
 // 	type HeadersToKeep = HeadersToKeep;
 
@@ -861,28 +861,28 @@ impl pallet_beefy_mmr::Config for Runtime {
 // }
 
 // // Instance that is "deployed" at Wococo chain. Responsible for dispatching Betanet -> Wococo messages.
-// pub type AtWococoFromRococoMessagesDispatch = pallet_bridge_dispatch::DefaultInstance;
-// impl pallet_bridge_dispatch::Config<AtWococoFromRococoMessagesDispatch> for Runtime {
+// pub type AtWococoFromBetanetMessagesDispatch = pallet_bridge_dispatch::DefaultInstance;
+// impl pallet_bridge_dispatch::Config<AtWococoFromBetanetMessagesDispatch> for Runtime {
 // 	type Event = Event;
 // 	type MessageId = (bp_messages::LaneId, bp_messages::MessageNonce);
 // 	type Call = Call;
 // 	type CallFilter = frame_support::traits::Everything;
-// 	type EncodedCall = bridge_messages::FromRococoEncodedCall;
+// 	type EncodedCall = bridge_messages::FromBetanetEncodedCall;
 // 	type SourceChainAccountId = bp_wococo::AccountId;
 // 	type TargetChainAccountPublic = sp_runtime::MultiSigner;
 // 	type TargetChainSignature = sp_runtime::MultiSignature;
-// 	type AccountIdConverter = bp_rococo::AccountIdConverter;
+// 	type AccountIdConverter = bp_betanet::AccountIdConverter;
 // }
 
 // // Instance that is "deployed" at Betanet chain. Responsible for dispatching Wococo -> Betanet messages.
-// pub type AtRococoFromWococoMessagesDispatch = pallet_bridge_dispatch::Instance1;
-// impl pallet_bridge_dispatch::Config<AtRococoFromWococoMessagesDispatch> for Runtime {
+// pub type AtBetanetFromWococoMessagesDispatch = pallet_bridge_dispatch::Instance1;
+// impl pallet_bridge_dispatch::Config<AtBetanetFromWococoMessagesDispatch> for Runtime {
 // 	type Event = Event;
 // 	type MessageId = (bp_messages::LaneId, bp_messages::MessageNonce);
 // 	type Call = Call;
 // 	type CallFilter = frame_support::traits::Everything;
 // 	type EncodedCall = bridge_messages::FromWococoEncodedCall;
-// 	type SourceChainAccountId = bp_rococo::AccountId;
+// 	type SourceChainAccountId = bp_betanet::AccountId;
 // 	type TargetChainAccountPublic = sp_runtime::MultiSigner;
 // 	type TargetChainSignature = sp_runtime::MultiSignature;
 // 	type AccountIdConverter = bp_wococo::AccountIdConverter;
@@ -891,16 +891,16 @@ impl pallet_beefy_mmr::Config for Runtime {
 // parameter_types! {
 // 	pub const MaxMessagesToPruneAtOnce: bp_messages::MessageNonce = 8;
 // 	pub const MaxUnrewardedRelayerEntriesAtInboundLane: bp_messages::MessageNonce =
-// 		bp_rococo::MAX_UNREWARDED_RELAYER_ENTRIES_AT_INBOUND_LANE;
+// 		bp_betanet::MAX_UNREWARDED_RELAYER_ENTRIES_AT_INBOUND_LANE;
 // 	pub const MaxUnconfirmedMessagesAtInboundLane: bp_messages::MessageNonce =
-// 		bp_rococo::MAX_UNCONFIRMED_MESSAGES_AT_INBOUND_LANE;
+// 		bp_betanet::MAX_UNCONFIRMED_MESSAGES_AT_INBOUND_LANE;
 // 	pub const RootAccountForPayments: Option<AccountId> = None;
 // }
 
 // // Instance that is "deployed" at Wococo chain. Responsible for sending Wococo -> Betanet messages
 // // and receiving Betanet -> Wococo messages.
-// pub type AtWococoWithRococoMessagesInstance = pallet_bridge_messages::DefaultInstance;
-// impl pallet_bridge_messages::Config<AtWococoWithRococoMessagesInstance> for Runtime {
+// pub type AtWococoWithBetanetMessagesInstance = pallet_bridge_messages::DefaultInstance;
+// impl pallet_bridge_messages::Config<AtWococoWithBetanetMessagesInstance> for Runtime {
 // 	type Event = Event;
 // 	type WeightInfo = pallet_bridge_messages::weights::RialtoWeight<Runtime>;
 // 	type Parameter = ();
@@ -908,17 +908,17 @@ impl pallet_beefy_mmr::Config for Runtime {
 // 	type MaxUnrewardedRelayerEntriesAtInboundLane = MaxUnrewardedRelayerEntriesAtInboundLane;
 // 	type MaxUnconfirmedMessagesAtInboundLane = MaxUnconfirmedMessagesAtInboundLane;
 
-// 	type OutboundPayload = crate::bridge_messages::ToRococoMessagePayload;
+// 	type OutboundPayload = crate::bridge_messages::ToBetanetMessagePayload;
 // 	type OutboundMessageFee = bp_wococo::Balance;
 
-// 	type InboundPayload = crate::bridge_messages::FromRococoMessagePayload;
-// 	type InboundMessageFee = bp_rococo::Balance;
-// 	type InboundRelayer = bp_rococo::AccountId;
+// 	type InboundPayload = crate::bridge_messages::FromBetanetMessagePayload;
+// 	type InboundMessageFee = bp_betanet::Balance;
+// 	type InboundRelayer = bp_betanet::AccountId;
 
 // 	type AccountIdConverter = bp_wococo::AccountIdConverter;
 
-// 	type TargetHeaderChain = crate::bridge_messages::RococoAtWococo;
-// 	type LaneMessageVerifier = crate::bridge_messages::ToRococoMessageVerifier;
+// 	type TargetHeaderChain = crate::bridge_messages::BetanetAtWococo;
+// 	type LaneMessageVerifier = crate::bridge_messages::ToBetanetMessageVerifier;
 // 	type MessageDeliveryAndDispatchPayment =
 // 		pallet_bridge_messages::instant_payments::InstantCurrencyPayments<
 // 			Runtime,
@@ -928,14 +928,14 @@ impl pallet_beefy_mmr::Config for Runtime {
 // 		>;
 // 	type OnDeliveryConfirmed = ();
 
-// 	type SourceHeaderChain = crate::bridge_messages::RococoAtWococo;
-// 	type MessageDispatch = crate::bridge_messages::FromRococoMessageDispatch;
+// 	type SourceHeaderChain = crate::bridge_messages::BetanetAtWococo;
+// 	type MessageDispatch = crate::bridge_messages::FromBetanetMessageDispatch;
 // }
 
 // // Instance that is "deployed" at Betanet chain. Responsible for sending Betanet -> Wococo messages
 // // and receiving Wococo -> Betanet messages.
-// pub type AtRococoWithWococoMessagesInstance = pallet_bridge_messages::Instance1;
-// impl pallet_bridge_messages::Config<AtRococoWithWococoMessagesInstance> for Runtime {
+// pub type AtBetanetWithWococoMessagesInstance = pallet_bridge_messages::Instance1;
+// impl pallet_bridge_messages::Config<AtBetanetWithWococoMessagesInstance> for Runtime {
 // 	type Event = Event;
 // 	type WeightInfo = pallet_bridge_messages::weights::RialtoWeight<Runtime>;
 // 	type Parameter = ();
@@ -944,15 +944,15 @@ impl pallet_beefy_mmr::Config for Runtime {
 // 	type MaxUnconfirmedMessagesAtInboundLane = MaxUnconfirmedMessagesAtInboundLane;
 
 // 	type OutboundPayload = crate::bridge_messages::ToWococoMessagePayload;
-// 	type OutboundMessageFee = bp_rococo::Balance;
+// 	type OutboundMessageFee = bp_betanet::Balance;
 
 // 	type InboundPayload = crate::bridge_messages::FromWococoMessagePayload;
 // 	type InboundMessageFee = bp_wococo::Balance;
 // 	type InboundRelayer = bp_wococo::AccountId;
 
-// 	type AccountIdConverter = bp_rococo::AccountIdConverter;
+// 	type AccountIdConverter = bp_betanet::AccountIdConverter;
 
-// 	type TargetHeaderChain = crate::bridge_messages::WococoAtRococo;
+// 	type TargetHeaderChain = crate::bridge_messages::WococoAtBetanet;
 // 	type LaneMessageVerifier = crate::bridge_messages::ToWococoMessageVerifier;
 // 	type MessageDeliveryAndDispatchPayment =
 // 		pallet_bridge_messages::instant_payments::InstantCurrencyPayments<
@@ -963,7 +963,7 @@ impl pallet_beefy_mmr::Config for Runtime {
 // 		>;
 // 	type OnDeliveryConfirmed = ();
 
-// 	type SourceHeaderChain = crate::bridge_messages::WococoAtRococo;
+// 	type SourceHeaderChain = crate::bridge_messages::WococoAtBetanet;
 // 	type MessageDispatch = crate::bridge_messages::FromWococoMessageDispatch;
 // }
 
@@ -1224,7 +1224,7 @@ sp_api::impl_runtime_apis! {
 		}
 	}
 
-	impl primitives::v1::ParachainHost<Block, Hash, BlockNumber> for Runtime {
+	impl primitives::v1::AllychainHost<Block, Hash, BlockNumber> for Runtime {
 		fn validators() -> Vec<ValidatorId> {
 			runtime_api_impl::validators::<Runtime>()
 		}
@@ -1442,14 +1442,14 @@ sp_api::impl_runtime_apis! {
 		}
 	}
 
-	// impl bp_rococo::RococoFinalityApi<Block> for Runtime {
-	// 	fn best_finalized() -> (bp_rococo::BlockNumber, bp_rococo::Hash) {
-	// 		let header = BridgeRococoGrandpa::best_finalized();
+	// impl bp_betanet::BetanetFinalityApi<Block> for Runtime {
+	// 	fn best_finalized() -> (bp_betanet::BlockNumber, bp_betanet::Hash) {
+	// 		let header = BridgeBetanetGrandpa::best_finalized();
 	// 		(header.number, header.hash())
 	// 	}
 
-	// 	fn is_known_header(hash: bp_rococo::Hash) -> bool {
-	// 		BridgeRococoGrandpa::is_known_header(hash)
+	// 	fn is_known_header(hash: bp_betanet::Hash) -> bool {
+	// 		BridgeBetanetGrandpa::is_known_header(hash)
 	// 	}
 	// }
 
@@ -1464,14 +1464,14 @@ sp_api::impl_runtime_apis! {
 	// 	}
 	// }
 
-	// impl bp_rococo::ToRococoOutboundLaneApi<Block, Balance, bridge_messages::ToRococoMessagePayload> for Runtime {
+	// impl bp_betanet::ToBetanetOutboundLaneApi<Block, Balance, bridge_messages::ToBetanetMessagePayload> for Runtime {
 	// 	fn estimate_message_delivery_and_dispatch_fee(
 	// 		_lane_id: bp_messages::LaneId,
 	// 		payload: bridge_messages::ToWococoMessagePayload,
 	// 	) -> Option<Balance> {
-	// 		estimate_message_dispatch_and_delivery_fee::<bridge_messages::AtWococoWithRococoMessageBridge>(
+	// 		estimate_message_dispatch_and_delivery_fee::<bridge_messages::AtWococoWithBetanetMessageBridge>(
 	// 			&payload,
-	// 			bridge_messages::AtWococoWithRococoMessageBridge::RELAYER_FEE_PERCENT,
+	// 			bridge_messages::AtWococoWithBetanetMessageBridge::RELAYER_FEE_PERCENT,
 	// 		).ok()
 	// 	}
 
@@ -1481,8 +1481,8 @@ sp_api::impl_runtime_apis! {
 	// 		end: bp_messages::MessageNonce,
 	// 	) -> Vec<bp_messages::MessageDetails<Balance>> {
 	// 		(begin..=end).filter_map(|nonce| {
-	// 			let message_data = BridgeRococoMessages::outbound_message_data(lane, nonce)?;
-	// 			let decoded_payload = bridge_messages::ToRococoMessagePayload::decode(
+	// 			let message_data = BridgeBetanetMessages::outbound_message_data(lane, nonce)?;
+	// 			let decoded_payload = bridge_messages::ToBetanetMessagePayload::decode(
 	// 				&mut &message_data.payload[..]
 	// 			).ok()?;
 	// 			Some(bp_messages::MessageDetails {
@@ -1497,25 +1497,25 @@ sp_api::impl_runtime_apis! {
 	// 	}
 
 	// 	fn latest_received_nonce(lane: bp_messages::LaneId) -> bp_messages::MessageNonce {
-	// 		BridgeRococoMessages::outbound_latest_received_nonce(lane)
+	// 		BridgeBetanetMessages::outbound_latest_received_nonce(lane)
 	// 	}
 
 	// 	fn latest_generated_nonce(lane: bp_messages::LaneId) -> bp_messages::MessageNonce {
-	// 		BridgeRococoMessages::outbound_latest_generated_nonce(lane)
+	// 		BridgeBetanetMessages::outbound_latest_generated_nonce(lane)
 	// 	}
 	// }
 
-	// impl bp_rococo::FromRococoInboundLaneApi<Block> for Runtime {
+	// impl bp_betanet::FromBetanetInboundLaneApi<Block> for Runtime {
 	// 	fn latest_received_nonce(lane: bp_messages::LaneId) -> bp_messages::MessageNonce {
-	// 		BridgeRococoMessages::inbound_latest_received_nonce(lane)
+	// 		BridgeBetanetMessages::inbound_latest_received_nonce(lane)
 	// 	}
 
 	// 	fn latest_confirmed_nonce(lane: bp_messages::LaneId) -> bp_messages::MessageNonce {
-	// 		BridgeRococoMessages::inbound_latest_confirmed_nonce(lane)
+	// 		BridgeBetanetMessages::inbound_latest_confirmed_nonce(lane)
 	// 	}
 
 	// 	fn unrewarded_relayers_state(lane: bp_messages::LaneId) -> bp_messages::UnrewardedRelayersState {
-	// 		BridgeRococoMessages::inbound_unrewarded_relayers_state(lane)
+	// 		BridgeBetanetMessages::inbound_unrewarded_relayers_state(lane)
 	// 	}
 	// }
 
@@ -1524,9 +1524,9 @@ sp_api::impl_runtime_apis! {
 	// 		_lane_id: bp_messages::LaneId,
 	// 		payload: bridge_messages::ToWococoMessagePayload,
 	// 	) -> Option<Balance> {
-	// 		estimate_message_dispatch_and_delivery_fee::<bridge_messages::AtRococoWithWococoMessageBridge>(
+	// 		estimate_message_dispatch_and_delivery_fee::<bridge_messages::AtBetanetWithWococoMessageBridge>(
 	// 			&payload,
-	// 			bridge_messages::AtRococoWithWococoMessageBridge::RELAYER_FEE_PERCENT,
+	// 			bridge_messages::AtBetanetWithWococoMessageBridge::RELAYER_FEE_PERCENT,
 	// 		).ok()
 	// 	}
 
@@ -1603,9 +1603,9 @@ sp_api::impl_runtime_apis! {
 
 			let mut list = Vec::<BenchmarkList>::new();
 
-			list_benchmark!(list, extra, runtime_parachains::configuration, Configuration);
-			list_benchmark!(list, extra, runtime_parachains::disputes, ParasDisputes);
-			list_benchmark!(list, extra, runtime_parachains::paras, Paras);
+			list_benchmark!(list, extra, runtime_allychains::configuration, Configuration);
+			list_benchmark!(list, extra, runtime_allychains::disputes, ParasDisputes);
+			list_benchmark!(list, extra, runtime_allychains::paras, Paras);
 
 			let storage_info = AllPalletsWithSystem::storage_info();
 
@@ -1635,9 +1635,9 @@ sp_api::impl_runtime_apis! {
 			];
 			let params = (&config, &whitelist);
 
-			add_benchmark!(params, batches, runtime_parachains::configuration, Configuration);
-			add_benchmark!(params, batches, runtime_parachains::disputes, ParasDisputes);
-			add_benchmark!(params, batches, runtime_parachains::paras, Paras);
+			add_benchmark!(params, batches, runtime_allychains::configuration, Configuration);
+			add_benchmark!(params, batches, runtime_allychains::disputes, ParasDisputes);
+			add_benchmark!(params, batches, runtime_allychains::paras, Paras);
 
 			if batches.is_empty() { return Err("Benchmark not found for this pallet.".into()) }
 			Ok(batches)

@@ -159,7 +159,7 @@ fn axia_testnet_genesis(
 		vesting: runtime::VestingConfig { vesting: vec![] },
 		sudo: runtime::SudoConfig { key: root_key },
 		configuration: runtime::ConfigurationConfig {
-			config: axia_runtime_parachains::configuration::HostConfiguration {
+			config: axia_runtime_allychains::configuration::HostConfiguration {
 				validation_upgrade_frequency: 10u32,
 				validation_upgrade_delay: 5,
 				code_retention_period: 1200,

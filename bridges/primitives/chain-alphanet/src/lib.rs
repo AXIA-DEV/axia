@@ -57,12 +57,12 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 pub enum Call {
 	/// Betanet bridge pallet.
 	#[codec(index = 40)]
-	BridgeGrandpaRococo(BridgeGrandpaRococoCall),
+	BridgeGrandpaBetanet(BridgeGrandpaBetanetCall),
 }
 
 #[derive(parity_scale_codec::Encode, parity_scale_codec::Decode, Debug, PartialEq, Eq, Clone)]
 #[allow(non_camel_case_types)]
-pub enum BridgeGrandpaRococoCall {
+pub enum BridgeGrandpaBetanetCall {
 	#[codec(index = 0)]
 	submit_finality_proof(
 		<AxiaLike as Chain>::Header,
@@ -85,32 +85,32 @@ impl sp_runtime::traits::Dispatchable for Call {
 
 // We use this to get the account on Alphanet (target) which is derived from Betanet's (source)
 // account.
-pub fn derive_account_from_rococo_id(id: bp_runtime::SourceAccount<AccountId>) -> AccountId {
-	let encoded_id = bp_runtime::derive_account_id(bp_runtime::ROCOCO_CHAIN_ID, id);
+pub fn derive_account_from_betanet_id(id: bp_runtime::SourceAccount<AccountId>) -> AccountId {
+	let encoded_id = bp_runtime::derive_account_id(bp_runtime::BETANET_CHAIN_ID, id);
 	AccountIdConverter::convert(encoded_id)
 }
 
-/// Name of the `WestendFinalityApi::best_finalized` runtime method.
-pub const BEST_FINALIZED_WESTEND_HEADER_METHOD: &str = "WestendFinalityApi_best_finalized";
-/// Name of the `WestendFinalityApi::is_known_header` runtime method.
-pub const IS_KNOWN_WESTEND_HEADER_METHOD: &str = "WestendFinalityApi_is_known_header";
+/// Name of the `AlphanetFinalityApi::best_finalized` runtime method.
+pub const BEST_FINALIZED_ALPHANET_HEADER_METHOD: &str = "AlphanetFinalityApi_best_finalized";
+/// Name of the `AlphanetFinalityApi::is_known_header` runtime method.
+pub const IS_KNOWN_ALPHANET_HEADER_METHOD: &str = "AlphanetFinalityApi_is_known_header";
 
-/// Name of the `ToWestendOutboundLaneApi::estimate_message_delivery_and_dispatch_fee` runtime method.
-pub const TO_WESTEND_ESTIMATE_MESSAGE_FEE_METHOD: &str =
-	"ToWestendOutboundLaneApi_estimate_message_delivery_and_dispatch_fee";
-/// Name of the `ToWestendOutboundLaneApi::message_details` runtime method.
-pub const TO_WESTEND_MESSAGE_DETAILS_METHOD: &str = "ToWestendOutboundLaneApi_message_details";
-/// Name of the `ToWestendOutboundLaneApi::latest_generated_nonce` runtime method.
-pub const TO_WESTEND_LATEST_GENERATED_NONCE_METHOD: &str = "ToWestendOutboundLaneApi_latest_generated_nonce";
-/// Name of the `ToWestendOutboundLaneApi::latest_received_nonce` runtime method.
-pub const TO_WESTEND_LATEST_RECEIVED_NONCE_METHOD: &str = "ToWestendOutboundLaneApi_latest_received_nonce";
+/// Name of the `ToAlphanetOutboundLaneApi::estimate_message_delivery_and_dispatch_fee` runtime method.
+pub const TO_ALPHANET_ESTIMATE_MESSAGE_FEE_METHOD: &str =
+	"ToAlphanetOutboundLaneApi_estimate_message_delivery_and_dispatch_fee";
+/// Name of the `ToAlphanetOutboundLaneApi::message_details` runtime method.
+pub const TO_ALPHANET_MESSAGE_DETAILS_METHOD: &str = "ToAlphanetOutboundLaneApi_message_details";
+/// Name of the `ToAlphanetOutboundLaneApi::latest_generated_nonce` runtime method.
+pub const TO_ALPHANET_LATEST_GENERATED_NONCE_METHOD: &str = "ToAlphanetOutboundLaneApi_latest_generated_nonce";
+/// Name of the `ToAlphanetOutboundLaneApi::latest_received_nonce` runtime method.
+pub const TO_ALPHANET_LATEST_RECEIVED_NONCE_METHOD: &str = "ToAlphanetOutboundLaneApi_latest_received_nonce";
 
-/// Name of the `FromWestendInboundLaneApi::latest_received_nonce` runtime method.
-pub const FROM_WESTEND_LATEST_RECEIVED_NONCE_METHOD: &str = "FromWestendInboundLaneApi_latest_received_nonce";
-/// Name of the `FromWestendInboundLaneApi::latest_onfirmed_nonce` runtime method.
-pub const FROM_WESTEND_LATEST_CONFIRMED_NONCE_METHOD: &str = "FromWestendInboundLaneApi_latest_confirmed_nonce";
-/// Name of the `FromWestendInboundLaneApi::unrewarded_relayers_state` runtime method.
-pub const FROM_WESTEND_UNREWARDED_RELAYERS_STATE: &str = "FromWestendInboundLaneApi_unrewarded_relayers_state";
+/// Name of the `FromAlphanetInboundLaneApi::latest_received_nonce` runtime method.
+pub const FROM_ALPHANET_LATEST_RECEIVED_NONCE_METHOD: &str = "FromAlphanetInboundLaneApi_latest_received_nonce";
+/// Name of the `FromAlphanetInboundLaneApi::latest_onfirmed_nonce` runtime method.
+pub const FROM_ALPHANET_LATEST_CONFIRMED_NONCE_METHOD: &str = "FromAlphanetInboundLaneApi_latest_confirmed_nonce";
+/// Name of the `FromAlphanetInboundLaneApi::unrewarded_relayers_state` runtime method.
+pub const FROM_ALPHANET_UNREWARDED_RELAYERS_STATE: &str = "FromAlphanetInboundLaneApi_unrewarded_relayers_state";
 
 /// The target length of a session (how often authorities change) on Alphanet measured in of number of
 /// blocks.
@@ -124,7 +124,7 @@ sp_api::decl_runtime_apis! {
 	///
 	/// This API is implemented by runtimes that are bridging with the Alphanet chain, not the
 	/// Alphanet runtime itself.
-	pub trait WestendFinalityApi {
+	pub trait AlphanetFinalityApi {
 		/// Returns number and hash of the best finalized header known to the bridge module.
 		fn best_finalized() -> (BlockNumber, Hash);
 		/// Returns true if the header is known to the runtime.
@@ -135,7 +135,7 @@ sp_api::decl_runtime_apis! {
 	///
 	/// This API is implemented by runtimes that are sending messages to Alphanet chain, not the
 	/// Alphanet runtime itself.
-	pub trait ToWestendOutboundLaneApi<OutboundMessageFee: Parameter, OutboundPayload: Parameter> {
+	pub trait ToAlphanetOutboundLaneApi<OutboundMessageFee: Parameter, OutboundPayload: Parameter> {
 		/// Estimate message delivery and dispatch fee that needs to be paid by the sender on
 		/// this chain.
 		///
@@ -169,7 +169,7 @@ sp_api::decl_runtime_apis! {
 	///
 	/// This API is implemented by runtimes that are receiving messages from Alphanet chain, not the
 	/// Alphanet runtime itself.
-	pub trait FromWestendInboundLaneApi {
+	pub trait FromAlphanetInboundLaneApi {
 		/// Returns nonce of the latest message, received by given lane.
 		fn latest_received_nonce(lane: LaneId) -> MessageNonce;
 		/// Nonce of the latest message that has been confirmed to the bridged chain.

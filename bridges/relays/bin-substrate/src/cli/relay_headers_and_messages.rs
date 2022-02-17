@@ -35,7 +35,7 @@ use structopt::StructOpt;
 #[derive(StructOpt)]
 pub enum RelayHeadersAndMessages {
 	MillauRialto(MillauRialtoHeadersAndMessages),
-	RococoWococo(RococoWococoHeadersAndMessages),
+	BetanetWococo(BetanetWococoHeadersAndMessages),
 }
 
 /// Parameters that have the same names across all bridges.
@@ -105,23 +105,23 @@ macro_rules! select_bridge {
 
 				$generic
 			}
-			RelayHeadersAndMessages::RococoWococo(_) => {
-				type Params = RococoWococoHeadersAndMessages;
+			RelayHeadersAndMessages::BetanetWococo(_) => {
+				type Params = BetanetWococoHeadersAndMessages;
 
-				type Left = relay_rococo_client::Betanet;
+				type Left = relay_betanet_client::Betanet;
 				type Right = relay_wococo_client::Wococo;
 
-				type LeftToRightFinality = crate::chains::rococo_headers_to_wococo::RococoFinalityToWococo;
-				type RightToLeftFinality = crate::chains::wococo_headers_to_rococo::WococoFinalityToRococo;
+				type LeftToRightFinality = crate::chains::betanet_headers_to_wococo::BetanetFinalityToWococo;
+				type RightToLeftFinality = crate::chains::wococo_headers_to_betanet::WococoFinalityToBetanet;
 
-				type LeftToRightMessages = crate::chains::rococo_messages_to_wococo::RococoMessagesToWococo;
-				type RightToLeftMessages = crate::chains::wococo_messages_to_rococo::WococoMessagesToRococo;
+				type LeftToRightMessages = crate::chains::betanet_messages_to_wococo::BetanetMessagesToWococo;
+				type RightToLeftMessages = crate::chains::wococo_messages_to_betanet::WococoMessagesToBetanet;
 
-				const MAX_MISSING_LEFT_HEADERS_AT_RIGHT: bp_rococo::BlockNumber = bp_rococo::SESSION_LENGTH;
+				const MAX_MISSING_LEFT_HEADERS_AT_RIGHT: bp_betanet::BlockNumber = bp_betanet::SESSION_LENGTH;
 				const MAX_MISSING_RIGHT_HEADERS_AT_LEFT: bp_wococo::BlockNumber = bp_wococo::SESSION_LENGTH;
 
-				use crate::chains::rococo_messages_to_wococo::run as left_to_right_messages;
-				use crate::chains::wococo_messages_to_rococo::run as right_to_left_messages;
+				use crate::chains::betanet_messages_to_wococo::run as left_to_right_messages;
+				use crate::chains::wococo_messages_to_betanet::run as right_to_left_messages;
 
 				$generic
 			}

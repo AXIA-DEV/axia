@@ -164,11 +164,11 @@ You can see your node on [telemetry] (set a custom name with `--name "my custom 
 
 [telemetry]: https://telemetry.axia.io/#list/Alphanet
 
-### Obtaining DOTs
+### Obtaining AXCs
 
 If you want to do anything on Axia, AxiaTest, or Alphanet, then you'll need to get an account and
 some AXC, AXCT, or WND tokens, respectively. See the
-[claims instructions](https://claims.axia.network/) for Axia if you have DOTs to claim. For
+[claims instructions](https://claims.axia.network/) for Axia if you have AXCs to claim. For
 Alphanet's WND tokens, see the faucet
 [instructions](https://wiki.axia.network/docs/learn-AXC#getting-westies) on the Wiki.
 

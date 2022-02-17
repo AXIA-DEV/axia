@@ -44,9 +44,9 @@ arg_enum! {
 	pub enum RelayHeadersBridge {
 		MillauToRialto,
 		RialtoToMillau,
-		WestendToMillau,
-		RococoToWococo,
-		WococoToRococo,
+		AlphanetToMillau,
+		BetanetToWococo,
+		WococoToBetanet,
 	}
 }
 
@@ -67,24 +67,24 @@ macro_rules! select_bridge {
 
 				$generic
 			}
-			RelayHeadersBridge::WestendToMillau => {
-				type Source = relay_westend_client::Alphanet;
+			RelayHeadersBridge::AlphanetToMillau => {
+				type Source = relay_alphanet_client::Alphanet;
 				type Target = relay_millau_client::Millau;
-				type Finality = crate::chains::westend_headers_to_millau::WestendFinalityToMillau;
+				type Finality = crate::chains::alphanet_headers_to_millau::AlphanetFinalityToMillau;
 
 				$generic
 			}
-			RelayHeadersBridge::RococoToWococo => {
-				type Source = relay_rococo_client::Betanet;
+			RelayHeadersBridge::BetanetToWococo => {
+				type Source = relay_betanet_client::Betanet;
 				type Target = relay_wococo_client::Wococo;
-				type Finality = crate::chains::rococo_headers_to_wococo::RococoFinalityToWococo;
+				type Finality = crate::chains::betanet_headers_to_wococo::BetanetFinalityToWococo;
 
 				$generic
 			}
-			RelayHeadersBridge::WococoToRococo => {
+			RelayHeadersBridge::WococoToBetanet => {
 				type Source = relay_wococo_client::Wococo;
-				type Target = relay_rococo_client::Betanet;
-				type Finality = crate::chains::wococo_headers_to_rococo::WococoFinalityToRococo;
+				type Target = relay_betanet_client::Betanet;
+				type Finality = crate::chains::wococo_headers_to_betanet::WococoFinalityToBetanet;
 
 				$generic
 			}

@@ -27,7 +27,7 @@ use axia_node_subsystem::messages::{CollationGenerationMessage, CollatorProtocol
 use axia_overseer::Handle;
 use axia_primitives::v1::{Balance, CollatorPair, HeadData, Id as ParaId, ValidationCode};
 use axia_runtime_common::BlockHashCount;
-use axia_runtime_parachains::paras::ParaGenesisArgs;
+use axia_runtime_allychains::paras::ParaGenesisArgs;
 use axia_service::{ClientHandle, Error, ExecuteWithClient, FullClient, IsCollator, NewFull};
 use axia_test_runtime::{
 	ParasSudoWrapperCall, Runtime, SignedExtra, SignedPayload, SudoCall, UncheckedExtrinsic,
@@ -280,7 +280,7 @@ impl AxiaTestNode {
 	}
 
 	/// Register a allychain at this relay chain.
-	pub async fn register_parachain(
+	pub async fn register_allychain(
 		&self,
 		id: ParaId,
 		validation_code: impl Into<ValidationCode>,

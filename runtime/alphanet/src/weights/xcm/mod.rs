@@ -64,8 +64,8 @@ impl WeighMultiAssets for MultiAssets {
 	}
 }
 
-pub struct WestendXcmWeight<Call>(core::marker::PhantomData<Call>);
-impl<Call> XcmWeightInfo<Call> for WestendXcmWeight<Call> {
+pub struct AlphanetXcmWeight<Call>(core::marker::PhantomData<Call>);
+impl<Call> XcmWeightInfo<Call> for AlphanetXcmWeight<Call> {
 	fn withdraw_asset(assets: &MultiAssets) -> Weight {
 		assets.weigh_multi_assets(XcmBalancesWeight::<Runtime>::withdraw_asset())
 	}

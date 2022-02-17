@@ -23,14 +23,14 @@ use codec::Encode;
 use relay_millau_client::{Millau, SigningParams as MillauSigningParams};
 use relay_axlib_client::{Chain, TransactionSignScheme};
 use relay_utils::metrics::MetricsParams;
-use relay_westend_client::{SyncHeader as WestendSyncHeader, Alphanet};
+use relay_alphanet_client::{SyncHeader as AlphanetSyncHeader, Alphanet};
 use sp_core::{Bytes, Pair};
 
 /// Alphanet-to-Millau finality sync pipeline.
-pub(crate) type WestendFinalityToMillau = AxlibFinalityToAxlib<Alphanet, Millau, MillauSigningParams>;
+pub(crate) type AlphanetFinalityToMillau = AxlibFinalityToAxlib<Alphanet, Millau, MillauSigningParams>;
 
-impl AxlibFinalitySyncPipeline for WestendFinalityToMillau {
-	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_westend::BEST_FINALIZED_WESTEND_HEADER_METHOD;
+impl AxlibFinalitySyncPipeline for AlphanetFinalityToMillau {
+	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_alphanet::BEST_FINALIZED_ALPHANET_HEADER_METHOD;
 
 	type TargetChain = Millau;
 
@@ -45,12 +45,12 @@ impl AxlibFinalitySyncPipeline for WestendFinalityToMillau {
 	fn make_submit_finality_proof_transaction(
 		&self,
 		transaction_nonce: <Millau as Chain>::Index,
-		header: WestendSyncHeader,
-		proof: GrandpaJustification<bp_westend::Header>,
+		header: AlphanetSyncHeader,
+		proof: GrandpaJustification<bp_alphanet::Header>,
 	) -> Bytes {
-		let call = millau_runtime::BridgeGrandpaWestendCall::<
+		let call = millau_runtime::BridgeGrandpaAlphanetCall::<
 			millau_runtime::Runtime,
-			millau_runtime::WestendGrandpaInstance,
+			millau_runtime::AlphanetGrandpaInstance,
 		>::submit_finality_proof(header.into_inner(), proof)
 		.into();
 

@@ -58,9 +58,9 @@ impl<AccountId: Default + Eq + Clone> Convert<MultiLocation, AccountId>
 	}
 }
 
-pub struct ChildParachainConvertsVia<ParaId, AccountId>(PhantomData<(ParaId, AccountId)>);
+pub struct ChildAllychainConvertsVia<ParaId, AccountId>(PhantomData<(ParaId, AccountId)>);
 impl<ParaId: From<u32> + Into<u32> + AccountIdConversion<AccountId>, AccountId: Clone>
-	Convert<MultiLocation, AccountId> for ChildParachainConvertsVia<ParaId, AccountId>
+	Convert<MultiLocation, AccountId> for ChildAllychainConvertsVia<ParaId, AccountId>
 {
 	fn convert_ref(location: impl Borrow<MultiLocation>) -> Result<AccountId, ()> {
 		match location.borrow() {
@@ -79,9 +79,9 @@ impl<ParaId: From<u32> + Into<u32> + AccountIdConversion<AccountId>, AccountId: 
 	}
 }
 
-pub struct SiblingParachainConvertsVia<ParaId, AccountId>(PhantomData<(ParaId, AccountId)>);
+pub struct SiblingAllychainConvertsVia<ParaId, AccountId>(PhantomData<(ParaId, AccountId)>);
 impl<ParaId: From<u32> + Into<u32> + AccountIdConversion<AccountId>, AccountId: Clone>
-	Convert<MultiLocation, AccountId> for SiblingParachainConvertsVia<ParaId, AccountId>
+	Convert<MultiLocation, AccountId> for SiblingAllychainConvertsVia<ParaId, AccountId>
 {
 	fn convert_ref(location: impl Borrow<MultiLocation>) -> Result<AccountId, ()> {
 		match location.borrow() {

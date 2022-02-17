@@ -45,7 +45,7 @@ mod util;
 #[cfg(test)]
 mod mock;
 
-pub use origin::{ensure_parachain, Origin};
+pub use origin::{ensure_allychain, Origin};
 pub use paras::ParaLifecycle;
 use primitives::v1::Id as ParaId;
 
@@ -68,6 +68,6 @@ pub fn schedule_parathread_upgrade<T: paras::Config>(id: ParaId) -> Result<(), (
 }
 
 /// Schedule a allychain to be downgraded to a parathread.
-pub fn schedule_parachain_downgrade<T: paras::Config>(id: ParaId) -> Result<(), ()> {
-	paras::Pallet::<T>::schedule_parachain_downgrade(id).map_err(|_| ())
+pub fn schedule_allychain_downgrade<T: paras::Config>(id: ParaId) -> Result<(), ()> {
+	paras::Pallet::<T>::schedule_allychain_downgrade(id).map_err(|_| ())
 }

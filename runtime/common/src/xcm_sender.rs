@@ -17,15 +17,15 @@
 //! XCM sender for relay chain.
 
 use parity_scale_codec::Encode;
-use runtime_parachains::{configuration, dmp};
+use runtime_allychains::{configuration, dmp};
 use sp_std::marker::PhantomData;
 use xcm::latest::prelude::*;
 
 /// XCM sender for relay chain. It only sends downward message.
-pub struct ChildParachainRouter<T, W>(PhantomData<(T, W)>);
+pub struct ChildAllychainRouter<T, W>(PhantomData<(T, W)>);
 
 impl<T: configuration::Config + dmp::Config, W: xcm::WrapVersion> SendXcm
-	for ChildParachainRouter<T, W>
+	for ChildAllychainRouter<T, W>
 {
 	fn send_xcm(dest: impl Into<MultiLocation>, msg: Xcm<()>) -> SendResult {
 		let dest = dest.into();

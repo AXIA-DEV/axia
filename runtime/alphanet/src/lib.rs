@@ -35,21 +35,21 @@ use runtime_common::{
 };
 use sp_std::{collections::btree_map::BTreeMap, prelude::*};
 
-use runtime_parachains::{
-	configuration as parachains_configuration, dmp as parachains_dmp, hrmp as parachains_hrmp,
-	inclusion as parachains_inclusion, initializer as parachains_initializer,
-	origin as parachains_origin, paras as parachains_paras,
-	paras_inherent as parachains_paras_inherent, reward_points as parachains_reward_points,
-	runtime_api_impl::v1 as parachains_runtime_api_impl, scheduler as parachains_scheduler,
-	session_info as parachains_session_info, shared as parachains_shared, ump as parachains_ump,
+use runtime_allychains::{
+	configuration as allychains_configuration, dmp as allychains_dmp, hrmp as allychains_hrmp,
+	inclusion as allychains_inclusion, initializer as allychains_initializer,
+	origin as allychains_origin, paras as allychains_paras,
+	paras_inherent as allychains_paras_inherent, reward_points as allychains_reward_points,
+	runtime_api_impl::v1 as allychains_runtime_api_impl, scheduler as allychains_scheduler,
+	session_info as allychains_session_info, shared as allychains_shared, ump as allychains_ump,
 };
 
 use xcm::latest::prelude::*;
 use xcm_builder::{
 	AccountId32Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom,
-	AllowTopLevelPaidExecutionFrom, AllowUnpaidExecutionFrom, ChildParachainAsNative,
-	ChildParachainConvertsVia, ChildSystemParachainAsSuperuser,
-	CurrencyAdapter as XcmCurrencyAdapter, IsChildSystemParachain, IsConcrete, LocationInverter,
+	AllowTopLevelPaidExecutionFrom, AllowUnpaidExecutionFrom, ChildAllychainAsNative,
+	ChildAllychainConvertsVia, ChildSystemAllychainAsSuperuser,
+	CurrencyAdapter as XcmCurrencyAdapter, IsChildSystemAllychain, IsConcrete, LocationInverter,
 	SignedAccountId32AsNative, SignedToAccountId32, SovereignSignedViaLocation, TakeWeightCredit,
 	UsingComponents, WeightInfoBounds,
 };
@@ -803,55 +803,55 @@ impl pallet_proxy::Config for Runtime {
 	type AnnouncementDepositFactor = AnnouncementDepositFactor;
 }
 
-impl parachains_origin::Config for Runtime {}
+impl allychains_origin::Config for Runtime {}
 
-impl parachains_configuration::Config for Runtime {
-	type WeightInfo = weights::runtime_parachains_configuration::WeightInfo<Runtime>;
+impl allychains_configuration::Config for Runtime {
+	type WeightInfo = weights::runtime_allychains_configuration::WeightInfo<Runtime>;
 }
 
-impl parachains_shared::Config for Runtime {}
+impl allychains_shared::Config for Runtime {}
 
-impl parachains_session_info::Config for Runtime {}
+impl allychains_session_info::Config for Runtime {}
 
-impl parachains_inclusion::Config for Runtime {
+impl allychains_inclusion::Config for Runtime {
 	type Event = Event;
 	type DisputesHandler = ();
-	type RewardValidators = parachains_reward_points::RewardValidatorsWithEraPoints<Runtime>;
+	type RewardValidators = allychains_reward_points::RewardValidatorsWithEraPoints<Runtime>;
 }
 
-impl parachains_paras::Config for Runtime {
+impl allychains_paras::Config for Runtime {
 	type Origin = Origin;
 	type Event = Event;
-	type WeightInfo = weights::runtime_parachains_paras::WeightInfo<Runtime>;
+	type WeightInfo = weights::runtime_allychains_paras::WeightInfo<Runtime>;
 }
 
 parameter_types! {
 	pub const FirstMessageFactorPercent: u64 = 100;
 }
 
-impl parachains_ump::Config for Runtime {
+impl allychains_ump::Config for Runtime {
 	type Event = Event;
-	type UmpSink = crate::parachains_ump::XcmSink<XcmExecutor<XcmConfig>, Runtime>;
+	type UmpSink = crate::allychains_ump::XcmSink<XcmExecutor<XcmConfig>, Runtime>;
 	type FirstMessageFactorPercent = FirstMessageFactorPercent;
 	type ExecuteOverweightOrigin = EnsureRoot<AccountId>;
 }
 
-impl parachains_dmp::Config for Runtime {}
+impl allychains_dmp::Config for Runtime {}
 
-impl parachains_hrmp::Config for Runtime {
+impl allychains_hrmp::Config for Runtime {
 	type Event = Event;
 	type Origin = Origin;
 	type Currency = Balances;
 }
 
-impl parachains_paras_inherent::Config for Runtime {}
+impl allychains_paras_inherent::Config for Runtime {}
 
-impl parachains_scheduler::Config for Runtime {}
+impl allychains_scheduler::Config for Runtime {}
 
-impl parachains_initializer::Config for Runtime {
+impl allychains_initializer::Config for Runtime {
 	type Randomness = pallet_babe::RandomnessFromOneEpochAgo<Runtime>;
 	type ForceOrigin = EnsureRoot<AccountId>;
-	type WeightInfo = weights::runtime_parachains_initializer::WeightInfo<Runtime>;
+	type WeightInfo = weights::runtime_allychains_initializer::WeightInfo<Runtime>;
 }
 
 impl paras_sudo_wrapper::Config for Runtime {}
@@ -927,12 +927,12 @@ impl auctions::Config for Runtime {
 parameter_types! {
 	pub const WndLocation: MultiLocation = Here.into();
 	pub const Ancestry: MultiLocation = Here.into();
-	pub WestendNetwork: NetworkId = NetworkId::Named(b"Alphanet".to_vec());
+	pub AlphanetNetwork: NetworkId = NetworkId::Named(b"Alphanet".to_vec());
 	pub CheckAccount: AccountId = XcmPallet::check_account();
 }
 
 pub type LocationConverter =
-	(ChildParachainConvertsVia<ParaId, AccountId>, AccountId32Aliases<WestendNetwork, AccountId>);
+	(ChildAllychainConvertsVia<ParaId, AccountId>, AccountId32Aliases<AlphanetNetwork, AccountId>);
 
 pub type LocalAssetTransactor = XcmCurrencyAdapter<
 	// Use this currency:
@@ -949,25 +949,25 @@ pub type LocalAssetTransactor = XcmCurrencyAdapter<
 
 type LocalOriginConverter = (
 	SovereignSignedViaLocation<LocationConverter, Origin>,
-	ChildParachainAsNative<parachains_origin::Origin, Origin>,
-	SignedAccountId32AsNative<WestendNetwork, Origin>,
-	ChildSystemParachainAsSuperuser<ParaId, Origin>,
+	ChildAllychainAsNative<allychains_origin::Origin, Origin>,
+	SignedAccountId32AsNative<AlphanetNetwork, Origin>,
+	ChildSystemAllychainAsSuperuser<ParaId, Origin>,
 );
 
 /// The XCM router. When we want to send an XCM message, we use this type. It amalgamates all of our
 /// individual routers.
 pub type XcmRouter = (
 	// Only one router so far - use DMP to communicate with child allychains.
-	xcm_sender::ChildParachainRouter<Runtime, XcmPallet>,
+	xcm_sender::ChildAllychainRouter<Runtime, XcmPallet>,
 );
 
 parameter_types! {
 	pub const Westmint: MultiLocation = Allychain(1000).into();
-	pub const WestendForWestmint: (MultiAssetFilter, MultiLocation) =
+	pub const AlphanetForWestmint: (MultiAssetFilter, MultiLocation) =
 		(Wild(AllOf { fun: WildFungible, id: Concrete(WndLocation::get()) }), Westmint::get());
 	pub const MaxInstructions: u32 = 100;
 }
-pub type TrustedTeleporters = (xcm_builder::Case<WestendForWestmint>,);
+pub type TrustedTeleporters = (xcm_builder::Case<AlphanetForWestmint>,);
 
 /// The barriers one of which must be passed for an XCM message to be executed.
 pub type Barrier = (
@@ -976,7 +976,7 @@ pub type Barrier = (
 	// If the message is one that immediately attemps to pay for execution, then allow it.
 	AllowTopLevelPaidExecutionFrom<Everything>,
 	// Messages coming from system allychains need not pay for execution.
-	AllowUnpaidExecutionFrom<IsChildSystemParachain<ParaId>>,
+	AllowUnpaidExecutionFrom<IsChildSystemAllychain<ParaId>>,
 	// Expected responses are OK.
 	AllowKnownQueryResponses<XcmPallet>,
 	// Subscriptions for version tracking are OK.
@@ -993,7 +993,7 @@ impl xcm_executor::Config for XcmConfig {
 	type IsTeleporter = TrustedTeleporters;
 	type LocationInverter = LocationInverter<Ancestry>;
 	type Barrier = Barrier;
-	type Weigher = WeightInfoBounds<weights::xcm::WestendXcmWeight<Call>, Call, MaxInstructions>;
+	type Weigher = WeightInfoBounds<weights::xcm::AlphanetXcmWeight<Call>, Call, MaxInstructions>;
 	type Trader = UsingComponents<WeightToFee, WndLocation, AccountId, Balances, ToAuthor<Runtime>>;
 	type ResponseHandler = XcmPallet;
 	type AssetTrap = XcmPallet;
@@ -1005,7 +1005,7 @@ impl xcm_executor::Config for XcmConfig {
 /// of this chain.
 pub type LocalOriginToLocation = (
 	// And a usual Signed origin to be used in XCM as a corresponding AccountId32
-	SignedToAccountId32<Origin, AccountId, WestendNetwork>,
+	SignedToAccountId32<Origin, AccountId, AlphanetNetwork>,
 );
 
 impl pallet_xcm::Config for Runtime {
@@ -1019,7 +1019,7 @@ impl pallet_xcm::Config for Runtime {
 	type XcmExecutor = XcmExecutor<XcmConfig>;
 	type XcmTeleportFilter = Everything;
 	type XcmReserveTransferFilter = Everything;
-	type Weigher = WeightInfoBounds<weights::xcm::WestendXcmWeight<Call>, Call, MaxInstructions>;
+	type Weigher = WeightInfoBounds<weights::xcm::AlphanetXcmWeight<Call>, Call, MaxInstructions>;
 	type LocationInverter = LocationInverter<Ancestry>;
 	type Origin = Origin;
 	type Call = Call;
@@ -1085,18 +1085,18 @@ construct_runtime! {
 		BagsList: pallet_bags_list::{Pallet, Call, Storage, Event<T>} = 25,
 
 		// Allychains pallets. Start indices at 40 to leave room.
-		ParachainsOrigin: parachains_origin::{Pallet, Origin} = 41,
-		Configuration: parachains_configuration::{Pallet, Call, Storage, Config<T>} = 42,
-		ParasShared: parachains_shared::{Pallet, Call, Storage} = 43,
-		ParaInclusion: parachains_inclusion::{Pallet, Call, Storage, Event<T>} = 44,
-		ParaInherent: parachains_paras_inherent::{Pallet, Call, Storage, Inherent} = 45,
-		ParaScheduler: parachains_scheduler::{Pallet, Storage} = 46,
-		Paras: parachains_paras::{Pallet, Call, Storage, Event, Config} = 47,
-		Initializer: parachains_initializer::{Pallet, Call, Storage} = 48,
-		Dmp: parachains_dmp::{Pallet, Call, Storage} = 49,
-		Ump: parachains_ump::{Pallet, Call, Storage, Event} = 50,
-		Hrmp: parachains_hrmp::{Pallet, Call, Storage, Event<T>} = 51,
-		ParaSessionInfo: parachains_session_info::{Pallet, Storage} = 52,
+		AllychainsOrigin: allychains_origin::{Pallet, Origin} = 41,
+		Configuration: allychains_configuration::{Pallet, Call, Storage, Config<T>} = 42,
+		ParasShared: allychains_shared::{Pallet, Call, Storage} = 43,
+		ParaInclusion: allychains_inclusion::{Pallet, Call, Storage, Event<T>} = 44,
+		ParaInherent: allychains_paras_inherent::{Pallet, Call, Storage, Inherent} = 45,
+		ParaScheduler: allychains_scheduler::{Pallet, Storage} = 46,
+		Paras: allychains_paras::{Pallet, Call, Storage, Event, Config} = 47,
+		Initializer: allychains_initializer::{Pallet, Call, Storage} = 48,
+		Dmp: allychains_dmp::{Pallet, Call, Storage} = 49,
+		Ump: allychains_ump::{Pallet, Call, Storage, Event} = 50,
+		Hrmp: allychains_hrmp::{Pallet, Call, Storage, Event<T>} = 51,
+		ParaSessionInfo: allychains_session_info::{Pallet, Storage} = 52,
 
 		// Allychain Onboarding Pallets. Start indices at 60 to leave room.
 		Registrar: paras_registrar::{Pallet, Call, Storage, Event<T>, Config} = 60,
@@ -1203,46 +1203,46 @@ sp_api::impl_runtime_apis! {
 		}
 	}
 
-	impl primitives::v1::ParachainHost<Block, Hash, BlockNumber> for Runtime {
+	impl primitives::v1::AllychainHost<Block, Hash, BlockNumber> for Runtime {
 		fn validators() -> Vec<ValidatorId> {
-			parachains_runtime_api_impl::validators::<Runtime>()
+			allychains_runtime_api_impl::validators::<Runtime>()
 		}
 
 		fn validator_groups() -> (Vec<Vec<ValidatorIndex>>, GroupRotationInfo<BlockNumber>) {
-			parachains_runtime_api_impl::validator_groups::<Runtime>()
+			allychains_runtime_api_impl::validator_groups::<Runtime>()
 		}
 
 		fn availability_cores() -> Vec<CoreState<Hash, BlockNumber>> {
-			parachains_runtime_api_impl::availability_cores::<Runtime>()
+			allychains_runtime_api_impl::availability_cores::<Runtime>()
 		}
 
 		fn persisted_validation_data(para_id: ParaId, assumption: OccupiedCoreAssumption)
 			-> Option<PersistedValidationData<Hash, BlockNumber>> {
-			parachains_runtime_api_impl::persisted_validation_data::<Runtime>(para_id, assumption)
+			allychains_runtime_api_impl::persisted_validation_data::<Runtime>(para_id, assumption)
 		}
 
 		fn check_validation_outputs(
 			para_id: ParaId,
 			outputs: primitives::v1::CandidateCommitments,
 		) -> bool {
-			parachains_runtime_api_impl::check_validation_outputs::<Runtime>(para_id, outputs)
+			allychains_runtime_api_impl::check_validation_outputs::<Runtime>(para_id, outputs)
 		}
 
 		fn session_index_for_child() -> SessionIndex {
-			parachains_runtime_api_impl::session_index_for_child::<Runtime>()
+			allychains_runtime_api_impl::session_index_for_child::<Runtime>()
 		}
 
 		fn validation_code(para_id: ParaId, assumption: OccupiedCoreAssumption)
 			-> Option<ValidationCode> {
-			parachains_runtime_api_impl::validation_code::<Runtime>(para_id, assumption)
+			allychains_runtime_api_impl::validation_code::<Runtime>(para_id, assumption)
 		}
 
 		fn candidate_pending_availability(para_id: ParaId) -> Option<CommittedCandidateReceipt<Hash>> {
-			parachains_runtime_api_impl::candidate_pending_availability::<Runtime>(para_id)
+			allychains_runtime_api_impl::candidate_pending_availability::<Runtime>(para_id)
 		}
 
 		fn candidate_events() -> Vec<CandidateEvent<Hash>> {
-			parachains_runtime_api_impl::candidate_events::<Runtime, _>(|ev| {
+			allychains_runtime_api_impl::candidate_events::<Runtime, _>(|ev| {
 				match ev {
 					Event::ParaInclusion(ev) => {
 						Some(ev)
@@ -1253,25 +1253,25 @@ sp_api::impl_runtime_apis! {
 		}
 
 		fn session_info(index: SessionIndex) -> Option<SessionInfo> {
-			parachains_runtime_api_impl::session_info::<Runtime>(index)
+			allychains_runtime_api_impl::session_info::<Runtime>(index)
 		}
 
 		fn dmq_contents(recipient: ParaId) -> Vec<InboundDownwardMessage<BlockNumber>> {
-			parachains_runtime_api_impl::dmq_contents::<Runtime>(recipient)
+			allychains_runtime_api_impl::dmq_contents::<Runtime>(recipient)
 		}
 
 		fn inbound_hrmp_channels_contents(
 			recipient: ParaId
 		) -> BTreeMap<ParaId, Vec<InboundHrmpMessage<BlockNumber>>> {
-			parachains_runtime_api_impl::inbound_hrmp_channels_contents::<Runtime>(recipient)
+			allychains_runtime_api_impl::inbound_hrmp_channels_contents::<Runtime>(recipient)
 		}
 
 		fn validation_code_by_hash(hash: ValidationCodeHash) -> Option<ValidationCode> {
-			parachains_runtime_api_impl::validation_code_by_hash::<Runtime>(hash)
+			allychains_runtime_api_impl::validation_code_by_hash::<Runtime>(hash)
 		}
 
 		fn on_chain_votes() -> Option<ScrapedOnChainVotes<Hash>> {
-			parachains_runtime_api_impl::on_chain_votes::<Runtime>()
+			allychains_runtime_api_impl::on_chain_votes::<Runtime>()
 		}
 	}
 
@@ -1398,7 +1398,7 @@ sp_api::impl_runtime_apis! {
 
 	impl authority_discovery_primitives::AuthorityDiscoveryApi<Block> for Runtime {
 		fn authorities() -> Vec<AuthorityDiscoveryId> {
-			parachains_runtime_api_impl::relevant_authority_ids::<Runtime>()
+			allychains_runtime_api_impl::relevant_authority_ids::<Runtime>()
 		}
 	}
 
@@ -1468,9 +1468,9 @@ sp_api::impl_runtime_apis! {
 			list_benchmark!(list, extra, runtime_common::crowdloan, Crowdloan);
 			list_benchmark!(list, extra, runtime_common::paras_registrar, Registrar);
 			list_benchmark!(list, extra, runtime_common::slots, Slots);
-			list_benchmark!(list, extra, runtime_parachains::configuration, Configuration);
-			list_benchmark!(list, extra, runtime_parachains::initializer, Initializer);
-			list_benchmark!(list, extra, runtime_parachains::paras, Paras);
+			list_benchmark!(list, extra, runtime_allychains::configuration, Configuration);
+			list_benchmark!(list, extra, runtime_allychains::initializer, Initializer);
+			list_benchmark!(list, extra, runtime_allychains::paras, Paras);
 
 			// Axlib
 			list_benchmark!(list, extra, pallet_bags_list, BagsList);
@@ -1580,9 +1580,9 @@ sp_api::impl_runtime_apis! {
 			add_benchmark!(params, batches, runtime_common::crowdloan, Crowdloan);
 			add_benchmark!(params, batches, runtime_common::paras_registrar, Registrar);
 			add_benchmark!(params, batches, runtime_common::slots, Slots);
-			add_benchmark!(params, batches, runtime_parachains::configuration, Configuration);
-			add_benchmark!(params, batches, runtime_parachains::initializer, Initializer);
-			add_benchmark!(params, batches, runtime_parachains::paras, Paras);
+			add_benchmark!(params, batches, runtime_allychains::configuration, Configuration);
+			add_benchmark!(params, batches, runtime_allychains::initializer, Initializer);
+			add_benchmark!(params, batches, runtime_allychains::paras, Paras);
 
 			// Axlib
 			add_benchmark!(params, batches, pallet_bags_list, BagsList);

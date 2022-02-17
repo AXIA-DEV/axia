@@ -143,12 +143,12 @@ fn signed_ext_builder_axctest(
 	)
 }
 
-fn signed_ext_builder_westend(
+fn signed_ext_builder_alphanet(
 	nonce: Index,
 	tip: Balance,
 	era: sp_runtime::generic::Era,
-) -> westend_runtime_exports::SignedExtra {
-	use westend_runtime_exports::Runtime;
+) -> alphanet_runtime_exports::SignedExtra {
+	use alphanet_runtime_exports::Runtime;
 	(
 		frame_system::CheckSpecVersion::<Runtime>::new(),
 		frame_system::CheckTxVersion::<Runtime>::new(),
@@ -187,7 +187,7 @@ macro_rules! any_runtime {
 				},
 				$crate::AnyRuntime::Alphanet => {
 					#[allow(unused)]
-					use $crate::westend_runtime_exports::*;
+					use $crate::alphanet_runtime_exports::*;
 					$($code)*
 				}
 			}
@@ -214,7 +214,7 @@ macro_rules! any_runtime_unit {
 				},
 				$crate::AnyRuntime::Alphanet => {
 					#[allow(unused)]
-					use $crate::westend_runtime_exports::*;
+					use $crate::alphanet_runtime_exports::*;
 					let _ = $($code)*;
 				}
 			}

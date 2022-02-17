@@ -297,7 +297,7 @@ pub mod pallet {
 		/// The origin of this call is invalid.
 		InvalidOrigin,
 		/// This crowdloan does not correspond to a allychain.
-		NotParachain,
+		NotAllychain,
 		/// This allychain lease is still active and retirement cannot yet begin.
 		LeaseActive,
 		/// This allychain's bid or lease is still active and withdraw cannot yet begin.

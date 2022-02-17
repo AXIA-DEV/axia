@@ -38,7 +38,7 @@ use axia_node_subsystem::{
 	SubsystemResult, SubsystemSender,
 };
 use axia_node_subsystem_util::metrics::{self, prometheus};
-use axia_parachain::primitives::{ValidationParams, ValidationResult as WasmValidationResult};
+use axia_allychain::primitives::{ValidationParams, ValidationResult as WasmValidationResult};
 use axia_primitives::v1::{
 	CandidateCommitments, CandidateDescriptor, Hash, OccupiedCoreAssumption,
 	PersistedValidationData, ValidationCode, ValidationCodeHash,
@@ -609,7 +609,7 @@ impl metrics::Metrics for Metrics {
 			validation_requests: prometheus::register(
 				prometheus::CounterVec::new(
 					prometheus::Opts::new(
-						"parachain_validation_requests_total",
+						"allychain_validation_requests_total",
 						"Number of validation requests served.",
 					),
 					&["validity"],
@@ -618,21 +618,21 @@ impl metrics::Metrics for Metrics {
 			)?,
 			validate_from_chain_state: prometheus::register(
 				prometheus::Histogram::with_opts(prometheus::HistogramOpts::new(
-					"parachain_candidate_validation_validate_from_chain_state",
+					"allychain_candidate_validation_validate_from_chain_state",
 					"Time spent within `candidate_validation::validate_from_chain_state`",
 				))?,
 				registry,
 			)?,
 			validate_from_exhaustive: prometheus::register(
 				prometheus::Histogram::with_opts(prometheus::HistogramOpts::new(
-					"parachain_candidate_validation_validate_from_exhaustive",
+					"allychain_candidate_validation_validate_from_exhaustive",
 					"Time spent within `candidate_validation::validate_from_exhaustive`",
 				))?,
 				registry,
 			)?,
 			validate_candidate_exhaustive: prometheus::register(
 				prometheus::Histogram::with_opts(prometheus::HistogramOpts::new(
-					"parachain_candidate_validation_validate_candidate_exhaustive",
+					"allychain_candidate_validation_validate_candidate_exhaustive",
 					"Time spent within `candidate_validation::validate_candidate_exhaustive`",
 				))?,
 				registry,

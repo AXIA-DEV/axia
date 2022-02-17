@@ -16,7 +16,7 @@
 
 use codec::Decode;
 use frame_support::weights::{DispatchClass, DispatchInfo, Pays, Weight};
-use relay_rococo_client::Betanet;
+use relay_betanet_client::Betanet;
 use sp_version::RuntimeVersion;
 
 use crate::cli::{
@@ -33,13 +33,13 @@ pub(crate) const SYSTEM_REMARK_CALL_WEIGHT: Weight = 2 * 1_345_000;
 
 impl CliEncodeCall for Betanet {
 	fn max_extrinsic_size() -> u32 {
-		bp_rococo::max_extrinsic_size()
+		bp_betanet::max_extrinsic_size()
 	}
 
 	fn encode_call(call: &Call) -> anyhow::Result<Self::Call> {
 		Ok(match call {
 			Call::Remark { remark_payload, .. } => {
-				relay_rococo_client::runtime::Call::System(relay_rococo_client::runtime::SystemCall::remark(
+				relay_betanet_client::runtime::Call::System(relay_betanet_client::runtime::SystemCall::remark(
 					remark_payload.as_ref().map(|x| x.0.clone()).unwrap_or_default(),
 				))
 			}
@@ -49,10 +49,10 @@ impl CliEncodeCall for Betanet {
 				fee,
 				bridge_instance_index,
 			} => match *bridge_instance_index {
-				bridge::ROCOCO_TO_WOCOCO_INDEX => {
+				bridge::BETANET_TO_WOCOCO_INDEX => {
 					let payload = Decode::decode(&mut &*payload.0)?;
-					relay_rococo_client::runtime::Call::BridgeMessagesWococo(
-						relay_rococo_client::runtime::BridgeMessagesWococoCall::send_message(lane.0, payload, fee.0),
+					relay_betanet_client::runtime::Call::BridgeMessagesWococo(
+						relay_betanet_client::runtime::BridgeMessagesWococoCall::send_message(lane.0, payload, fee.0),
 					)
 				}
 				_ => anyhow::bail!(
@@ -64,9 +64,9 @@ impl CliEncodeCall for Betanet {
 		})
 	}
 
-	fn get_dispatch_info(call: &relay_rococo_client::runtime::Call) -> anyhow::Result<DispatchInfo> {
+	fn get_dispatch_info(call: &relay_betanet_client::runtime::Call) -> anyhow::Result<DispatchInfo> {
 		match *call {
-			relay_rococo_client::runtime::Call::System(relay_rococo_client::runtime::SystemCall::remark(_)) => {
+			relay_betanet_client::runtime::Call::System(relay_betanet_client::runtime::SystemCall::remark(_)) => {
 				Ok(DispatchInfo {
 					weight: SYSTEM_REMARK_CALL_WEIGHT,
 					class: DispatchClass::Normal,
@@ -79,7 +79,7 @@ impl CliEncodeCall for Betanet {
 }
 
 impl CliChain for Betanet {
-	const RUNTIME_VERSION: RuntimeVersion = bp_rococo::VERSION;
+	const RUNTIME_VERSION: RuntimeVersion = bp_betanet::VERSION;
 
 	type KeyPair = sp_core::sr25519::Pair;
 	type MessagePayload = ();

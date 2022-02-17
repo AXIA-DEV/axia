@@ -20,11 +20,11 @@ pub mod millau_headers_to_rialto;
 pub mod millau_messages_to_rialto;
 pub mod rialto_headers_to_millau;
 pub mod rialto_messages_to_millau;
-pub mod rococo_headers_to_wococo;
-pub mod rococo_messages_to_wococo;
-pub mod westend_headers_to_millau;
-pub mod wococo_headers_to_rococo;
-pub mod wococo_messages_to_rococo;
+pub mod betanet_headers_to_wococo;
+pub mod betanet_messages_to_wococo;
+pub mod alphanet_headers_to_millau;
+pub mod wococo_headers_to_betanet;
+pub mod wococo_messages_to_betanet;
 
 mod millau;
 mod rialto;
@@ -248,7 +248,7 @@ mod tests {
 }
 
 #[cfg(test)]
-mod rococo_tests {
+mod betanet_tests {
 	use bp_header_chain::justification::GrandpaJustification;
 	use codec::Encode;
 
@@ -273,7 +273,7 @@ mod rococo_tests {
 			votes_ancestries: vec![],
 		};
 
-		let actual = relay_rococo_client::runtime::BridgeGrandpaWococoCall::submit_finality_proof(
+		let actual = relay_betanet_client::runtime::BridgeGrandpaWococoCall::submit_finality_proof(
 			header.clone(),
 			justification.clone(),
 		);
@@ -296,7 +296,7 @@ mod rococo_tests {
 }
 
 #[cfg(test)]
-mod westend_tests {
+mod alphanet_tests {
 	use bp_header_chain::justification::GrandpaJustification;
 	use codec::Encode;
 
@@ -321,7 +321,7 @@ mod westend_tests {
 			votes_ancestries: vec![],
 		};
 
-		let actual = bp_westend::BridgeGrandpaRococoCall::submit_finality_proof(header.clone(), justification.clone());
+		let actual = bp_alphanet::BridgeGrandpaBetanetCall::submit_finality_proof(header.clone(), justification.clone());
 		let expected = millau_runtime::BridgeGrandpaRialtoCall::<millau_runtime::Runtime>::submit_finality_proof(
 			header,
 			justification,

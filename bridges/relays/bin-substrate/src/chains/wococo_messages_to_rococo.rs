@@ -23,25 +23,25 @@ use crate::messages_source::AxlibMessagesSource;
 use crate::messages_target::AxlibMessagesTarget;
 
 use bp_messages::MessageNonce;
-use bp_runtime::{ROCOCO_CHAIN_ID, WOCOCO_CHAIN_ID};
+use bp_runtime::{BETANET_CHAIN_ID, WOCOCO_CHAIN_ID};
 use bridge_runtime_common::messages::target::FromBridgedChainMessagesProof;
 use codec::Encode;
 use messages_relay::message_lane::MessageLane;
-use relay_rococo_client::{HeaderId as RococoHeaderId, Betanet, SigningParams as RococoSigningParams};
+use relay_betanet_client::{HeaderId as BetanetHeaderId, Betanet, SigningParams as BetanetSigningParams};
 use relay_axlib_client::{metrics::StorageProofOverheadMetric, Chain, TransactionSignScheme};
 use relay_wococo_client::{HeaderId as WococoHeaderId, SigningParams as WococoSigningParams, Wococo};
 use sp_core::{Bytes, Pair};
 use std::{ops::RangeInclusive, time::Duration};
 
 /// Wococo-to-Betanet message lane.
-pub type WococoMessagesToRococo =
-	AxlibMessageLaneToAxlib<Wococo, WococoSigningParams, Betanet, RococoSigningParams>;
+pub type WococoMessagesToBetanet =
+	AxlibMessageLaneToAxlib<Wococo, WococoSigningParams, Betanet, BetanetSigningParams>;
 
-impl AxlibMessageLane for WococoMessagesToRococo {
-	const OUTBOUND_LANE_MESSAGE_DETAILS_METHOD: &'static str = bp_rococo::TO_ROCOCO_MESSAGE_DETAILS_METHOD;
+impl AxlibMessageLane for WococoMessagesToBetanet {
+	const OUTBOUND_LANE_MESSAGE_DETAILS_METHOD: &'static str = bp_betanet::TO_BETANET_MESSAGE_DETAILS_METHOD;
 	const OUTBOUND_LANE_LATEST_GENERATED_NONCE_METHOD: &'static str =
-		bp_rococo::TO_ROCOCO_LATEST_GENERATED_NONCE_METHOD;
-	const OUTBOUND_LANE_LATEST_RECEIVED_NONCE_METHOD: &'static str = bp_rococo::TO_ROCOCO_LATEST_RECEIVED_NONCE_METHOD;
+		bp_betanet::TO_BETANET_LATEST_GENERATED_NONCE_METHOD;
+	const OUTBOUND_LANE_LATEST_RECEIVED_NONCE_METHOD: &'static str = bp_betanet::TO_BETANET_LATEST_RECEIVED_NONCE_METHOD;
 
 	const INBOUND_LANE_LATEST_RECEIVED_NONCE_METHOD: &'static str = bp_wococo::FROM_WOCOCO_LATEST_RECEIVED_NONCE_METHOD;
 	const INBOUND_LANE_LATEST_CONFIRMED_NONCE_METHOD: &'static str =
@@ -49,7 +49,7 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 	const INBOUND_LANE_UNREWARDED_RELAYERS_STATE: &'static str = bp_wococo::FROM_WOCOCO_UNREWARDED_RELAYERS_STATE;
 
 	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_wococo::BEST_FINALIZED_WOCOCO_HEADER_METHOD;
-	const BEST_FINALIZED_TARGET_HEADER_ID_AT_SOURCE: &'static str = bp_rococo::BEST_FINALIZED_ROCOCO_HEADER_METHOD;
+	const BEST_FINALIZED_TARGET_HEADER_ID_AT_SOURCE: &'static str = bp_betanet::BEST_FINALIZED_BETANET_HEADER_METHOD;
 
 	type SourceChain = Wococo;
 	type TargetChain = Betanet;
@@ -61,12 +61,12 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 	fn make_messages_receiving_proof_transaction(
 		&self,
 		transaction_nonce: <Wococo as Chain>::Index,
-		_generated_at_block: RococoHeaderId,
+		_generated_at_block: BetanetHeaderId,
 		proof: <Self as MessageLane>::MessagesReceivingProof,
 	) -> Bytes {
 		let (relayers_state, proof) = proof;
-		let call = relay_wococo_client::runtime::Call::BridgeMessagesRococo(
-			relay_wococo_client::runtime::BridgeMessagesRococoCall::receive_messages_delivery_proof(
+		let call = relay_wococo_client::runtime::Call::BridgeMessagesBetanet(
+			relay_wococo_client::runtime::BridgeMessagesBetanetCall::receive_messages_delivery_proof(
 				proof,
 				relayers_state,
 			),
@@ -83,7 +83,7 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 		Bytes(transaction.encode())
 	}
 
-	fn target_transactions_author(&self) -> bp_rococo::AccountId {
+	fn target_transactions_author(&self) -> bp_betanet::AccountId {
 		(*self.target_sign.public().as_array_ref()).into()
 	}
 
@@ -102,8 +102,8 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 		} = proof;
 		let messages_count = nonces_end - nonces_start + 1;
 
-		let call = relay_rococo_client::runtime::Call::BridgeMessagesWococo(
-			relay_rococo_client::runtime::BridgeMessagesWococoCall::receive_messages_proof(
+		let call = relay_betanet_client::runtime::Call::BridgeMessagesWococo(
+			relay_betanet_client::runtime::BridgeMessagesWococoCall::receive_messages_proof(
 				self.relayer_id_at_source.clone(),
 				proof,
 				messages_count as _,
@@ -115,9 +115,9 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 		log::trace!(
 			target: "bridge",
 			"Prepared Wococo -> Betanet delivery transaction. Weight: <unknown>/{}, size: {}/{}",
-			bp_rococo::max_extrinsic_weight(),
+			bp_betanet::max_extrinsic_weight(),
 			transaction.encode().len(),
-			bp_rococo::max_extrinsic_size(),
+			bp_betanet::max_extrinsic_size(),
 		);
 		Bytes(transaction.encode())
 	}
@@ -125,22 +125,22 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 
 /// Wococo node as messages source.
 type WococoSourceClient =
-	AxlibMessagesSource<Wococo, WococoMessagesToRococo, relay_wococo_client::runtime::WithRococoMessagesInstance>;
+	AxlibMessagesSource<Wococo, WococoMessagesToBetanet, relay_wococo_client::runtime::WithBetanetMessagesInstance>;
 
 /// Betanet node as messages target.
-type RococoTargetClient =
-	AxlibMessagesTarget<Betanet, WococoMessagesToRococo, relay_rococo_client::runtime::WithWococoMessagesInstance>;
+type BetanetTargetClient =
+	AxlibMessagesTarget<Betanet, WococoMessagesToBetanet, relay_betanet_client::runtime::WithWococoMessagesInstance>;
 
 /// Run Wococo-to-Betanet messages sync.
 pub async fn run(
-	params: MessagesRelayParams<Wococo, WococoSigningParams, Betanet, RococoSigningParams>,
+	params: MessagesRelayParams<Wococo, WococoSigningParams, Betanet, BetanetSigningParams>,
 ) -> Result<(), String> {
 	let stall_timeout = Duration::from_secs(5 * 60);
 	let relayer_id_at_wococo = (*params.source_sign.public().as_array_ref()).into();
 
 	let lane_id = params.lane_id;
 	let source_client = params.source_client;
-	let lane = WococoMessagesToRococo {
+	let lane = WococoMessagesToBetanet {
 		source_client: source_client.clone(),
 		source_sign: params.source_sign,
 		target_client: params.target_client.clone(),
@@ -149,13 +149,13 @@ pub async fn run(
 	};
 
 	// 2/3 is reserved for proofs and tx overhead
-	let max_messages_size_in_single_batch = bp_rococo::max_extrinsic_size() / 3;
+	let max_messages_size_in_single_batch = bp_betanet::max_extrinsic_size() / 3;
 	// we don't know exact weights of the Betanet runtime. So to guess weights we'll be using
 	// weights from Rialto and then simply dividing it by x2.
 	let (max_messages_in_single_batch, max_messages_weight_in_single_batch) =
 		select_delivery_transaction_limits::<pallet_bridge_messages::weights::RialtoWeight<rialto_runtime::Runtime>>(
-			bp_rococo::max_extrinsic_weight(),
-			bp_rococo::MAX_UNREWARDED_RELAYER_ENTRIES_AT_INBOUND_LANE,
+			bp_betanet::max_extrinsic_weight(),
+			bp_betanet::MAX_UNREWARDED_RELAYER_ENTRIES_AT_INBOUND_LANE,
 		);
 	let (max_messages_in_single_batch, max_messages_weight_in_single_batch) = (
 		max_messages_in_single_batch / 2,
@@ -183,8 +183,8 @@ pub async fn run(
 			reconnect_delay: relay_utils::relay_loop::RECONNECT_DELAY,
 			stall_timeout,
 			delivery_params: messages_relay::message_lane_loop::MessageDeliveryParams {
-				max_unrewarded_relayer_entries_at_target: bp_rococo::MAX_UNREWARDED_RELAYER_ENTRIES_AT_INBOUND_LANE,
-				max_unconfirmed_nonces_at_target: bp_rococo::MAX_UNCONFIRMED_MESSAGES_AT_INBOUND_LANE,
+				max_unrewarded_relayer_entries_at_target: bp_betanet::MAX_UNREWARDED_RELAYER_ENTRIES_AT_INBOUND_LANE,
+				max_unconfirmed_nonces_at_target: bp_betanet::MAX_UNCONFIRMED_MESSAGES_AT_INBOUND_LANE,
 				max_messages_in_single_batch,
 				max_messages_weight_in_single_batch,
 				max_messages_size_in_single_batch,
@@ -195,10 +195,10 @@ pub async fn run(
 			source_client.clone(),
 			lane.clone(),
 			lane_id,
-			ROCOCO_CHAIN_ID,
+			BETANET_CHAIN_ID,
 			params.target_to_source_headers_relay,
 		),
-		RococoTargetClient::new(
+		BetanetTargetClient::new(
 			params.target_client,
 			lane,
 			lane_id,
@@ -207,7 +207,7 @@ pub async fn run(
 		),
 		relay_utils::relay_metrics(
 			Some(messages_relay::message_lane_loop::metrics_prefix::<
-				WococoMessagesToRococo,
+				WococoMessagesToBetanet,
 			>(&lane_id)),
 			params.metrics_params,
 		)

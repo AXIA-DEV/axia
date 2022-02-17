@@ -36,7 +36,7 @@ pub use parity_scale_codec::Compact;
 pub use axia_core_primitives::*;
 pub use runtime_primitives::traits::{BlakeTwo256, Hash as HashT, IdentifyAccount, Verify};
 
-pub use axia_parachain::primitives::{
+pub use axia_allychain::primitives::{
 	BlockData, HeadData, Id, UpwardMessage, ValidationCode, LOWEST_USER_ID,
 };
 
@@ -83,11 +83,11 @@ impl MallocSizeOf for CollatorSignature {
 }
 
 /// The key type ID for a allychain validator key.
-pub const PARACHAIN_KEY_TYPE_ID: KeyTypeId = KeyTypeId(*b"para");
+pub const ALLYCHAIN_KEY_TYPE_ID: KeyTypeId = KeyTypeId(*b"para");
 
 mod validator_app {
 	use application_crypto::{app_crypto, sr25519};
-	app_crypto!(sr25519, super::PARACHAIN_KEY_TYPE_ID);
+	app_crypto!(sr25519, super::ALLYCHAIN_KEY_TYPE_ID);
 }
 
 /// Identity that allychain validators use when signing validation messages.
@@ -179,7 +179,7 @@ pub struct Info {
 }
 
 /// An `Info` value for a standard leased allychain.
-pub const PARACHAIN_INFO: Info = Info { scheduling: Scheduling::Always };
+pub const ALLYCHAIN_INFO: Info = Info { scheduling: Scheduling::Always };
 
 /// Auxiliary for when there's an attempt to swap two allychains/parathreads.
 pub trait SwapAux {
@@ -282,14 +282,14 @@ pub struct CandidateCommitments<H = Hash> {
 /// Get a collator signature payload on a relay-parent, block-data combo.
 pub fn collator_signature_payload<H: AsRef<[u8]>>(
 	relay_parent: &H,
-	parachain_index: &Id,
+	allychain_index: &Id,
 	pov_block_hash: &H,
 ) -> [u8; 68] {
 	// 32-byte hash length is protected in a test below.
 	let mut payload = [0u8; 68];
 
 	payload[0..32].copy_from_slice(relay_parent.as_ref());
-	u32::from(*parachain_index).using_encoded(|s| payload[32..32 + s.len()].copy_from_slice(s));
+	u32::from(*allychain_index).using_encoded(|s| payload[32..32 + s.len()].copy_from_slice(s));
 	payload[36..68].copy_from_slice(pov_block_hash.as_ref());
 
 	payload
@@ -297,12 +297,12 @@ pub fn collator_signature_payload<H: AsRef<[u8]>>(
 
 fn check_collator_signature<H: AsRef<[u8]>>(
 	relay_parent: &H,
-	parachain_index: &Id,
+	allychain_index: &Id,
 	pov_block_hash: &H,
 	collator: &CollatorId,
 	signature: &CollatorSignature,
 ) -> Result<(), ()> {
-	let payload = collator_signature_payload(relay_parent, parachain_index, pov_block_hash);
+	let payload = collator_signature_payload(relay_parent, allychain_index, pov_block_hash);
 	if signature.verify(&payload[..], collator) {
 		Ok(())
 	} else {
@@ -315,7 +315,7 @@ fn check_collator_signature<H: AsRef<[u8]>>(
 #[cfg_attr(feature = "std", derive(Debug, Default))]
 pub struct CandidateReceipt<H = Hash, N = BlockNumber> {
 	/// The ID of the allychain this is a candidate for.
-	pub parachain_index: Id,
+	pub allychain_index: Id,
 	/// The hash of the relay-chain block this should be executed in
 	/// the context of.
 	pub relay_parent: H,
@@ -340,7 +340,7 @@ impl<H: AsRef<[u8]>, N> CandidateReceipt<H, N> {
 	pub fn check_signature(&self) -> Result<(), ()> {
 		check_collator_signature(
 			&self.relay_parent,
-			&self.parachain_index,
+			&self.allychain_index,
 			&self.pov_block_hash,
 			&self.collator,
 			&self.signature,
@@ -351,7 +351,7 @@ impl<H: AsRef<[u8]>, N> CandidateReceipt<H, N> {
 	/// and its omitted component.
 	pub fn abridge(self) -> (AbridgedCandidateReceipt<H>, OmittedValidationData<N>) {
 		let CandidateReceipt {
-			parachain_index,
+			allychain_index,
 			relay_parent,
 			head_data,
 			collator,
@@ -363,7 +363,7 @@ impl<H: AsRef<[u8]>, N> CandidateReceipt<H, N> {
 		} = self;
 
 		let abridged = AbridgedCandidateReceipt {
-			parachain_index,
+			allychain_index,
 			relay_parent,
 			head_data,
 			collator,
@@ -388,8 +388,8 @@ impl Ord for CandidateReceipt {
 	fn cmp(&self, other: &Self) -> Ordering {
 		// TODO: compare signatures or something more sane
 		// https://github.com/paritytech/axia/issues/222
-		self.parachain_index
-			.cmp(&other.parachain_index)
+		self.allychain_index
+			.cmp(&other.allychain_index)
 			.then_with(|| self.head_data.cmp(&other.head_data))
 	}
 }
@@ -414,7 +414,7 @@ pub struct OmittedValidationData<N = BlockNumber> {
 #[cfg_attr(feature = "std", derive(Debug, Default))]
 pub struct AbridgedCandidateReceipt<H = Hash> {
 	/// The ID of the allychain this is a candidate for.
-	pub parachain_index: Id,
+	pub allychain_index: Id,
 	/// The hash of the relay-chain block this should be executed in
 	/// the context of.
 	// NOTE: the fact that the hash includes this value means that code depends
@@ -446,7 +446,7 @@ impl<H: AsRef<[u8]> + Encode> AbridgedCandidateReceipt<H> {
 	pub fn check_signature(&self) -> Result<(), ()> {
 		check_collator_signature(
 			&self.relay_parent,
-			&self.parachain_index,
+			&self.allychain_index,
 			&self.pov_block_hash,
 			&self.collator,
 			&self.signature,
@@ -470,7 +470,7 @@ impl AbridgedCandidateReceipt {
 	/// forming a full `CandidateReceipt`.
 	pub fn complete(self, omitted: OmittedValidationData) -> CandidateReceipt {
 		let AbridgedCandidateReceipt {
-			parachain_index,
+			allychain_index,
 			relay_parent,
 			head_data,
 			collator,
@@ -482,7 +482,7 @@ impl AbridgedCandidateReceipt {
 		let OmittedValidationData { global_validation, local_validation } = omitted;
 
 		CandidateReceipt {
-			parachain_index,
+			allychain_index,
 			relay_parent,
 			head_data,
 			collator,
@@ -497,7 +497,7 @@ impl AbridgedCandidateReceipt {
 	/// Clone the relevant portions of the `CandidateReceipt` to form a `CollationInfo`.
 	pub fn to_collation_info(&self) -> CollationInfo {
 		let AbridgedCandidateReceipt {
-			parachain_index,
+			allychain_index,
 			relay_parent,
 			head_data,
 			collator,
@@ -507,7 +507,7 @@ impl AbridgedCandidateReceipt {
 		} = self;
 
 		CollationInfo {
-			parachain_index: *parachain_index,
+			allychain_index: *allychain_index,
 			relay_parent: *relay_parent,
 			head_data: head_data.clone(),
 			collator: collator.clone(),
@@ -519,7 +519,7 @@ impl AbridgedCandidateReceipt {
 	/// Clone the relevant portions of the `AbridgedCandidateReceipt` to form a `CandidateDescriptor`.
 	pub fn to_descriptor(&self) -> CandidateDescriptor {
 		CandidateDescriptor {
-			para_id: self.parachain_index,
+			para_id: self.allychain_index,
 			relay_parent: self.relay_parent,
 			collator: self.collator.clone(),
 			signature: self.signature.clone(),
@@ -538,8 +538,8 @@ impl Ord for AbridgedCandidateReceipt {
 	fn cmp(&self, other: &Self) -> Ordering {
 		// TODO: compare signatures or something more sane
 		// https://github.com/paritytech/axia/issues/222
-		self.parachain_index
-			.cmp(&other.parachain_index)
+		self.allychain_index
+			.cmp(&other.allychain_index)
 			.then_with(|| self.head_data.cmp(&other.head_data))
 	}
 }
@@ -569,7 +569,7 @@ pub struct CandidateDescriptor<H = Hash> {
 #[cfg_attr(feature = "std", derive(Debug, Default))]
 pub struct CollationInfo {
 	/// The ID of the allychain this is a candidate for.
-	pub parachain_index: Id,
+	pub allychain_index: Id,
 	/// The relay-chain block hash this block should execute in the
 	/// context of.
 	pub relay_parent: Hash,
@@ -588,7 +588,7 @@ impl CollationInfo {
 	pub fn check_signature(&self) -> Result<(), ()> {
 		check_collator_signature(
 			&self.relay_parent,
-			&self.parachain_index,
+			&self.allychain_index,
 			&self.pov_block_hash,
 			&self.collator,
 			&self.signature,
@@ -598,7 +598,7 @@ impl CollationInfo {
 	/// Turn this into an `AbridgedCandidateReceipt` by supplying a set of commitments.
 	pub fn into_receipt(self, commitments: CandidateCommitments) -> AbridgedCandidateReceipt {
 		let CollationInfo {
-			parachain_index,
+			allychain_index,
 			relay_parent,
 			collator,
 			signature,
@@ -607,7 +607,7 @@ impl CollationInfo {
 		} = self;
 
 		AbridgedCandidateReceipt {
-			parachain_index,
+			allychain_index,
 			relay_parent,
 			collator,
 			signature,
@@ -812,8 +812,8 @@ impl AttestedCandidate {
 	}
 
 	/// Get the group ID of the candidate.
-	pub fn parachain_index(&self) -> Id {
-		self.candidate.parachain_index
+	pub fn allychain_index(&self) -> Id {
+		self.candidate.allychain_index
 	}
 }
 
@@ -841,20 +841,20 @@ impl FeeSchedule {
 sp_api::decl_runtime_apis! {
 	/// The API for querying the state of allychains on-chain.
 	#[api_version(3)]
-	pub trait ParachainHost {
+	pub trait AllychainHost {
 		/// Get the current validators.
 		fn validators() -> Vec<ValidatorId>;
 		/// Get the current duty roster.
 		fn duty_roster() -> DutyRoster;
 		/// Get the currently active allychains.
-		fn active_parachains() -> Vec<(Id, Option<(CollatorId, Retriable)>)>;
+		fn active_allychains() -> Vec<(Id, Option<(CollatorId, Retriable)>)>;
 		/// Get the global validation schedule that all allychains should
 		/// be validated under.
 		fn global_validation_data() -> GlobalValidationData;
 		/// Get the local validation data for a particular allychain.
 		fn local_validation_data(id: Id) -> Option<LocalValidationData>;
 		/// Get the given allychain's head code blob.
-		fn parachain_code(id: Id) -> Option<ValidationCode>;
+		fn allychain_code(id: Id) -> Option<ValidationCode>;
 		/// Extract the abridged head that was set in the extrinsics.
 		fn get_heads(extrinsics: Vec<<Block as BlockT>::Extrinsic>)
 			-> Option<Vec<AbridgedCandidateReceipt>>;
@@ -870,7 +870,7 @@ pub mod id {
 	use sp_version::ApiId;
 
 	/// Allychain host runtime API id.
-	pub const PARACHAIN_HOST: ApiId = *b"parahost";
+	pub const ALLYCHAIN_HOST: ApiId = *b"parahost";
 }
 
 /// Custom validity errors used in Axia while validating transactions.

@@ -50,7 +50,7 @@ pub const AXIA_CHAIN_ID: ChainId = *b"pdot";
 pub const AXIATEST_CHAIN_ID: ChainId = *b"ksma";
 
 /// Bridge-with-Betanet instance id.
-pub const ROCOCO_CHAIN_ID: ChainId = *b"roco";
+pub const BETANET_CHAIN_ID: ChainId = *b"roco";
 
 /// Bridge-with-Wococo instance id.
 pub const WOCOCO_CHAIN_ID: ChainId = *b"woco";

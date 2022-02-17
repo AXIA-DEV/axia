@@ -43,9 +43,9 @@ arg_enum! {
 	pub enum InitBridgeName {
 		MillauToRialto,
 		RialtoToMillau,
-		WestendToMillau,
-		RococoToWococo,
-		WococoToRococo,
+		AlphanetToMillau,
+		BetanetToWococo,
+		WococoToBetanet,
 	}
 }
 
@@ -83,8 +83,8 @@ macro_rules! select_bridge {
 
 				$generic
 			}
-			InitBridgeName::WestendToMillau => {
-				type Source = relay_westend_client::Alphanet;
+			InitBridgeName::AlphanetToMillau => {
+				type Source = relay_alphanet_client::Alphanet;
 				type Target = relay_millau_client::Millau;
 
 				fn encode_init_bridge(
@@ -93,38 +93,38 @@ macro_rules! select_bridge {
 					// at Alphanet -> Millau initialization we're not using sudo, because otherwise our deployments
 					// may fail, because we need to initialize both Rialto -> Millau and Alphanet -> Millau bridge.
 					// => since there's single possible sudo account, one of transaction may fail with duplicate nonce error
-					millau_runtime::BridgeGrandpaWestendCall::<
+					millau_runtime::BridgeGrandpaAlphanetCall::<
 						millau_runtime::Runtime,
-						millau_runtime::WestendGrandpaInstance,
+						millau_runtime::AlphanetGrandpaInstance,
 					>::initialize(init_data)
 					.into()
 				}
 
 				$generic
 			}
-			InitBridgeName::RococoToWococo => {
-				type Source = relay_rococo_client::Betanet;
+			InitBridgeName::BetanetToWococo => {
+				type Source = relay_betanet_client::Betanet;
 				type Target = relay_wococo_client::Wococo;
 
 				fn encode_init_bridge(
 					init_data: InitializationData<<Source as ChainBase>::Header>,
 				) -> <Target as Chain>::Call {
-					relay_wococo_client::runtime::Call::BridgeGrandpaRococo(
-						relay_wococo_client::runtime::BridgeGrandpaRococoCall::initialize(init_data),
+					relay_wococo_client::runtime::Call::BridgeGrandpaBetanet(
+						relay_wococo_client::runtime::BridgeGrandpaBetanetCall::initialize(init_data),
 					)
 				}
 
 				$generic
 			}
-			InitBridgeName::WococoToRococo => {
+			InitBridgeName::WococoToBetanet => {
 				type Source = relay_wococo_client::Wococo;
-				type Target = relay_rococo_client::Betanet;
+				type Target = relay_betanet_client::Betanet;
 
 				fn encode_init_bridge(
 					init_data: InitializationData<<Source as ChainBase>::Header>,
 				) -> <Target as Chain>::Call {
-					relay_rococo_client::runtime::Call::BridgeGrandpaWococo(
-						relay_rococo_client::runtime::BridgeGrandpaWococoCall::initialize(init_data),
+					relay_betanet_client::runtime::Call::BridgeGrandpaWococo(
+						relay_betanet_client::runtime::BridgeGrandpaWococoCall::initialize(init_data),
 					)
 				}
 

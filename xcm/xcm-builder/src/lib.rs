@@ -27,22 +27,22 @@ mod tests;
 
 mod location_conversion;
 pub use location_conversion::{
-	Account32Hash, AccountId32Aliases, AccountKey20Aliases, ChildParachainConvertsVia,
-	LocationInverter, ParentIsDefault, SiblingParachainConvertsVia,
+	Account32Hash, AccountId32Aliases, AccountKey20Aliases, ChildAllychainConvertsVia,
+	LocationInverter, ParentIsDefault, SiblingAllychainConvertsVia,
 };
 
 mod origin_conversion;
 pub use origin_conversion::{
-	BackingToPlurality, ChildParachainAsNative, ChildSystemParachainAsSuperuser, EnsureXcmOrigin,
-	ParentAsSuperuser, RelayChainAsNative, SiblingParachainAsNative,
-	SiblingSystemParachainAsSuperuser, SignedAccountId32AsNative, SignedAccountKey20AsNative,
+	BackingToPlurality, ChildAllychainAsNative, ChildSystemAllychainAsSuperuser, EnsureXcmOrigin,
+	ParentAsSuperuser, RelayChainAsNative, SiblingAllychainAsNative,
+	SiblingSystemAllychainAsSuperuser, SignedAccountId32AsNative, SignedAccountKey20AsNative,
 	SignedToAccountId32, SovereignSignedViaLocation,
 };
 
 mod barriers;
 pub use barriers::{
 	AllowKnownQueryResponses, AllowSubscriptionsFrom, AllowTopLevelPaidExecutionFrom,
-	AllowUnpaidExecutionFrom, IsChildSystemParachain, TakeWeightCredit,
+	AllowUnpaidExecutionFrom, IsChildSystemAllychain, TakeWeightCredit,
 };
 
 mod currency_adapter;

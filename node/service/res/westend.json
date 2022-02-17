@@ -1,6 +1,6 @@
 {
   "name": "Alphanet",
-  "id": "westend2",
+  "id": "alphanet2",
   "bootNodes": [
     "/dns/0.alphanet.paritytech.net/tcp/30333/p2p/12D3KooWKer94o1REDPtAhjtYR4SdLehnSrN8PEhBnZm5NBoCrMC",
     "/dns/0.alphanet.paritytech.net/tcp/30334/ws/p2p/12D3KooWKer94o1REDPtAhjtYR4SdLehnSrN8PEhBnZm5NBoCrMC",

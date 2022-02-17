@@ -15,6 +15,6 @@
 
 //! A list of the different weight modules for our runtime.
 
-pub mod runtime_parachains_configuration;
-pub mod runtime_parachains_disputes;
-pub mod runtime_parachains_paras;
+pub mod runtime_allychains_configuration;
+pub mod runtime_allychains_disputes;
+pub mod runtime_allychains_paras;

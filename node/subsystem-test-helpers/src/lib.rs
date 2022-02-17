@@ -372,12 +372,12 @@ mod tests {
 	use super::*;
 	use futures::executor::block_on;
 	use axia_node_subsystem::messages::CollatorProtocolMessage;
-	use axia_overseer::{dummy::dummy_overseer_builder, Handle, HeadSupportsParachains};
+	use axia_overseer::{dummy::dummy_overseer_builder, Handle, HeadSupportsAllychains};
 	use axia_primitives::v1::Hash;
 
-	struct AlwaysSupportsParachains;
-	impl HeadSupportsParachains for AlwaysSupportsParachains {
-		fn head_supports_parachains(&self, _head: &Hash) -> bool {
+	struct AlwaysSupportsAllychains;
+	impl HeadSupportsAllychains for AlwaysSupportsAllychains {
+		fn head_supports_allychains(&self, _head: &Hash) -> bool {
 			true
 		}
 	}
@@ -387,7 +387,7 @@ mod tests {
 		let spawner = sp_core::testing::TaskExecutor::new();
 		let (tx, rx) = mpsc::channel(2);
 		let (overseer, handle) =
-			dummy_overseer_builder(spawner.clone(), AlwaysSupportsParachains, None)
+			dummy_overseer_builder(spawner.clone(), AlwaysSupportsAllychains, None)
 				.unwrap()
 				.replace_collator_protocol(|_| ForwardSubsystem(tx))
 				.leaves(vec![])

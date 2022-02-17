@@ -26,14 +26,14 @@ use axia_node_network_protocol::request_response::{v1 as request_v1, IncomingReq
 #[cfg(any(feature = "malus", test))]
 pub use axia_overseer::{
 	dummy::{dummy_overseer_builder, DummySubsystem},
-	HeadSupportsParachains,
+	HeadSupportsAllychains,
 };
 use axia_overseer::{
 	metrics::Metrics as OverseerMetrics, BlockInfo, MetricsTrait, Overseer, OverseerBuilder,
 	OverseerConnector, OverseerHandle,
 };
 
-use axia_primitives::v1::ParachainHost;
+use axia_primitives::v1::AllychainHost;
 use sc_authority_discovery::Service as AuthorityDiscoveryService;
 use sc_client_api::AuxStore;
 use sc_keystore::LocalKeystore;
@@ -68,7 +68,7 @@ pub use axia_statement_distribution::StatementDistribution as StatementDistribut
 pub struct OverseerGenArgs<'a, Spawner, RuntimeClient>
 where
 	RuntimeClient: 'static + ProvideRuntimeApi<Block> + HeaderBackend<Block> + AuxStore,
-	RuntimeClient::Api: ParachainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
+	RuntimeClient::Api: AllychainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
 	Spawner: 'static + SpawnNamed + Clone + Unpin,
 {
 	/// Set of initial relay chain leaves to track.
@@ -78,7 +78,7 @@ where
 	/// Runtime client generic, providing the `ProvieRuntimeApi` trait besides others.
 	pub runtime_client: Arc<RuntimeClient>,
 	/// The underlying key value store for the allychains.
-	pub parachains_db: Arc<dyn kvdb::KeyValueDB>,
+	pub allychains_db: Arc<dyn kvdb::KeyValueDB>,
 	/// Underlying network service implementation.
 	pub network_service: Arc<sc_network::NetworkService<Block, Hash>>,
 	/// Underlying authority discovery service.
@@ -116,7 +116,7 @@ pub fn prepared_overseer_builder<'a, Spawner, RuntimeClient>(
 		leaves,
 		keystore,
 		runtime_client,
-		parachains_db,
+		allychains_db,
 		network_service,
 		authority_discovery_service,
 		pov_req_receiver,
@@ -167,7 +167,7 @@ pub fn prepared_overseer_builder<'a, Spawner, RuntimeClient>(
 >
 where
 	RuntimeClient: 'static + ProvideRuntimeApi<Block> + HeaderBackend<Block> + AuxStore,
-	RuntimeClient::Api: ParachainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
+	RuntimeClient::Api: AllychainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
 	Spawner: 'static + SpawnNamed + Clone + Unpin,
 {
 	use axia_node_subsystem_util::metrics::Metrics;
@@ -186,7 +186,7 @@ where
 			Metrics::register(registry)?,
 		))
 		.availability_store(AvailabilityStoreSubsystem::new(
-			parachains_db.clone(),
+			allychains_db.clone(),
 			availability_config,
 			Metrics::register(registry)?,
 		))
@@ -244,7 +244,7 @@ where
 		.approval_distribution(ApprovalDistributionSubsystem::new(Metrics::register(registry)?))
 		.approval_voting(ApprovalVotingSubsystem::with_config(
 			approval_voting_config,
-			parachains_db.clone(),
+			allychains_db.clone(),
 			keystore.clone(),
 			Box::new(network_service.clone()),
 			Metrics::register(registry)?,
@@ -254,7 +254,7 @@ where
 			authority_discovery_service.clone(),
 		))
 		.dispute_coordinator(DisputeCoordinatorSubsystem::new(
-			parachains_db.clone(),
+			allychains_db.clone(),
 			dispute_coordinator_config,
 			keystore.clone(),
 			Metrics::register(registry)?,
@@ -266,7 +266,7 @@ where
 			authority_discovery_service.clone(),
 			Metrics::register(registry)?,
 		))
-		.chain_selection(ChainSelectionSubsystem::new(chain_selection_config, parachains_db))
+		.chain_selection(ChainSelectionSubsystem::new(chain_selection_config, allychains_db))
 		.leaves(Vec::from_iter(
 			leaves
 				.into_iter()
@@ -275,7 +275,7 @@ where
 		.activation_external_listeners(Default::default())
 		.span_per_active_leaf(Default::default())
 		.active_leaves(Default::default())
-		.supports_parachains(runtime_client)
+		.supports_allychains(runtime_client)
 		.known_leaves(LruCache::new(KNOWN_LEAVES_CACHE_SIZE))
 		.metrics(metrics)
 		.spawner(spawner);
@@ -295,7 +295,7 @@ pub trait OverseerGen {
 	) -> Result<(Overseer<Spawner, Arc<RuntimeClient>>, OverseerHandle), Error>
 	where
 		RuntimeClient: 'static + ProvideRuntimeApi<Block> + HeaderBackend<Block> + AuxStore,
-		RuntimeClient::Api: ParachainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
+		RuntimeClient::Api: AllychainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
 		Spawner: 'static + SpawnNamed + Clone + Unpin,
 	{
 		let gen = RealOverseerGen;
@@ -319,7 +319,7 @@ impl OverseerGen for RealOverseerGen {
 	) -> Result<(Overseer<Spawner, Arc<RuntimeClient>>, OverseerHandle), Error>
 	where
 		RuntimeClient: 'static + ProvideRuntimeApi<Block> + HeaderBackend<Block> + AuxStore,
-		RuntimeClient::Api: ParachainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
+		RuntimeClient::Api: AllychainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
 		Spawner: 'static + SpawnNamed + Clone + Unpin,
 	{
 		prepared_overseer_builder(args)?

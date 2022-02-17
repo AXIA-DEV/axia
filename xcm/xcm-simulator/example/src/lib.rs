@@ -17,14 +17,14 @@
 mod allychain;
 mod relay_chain;
 
-use axia_parachain::primitives::Id as ParaId;
+use axia_allychain::primitives::Id as ParaId;
 use sp_runtime::traits::AccountIdConversion;
-use xcm_simulator::{decl_test_network, decl_test_parachain, decl_test_relay_chain};
+use xcm_simulator::{decl_test_network, decl_test_allychain, decl_test_relay_chain};
 
 pub const ALICE: sp_runtime::AccountId32 = sp_runtime::AccountId32::new([0u8; 32]);
 pub const INITIAL_BALANCE: u128 = 1_000_000_000;
 
-decl_test_parachain! {
+decl_test_allychain! {
 	pub struct ParaA {
 		Runtime = allychain::Runtime,
 		XcmpMessageHandler = allychain::MsgQueue,
@@ -33,7 +33,7 @@ decl_test_parachain! {
 	}
 }
 
-decl_test_parachain! {
+decl_test_allychain! {
 	pub struct ParaB {
 		Runtime = allychain::Runtime,
 		XcmpMessageHandler = allychain::MsgQueue,
@@ -98,7 +98,7 @@ pub fn relay_ext() -> sp_io::TestExternalities {
 }
 
 pub type RelayChainPalletXcm = pallet_xcm::Pallet<relay_chain::Runtime>;
-pub type ParachainPalletXcm = pallet_xcm::Pallet<allychain::Runtime>;
+pub type AllychainPalletXcm = pallet_xcm::Pallet<allychain::Runtime>;
 
 #[cfg(test)]
 mod tests {
@@ -150,7 +150,7 @@ mod tests {
 			frame_system::Call::<relay_chain::Runtime>::remark_with_event { remark: vec![1, 2, 3] },
 		);
 		ParaA::execute_with(|| {
-			assert_ok!(ParachainPalletXcm::send_xcm(
+			assert_ok!(AllychainPalletXcm::send_xcm(
 				Here,
 				Parent,
 				Xcm(vec![Transact {
@@ -178,7 +178,7 @@ mod tests {
 				remark: vec![1, 2, 3],
 			});
 		ParaA::execute_with(|| {
-			assert_ok!(ParachainPalletXcm::send_xcm(
+			assert_ok!(AllychainPalletXcm::send_xcm(
 				Here,
 				(Parent, Allychain(2)),
 				Xcm(vec![Transact {
@@ -247,7 +247,7 @@ mod tests {
 				},
 			]);
 			// Send withdraw and deposit
-			assert_ok!(ParachainPalletXcm::send_xcm(Here, Parent, message.clone()));
+			assert_ok!(AllychainPalletXcm::send_xcm(Here, Parent, message.clone()));
 		});
 
 		Relay::execute_with(|| {
@@ -289,7 +289,7 @@ mod tests {
 				},
 			]);
 			// Send withdraw and deposit with query holding
-			assert_ok!(ParachainPalletXcm::send_xcm(Here, Parent, message.clone(),));
+			assert_ok!(AllychainPalletXcm::send_xcm(Here, Parent, message.clone(),));
 		});
 
 		// Check that transfer was executed

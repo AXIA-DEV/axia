@@ -96,7 +96,7 @@ pub struct HostConfiguration<BlockNumber> {
 	/// NOTE that this is a soft limit and could be exceeded.
 	pub ump_service_total_weight: Weight,
 	/// The maximum number of outbound HRMP channels a allychain is allowed to open.
-	pub hrmp_max_parachain_outbound_channels: u32,
+	pub hrmp_max_allychain_outbound_channels: u32,
 	/// The maximum number of outbound HRMP channels a parathread is allowed to open.
 	pub hrmp_max_parathread_outbound_channels: u32,
 	/// The deposit that the sender should provide for opening an HRMP channel.
@@ -108,7 +108,7 @@ pub struct HostConfiguration<BlockNumber> {
 	/// The maximum total size of messages in bytes allowed in an HRMP channel at once.
 	pub hrmp_channel_max_total_size: u32,
 	/// The maximum number of inbound HRMP channels a allychain is allowed to accept.
-	pub hrmp_max_parachain_inbound_channels: u32,
+	pub hrmp_max_allychain_inbound_channels: u32,
 	/// The maximum number of inbound HRMP channels a parathread is allowed to accept.
 	pub hrmp_max_parathread_inbound_channels: u32,
 	/// The maximum size of a message that could ever be put into an HRMP channel.
@@ -215,10 +215,10 @@ impl<BlockNumber: Default + From<u32>> Default for HostConfiguration<BlockNumber
 			hrmp_recipient_deposit: Default::default(),
 			hrmp_channel_max_capacity: Default::default(),
 			hrmp_channel_max_total_size: Default::default(),
-			hrmp_max_parachain_inbound_channels: Default::default(),
+			hrmp_max_allychain_inbound_channels: Default::default(),
 			hrmp_max_parathread_inbound_channels: Default::default(),
 			hrmp_channel_max_message_size: Default::default(),
-			hrmp_max_parachain_outbound_channels: Default::default(),
+			hrmp_max_allychain_outbound_channels: Default::default(),
 			hrmp_max_parathread_outbound_channels: Default::default(),
 			hrmp_max_message_num_per_candidate: Default::default(),
 			ump_max_individual_weight: 20 * WEIGHT_PER_MILLIS,
@@ -847,13 +847,13 @@ pub mod pallet {
 			T::WeightInfo::set_config_with_u32(),
 			DispatchClass::Operational,
 		))]
-		pub fn set_hrmp_max_parachain_inbound_channels(
+		pub fn set_hrmp_max_allychain_inbound_channels(
 			origin: OriginFor<T>,
 			new: u32,
 		) -> DispatchResult {
 			ensure_root(origin)?;
 			Self::update_config_member(|config| {
-				sp_std::mem::replace(&mut config.hrmp_max_parachain_inbound_channels, new) != new
+				sp_std::mem::replace(&mut config.hrmp_max_allychain_inbound_channels, new) != new
 			});
 			Ok(())
 		}
@@ -892,13 +892,13 @@ pub mod pallet {
 			T::WeightInfo::set_config_with_u32(),
 			DispatchClass::Operational,
 		))]
-		pub fn set_hrmp_max_parachain_outbound_channels(
+		pub fn set_hrmp_max_allychain_outbound_channels(
 			origin: OriginFor<T>,
 			new: u32,
 		) -> DispatchResult {
 			ensure_root(origin)?;
 			Self::update_config_member(|config| {
-				sp_std::mem::replace(&mut config.hrmp_max_parachain_outbound_channels, new) != new
+				sp_std::mem::replace(&mut config.hrmp_max_allychain_outbound_channels, new) != new
 			});
 			Ok(())
 		}
@@ -1079,10 +1079,10 @@ mod tests {
 				hrmp_recipient_deposit: 4905,
 				hrmp_channel_max_capacity: 3921,
 				hrmp_channel_max_total_size: 7687,
-				hrmp_max_parachain_inbound_channels: 3722,
+				hrmp_max_allychain_inbound_channels: 3722,
 				hrmp_max_parathread_inbound_channels: 1967,
 				hrmp_channel_max_message_size: 8192,
-				hrmp_max_parachain_outbound_channels: 100,
+				hrmp_max_allychain_outbound_channels: 100,
 				hrmp_max_parathread_outbound_channels: 200,
 				hrmp_max_message_num_per_candidate: 20,
 				ump_max_individual_weight: 909,
@@ -1217,9 +1217,9 @@ mod tests {
 				new_config.hrmp_channel_max_total_size,
 			)
 			.unwrap();
-			Configuration::set_hrmp_max_parachain_inbound_channels(
+			Configuration::set_hrmp_max_allychain_inbound_channels(
 				Origin::root(),
-				new_config.hrmp_max_parachain_inbound_channels,
+				new_config.hrmp_max_allychain_inbound_channels,
 			)
 			.unwrap();
 			Configuration::set_hrmp_max_parathread_inbound_channels(
@@ -1232,9 +1232,9 @@ mod tests {
 				new_config.hrmp_channel_max_message_size,
 			)
 			.unwrap();
-			Configuration::set_hrmp_max_parachain_outbound_channels(
+			Configuration::set_hrmp_max_allychain_outbound_channels(
 				Origin::root(),
-				new_config.hrmp_max_parachain_outbound_channels,
+				new_config.hrmp_max_allychain_outbound_channels,
 			)
 			.unwrap();
 			Configuration::set_hrmp_max_parathread_outbound_channels(

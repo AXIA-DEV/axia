@@ -25,7 +25,7 @@ use axctest_runtime::Runtime as AxiaTestRuntime;
 use axia_runtime::Runtime as AxiaRuntime;
 use std::path::{Path, PathBuf};
 use structopt::{clap::arg_enum, StructOpt};
-use westend_runtime::Runtime as WestendRuntime;
+use alphanet_runtime::Runtime as AlphanetRuntime;
 
 arg_enum! {
 	#[derive(Debug)]
@@ -41,7 +41,7 @@ impl Runtime {
 		&self,
 	) -> Box<dyn FnOnce(usize, &Path, u128, u128) -> Result<(), std::io::Error>> {
 		match self {
-			Runtime::Alphanet => Box::new(generate_thresholds::<WestendRuntime>),
+			Runtime::Alphanet => Box::new(generate_thresholds::<AlphanetRuntime>),
 			Runtime::AxiaTest => Box::new(generate_thresholds::<AxiaTestRuntime>),
 			Runtime::Axia => Box::new(generate_thresholds::<AxiaRuntime>),
 		}

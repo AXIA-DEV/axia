@@ -20,7 +20,7 @@ use crate::finality_pipeline::{AxlibFinalitySyncPipeline, AxlibFinalityToAxlib};
 
 use bp_header_chain::justification::GrandpaJustification;
 use codec::Encode;
-use relay_rococo_client::{Betanet, SigningParams as RococoSigningParams};
+use relay_betanet_client::{Betanet, SigningParams as BetanetSigningParams};
 use relay_axlib_client::{Chain, TransactionSignScheme};
 use relay_utils::metrics::MetricsParams;
 use relay_wococo_client::{SyncHeader as WococoSyncHeader, Wococo};
@@ -31,12 +31,12 @@ use sp_core::{Bytes, Pair};
 ///
 /// See `maximal_balance_decrease_per_day_is_sane` test for details.
 /// Note that this is in plancks, so this corresponds to `1500 UNITS`.
-pub(crate) const MAXIMAL_BALANCE_DECREASE_PER_DAY: bp_rococo::Balance = 1_500_000_000_000_000;
+pub(crate) const MAXIMAL_BALANCE_DECREASE_PER_DAY: bp_betanet::Balance = 1_500_000_000_000_000;
 
 /// Wococo-to-Betanet finality sync pipeline.
-pub(crate) type WococoFinalityToRococo = AxlibFinalityToAxlib<Wococo, Betanet, RococoSigningParams>;
+pub(crate) type WococoFinalityToBetanet = AxlibFinalityToAxlib<Wococo, Betanet, BetanetSigningParams>;
 
-impl AxlibFinalitySyncPipeline for WococoFinalityToRococo {
+impl AxlibFinalitySyncPipeline for WococoFinalityToBetanet {
 	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_wococo::BEST_FINALIZED_WOCOCO_HEADER_METHOD;
 
 	type TargetChain = Betanet;
@@ -48,7 +48,7 @@ impl AxlibFinalitySyncPipeline for WococoFinalityToRococo {
 	fn start_relay_guards(&self) {
 		relay_axlib_client::guard::abort_on_spec_version_change(
 			self.target_client.clone(),
-			bp_rococo::VERSION.spec_version,
+			bp_betanet::VERSION.spec_version,
 		);
 		relay_axlib_client::guard::abort_when_account_balance_decreased(
 			self.target_client.clone(),
@@ -57,7 +57,7 @@ impl AxlibFinalitySyncPipeline for WococoFinalityToRococo {
 		);
 	}
 
-	fn transactions_author(&self) -> bp_rococo::AccountId {
+	fn transactions_author(&self) -> bp_betanet::AccountId {
 		(*self.target_sign.public().as_array_ref()).into()
 	}
 
@@ -67,8 +67,8 @@ impl AxlibFinalitySyncPipeline for WococoFinalityToRococo {
 		header: WococoSyncHeader,
 		proof: GrandpaJustification<bp_wococo::Header>,
 	) -> Bytes {
-		let call = relay_rococo_client::runtime::Call::BridgeGrandpaWococo(
-			relay_rococo_client::runtime::BridgeGrandpaWococoCall::submit_finality_proof(header.into_inner(), proof),
+		let call = relay_betanet_client::runtime::Call::BridgeGrandpaWococo(
+			relay_betanet_client::runtime::BridgeGrandpaWococoCall::submit_finality_proof(header.into_inner(), proof),
 		);
 		let genesis_hash = *self.target_client.genesis_hash();
 		let transaction = Betanet::sign_transaction(genesis_hash, &self.target_sign, transaction_nonce, call);
@@ -89,7 +89,7 @@ mod tests {
 		//
 		// Using Rialto runtime this is slightly incorrect, because `DbWeight` of Betanet/Wococo runtime may differ
 		// from the `DbWeight` of Rialto runtime. But now (and most probably forever) it is the same.
-		type RococoGrandpaPalletWeights = pallet_bridge_grandpa::weights::RialtoWeight<rialto_runtime::Runtime>;
+		type BetanetGrandpaPalletWeights = pallet_bridge_grandpa::weights::RialtoWeight<rialto_runtime::Runtime>;
 
 		// The following formula shall not be treated as super-accurate - guard is to protect from mad relays,
 		// not to protect from over-average loses.
@@ -101,10 +101,10 @@ mod tests {
 		const AVG_PRECOMMITS_LEN: u32 = 1024 * 2 / 3 + 1;
 		let number_of_source_headers_per_day: bp_wococo::Balance = bp_wococo::DAYS as _;
 		let single_source_header_submit_call_weight =
-			RococoGrandpaPalletWeights::submit_finality_proof(AVG_VOTES_ANCESTRIES_LEN, AVG_PRECOMMITS_LEN);
+			BetanetGrandpaPalletWeights::submit_finality_proof(AVG_VOTES_ANCESTRIES_LEN, AVG_PRECOMMITS_LEN);
 		// for simplicity - add extra weight for base tx fee + fee that is paid for the tx size + adjusted fee
 		let single_source_header_submit_tx_weight = single_source_header_submit_call_weight * 3 / 2;
-		let single_source_header_tx_cost = bp_rococo::WeightToFee::calc(&single_source_header_submit_tx_weight);
+		let single_source_header_tx_cost = bp_betanet::WeightToFee::calc(&single_source_header_submit_tx_weight);
 		let maximal_expected_decrease = single_source_header_tx_cost * number_of_source_headers_per_day;
 		assert!(
 			MAXIMAL_BALANCE_DECREASE_PER_DAY >= maximal_expected_decrease,

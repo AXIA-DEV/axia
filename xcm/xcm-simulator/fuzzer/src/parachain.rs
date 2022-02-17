@@ -32,14 +32,14 @@ use sp_std::{convert::TryFrom, prelude::*};
 
 use pallet_xcm::XcmPassthrough;
 use axia_core_primitives::BlockNumber as RelayBlockNumber;
-use axia_parachain::primitives::{
+use axia_allychain::primitives::{
 	DmpMessageHandler, Id as ParaId, Sibling, XcmpMessageFormat, XcmpMessageHandler,
 };
 use xcm::{latest::prelude::*, VersionedXcm};
 use xcm_builder::{
 	AccountId32Aliases, AllowUnpaidExecutionFrom, CurrencyAdapter as XcmCurrencyAdapter,
 	EnsureXcmOrigin, FixedRateOfFungible, FixedWeightBounds, IsConcrete, LocationInverter,
-	NativeAsset, ParentIsDefault, SiblingParachainConvertsVia, SignedAccountId32AsNative,
+	NativeAsset, ParentIsDefault, SiblingAllychainConvertsVia, SignedAccountId32AsNative,
 	SignedToAccountId32, SovereignSignedViaLocation,
 };
 use xcm_executor::{Config, XcmExecutor};
@@ -103,12 +103,12 @@ parameter_types! {
 parameter_types! {
 	pub const AxctLocation: MultiLocation = MultiLocation::parent();
 	pub const RelayNetwork: NetworkId = NetworkId::AxiaTest;
-	pub Ancestry: MultiLocation = Allychain(MsgQueue::parachain_id().into()).into();
+	pub Ancestry: MultiLocation = Allychain(MsgQueue::allychain_id().into()).into();
 }
 
 pub type LocationToAccountId = (
 	ParentIsDefault<AccountId>,
-	SiblingParachainConvertsVia<Sibling, AccountId>,
+	SiblingAllychainConvertsVia<Sibling, AccountId>,
 	AccountId32Aliases<RelayNetwork, AccountId>,
 );
 
@@ -127,7 +127,7 @@ parameter_types! {
 pub type LocalAssetTransactor =
 	XcmCurrencyAdapter<Balances, IsConcrete<AxctLocation>, LocationToAccountId, AccountId, ()>;
 
-pub type XcmRouter = super::ParachainXcmRouter<MsgQueue>;
+pub type XcmRouter = super::AllychainXcmRouter<MsgQueue>;
 pub type Barrier = AllowUnpaidExecutionFrom<Everything>;
 
 pub struct XcmConfig;
@@ -167,8 +167,8 @@ pub mod mock_msg_queue {
 	pub struct Pallet<T>(_);
 
 	#[pallet::storage]
-	#[pallet::getter(fn parachain_id)]
-	pub(super) type ParachainId<T: Config> = StorageValue<_, ParaId, ValueQuery>;
+	#[pallet::getter(fn allychain_id)]
+	pub(super) type AllychainId<T: Config> = StorageValue<_, ParaId, ValueQuery>;
 
 	#[pallet::storage]
 	#[pallet::getter(fn received_dmp)]
@@ -177,7 +177,7 @@ pub mod mock_msg_queue {
 
 	impl<T: Config> Get<ParaId> for Pallet<T> {
 		fn get() -> ParaId {
-			Self::parachain_id()
+			Self::allychain_id()
 		}
 	}
 
@@ -207,7 +207,7 @@ pub mod mock_msg_queue {
 
 	impl<T: Config> Pallet<T> {
 		pub fn set_para_id(para_id: ParaId) {
-			ParachainId::<T>::put(para_id);
+			AllychainId::<T>::put(para_id);
 		}
 
 		fn handle_xcmp_message(

@@ -41,7 +41,7 @@ use axia_primitives::v1::{
 	ValidatorIndex, MAX_CODE_SIZE, MAX_POV_SIZE,
 };
 
-pub use axia_parachain::primitives::BlockData;
+pub use axia_allychain::primitives::BlockData;
 
 pub mod approval;
 

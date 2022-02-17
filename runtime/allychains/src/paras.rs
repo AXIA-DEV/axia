@@ -39,7 +39,7 @@ use sp_std::{prelude::*, result};
 #[cfg(feature = "std")]
 use serde::{Deserialize, Serialize};
 
-pub use crate::Origin as ParachainOrigin;
+pub use crate::Origin as AllychainOrigin;
 
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
@@ -102,11 +102,11 @@ pub enum ParaLifecycle {
 	/// Para is a Parathread which is upgrading to a Allychain.
 	UpgradingParathread,
 	/// Para is a Allychain which is downgrading to a Parathread.
-	DowngradingParachain,
+	DowngradingAllychain,
 	/// Parathread is queued to be offboarded.
 	OffboardingParathread,
 	/// Allychain is queued to be offboarded.
-	OffboardingParachain,
+	OffboardingAllychain,
 }
 
 impl ParaLifecycle {
@@ -126,12 +126,12 @@ impl ParaLifecycle {
 	/// Returns true if para is currently treated as a allychain.
 	/// This also includes transitioning states, so you may want to combine
 	/// this check with `is_stable` if you specifically want `Paralifecycle::Allychain`.
-	pub fn is_parachain(&self) -> bool {
+	pub fn is_allychain(&self) -> bool {
 		matches!(
 			self,
 			ParaLifecycle::Allychain |
-				ParaLifecycle::DowngradingParachain |
-				ParaLifecycle::OffboardingParachain
+				ParaLifecycle::DowngradingAllychain |
+				ParaLifecycle::OffboardingAllychain
 		)
 	}
 
@@ -149,7 +149,7 @@ impl ParaLifecycle {
 
 	/// Returns true if para is currently offboarding.
 	pub fn is_offboarding(&self) -> bool {
-		matches!(self, ParaLifecycle::OffboardingParathread | ParaLifecycle::OffboardingParachain)
+		matches!(self, ParaLifecycle::OffboardingParathread | ParaLifecycle::OffboardingAllychain)
 	}
 
 	/// Returns true if para is in any transitionary state.
@@ -518,7 +518,7 @@ pub mod pallet {
 	}
 
 	#[pallet::origin]
-	pub type Origin = ParachainOrigin;
+	pub type Origin = AllychainOrigin;
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
@@ -681,14 +681,14 @@ impl<T: Config> Pallet<T> {
 					ParaLifecycles::<T>::insert(&para, ParaLifecycle::Allychain);
 				},
 				// Downgrade a allychain to a parathread
-				Some(ParaLifecycle::DowngradingParachain) => {
+				Some(ParaLifecycle::DowngradingAllychain) => {
 					if let Ok(i) = allychains.binary_search(&para) {
 						allychains.remove(i);
 					}
 					ParaLifecycles::<T>::insert(&para, ParaLifecycle::Parathread);
 				},
 				// Offboard a parathread or allychain from the system
-				Some(ParaLifecycle::OffboardingParachain) |
+				Some(ParaLifecycle::OffboardingAllychain) |
 				Some(ParaLifecycle::OffboardingParathread) => {
 					if let Ok(i) = allychains.binary_search(&para) {
 						allychains.remove(i);
@@ -897,7 +897,7 @@ impl<T: Config> Pallet<T> {
 				ParaLifecycles::<T>::insert(&id, ParaLifecycle::OffboardingParathread);
 			},
 			Some(ParaLifecycle::Allychain) => {
-				ParaLifecycles::<T>::insert(&id, ParaLifecycle::OffboardingParachain);
+				ParaLifecycles::<T>::insert(&id, ParaLifecycle::OffboardingAllychain);
 			},
 			_ => return Err(Error::<T>::CannotOffboard)?,
 		}
@@ -934,13 +934,13 @@ impl<T: Config> Pallet<T> {
 	/// Schedule a allychain to be downgraded to a parathread.
 	///
 	/// Noop if `ParaLifecycle` is not `Allychain`.
-	pub(crate) fn schedule_parachain_downgrade(id: ParaId) -> DispatchResult {
+	pub(crate) fn schedule_allychain_downgrade(id: ParaId) -> DispatchResult {
 		let scheduled_session = Self::scheduled_session();
 		let lifecycle = ParaLifecycles::<T>::get(&id).ok_or(Error::<T>::NotRegistered)?;
 
 		ensure!(lifecycle == ParaLifecycle::Allychain, Error::<T>::CannotDowngrade);
 
-		ParaLifecycles::<T>::insert(&id, ParaLifecycle::DowngradingParachain);
+		ParaLifecycles::<T>::insert(&id, ParaLifecycle::DowngradingAllychain);
 		ActionsQueue::<T>::mutate(scheduled_session, |v| {
 			if let Err(i) = v.binary_search(&id) {
 				v.insert(i, id);
@@ -1095,9 +1095,9 @@ impl<T: Config> Pallet<T> {
 	/// Whether a para ID corresponds to any live allychain.
 	///
 	/// Includes allychains which will downgrade to a parathread in the future.
-	pub fn is_parachain(id: ParaId) -> bool {
+	pub fn is_allychain(id: ParaId) -> bool {
 		if let Some(state) = ParaLifecycles::<T>::get(&id) {
-			state.is_parachain()
+			state.is_allychain()
 		} else {
 			false
 		}
@@ -1753,7 +1753,7 @@ mod tests {
 	}
 
 	#[test]
-	fn full_parachain_cleanup_storage() {
+	fn full_allychain_cleanup_storage() {
 		let code_retention_period = 10;
 		let validation_upgrade_delay = 1 + 5;
 

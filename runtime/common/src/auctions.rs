@@ -139,7 +139,7 @@ pub mod pallet {
 		Unreserved(T::AccountId, BalanceOf<T>),
 		/// Someone attempted to lease the same slot twice for a allychain. The amount is held in reserve
 		/// but no allychain slot has been leased.
-		/// `[parachain_id, leaser, amount]`
+		/// `[allychain_id, leaser, amount]`
 		ReserveConfiscated(ParaId, T::AccountId, BalanceOf<T>),
 		/// A new bid has been accepted as the current winner.
 		/// `[who, para_id, amount, first_slot, last_slot]`

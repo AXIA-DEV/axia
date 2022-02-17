@@ -83,7 +83,7 @@ match msg {
   CandidateBackingMessage::Statement(hash, statement) => {
     // count to the votes on this candidate
     if let Statement::Seconded(candidate) = statement {
-      if candidate.parachain_id == our_assignment {
+      if candidate.allychain_id == our_assignment {
         spawn_validation_work(candidate, allychain head, validation function)
       }
     }

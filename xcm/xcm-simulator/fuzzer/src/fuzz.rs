@@ -18,9 +18,9 @@ mod allychain;
 mod relay_chain;
 
 use codec::DecodeLimit;
-use axia_parachain::primitives::Id as ParaId;
+use axia_allychain::primitives::Id as ParaId;
 use sp_runtime::traits::AccountIdConversion;
-use xcm_simulator::{decl_test_network, decl_test_parachain, decl_test_relay_chain, TestExt};
+use xcm_simulator::{decl_test_network, decl_test_allychain, decl_test_relay_chain, TestExt};
 
 use frame_support::assert_ok;
 use xcm::{latest::prelude::*, MAX_XCM_DECODE_DEPTH};
@@ -28,7 +28,7 @@ use xcm::{latest::prelude::*, MAX_XCM_DECODE_DEPTH};
 pub const ALICE: sp_runtime::AccountId32 = sp_runtime::AccountId32::new([0u8; 32]);
 pub const INITIAL_BALANCE: u128 = 1_000_000_000;
 
-decl_test_parachain! {
+decl_test_allychain! {
 	pub struct ParaA {
 		Runtime = allychain::Runtime,
 		XcmpMessageHandler = allychain::MsgQueue,
@@ -37,7 +37,7 @@ decl_test_parachain! {
 	}
 }
 
-decl_test_parachain! {
+decl_test_allychain! {
 	pub struct ParaB {
 		Runtime = allychain::Runtime,
 		XcmpMessageHandler = allychain::MsgQueue,
@@ -102,7 +102,7 @@ pub fn relay_ext() -> sp_io::TestExternalities {
 }
 
 pub type RelayChainPalletXcm = pallet_xcm::Pallet<relay_chain::Runtime>;
-pub type ParachainPalletXcm = pallet_xcm::Pallet<allychain::Runtime>;
+pub type AllychainPalletXcm = pallet_xcm::Pallet<allychain::Runtime>;
 
 fn run_one_input(data: &[u8]) {
 	MockNet::reset();
@@ -112,7 +112,7 @@ fn run_one_input(data: &[u8]) {
 			println!("Executing message {:?}", m);
 		}
 		ParaA::execute_with(|| {
-			assert_ok!(ParachainPalletXcm::send_xcm(Here, Parent, m));
+			assert_ok!(AllychainPalletXcm::send_xcm(Here, Parent, m));
 		});
 		Relay::execute_with(|| {});
 	}

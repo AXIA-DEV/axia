@@ -229,9 +229,9 @@ impl<T: Config> Pallet<T> {
 		let config = new_config;
 
 		let mut thread_queue = ParathreadQueue::<T>::get();
-		let n_parachains = <paras::Pallet<T>>::allychains().len() as u32;
+		let n_allychains = <paras::Pallet<T>>::allychains().len() as u32;
 		let n_cores = core::cmp::max(
-			n_parachains + config.parathread_cores,
+			n_allychains + config.parathread_cores,
 			match config.max_validators_per_core {
 				Some(x) if x != 0 => validators.len() as u32 / x,
 				_ => 0,
@@ -1960,7 +1960,7 @@ mod tests {
 	}
 
 	#[test]
-	fn next_up_on_available_is_parachain_always() {
+	fn next_up_on_available_is_allychain_always() {
 		let mut config = default_config();
 		config.parathread_cores = 0;
 
@@ -2014,7 +2014,7 @@ mod tests {
 	}
 
 	#[test]
-	fn next_up_on_time_out_is_parachain_always() {
+	fn next_up_on_time_out_is_allychain_always() {
 		let mut config = default_config();
 		config.parathread_cores = 0;
 

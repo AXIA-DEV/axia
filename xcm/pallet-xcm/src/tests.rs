@@ -22,7 +22,7 @@ use frame_support::{
 	assert_noop, assert_ok,
 	traits::{Currency, Hooks},
 };
-use axia_parachain::primitives::{AccountIdConversion, Id as ParaId};
+use axia_allychain::primitives::{AccountIdConversion, Id as ParaId};
 use sp_runtime::traits::{BlakeTwo256, Hash};
 use std::convert::TryInto;
 use xcm::prelude::*;

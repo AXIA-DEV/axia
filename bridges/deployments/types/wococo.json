@@ -4,12 +4,12 @@
 	"Hash": "WococoBlockHash",
 	"BlockHash": "WococoBlockHash",
 	"BlockNumber": "WococoBlockNumber",
-	"BridgedBlockHash": "RococoBlockHash",
-	"BridgedBlockNumber": "RococoBlockNumber",
-	"BridgedHeader": "RococoHeader",
+	"BridgedBlockHash": "BetanetBlockHash",
+	"BridgedBlockNumber": "BetanetBlockNumber",
+	"BridgedHeader": "BetanetHeader",
 	"Parameter": {
 		"_enum": {
-			"WococoToRococoConversionRate": "u128"
+			"WococoToBetanetConversionRate": "u128"
 		}
 	}
 }

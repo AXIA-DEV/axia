@@ -33,8 +33,8 @@ use frame_support::{
 };
 use frame_system::pallet_prelude::*;
 use primitives::v1::{
-	BackedCandidate, InherentData as ParachainsInherentData, ScrapedOnChainVotes,
-	PARACHAINS_INHERENT_IDENTIFIER,
+	BackedCandidate, InherentData as AllychainsInherentData, ScrapedOnChainVotes,
+	ALLYCHAINS_INHERENT_IDENTIFIER,
 };
 use sp_runtime::traits::Header as HeaderT;
 use sp_std::prelude::*;
@@ -102,15 +102,15 @@ pub mod pallet {
 	impl<T: Config> ProvideInherent for Pallet<T> {
 		type Call = Call<T>;
 		type Error = MakeFatalError<()>;
-		const INHERENT_IDENTIFIER: InherentIdentifier = PARACHAINS_INHERENT_IDENTIFIER;
+		const INHERENT_IDENTIFIER: InherentIdentifier = ALLYCHAINS_INHERENT_IDENTIFIER;
 
 		fn create_inherent(data: &InherentData) -> Option<Self::Call> {
-			let mut inherent_data: ParachainsInherentData<T::Header> =
+			let mut inherent_data: AllychainsInherentData<T::Header> =
 				match data.get_data(&Self::INHERENT_IDENTIFIER) {
 					Ok(Some(d)) => d,
 					Ok(None) => return None,
 					Err(_) => {
-						log::warn!(target: LOG_TARGET, "ParachainsInherentData failed to decode");
+						log::warn!(target: LOG_TARGET, "AllychainsInherentData failed to decode");
 
 						return None
 					},
@@ -132,7 +132,7 @@ pub mod pallet {
 						err.error,
 					);
 
-						ParachainsInherentData {
+						AllychainsInherentData {
 							bitfields: Vec::new(),
 							backed_candidates: Vec::new(),
 							disputes: Vec::new(),
@@ -158,9 +158,9 @@ pub mod pallet {
 		))]
 		pub fn enter(
 			origin: OriginFor<T>,
-			data: ParachainsInherentData<T::Header>,
+			data: AllychainsInherentData<T::Header>,
 		) -> DispatchResultWithPostInfo {
-			let ParachainsInherentData {
+			let AllychainsInherentData {
 				bitfields: signed_bitfields,
 				backed_candidates,
 				parent_header,
@@ -458,7 +458,7 @@ mod tests {
 
 				// execute the paras inherent
 				let post_info = Call::<Test>::enter {
-					data: ParachainsInherentData {
+					data: AllychainsInherentData {
 						bitfields: signed_bitfields,
 						backed_candidates,
 						disputes: Vec::new(),
@@ -508,7 +508,7 @@ mod tests {
 
 				// execute the paras inherent
 				let post_info = Call::<Test>::enter {
-					data: ParachainsInherentData {
+					data: AllychainsInherentData {
 						bitfields: signed_bitfields,
 						backed_candidates,
 						disputes: Vec::new(),

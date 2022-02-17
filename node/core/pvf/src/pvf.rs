@@ -15,7 +15,7 @@
 // along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::artifacts::ArtifactId;
-use axia_parachain::primitives::ValidationCodeHash;
+use axia_allychain::primitives::ValidationCodeHash;
 use sp_core::blake2_256;
 use std::{fmt, sync::Arc};
 

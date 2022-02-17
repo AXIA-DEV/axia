@@ -16,7 +16,7 @@
 
 use crate::{
 	configuration::{self, HostConfiguration},
-	dmp, ensure_parachain, initializer, paras,
+	dmp, ensure_allychain, initializer, paras,
 };
 use frame_support::{pallet_prelude::*, traits::ReservableCurrency};
 use frame_system::pallet_prelude::*;
@@ -204,11 +204,11 @@ pub mod pallet {
 		/// `[sender, recipient, proposed_max_capacity, proposed_max_message_size]`
 		OpenChannelRequested(ParaId, ParaId, u32, u32),
 		/// An HRMP channel request sent by the receiver was canceled by either party.
-		/// `[by_parachain, channel_id]`
+		/// `[by_allychain, channel_id]`
 		OpenChannelCanceled(ParaId, HrmpChannelId),
 		/// Open HRMP channel accepted. `[sender, recipient]`
 		OpenChannelAccepted(ParaId, ParaId),
-		/// HRMP channel closed. `[by_parachain, channel_id]`
+		/// HRMP channel closed. `[by_allychain, channel_id]`
 		ChannelClosed(ParaId, HrmpChannelId),
 	}
 
@@ -400,7 +400,7 @@ pub mod pallet {
 			proposed_max_capacity: u32,
 			proposed_max_message_size: u32,
 		) -> DispatchResult {
-			let origin = ensure_parachain(<T as Config>::Origin::from(origin))?;
+			let origin = ensure_allychain(<T as Config>::Origin::from(origin))?;
 			Self::init_open_channel(
 				origin,
 				recipient,
@@ -421,7 +421,7 @@ pub mod pallet {
 		/// The channel will be opened only on the next session boundary.
 		#[pallet::weight(0)]
 		pub fn hrmp_accept_open_channel(origin: OriginFor<T>, sender: ParaId) -> DispatchResult {
-			let origin = ensure_parachain(<T as Config>::Origin::from(origin))?;
+			let origin = ensure_allychain(<T as Config>::Origin::from(origin))?;
 			Self::accept_open_channel(origin, sender)?;
 			Self::deposit_event(Event::OpenChannelAccepted(sender, origin));
 			Ok(())
@@ -436,7 +436,7 @@ pub mod pallet {
 			origin: OriginFor<T>,
 			channel_id: HrmpChannelId,
 		) -> DispatchResult {
-			let origin = ensure_parachain(<T as Config>::Origin::from(origin))?;
+			let origin = ensure_allychain(<T as Config>::Origin::from(origin))?;
 			Self::close_channel(origin, channel_id.clone())?;
 			Self::deposit_event(Event::ChannelClosed(origin, channel_id));
 			Ok(())
@@ -487,7 +487,7 @@ pub mod pallet {
 			origin: OriginFor<T>,
 			channel_id: HrmpChannelId,
 		) -> DispatchResult {
-			let origin = ensure_parachain(<T as Config>::Origin::from(origin))?;
+			let origin = ensure_allychain(<T as Config>::Origin::from(origin))?;
 			Self::cancel_open_request(origin, channel_id.clone())?;
 			Self::deposit_event(Event::OpenChannelCanceled(origin, channel_id));
 			Ok(())
@@ -1024,7 +1024,7 @@ impl<T: Config> Pallet<T> {
 		let channel_num_limit = if <paras::Pallet<T>>::is_parathread(origin) {
 			config.hrmp_max_parathread_outbound_channels
 		} else {
-			config.hrmp_max_parachain_outbound_channels
+			config.hrmp_max_allychain_outbound_channels
 		};
 		ensure!(
 			egress_cnt + open_req_cnt < channel_num_limit,
@@ -1088,7 +1088,7 @@ impl<T: Config> Pallet<T> {
 		let channel_num_limit = if <paras::Pallet<T>>::is_parathread(origin) {
 			config.hrmp_max_parathread_inbound_channels
 		} else {
-			config.hrmp_max_parachain_inbound_channels
+			config.hrmp_max_allychain_inbound_channels
 		};
 		let ingress_cnt =
 			<Self as Store>::HrmpIngressChannelsIndex::decode_len(&origin).unwrap_or(0) as u32;
@@ -1320,9 +1320,9 @@ mod tests {
 		hrmp_channel_max_capacity: u32,
 		hrmp_channel_max_message_size: u32,
 		hrmp_max_parathread_outbound_channels: u32,
-		hrmp_max_parachain_outbound_channels: u32,
+		hrmp_max_allychain_outbound_channels: u32,
 		hrmp_max_parathread_inbound_channels: u32,
-		hrmp_max_parachain_inbound_channels: u32,
+		hrmp_max_allychain_inbound_channels: u32,
 		hrmp_max_message_num_per_candidate: u32,
 		hrmp_channel_max_total_size: u32,
 		hrmp_sender_deposit: Balance,
@@ -1335,9 +1335,9 @@ mod tests {
 				hrmp_channel_max_capacity: 2,
 				hrmp_channel_max_message_size: 8,
 				hrmp_max_parathread_outbound_channels: 1,
-				hrmp_max_parachain_outbound_channels: 2,
+				hrmp_max_allychain_outbound_channels: 2,
 				hrmp_max_parathread_inbound_channels: 1,
-				hrmp_max_parachain_inbound_channels: 2,
+				hrmp_max_allychain_inbound_channels: 2,
 				hrmp_max_message_num_per_candidate: 2,
 				hrmp_channel_max_total_size: 16,
 				hrmp_sender_deposit: 100,
@@ -1354,9 +1354,9 @@ mod tests {
 			config.hrmp_channel_max_message_size = self.hrmp_channel_max_message_size;
 			config.hrmp_max_parathread_outbound_channels =
 				self.hrmp_max_parathread_outbound_channels;
-			config.hrmp_max_parachain_outbound_channels = self.hrmp_max_parachain_outbound_channels;
+			config.hrmp_max_allychain_outbound_channels = self.hrmp_max_allychain_outbound_channels;
 			config.hrmp_max_parathread_inbound_channels = self.hrmp_max_parathread_inbound_channels;
-			config.hrmp_max_parachain_inbound_channels = self.hrmp_max_parachain_inbound_channels;
+			config.hrmp_max_allychain_inbound_channels = self.hrmp_max_allychain_inbound_channels;
 			config.hrmp_max_message_num_per_candidate = self.hrmp_max_message_num_per_candidate;
 			config.hrmp_channel_max_total_size = self.hrmp_channel_max_total_size;
 			config.hrmp_sender_deposit = self.hrmp_sender_deposit;
@@ -1377,7 +1377,7 @@ mod tests {
 		}
 	}
 
-	fn register_parachain_with_balance(id: ParaId, balance: Balance) {
+	fn register_allychain_with_balance(id: ParaId, balance: Balance) {
 		assert_ok!(Paras::schedule_para_initialize(
 			id,
 			crate::paras::ParaGenesisArgs {
@@ -1389,11 +1389,11 @@ mod tests {
 		<Test as Config>::Currency::make_free_balance_be(&id.into_account(), balance);
 	}
 
-	fn register_parachain(id: ParaId) {
-		register_parachain_with_balance(id, 1000);
+	fn register_allychain(id: ParaId) {
+		register_allychain_with_balance(id, 1000);
 	}
 
-	fn deregister_parachain(id: ParaId) {
+	fn deregister_allychain(id: ParaId) {
 		assert_ok!(Paras::schedule_para_cleanup(id));
 	}
 
@@ -1574,8 +1574,8 @@ mod tests {
 
 		new_test_ext(GenesisConfigBuilder::default().build()).execute_with(|| {
 			// We need both A & B to be registered and alive allychains.
-			register_parachain(para_a);
-			register_parachain(para_b);
+			register_allychain(para_a);
+			register_allychain(para_b);
 
 			run_to_block(5, Some(vec![4, 5]));
 			Hrmp::hrmp_init_open_channel(para_a_origin.into(), para_b, 2, 8).unwrap();
@@ -1607,8 +1607,8 @@ mod tests {
 		let para_b_origin: crate::Origin = 2.into();
 
 		new_test_ext(GenesisConfigBuilder::default().build()).execute_with(|| {
-			register_parachain(para_a);
-			register_parachain(para_b);
+			register_allychain(para_a);
+			register_allychain(para_b);
 
 			run_to_block(5, Some(vec![4, 5]));
 			Hrmp::init_open_channel(para_a, para_b, 2, 8).unwrap();
@@ -1642,8 +1642,8 @@ mod tests {
 		genesis.hrmp_channel_max_message_size = 20;
 		genesis.hrmp_channel_max_total_size = 20;
 		new_test_ext(genesis.build()).execute_with(|| {
-			register_parachain(para_a);
-			register_parachain(para_b);
+			register_allychain(para_a);
+			register_allychain(para_b);
 
 			run_to_block(5, Some(vec![4, 5]));
 			Hrmp::init_open_channel(para_a, para_b, 2, 20).unwrap();
@@ -1680,8 +1680,8 @@ mod tests {
 		genesis.hrmp_channel_max_message_size = 20;
 		genesis.hrmp_channel_max_total_size = 20;
 		new_test_ext(genesis.build()).execute_with(|| {
-			register_parachain(para_a);
-			register_parachain(para_b);
+			register_allychain(para_a);
+			register_allychain(para_b);
 
 			run_to_block(2, Some(vec![1, 2]));
 			Hrmp::init_open_channel(para_a, para_b, 2, 20).unwrap();
@@ -1718,13 +1718,13 @@ mod tests {
 		let para_b = 64.into();
 
 		new_test_ext(GenesisConfigBuilder::default().build()).execute_with(|| {
-			register_parachain(para_a);
-			register_parachain(para_b);
+			register_allychain(para_a);
+			register_allychain(para_b);
 
 			run_to_block(5, Some(vec![4, 5]));
 			Hrmp::init_open_channel(para_a, para_b, 2, 8).unwrap();
 			Hrmp::accept_open_channel(para_b, para_a).unwrap();
-			deregister_parachain(para_a);
+			deregister_allychain(para_a);
 
 			// On Block 7: 2x session change. The channel should not be created.
 			run_to_block(7, Some(vec![6, 7]));
@@ -1741,9 +1741,9 @@ mod tests {
 		let para_c = 97.into();
 
 		new_test_ext(GenesisConfigBuilder::default().build()).execute_with(|| {
-			register_parachain(para_a);
-			register_parachain(para_b);
-			register_parachain(para_c);
+			register_allychain(para_a);
+			register_allychain(para_b);
+			register_allychain(para_c);
 
 			run_to_block(5, Some(vec![4, 5]));
 
@@ -1803,8 +1803,8 @@ mod tests {
 		new_test_ext(GenesisConfigBuilder::default().build()).execute_with(|| {
 			// Register two allychains, wait until a session change, then initiate channel open
 			// request and accept that, and finally wait until the next session.
-			register_parachain(para_a);
-			register_parachain(para_b);
+			register_allychain(para_a);
+			register_allychain(para_b);
 			run_to_block(5, Some(vec![4, 5]));
 			Hrmp::init_open_channel(para_a, para_b, 2, 8).unwrap();
 			Hrmp::accept_open_channel(para_b, para_a).unwrap();
@@ -1859,8 +1859,8 @@ mod tests {
 		let para_b = 64.into();
 
 		new_test_ext(GenesisConfigBuilder::default().build()).execute_with(|| {
-			register_parachain_with_balance(para_a, 0);
-			register_parachain(para_b);
+			register_allychain_with_balance(para_a, 0);
+			register_allychain(para_b);
 			run_to_block(5, Some(vec![4, 5]));
 
 			assert_noop!(
@@ -1870,8 +1870,8 @@ mod tests {
 		});
 
 		new_test_ext(GenesisConfigBuilder::default().build()).execute_with(|| {
-			register_parachain(para_a);
-			register_parachain_with_balance(para_b, 0);
+			register_allychain(para_a);
+			register_allychain_with_balance(para_b, 0);
 			run_to_block(5, Some(vec![4, 5]));
 
 			Hrmp::init_open_channel(para_a, para_b, 2, 8).unwrap();
@@ -1893,8 +1893,8 @@ mod tests {
 		genesis.hrmp_recipient_deposit = 15;
 		new_test_ext(genesis.build()).execute_with(|| {
 			// Register two allychains funded with different amounts of funds and arrange a channel.
-			register_parachain_with_balance(para_a, 100);
-			register_parachain_with_balance(para_b, 110);
+			register_allychain_with_balance(para_a, 100);
+			register_allychain_with_balance(para_b, 110);
 			run_to_block(5, Some(vec![4, 5]));
 			Hrmp::init_open_channel(para_a, para_b, 2, 8).unwrap();
 			Hrmp::accept_open_channel(para_b, para_a).unwrap();
@@ -1921,8 +1921,8 @@ mod tests {
 		genesis.hrmp_recipient_deposit = 15;
 		new_test_ext(genesis.build()).execute_with(|| {
 			// Register two allychains and open a channel between them.
-			register_parachain_with_balance(para_a, 100);
-			register_parachain_with_balance(para_b, 110);
+			register_allychain_with_balance(para_a, 100);
+			register_allychain_with_balance(para_b, 110);
 			run_to_block(5, Some(vec![4, 5]));
 			Hrmp::init_open_channel(para_a, para_b, 2, 8).unwrap();
 			Hrmp::accept_open_channel(para_b, para_a).unwrap();
@@ -1932,7 +1932,7 @@ mod tests {
 			assert!(channel_exists(para_a, para_b));
 
 			// Then deregister one allychain.
-			deregister_parachain(para_a);
+			deregister_allychain(para_a);
 			run_to_block(10, Some(vec![9, 10]));
 
 			// The channel should be removed.
@@ -1955,8 +1955,8 @@ mod tests {
 		genesis.hrmp_recipient_deposit = 15;
 		new_test_ext(genesis.build()).execute_with(|| {
 			// Register two allychains and open a channel between them.
-			register_parachain_with_balance(para_a, 100);
-			register_parachain_with_balance(para_b, 110);
+			register_allychain_with_balance(para_a, 100);
+			register_allychain_with_balance(para_b, 110);
 			run_to_block(5, Some(vec![4, 5]));
 
 			// Start opening a channel a->b
@@ -1966,7 +1966,7 @@ mod tests {
 			// Then deregister one allychain, but don't wait two sessions until it takes effect.
 			// Instead, para_b will confirm the request, which will take place the same time
 			// the offboarding should happen.
-			deregister_parachain(para_a);
+			deregister_allychain(para_a);
 			run_to_block(9, Some(vec![9]));
 			Hrmp::accept_open_channel(para_b, para_a).unwrap();
 			assert_eq!(<Test as Config>::Currency::free_balance(&para_b.into_account()), 95);
@@ -1990,8 +1990,8 @@ mod tests {
 		genesis.hrmp_recipient_deposit = 15;
 		new_test_ext(genesis.build()).execute_with(|| {
 			// Register two allychains and open a channel between them.
-			register_parachain_with_balance(para_a, 100);
-			register_parachain_with_balance(para_b, 110);
+			register_allychain_with_balance(para_a, 100);
+			register_allychain_with_balance(para_b, 110);
 			run_to_block(5, Some(vec![4, 5]));
 
 			// Start opening a channel a->b

@@ -27,7 +27,7 @@ use axia_cli::{
 	prepared_overseer_builder,
 	service::{
 		AuthorityDiscoveryApi, AuxStore, BabeApi, Block, Error, HeaderBackend, OverseerGen,
-		OverseerGenArgs, ParachainHost, ProvideRuntimeApi, SpawnNamed,
+		OverseerGenArgs, AllychainHost, ProvideRuntimeApi, SpawnNamed,
 	},
 	Cli,
 };
@@ -91,7 +91,7 @@ impl OverseerGen for BehaveMaleficient {
 	) -> Result<(Overseer<Spawner, Arc<RuntimeClient>>, OverseerHandle), Error>
 	where
 		RuntimeClient: 'static + ProvideRuntimeApi<Block> + HeaderBackend<Block> + AuxStore,
-		RuntimeClient::Api: ParachainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
+		RuntimeClient::Api: AllychainHost<Block> + BabeApi<Block> + AuthorityDiscoveryApi<Block>,
 		Spawner: 'static + SpawnNamed + Clone + Unpin,
 	{
 		let candidate_validation_config = args.candidate_validation_config.clone();

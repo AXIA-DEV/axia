@@ -63,7 +63,7 @@ pub use frame_support::{
 pub use frame_system::Call as SystemCall;
 pub use pallet_balances::Call as BalancesCall;
 pub use pallet_bridge_grandpa::Call as BridgeGrandpaRialtoCall;
-pub use pallet_bridge_grandpa::Call as BridgeGrandpaWestendCall;
+pub use pallet_bridge_grandpa::Call as BridgeGrandpaAlphanetCall;
 pub use pallet_bridge_messages::Call as MessagesCall;
 pub use pallet_sudo::Call as SudoCall;
 pub use pallet_timestamp::Call as TimestampCall;
@@ -335,9 +335,9 @@ impl pallet_bridge_grandpa::Config for Runtime {
 	type WeightInfo = pallet_bridge_grandpa::weights::RialtoWeight<Runtime>;
 }
 
-pub type WestendGrandpaInstance = pallet_bridge_grandpa::Instance1;
-impl pallet_bridge_grandpa::Config<WestendGrandpaInstance> for Runtime {
-	type BridgedChain = bp_westend::Alphanet;
+pub type AlphanetGrandpaInstance = pallet_bridge_grandpa::Instance1;
+impl pallet_bridge_grandpa::Config<AlphanetGrandpaInstance> for Runtime {
+	type BridgedChain = bp_alphanet::Alphanet;
 	type MaxRequests = MaxRequests;
 	type HeadersToKeep = HeadersToKeep;
 
@@ -403,7 +403,7 @@ construct_runtime!(
 		BridgeRialtoMessages: pallet_bridge_messages::{Pallet, Call, Storage, Event<T>},
 		BridgeDispatch: pallet_bridge_dispatch::{Pallet, Event<T>},
 		BridgeRialtoGrandpa: pallet_bridge_grandpa::{Pallet, Call, Storage},
-		BridgeWestendGrandpa: pallet_bridge_grandpa::<Instance1>::{Pallet, Call, Config<T>, Storage},
+		BridgeAlphanetGrandpa: pallet_bridge_grandpa::<Instance1>::{Pallet, Call, Config<T>, Storage},
 		System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
 		RandomnessCollectiveFlip: pallet_randomness_collective_flip::{Pallet, Storage},
 		Timestamp: pallet_timestamp::{Pallet, Call, Storage, Inherent},
@@ -587,14 +587,14 @@ impl_runtime_apis! {
 		}
 	}
 
-	impl bp_westend::WestendFinalityApi<Block> for Runtime {
-		fn best_finalized() -> (bp_westend::BlockNumber, bp_westend::Hash) {
-			let header = BridgeWestendGrandpa::best_finalized();
+	impl bp_alphanet::AlphanetFinalityApi<Block> for Runtime {
+		fn best_finalized() -> (bp_alphanet::BlockNumber, bp_alphanet::Hash) {
+			let header = BridgeAlphanetGrandpa::best_finalized();
 			(header.number, header.hash())
 		}
 
-		fn is_known_header(hash: bp_westend::Hash) -> bool {
-			BridgeWestendGrandpa::is_known_header(hash)
+		fn is_known_header(hash: bp_alphanet::Hash) -> bool {
+			BridgeAlphanetGrandpa::is_known_header(hash)
 		}
 	}
 

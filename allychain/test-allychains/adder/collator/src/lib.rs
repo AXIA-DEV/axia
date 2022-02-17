@@ -32,7 +32,7 @@ use std::{
 	},
 	time::Duration,
 };
-use test_parachain_adder::{execute, hash_state, BlockData, HeadData};
+use test_allychain_adder::{execute, hash_state, BlockData, HeadData};
 
 /// The amount we add when producing a new block.
 ///
@@ -131,7 +131,7 @@ impl Collator {
 
 	/// Get the validation code of the adder allychain.
 	pub fn validation_code(&self) -> &[u8] {
-		test_parachain_adder::wasm_binary_unwrap()
+		test_allychain_adder::wasm_binary_unwrap()
 	}
 
 	/// Get the collator key.
@@ -245,7 +245,7 @@ mod tests {
 	use super::*;
 
 	use futures::executor::block_on;
-	use axia_parachain::primitives::{ValidationParams, ValidationResult};
+	use axia_allychain::primitives::{ValidationParams, ValidationResult};
 	use axia_primitives::v1::PersistedValidationData;
 
 	#[test]

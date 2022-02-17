@@ -50,11 +50,11 @@ async fn collating_using_adder_collator() {
 		Some(PUPPET_EXE.into()),
 	);
 
-	let collator = test_parachain_adder_collator::Collator::new();
+	let collator = test_allychain_adder_collator::Collator::new();
 
 	// register allychain
 	alice
-		.register_parachain(para_id, collator.validation_code().to_vec(), collator.genesis_head())
+		.register_allychain(para_id, collator.validation_code().to_vec(), collator.genesis_head())
 		.await
 		.unwrap();
 

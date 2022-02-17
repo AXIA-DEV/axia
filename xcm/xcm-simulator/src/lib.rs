@@ -24,11 +24,11 @@ pub use sp_io::TestExternalities;
 pub use sp_std::{cell::RefCell, collections::vec_deque::VecDeque, marker::PhantomData};
 
 pub use axia_core_primitives::BlockNumber as RelayBlockNumber;
-pub use axia_parachain::primitives::{
+pub use axia_allychain::primitives::{
 	DmpMessageHandler as DmpMessageHandlerT, Id as ParaId, XcmpMessageFormat,
 	XcmpMessageHandler as XcmpMessageHandlerT,
 };
-pub use axia_runtime_parachains::{
+pub use axia_runtime_allychains::{
 	dmp,
 	ump::{self, MessageId, UmpSink, XcmSink},
 };
@@ -109,7 +109,7 @@ macro_rules! decl_test_relay_chain {
 }
 
 #[macro_export]
-macro_rules! decl_test_parachain {
+macro_rules! decl_test_allychain {
 	(
 		pub struct $name:ident {
 			Runtime = $runtime:path,
@@ -228,8 +228,8 @@ macro_rules! decl_test_network {
 		fn exists_messages_in_any_bus() -> bool {
 			use $crate::{RELAY_MESSAGE_BUS, PARA_MESSAGE_BUS};
 			let no_relay_messages_left = RELAY_MESSAGE_BUS.with(|b| b.borrow().is_empty());
-			let no_parachain_messages_left = PARA_MESSAGE_BUS.with(|b| b.borrow().is_empty());
-			!(no_relay_messages_left && no_parachain_messages_left)
+			let no_allychain_messages_left = PARA_MESSAGE_BUS.with(|b| b.borrow().is_empty());
+			!(no_relay_messages_left && no_allychain_messages_left)
 		}
 
 		/// Process all messages originating from allychains.
@@ -293,9 +293,9 @@ macro_rules! decl_test_network {
 		}
 
 		/// XCM router for allychain.
-		pub struct ParachainXcmRouter<T>($crate::PhantomData<T>);
+		pub struct AllychainXcmRouter<T>($crate::PhantomData<T>);
 
-		impl<T: $crate::Get<$crate::ParaId>> $crate::SendXcm for ParachainXcmRouter<T> {
+		impl<T: $crate::Get<$crate::ParaId>> $crate::SendXcm for AllychainXcmRouter<T> {
 			fn send_xcm(destination: impl Into<$crate::MultiLocation>, message: $crate::Xcm<()>) -> $crate::SendResult {
 				use $crate::{UmpSink, XcmpMessageHandlerT};
 

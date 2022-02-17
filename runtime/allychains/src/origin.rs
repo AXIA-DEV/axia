@@ -24,7 +24,7 @@ pub use pallet::*;
 
 /// Ensure that the origin `o` represents a allychain.
 /// Returns `Ok` with the allychain ID that effected the extrinsic or an `Err` otherwise.
-pub fn ensure_parachain<OuterOrigin>(o: OuterOrigin) -> result::Result<ParaId, BadOrigin>
+pub fn ensure_allychain<OuterOrigin>(o: OuterOrigin) -> result::Result<ParaId, BadOrigin>
 where
 	OuterOrigin: Into<result::Result<Origin, OuterOrigin>>,
 {

@@ -104,7 +104,7 @@ pub type BlockId = generic::BlockId<Block>;
 /// Opaque, encoded, unchecked extrinsic.
 pub use sp_runtime::OpaqueExtrinsic as UncheckedExtrinsic;
 
-/// The information that goes alongside a `transfer_into_parachain` operation. Entirely opaque, it
+/// The information that goes alongside a `transfer_into_allychain` operation. Entirely opaque, it
 /// will generally be used for identifying the reason for the transfer. Typically it will hold the
 /// destination account to which the transfer should be credited. If still more information is
 /// needed, then this should be a hash with the pre-image presented via an off-chain mechanism on

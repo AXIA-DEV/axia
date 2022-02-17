@@ -109,23 +109,23 @@ impl AxlibCli for Cli {
 			"axia-local" => Box::new(service::chain_spec::axia_local_testnet_config()?),
 			#[cfg(feature = "axia-native")]
 			"axia-staging" => Box::new(service::chain_spec::axia_staging_testnet_config()?),
-			"betanet" => Box::new(service::chain_spec::rococo_config()?),
+			"betanet" => Box::new(service::chain_spec::betanet_config()?),
 			#[cfg(feature = "betanet-native")]
-			"betanet-dev" => Box::new(service::chain_spec::rococo_development_config()?),
+			"betanet-dev" => Box::new(service::chain_spec::betanet_development_config()?),
 			#[cfg(feature = "betanet-native")]
-			"betanet-local" => Box::new(service::chain_spec::rococo_local_testnet_config()?),
+			"betanet-local" => Box::new(service::chain_spec::betanet_local_testnet_config()?),
 			#[cfg(feature = "betanet-native")]
-			"betanet-staging" => Box::new(service::chain_spec::rococo_staging_testnet_config()?),
+			"betanet-staging" => Box::new(service::chain_spec::betanet_staging_testnet_config()?),
 			#[cfg(not(feature = "betanet-native"))]
 			name if name.starts_with("betanet-") && !name.ends_with(".json") =>
 				Err(format!("`{}` only supported with `betanet-native` feature enabled.", name))?,
-			"alphanet" => Box::new(service::chain_spec::westend_config()?),
+			"alphanet" => Box::new(service::chain_spec::alphanet_config()?),
 			#[cfg(feature = "alphanet-native")]
-			"alphanet-dev" => Box::new(service::chain_spec::westend_development_config()?),
+			"alphanet-dev" => Box::new(service::chain_spec::alphanet_development_config()?),
 			#[cfg(feature = "alphanet-native")]
-			"alphanet-local" => Box::new(service::chain_spec::westend_local_testnet_config()?),
+			"alphanet-local" => Box::new(service::chain_spec::alphanet_local_testnet_config()?),
 			#[cfg(feature = "alphanet-native")]
-			"alphanet-staging" => Box::new(service::chain_spec::westend_staging_testnet_config()?),
+			"alphanet-staging" => Box::new(service::chain_spec::alphanet_staging_testnet_config()?),
 			#[cfg(not(feature = "alphanet-native"))]
 			name if name.starts_with("alphanet-") && !name.ends_with(".json") =>
 				Err(format!("`{}` only supported with `alphanet-native` feature enabled.", name))?,
@@ -145,12 +145,12 @@ impl AxlibCli for Cli {
 
 				// When `force_*` is given or the file name starts with the name of one of the known chains,
 				// we use the chain spec for the specific chain.
-				if self.run.force_rococo || chain_spec.is_rococo() || chain_spec.is_wococo() {
-					Box::new(service::RococoChainSpec::from_json_file(path)?)
+				if self.run.force_betanet || chain_spec.is_betanet() || chain_spec.is_wococo() {
+					Box::new(service::BetanetChainSpec::from_json_file(path)?)
 				} else if self.run.force_axctest || chain_spec.is_axctest() {
 					Box::new(service::AxiaTestChainSpec::from_json_file(path)?)
-				} else if self.run.force_westend || chain_spec.is_westend() {
-					Box::new(service::WestendChainSpec::from_json_file(path)?)
+				} else if self.run.force_alphanet || chain_spec.is_alphanet() {
+					Box::new(service::AlphanetChainSpec::from_json_file(path)?)
 				} else {
 					chain_spec
 				}
@@ -165,13 +165,13 @@ impl AxlibCli for Cli {
 		}
 
 		#[cfg(feature = "alphanet-native")]
-		if spec.is_westend() {
-			return &service::westend_runtime::VERSION
+		if spec.is_alphanet() {
+			return &service::alphanet_runtime::VERSION
 		}
 
 		#[cfg(feature = "betanet-native")]
-		if spec.is_rococo() || spec.is_wococo() {
-			return &service::rococo_runtime::VERSION
+		if spec.is_betanet() || spec.is_wococo() {
+			return &service::betanet_runtime::VERSION
 		}
 
 		#[cfg(not(all(
@@ -194,7 +194,7 @@ impl AxlibCli for Cli {
 fn set_default_ss58_version(spec: &Box<dyn service::ChainSpec>) {
 	let ss58_version = if spec.is_axctest() {
 		Ss58AddressFormatRegistry::AxiaTestAccount
-	} else if spec.is_westend() {
+	} else if spec.is_alphanet() {
 		Ss58AddressFormatRegistry::AxlibAccount
 	} else {
 		Ss58AddressFormatRegistry::AxiaAccount
@@ -393,9 +393,9 @@ pub fn run() -> Result<()> {
 			}
 
 			#[cfg(feature = "alphanet-native")]
-			if chain_spec.is_westend() {
+			if chain_spec.is_alphanet() {
 				return Ok(runner.sync_run(|config| {
-					cmd.run::<service::westend_runtime::Block, service::WestendExecutorDispatch>(
+					cmd.run::<service::alphanet_runtime::Block, service::AlphanetExecutorDispatch>(
 						config,
 					)
 					.map_err(|e| Error::AxlibCli(e))
@@ -443,10 +443,10 @@ pub fn run() -> Result<()> {
 			}
 
 			#[cfg(feature = "alphanet-native")]
-			if chain_spec.is_westend() {
+			if chain_spec.is_alphanet() {
 				return runner.async_run(|config| {
 					Ok((
-						cmd.run::<service::westend_runtime::Block, service::WestendExecutorDispatch>(
+						cmd.run::<service::alphanet_runtime::Block, service::AlphanetExecutorDispatch>(
 							config,
 						)
 						.map_err(Error::AxlibCli),

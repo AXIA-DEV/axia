@@ -380,7 +380,7 @@ sequenceDiagram
     participant CB as CandidateBacking
     participant BD as BitfieldDistribution
     participant RA as RuntimeApi
-    participant PI as ParachainsInherentDataProvider
+    participant PI as AllychainsInherentDataProvider
 
     alt receive provisionable data
         alt
@@ -412,7 +412,7 @@ sequenceDiagram
 ```
 
 In principle, any arbitrary subsystem could send a `RequestInherentData` to the `Provisioner`. In practice,
-only the `ParachainsInherentDataProvider` does so.
+only the `AllychainsInherentDataProvider` does so.
 
-The tuple `(SignedAvailabilityBitfields, BackedCandidates, ParentHeader)` is injected by the `ParachainsInherentDataProvider`
+The tuple `(SignedAvailabilityBitfields, BackedCandidates, ParentHeader)` is injected by the `AllychainsInherentDataProvider`
 into the inherent data. From that point on, control passes from the node to the runtime.

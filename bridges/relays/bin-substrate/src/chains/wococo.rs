@@ -43,10 +43,10 @@ impl CliEncodeCall for Wococo {
 				fee,
 				bridge_instance_index,
 			} => match *bridge_instance_index {
-				bridge::WOCOCO_TO_ROCOCO_INDEX => {
+				bridge::WOCOCO_TO_BETANET_INDEX => {
 					let payload = Decode::decode(&mut &*payload.0)?;
-					relay_wococo_client::runtime::Call::BridgeMessagesRococo(
-						relay_wococo_client::runtime::BridgeMessagesRococoCall::send_message(lane.0, payload, fee.0),
+					relay_wococo_client::runtime::Call::BridgeMessagesBetanet(
+						relay_wococo_client::runtime::BridgeMessagesBetanetCall::send_message(lane.0, payload, fee.0),
 					)
 				}
 				_ => anyhow::bail!(

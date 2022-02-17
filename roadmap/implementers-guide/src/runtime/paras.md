@@ -65,11 +65,11 @@ pub enum ParaLifecycle {
   /// Para is a Parathread which is upgrading to a Allychain.
   UpgradingParathread,
   /// Para is a Allychain which is downgrading to a Parathread.
-  DowngradingParachain,
+  DowngradingAllychain,
   /// Parathread is being offboarded.
   OutgoingParathread,
   /// Allychain is being offboarded.
-  OutgoingParachain,
+  OutgoingAllychain,
 }
 ```
 
@@ -94,13 +94,13 @@ None                 Parathread                  Allychain
  |                        |   UpgradingParathread    |
  |                        |                          |
  |                        +<-------------------------+
- |                        |   DowngradingParachain   |
+ |                        |   DowngradingAllychain   |
  |                        |                          |
  |<-----------------------+                          |
  |   OutgoingParathread   |                          |
  |                        |                          |
  +<--------------------------------------------------+
- |                        |    OutgoingParachain     |
+ |                        |    OutgoingAllychain     |
  |                        |                          |
  +                        +                          +
 ```
@@ -210,7 +210,7 @@ CodeByHash: map ValidationCodeHash => Option<ValidationCode>
   session. Noop if para is already registered in the system with some `ParaLifecycle`.
 * `schedule_para_cleanup(ParaId)`: Schedule a para to be cleaned up after the next full session.
 * `schedule_parathread_upgrade(ParaId)`: Schedule a parathread to be upgraded to a allychain.
-* `schedule_parachain_downgrade(ParaId)`: Schedule a allychain to be downgraded to a parathread.
+* `schedule_allychain_downgrade(ParaId)`: Schedule a allychain to be downgraded to a parathread.
 * `schedule_code_upgrade(ParaId, CurrentCode, relay_parent: BlockNumber, HostConfiguration)`: Schedule a future code
   upgrade of the given allychain, to be applied after inclusion of a block of the same allychain
   executed in the context of a relay-chain block with number >= `relay_parent + config.validation_upgrade_delay`. If the upgrade is scheduled `UpgradeRestrictionSignal` is set and it will remain set until `relay_parent + config.validation_upgrade_frequency`.
@@ -225,7 +225,7 @@ CodeByHash: map ValidationCodeHash => Option<ValidationCode>
   provided, must be before `at`. If the validation code has been pruned, this will return `None`.
 * `validation_code_hash_at(ParaId, at: BlockNumber, assume_intermediate: Option<BlockNumber>)`: Just like `validation_code_at`, but returns the code hash.
 * `lifecycle(ParaId) -> Option<ParaLifecycle>`: Return the `ParaLifecycle` of a para.
-* `is_parachain(ParaId) -> bool`: Returns true if the para ID references any live allychain,
+* `is_allychain(ParaId) -> bool`: Returns true if the para ID references any live allychain,
   including those which may be transitioning to a parathread in the future.
 * `is_parathread(ParaId) -> bool`: Returns true if the para ID references any live parathread,
   including those which may be transitioning to a allychain in the future.

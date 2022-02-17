@@ -15,7 +15,7 @@
 // along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::{
-	prometheus::Registry, AllMessages, HeadSupportsParachains, MetricsTrait, Overseer,
+	prometheus::Registry, AllMessages, HeadSupportsAllychains, MetricsTrait, Overseer,
 	OverseerBuilder, OverseerMetrics, OverseerSignal, OverseerSubsystemContext, SpawnNamed,
 	KNOWN_LEAVES_CACHE_SIZE,
 };
@@ -61,14 +61,14 @@ where
 /// Create an overseer with all subsystem being `Sub`.
 ///
 /// Preferred way of initializing a dummy overseer for subsystem tests.
-pub fn dummy_overseer_builder<'a, Spawner, SupportsParachains>(
+pub fn dummy_overseer_builder<'a, Spawner, SupportsAllychains>(
 	spawner: Spawner,
-	supports_parachains: SupportsParachains,
+	supports_allychains: SupportsAllychains,
 	registry: Option<&'a Registry>,
 ) -> Result<
 	OverseerBuilder<
 		Spawner,
-		SupportsParachains,
+		SupportsAllychains,
 		DummySubsystem,
 		DummySubsystem,
 		DummySubsystem,
@@ -95,21 +95,21 @@ pub fn dummy_overseer_builder<'a, Spawner, SupportsParachains>(
 >
 where
 	Spawner: SpawnNamed + Send + Sync + 'static,
-	SupportsParachains: HeadSupportsParachains,
+	SupportsAllychains: HeadSupportsAllychains,
 {
-	one_for_all_overseer_builder(spawner, supports_parachains, DummySubsystem, registry)
+	one_for_all_overseer_builder(spawner, supports_allychains, DummySubsystem, registry)
 }
 
 /// Create an overseer with all subsystem being `Sub`.
-pub fn one_for_all_overseer_builder<'a, Spawner, SupportsParachains, Sub>(
+pub fn one_for_all_overseer_builder<'a, Spawner, SupportsAllychains, Sub>(
 	spawner: Spawner,
-	supports_parachains: SupportsParachains,
+	supports_allychains: SupportsAllychains,
 	subsystem: Sub,
 	registry: Option<&'a Registry>,
 ) -> Result<
 	OverseerBuilder<
 		Spawner,
-		SupportsParachains,
+		SupportsAllychains,
 		Sub,
 		Sub,
 		Sub,
@@ -136,7 +136,7 @@ pub fn one_for_all_overseer_builder<'a, Spawner, SupportsParachains, Sub>(
 >
 where
 	Spawner: SpawnNamed + Send + Sync + 'static,
-	SupportsParachains: HeadSupportsParachains,
+	SupportsAllychains: HeadSupportsAllychains,
 	Sub: Clone
 		+ Subsystem<OverseerSubsystemContext<AvailabilityDistributionMessage>, SubsystemError>
 		+ Subsystem<OverseerSubsystemContext<AvailabilityRecoveryMessage>, SubsystemError>
@@ -191,6 +191,6 @@ where
 		.leaves(Default::default())
 		.spawner(spawner)
 		.metrics(metrics)
-		.supports_parachains(supports_parachains);
+		.supports_allychains(supports_allychains);
 	Ok(builder)
 }

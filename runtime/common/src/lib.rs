@@ -126,13 +126,13 @@ static_assertions::assert_eq_size!(primitives::v1::Balance, u128);
 
 /// A placeholder since there is currently no provided session key handler for allychain validator
 /// keys.
-pub struct ParachainSessionKeyPlaceholder<T>(sp_std::marker::PhantomData<T>);
-impl<T> sp_runtime::BoundToRuntimeAppPublic for ParachainSessionKeyPlaceholder<T> {
+pub struct AllychainSessionKeyPlaceholder<T>(sp_std::marker::PhantomData<T>);
+impl<T> sp_runtime::BoundToRuntimeAppPublic for AllychainSessionKeyPlaceholder<T> {
 	type Public = ValidatorId;
 }
 
 impl<T: pallet_session::Config> OneSessionHandler<T::AccountId>
-	for ParachainSessionKeyPlaceholder<T>
+	for AllychainSessionKeyPlaceholder<T>
 {
 	type Key = ValidatorId;
 

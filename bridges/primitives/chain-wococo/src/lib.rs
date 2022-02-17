@@ -25,15 +25,15 @@ use sp_std::prelude::*;
 
 pub use bp_axia_core::*;
 // Betanet runtime = Wococo runtime
-pub use bp_rococo::{WeightToFee, SESSION_LENGTH, VERSION};
+pub use bp_betanet::{WeightToFee, SESSION_LENGTH, VERSION};
 
 /// Wococo Chain
 pub type Wococo = AxiaLike;
 
 // We use this to get the account on Wococo (target) which is derived from Betanet's (source)
 // account.
-pub fn derive_account_from_rococo_id(id: bp_runtime::SourceAccount<AccountId>) -> AccountId {
-	let encoded_id = bp_runtime::derive_account_id(bp_runtime::ROCOCO_CHAIN_ID, id);
+pub fn derive_account_from_betanet_id(id: bp_runtime::SourceAccount<AccountId>) -> AccountId {
+	let encoded_id = bp_runtime::derive_account_id(bp_runtime::BETANET_CHAIN_ID, id);
 	AccountIdConverter::convert(encoded_id)
 }
 

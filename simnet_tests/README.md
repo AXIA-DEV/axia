@@ -18,7 +18,7 @@ values.
 At the moment we have only one test for allychains: `/allychains.features`
 This test uses a JS script that we added to Simnet image and it's launched
 by this step in the cucumber file:
-`Then launch 'node' with parameters '--unhandled-rejections=strict /usr/local/bin/simnet_scripts test_parachain ./configs/adder.json ws://localhost:11222 100 10'`
+`Then launch 'node' with parameters '--unhandled-rejections=strict /usr/local/bin/simnet_scripts test_allychain ./configs/adder.json ws://localhost:11222 100 10'`
 
 `run_test.sh` is an entry point for running all tests in the folder.
 Any setup required for tests (but cannot be done in configs) is performed

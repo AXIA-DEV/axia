@@ -127,7 +127,7 @@ rustc_stable = ENV['RUSTC_STABLE']
 rustc_nightly = ENV['RUSTC_NIGHTLY']
 axia_runtime = get_runtime('axia', axia_path)
 axctest_runtime = get_runtime('axctest', axia_path)
-westend_runtime = get_runtime('alphanet', axia_path)
+alphanet_runtime = get_runtime('alphanet', axia_path)
 
 # These json files should have been downloaded as part of the build-runtimes
 # github action

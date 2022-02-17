@@ -19,7 +19,7 @@
 //! Allychain backing and approval is an off-chain process, but the allychain needs to progress on chain as well. To
 //! make it progress on chain a block producer needs to forward information about the state of a allychain to the
 //! runtime. This information is forwarded through an inherent to the runtime. Here we provide the
-//! [`ParachainInherentDataProvider`] that requests the relevant data from the provisioner subsystem and creates the
+//! [`AllychainInherentDataProvider`] that requests the relevant data from the provisioner subsystem and creates the
 //! the inherent data that the runtime will use to create an inherent.
 
 #![deny(unused_crate_dependencies, unused_results)]
@@ -28,7 +28,7 @@ use futures::{select, FutureExt};
 use axia_node_subsystem::{
 	errors::SubsystemError, messages::ProvisionerMessage, overseer::Handle,
 };
-use axia_primitives::v1::{Block, Hash, InherentData as ParachainsInherentData};
+use axia_primitives::v1::{Block, Hash, InherentData as AllychainsInherentData};
 use sp_blockchain::HeaderBackend;
 use sp_runtime::generic::BlockId;
 use std::time;
@@ -37,12 +37,12 @@ use std::time;
 const PROVISIONER_TIMEOUT: time::Duration = core::time::Duration::from_millis(2500);
 
 /// Provides the allychains inherent data.
-pub struct ParachainsInherentDataProvider {
-	inherent_data: ParachainsInherentData,
+pub struct AllychainsInherentDataProvider {
+	inherent_data: AllychainsInherentData,
 }
 
-impl ParachainsInherentDataProvider {
-	/// Create a new instance of the [`ParachainsInherentDataProvider`].
+impl AllychainsInherentDataProvider {
+	/// Create a new instance of the [`AllychainsInherentDataProvider`].
 	pub async fn create<C: HeaderBackend<Block>>(
 		client: &C,
 		mut overseer: Handle,
@@ -81,7 +81,7 @@ impl ParachainsInherentDataProvider {
 		};
 
 		let inherent_data = match res {
-			Ok(pd) => ParachainsInherentData {
+			Ok(pd) => AllychainsInherentData {
 				bitfields: pd.bitfields.into_iter().map(Into::into).collect(),
 				backed_candidates: pd.backed_candidates,
 				disputes: pd.disputes,
@@ -92,7 +92,7 @@ impl ParachainsInherentDataProvider {
 					?err,
 					"Could not get provisioner inherent data; injecting default data",
 				);
-				ParachainsInherentData {
+				AllychainsInherentData {
 					bitfields: Vec::new(),
 					backed_candidates: Vec::new(),
 					disputes: Vec::new(),
@@ -106,13 +106,13 @@ impl ParachainsInherentDataProvider {
 }
 
 #[async_trait::async_trait]
-impl sp_inherents::InherentDataProvider for ParachainsInherentDataProvider {
+impl sp_inherents::InherentDataProvider for AllychainsInherentDataProvider {
 	fn provide_inherent_data(
 		&self,
 		inherent_data: &mut sp_inherents::InherentData,
 	) -> Result<(), sp_inherents::Error> {
 		inherent_data
-			.put_data(axia_primitives::v1::PARACHAINS_INHERENT_IDENTIFIER, &self.inherent_data)
+			.put_data(axia_primitives::v1::ALLYCHAINS_INHERENT_IDENTIFIER, &self.inherent_data)
 	}
 
 	async fn try_handle_error(

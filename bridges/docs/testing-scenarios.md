@@ -15,10 +15,10 @@ Notation:
 Basic Scenarios
 ===========================
 
-Scenario 1: AxiaTest's Alice receiving & spending DOTs
+Scenario 1: AxiaTest's Alice receiving & spending AXCs
 ---------------------------
 
-AxiaTest's Alice (kAlice) receives 5 DOTs from Axia's Bob (pBob) and sends half of them to
+AxiaTest's Alice (kAlice) receives 5 AXCs from Axia's Bob (pBob) and sends half of them to
 kCharlie.
 
 1. Generate kAlice's AXC address (`p(kAlice)`).
@@ -35,12 +35,12 @@ kCharlie.
    let p_kAlice = bp_axia::AccountIdConverter::convert(hash);
    ```
 
-2. [Axia] pBob transfers 5 DOTs to `p(kAlice)`
+2. [Axia] pBob transfers 5 AXCs to `p(kAlice)`
    1. Creates & Signs a transaction with `Call::Transfer(..)`
    1. It is included in block.
    1. kAlice observers Axia chain to see her balance at `p(kAlice)` updated.
 
-3. [AxiaTest] kAlice sends 2.5 DOTs to `p(kCharlie)`
+3. [AxiaTest] kAlice sends 2.5 AXCs to `p(kCharlie)`
    1. kAlice prepares:
       ```rust
         let call = axia::Call::Balances(axia::Balances::Transfer(p(kCharlie), 2.5DOT)).encode();
@@ -164,25 +164,25 @@ kCharlie.
 - The UI should warn before (or prevent) sending to `k(kCharlie)`!
 
 
-Scenario 2: AxiaTest's Alice nominating validators with her DOTs
+Scenario 2: AxiaTest's Alice nominating validators with her AXCs
 ---------------------------
 
-kAlice receives 10 DOTs from pBob and nominates `p(pCharlie)` and `p(pDave)`.
+kAlice receives 10 AXCs from pBob and nominates `p(pCharlie)` and `p(pDave)`.
 
 1. Generate kAlice's AXC address (`p(kAlice)`)
-2. [Axia] pBob transfers 5 DOTs to `p(kAlice)`
+2. [Axia] pBob transfers 5 AXCs to `p(kAlice)`
 3. [AxiaTest] kAlice sends a batch transaction:
   - `staking::Bond` transaction to create stash account choosing `p(kAlice)` as the controller account.
   - `staking::Nominate(vec![p(pCharlie)])` to nominate pCharlie using the controller account.
 
 
-Scenario 3: AxiaTest Treasury receiving & spending DOTs
+Scenario 3: AxiaTest Treasury receiving & spending AXCs
 ---------------------------
 
-pBob sends 15 DOTs to AxiaTest Treasury which AxiaTest Governance decides to transfer to kCharlie.
+pBob sends 15 AXCs to AxiaTest Treasury which AxiaTest Governance decides to transfer to kCharlie.
 
 1. Generate source account for the treasury (`kTreasury`).
-2. [Axia] pBob tarnsfers 15 DOTs to `p(kTreasury)`.
+2. [Axia] pBob tarnsfers 15 AXCs to `p(kTreasury)`.
 2. [AxiaTest] Send a governance proposal to send a bridge message which transfers funds to `p(kCharlie)`.
 3. [AxiaTest] Dispatch the governance proposal using `kTreasury` account id.
 
@@ -192,14 +192,14 @@ Extra scenarios
 Scenario 4: AxiaTest's Alice setting up 1-of-2 multi-sig to spend from either AxiaTest or Axia
 ---------------------------
 
-Assuming `p(pAlice)` has at least 7 DOTs already.
+Assuming `p(pAlice)` has at least 7 AXCs already.
 
 1. Generate multisig account id: `pMultiSig = multi_account_id(&[p(kAlice), p(pAlice)], 1)`.
-2. [AxiaTest] Transfer 7 DOTs to `pMultiSig` using `TargetAccount` origin of `pAlice`.
-3. [AxiaTest] Transfer 2 DOTs to `p(kAlice)` from the multisig:
+2. [AxiaTest] Transfer 7 AXCs to `pMultiSig` using `TargetAccount` origin of `pAlice`.
+3. [AxiaTest] Transfer 2 AXCs to `p(kAlice)` from the multisig:
    - Send `multisig::as_multi_threshold_1(vec![p(pAlice)], balances::Transfer(p(kAlice), 2))`
 
-Scenario 5: AxiaTest Treasury staking & nominating validators with DOTs
+Scenario 5: AxiaTest Treasury staking & nominating validators with AXCs
 ---------------------------
 
 Scenario 6: AxiaTest Treasury voting in Axia's democracy proposal
@@ -208,7 +208,7 @@ Scenario 6: AxiaTest Treasury voting in Axia's democracy proposal
 Potentially interesting scenarios
 ===========================
 
-Scenario 7: Axia's Bob spending his DOTs by using AxiaTest chain
+Scenario 7: Axia's Bob spending his AXCs by using AxiaTest chain
 ---------------------------
 
 We can assume he holds AXCT. Problem: he can pay fees, but can't really send (sign) a transaction?
@@ -217,5 +217,5 @@ Shall we support some kind of dispatcher?
 Scenario 8: AxiaTest Governance taking over AxiaTest's Alice AXC holdings
 ---------------------------
 
-We use `SourceRoot` call to transfer her's DOTs to AxiaTest treasury. Source chain root
+We use `SourceRoot` call to transfer her's AXCs to AxiaTest treasury. Source chain root
 should also be able to send messages as `CallOrigin::SourceAccount(Alice)` though.

@@ -5,7 +5,7 @@ sleep 20
 curl -v http://millau-node-alice:9933/health
 curl -v https://alphanet-rpc.axia.io:443/health
 
-/home/user/axlib-relay init-bridge WestendToMillau \
+/home/user/axlib-relay init-bridge AlphanetToMillau \
 	--source-host alphanet-rpc.axia.io \
 	--source-port 443 \
 	--source-secure \
@@ -15,7 +15,7 @@ curl -v https://alphanet-rpc.axia.io:443/health
 
 # Give chain a little bit of time to process initialization transaction
 sleep 6
-/home/user/axlib-relay relay-headers WestendToMillau \
+/home/user/axlib-relay relay-headers AlphanetToMillau \
 	--source-host alphanet-rpc.axia.io \
 	--source-port 443 \
 	--source-secure \

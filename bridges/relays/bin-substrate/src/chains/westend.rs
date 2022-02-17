@@ -18,11 +18,11 @@
 
 use crate::cli::{encode_message, CliChain};
 use frame_support::weights::Weight;
-use relay_westend_client::Alphanet;
+use relay_alphanet_client::Alphanet;
 use sp_version::RuntimeVersion;
 
 impl CliChain for Alphanet {
-	const RUNTIME_VERSION: RuntimeVersion = bp_westend::VERSION;
+	const RUNTIME_VERSION: RuntimeVersion = bp_alphanet::VERSION;
 
 	type KeyPair = sp_core::sr25519::Pair;
 	type MessagePayload = ();

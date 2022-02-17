@@ -21,7 +21,7 @@ use frame_system::pallet_prelude::*;
 pub use pallet::*;
 use parity_scale_codec::Encode;
 use primitives::v1::Id as ParaId;
-use runtime_parachains::{
+use runtime_allychains::{
 	configuration, dmp, hrmp,
 	paras::{self, ParaGenesisArgs},
 	ump, ParaLifecycle,
@@ -57,7 +57,7 @@ pub mod pallet {
 		/// Not a parathread.
 		NotParathread,
 		/// Not a allychain.
-		NotParachain,
+		NotAllychain,
 		/// Cannot upgrade parathread.
 		CannotUpgrade,
 		/// Cannot downgrade allychain.
@@ -77,7 +77,7 @@ pub mod pallet {
 			genesis: ParaGenesisArgs,
 		) -> DispatchResult {
 			ensure_root(origin)?;
-			runtime_parachains::schedule_para_initialize::<T>(id, genesis)
+			runtime_allychains::schedule_para_initialize::<T>(id, genesis)
 				.map_err(|_| Error::<T>::ParaAlreadyExists)?;
 			Ok(())
 		}
@@ -86,7 +86,7 @@ pub mod pallet {
 		#[pallet::weight((1_000, DispatchClass::Operational))]
 		pub fn sudo_schedule_para_cleanup(origin: OriginFor<T>, id: ParaId) -> DispatchResult {
 			ensure_root(origin)?;
-			runtime_parachains::schedule_para_cleanup::<T>(id)
+			runtime_allychains::schedule_para_cleanup::<T>(id)
 				.map_err(|_| Error::<T>::CouldntCleanup)?;
 			Ok(())
 		}
@@ -103,14 +103,14 @@ pub mod pallet {
 				paras::Pallet::<T>::lifecycle(id) == Some(ParaLifecycle::Parathread),
 				Error::<T>::NotParathread,
 			);
-			runtime_parachains::schedule_parathread_upgrade::<T>(id)
+			runtime_allychains::schedule_parathread_upgrade::<T>(id)
 				.map_err(|_| Error::<T>::CannotUpgrade)?;
 			Ok(())
 		}
 
 		/// Downgrade a allychain to a parathread
 		#[pallet::weight((1_000, DispatchClass::Operational))]
-		pub fn sudo_schedule_parachain_downgrade(
+		pub fn sudo_schedule_allychain_downgrade(
 			origin: OriginFor<T>,
 			id: ParaId,
 		) -> DispatchResult {
@@ -118,9 +118,9 @@ pub mod pallet {
 			// Para backend should think this is a allychain...
 			ensure!(
 				paras::Pallet::<T>::lifecycle(id) == Some(ParaLifecycle::Allychain),
-				Error::<T>::NotParachain,
+				Error::<T>::NotAllychain,
 			);
-			runtime_parachains::schedule_parachain_downgrade::<T>(id)
+			runtime_allychains::schedule_allychain_downgrade::<T>(id)
 				.map_err(|_| Error::<T>::CannotDowngrade)?;
 			Ok(())
 		}

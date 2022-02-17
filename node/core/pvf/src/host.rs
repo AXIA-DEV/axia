@@ -32,7 +32,7 @@ use futures::{
 	channel::{mpsc, oneshot},
 	Future, FutureExt, SinkExt, StreamExt,
 };
-use axia_parachain::primitives::ValidationResult;
+use axia_allychain::primitives::ValidationResult;
 use std::{
 	collections::HashMap,
 	time::{Duration, SystemTime},

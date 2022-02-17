@@ -131,7 +131,7 @@ fn test_harness<T: Future<Output = VirtualOverseer>>(test: impl FnOnce(TestHarne
 	let keystore = TestKeyStore::new();
 	keystore
 		.sr25519_generate_new(
-			axia_primitives::v1::PARACHAIN_KEY_TYPE_ID,
+			axia_primitives::v1::ALLYCHAIN_KEY_TYPE_ID,
 			Some(&Sr25519Keyring::Alice.to_seed()),
 		)
 		.unwrap();

@@ -23,43 +23,43 @@ use sp_runtime::{generic::SignedPayload, traits::IdentifyAccount};
 use std::time::Duration;
 
 /// Alphanet header id.
-pub type HeaderId = relay_utils::HeaderId<bp_westend::Hash, bp_westend::BlockNumber>;
+pub type HeaderId = relay_utils::HeaderId<bp_alphanet::Hash, bp_alphanet::BlockNumber>;
 
 /// Alphanet header type used in headers sync.
-pub type SyncHeader = relay_axlib_client::SyncHeader<bp_westend::Header>;
+pub type SyncHeader = relay_axlib_client::SyncHeader<bp_alphanet::Header>;
 
 /// Alphanet chain definition
 #[derive(Debug, Clone, Copy)]
 pub struct Alphanet;
 
 impl ChainBase for Alphanet {
-	type BlockNumber = bp_westend::BlockNumber;
-	type Hash = bp_westend::Hash;
-	type Hasher = bp_westend::Hasher;
-	type Header = bp_westend::Header;
+	type BlockNumber = bp_alphanet::BlockNumber;
+	type Hash = bp_alphanet::Hash;
+	type Hasher = bp_alphanet::Hasher;
+	type Header = bp_alphanet::Header;
 }
 
 impl Chain for Alphanet {
 	const NAME: &'static str = "Alphanet";
 	const AVERAGE_BLOCK_INTERVAL: Duration = Duration::from_secs(6);
 
-	type AccountId = bp_westend::AccountId;
-	type Index = bp_westend::Nonce;
-	type SignedBlock = bp_westend::SignedBlock;
-	type Call = bp_westend::Call;
-	type Balance = bp_westend::Balance;
+	type AccountId = bp_alphanet::AccountId;
+	type Index = bp_alphanet::Nonce;
+	type SignedBlock = bp_alphanet::SignedBlock;
+	type Call = bp_alphanet::Call;
+	type Balance = bp_alphanet::Balance;
 }
 
 impl ChainWithBalances for Alphanet {
 	fn account_info_storage_key(account_id: &Self::AccountId) -> StorageKey {
-		StorageKey(bp_westend::account_info_storage_key(account_id))
+		StorageKey(bp_alphanet::account_info_storage_key(account_id))
 	}
 }
 
 impl TransactionSignScheme for Alphanet {
 	type Chain = Alphanet;
 	type AccountKeyPair = sp_core::sr25519::Pair;
-	type SignedTransaction = bp_westend::UncheckedExtrinsic;
+	type SignedTransaction = bp_alphanet::UncheckedExtrinsic;
 
 	fn sign_transaction(
 		genesis_hash: <Self::Chain as ChainBase>::Hash,
@@ -69,8 +69,8 @@ impl TransactionSignScheme for Alphanet {
 	) -> Self::SignedTransaction {
 		let raw_payload = SignedPayload::new(
 			call,
-			bp_westend::SignedExtensions::new(
-				bp_westend::VERSION,
+			bp_alphanet::SignedExtensions::new(
+				bp_alphanet::VERSION,
 				sp_runtime::generic::Era::Immortal,
 				genesis_hash,
 				signer_nonce,
@@ -83,7 +83,7 @@ impl TransactionSignScheme for Alphanet {
 		let signer: sp_runtime::MultiSigner = signer.public().into();
 		let (call, extra, _) = raw_payload.deconstruct();
 
-		bp_westend::UncheckedExtrinsic::new_signed(
+		bp_alphanet::UncheckedExtrinsic::new_signed(
 			call,
 			sp_runtime::MultiAddress::Id(signer.into_account()),
 			signature.into(),

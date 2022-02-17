@@ -31,11 +31,11 @@ pub type UncheckedExtrinsic = bp_axia_core::UncheckedExtrinsic<Call>;
 /// Wococo account ownership digest from Betanet.
 ///
 /// The byte vector returned by this function should be signed with a Wococo account private key.
-/// This way, the owner of `rococo_account_id` on Betanet proves that the Wococo account private key
+/// This way, the owner of `betanet_account_id` on Betanet proves that the Wococo account private key
 /// is also under his control.
-pub fn rococo_to_wococo_account_ownership_digest<Call, AccountId, SpecVersion>(
+pub fn betanet_to_wococo_account_ownership_digest<Call, AccountId, SpecVersion>(
 	wococo_call: &Call,
-	rococo_account_id: AccountId,
+	betanet_account_id: AccountId,
 	wococo_spec_version: SpecVersion,
 ) -> Vec<u8>
 where
@@ -45,9 +45,9 @@ where
 {
 	pallet_bridge_dispatch::account_ownership_digest(
 		wococo_call,
-		rococo_account_id,
+		betanet_account_id,
 		wococo_spec_version,
-		bp_runtime::ROCOCO_CHAIN_ID,
+		bp_runtime::BETANET_CHAIN_ID,
 		bp_runtime::WOCOCO_CHAIN_ID,
 	)
 }
@@ -102,12 +102,12 @@ pub enum BridgeMessagesWococoCall {
 	send_message(
 		LaneId,
 		bp_message_dispatch::MessagePayload<
-			bp_rococo::AccountId,
+			bp_betanet::AccountId,
 			bp_wococo::AccountId,
 			bp_wococo::AccountPublic,
 			Vec<u8>,
 		>,
-		bp_rococo::Balance,
+		bp_betanet::Balance,
 	),
 	#[codec(index = 5)]
 	receive_messages_proof(

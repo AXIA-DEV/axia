@@ -25,36 +25,36 @@ use std::time::Duration;
 pub mod runtime;
 
 /// Betanet header id.
-pub type HeaderId = relay_utils::HeaderId<bp_rococo::Hash, bp_rococo::BlockNumber>;
+pub type HeaderId = relay_utils::HeaderId<bp_betanet::Hash, bp_betanet::BlockNumber>;
 
 /// Betanet header type used in headers sync.
-pub type SyncHeader = relay_axlib_client::SyncHeader<bp_rococo::Header>;
+pub type SyncHeader = relay_axlib_client::SyncHeader<bp_betanet::Header>;
 
 /// Betanet chain definition
 #[derive(Debug, Clone, Copy)]
 pub struct Betanet;
 
 impl ChainBase for Betanet {
-	type BlockNumber = bp_rococo::BlockNumber;
-	type Hash = bp_rococo::Hash;
-	type Hasher = bp_rococo::Hashing;
-	type Header = bp_rococo::Header;
+	type BlockNumber = bp_betanet::BlockNumber;
+	type Hash = bp_betanet::Hash;
+	type Hasher = bp_betanet::Hashing;
+	type Header = bp_betanet::Header;
 }
 
 impl Chain for Betanet {
 	const NAME: &'static str = "Betanet";
 	const AVERAGE_BLOCK_INTERVAL: Duration = Duration::from_secs(6);
 
-	type AccountId = bp_rococo::AccountId;
-	type Index = bp_rococo::Index;
-	type SignedBlock = bp_rococo::SignedBlock;
+	type AccountId = bp_betanet::AccountId;
+	type Index = bp_betanet::Index;
+	type SignedBlock = bp_betanet::SignedBlock;
 	type Call = crate::runtime::Call;
-	type Balance = bp_rococo::Balance;
+	type Balance = bp_betanet::Balance;
 }
 
 impl ChainWithBalances for Betanet {
 	fn account_info_storage_key(account_id: &Self::AccountId) -> StorageKey {
-		StorageKey(bp_rococo::account_info_storage_key(account_id))
+		StorageKey(bp_betanet::account_info_storage_key(account_id))
 	}
 }
 
@@ -71,8 +71,8 @@ impl TransactionSignScheme for Betanet {
 	) -> Self::SignedTransaction {
 		let raw_payload = SignedPayload::new(
 			call,
-			bp_rococo::SignedExtensions::new(
-				bp_rococo::VERSION,
+			bp_betanet::SignedExtensions::new(
+				bp_betanet::VERSION,
 				sp_runtime::generic::Era::Immortal,
 				genesis_hash,
 				signer_nonce,
@@ -85,7 +85,7 @@ impl TransactionSignScheme for Betanet {
 		let signer: sp_runtime::MultiSigner = signer.public().into();
 		let (call, extra, _) = raw_payload.deconstruct();
 
-		bp_rococo::UncheckedExtrinsic::new_signed(
+		bp_betanet::UncheckedExtrinsic::new_signed(
 			call,
 			sp_runtime::MultiAddress::Id(signer.into_account()),
 			signature.into(),

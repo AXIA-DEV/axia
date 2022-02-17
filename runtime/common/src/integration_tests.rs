@@ -32,7 +32,7 @@ use frame_system::EnsureRoot;
 use primitives::v1::{
 	BlockNumber, HeadData, Header, Id as ParaId, ValidationCode, LOWEST_PUBLIC_ID,
 };
-use runtime_parachains::{configuration, paras, shared, Origin as ParaOrigin, ParaLifecycle};
+use runtime_allychains::{configuration, paras, shared, Origin as ParaOrigin, ParaLifecycle};
 use sp_core::{crypto::KeyTypeId, H256};
 use sp_io::TestExternalities;
 use sp_keystore::{testing::KeyStore, KeystoreExt};
@@ -445,7 +445,7 @@ fn basic_end_to_end_works() {
 			run_to_block(lease_start_block + 200);
 			assert_eq!(
 				Paras::lifecycle(ParaId::from(para_1)),
-				Some(ParaLifecycle::DowngradingParachain)
+				Some(ParaLifecycle::DowngradingAllychain)
 			);
 			assert_eq!(
 				Paras::lifecycle(ParaId::from(para_2)),
@@ -467,7 +467,7 @@ fn basic_end_to_end_works() {
 			assert_eq!(Paras::lifecycle(ParaId::from(para_1)), Some(ParaLifecycle::Parathread));
 			assert_eq!(
 				Paras::lifecycle(ParaId::from(para_2)),
-				Some(ParaLifecycle::DowngradingParachain)
+				Some(ParaLifecycle::DowngradingAllychain)
 			);
 
 			// Two sessions later, Para 2 is downgraded
@@ -804,7 +804,7 @@ fn basic_swap_works() {
 			ParaId::from(2000)
 		));
 
-		assert_eq!(Paras::lifecycle(ParaId::from(2000)), Some(ParaLifecycle::DowngradingParachain));
+		assert_eq!(Paras::lifecycle(ParaId::from(2000)), Some(ParaLifecycle::DowngradingAllychain));
 		assert_eq!(Paras::lifecycle(ParaId::from(2001)), Some(ParaLifecycle::UpgradingParathread));
 
 		// 2 session later they have swapped

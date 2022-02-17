@@ -405,8 +405,8 @@ publish-axia-image:
   after_script:
     # pass artifacts to the simnet-tests job
     # https://docs.gitlab.com/ee/ci/multi_project_pipelines.html#with-variable-inheritance
-    - echo "PARACHAINS_IMAGE_NAME=${IMAGE_NAME}" > ./artifacts/allychains.env
-    - echo "PARACHAINS_IMAGE_TAG=$(cat ./artifacts/EXTRATAG)" >> ./artifacts/allychains.env
+    - echo "ALLYCHAINS_IMAGE_NAME=${IMAGE_NAME}" > ./artifacts/allychains.env
+    - echo "ALLYCHAINS_IMAGE_TAG=$(cat ./artifacts/EXTRATAG)" >> ./artifacts/allychains.env
   artifacts:
     reports:
       # this artifact is used in simnet-tests job
@@ -461,7 +461,7 @@ update_axctest_weights:
   variables:
     RUNTIME:                       axctest
 
-update_westend_weights:
+update_alphanet_weights:
   <<:                              *update-weights
   variables:
     RUNTIME:                       alphanet
@@ -578,23 +578,23 @@ simnet-tests:
   needs:
     - job:                         publish-axia-image
     - job:                         publish-adder-collator-image
-  # `allychains.env` brings here `$PARACHAINS_IMAGE_NAME` and `$PARACHAINS_IMAGE_TAG`
+  # `allychains.env` brings here `$ALLYCHAINS_IMAGE_NAME` and `$ALLYCHAINS_IMAGE_TAG`
   # (`$EXTRATAG` here, # i.e. `2643-0.8.29-5f689e0a-6b24dc54`).
   # `collator.env` brings here `$COLLATOR_IMAGE_NAME` and  `$COLLATOR_IMAGE_TAG`
-  # For local tests with docker `$PARACHAINS_IMAGE_TAG` and `$COLLATOR_IMAGE_TAG`
+  # For local tests with docker `$ALLYCHAINS_IMAGE_TAG` and `$COLLATOR_IMAGE_TAG`
   # can be replaced with `master` tag.
 
   # SIMNET_REF is a gitlab variable
   before_script:
     - echo "Simnet Tests Config
         ${SIMNET_IMAGE_NAME} ${SIMNET_REF}
-        ${PARACHAINS_IMAGE_NAME} ${PARACHAINS_IMAGE_TAG}
+        ${ALLYCHAINS_IMAGE_NAME} ${ALLYCHAINS_IMAGE_TAG}
         ${COLLATOR_IMAGE_NAME} ${COLLATOR_IMAGE_TAG}"
   script:
     - /home/nonroot/simnet/gurke/scripts/run-test-environment-manager.sh
         --github-remote-dir="https://github.com/paritytech/axia/tree/master/simnet_tests"
-        --config="simnet_tests/configs/simple_rococo_testnet.toml"
-        --image="${PARACHAINS_IMAGE_NAME}:${PARACHAINS_IMAGE_TAG}"
+        --config="simnet_tests/configs/simple_betanet_testnet.toml"
+        --image="${ALLYCHAINS_IMAGE_NAME}:${ALLYCHAINS_IMAGE_TAG}"
         --image-2="${COLLATOR_IMAGE_NAME}:${COLLATOR_IMAGE_TAG}"
         --image-simnet="docker.io/paritytech/simnet:${SIMNET_REF}"
   allow_failure:                   true

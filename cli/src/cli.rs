@@ -86,11 +86,11 @@ pub struct RunCmd {
 
 	/// Force using Alphanet native runtime.
 	#[structopt(long = "force-alphanet")]
-	pub force_westend: bool,
+	pub force_alphanet: bool,
 
 	/// Force using Betanet native runtime.
 	#[structopt(long = "force-betanet")]
-	pub force_rococo: bool,
+	pub force_betanet: bool,
 
 	/// Setup a GRANDPA scheduled voting pause.
 	///
