@@ -23,18 +23,18 @@ bp-runtime = { path = "../../primitives/runtime", default-features = false }
 
 # Substrate Dependencies
 
-frame-benchmarking = { git = "https://github.com/purestake/substrate", default-features = false, optional = true , branch = "moonbeam-polkadot-v0.9.12" }
-frame-support = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-frame-system = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-core = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-runtime = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-std = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+frame-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false, optional = true , branch = "master" }
+frame-support = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+frame-system = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-std = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 
 [dev-dependencies]
 hex = "0.4"
 hex-literal = "0.3"
-sp-io = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-pallet-balances = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+sp-io = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+pallet-balances = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [features]
 default = ["std"]

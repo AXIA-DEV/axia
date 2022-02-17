@@ -22,4 +22,4 @@ time = "0.2"
 
 # Substrate dependencies
 
-substrate-prometheus-endpoint = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+substrate-prometheus-endpoint = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

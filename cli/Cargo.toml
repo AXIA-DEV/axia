@@ -22,18 +22,18 @@ futures = "0.3.17"
 service = { package = "polkadot-service", path = "../node/service", default-features = false, optional = true }
 polkadot-node-core-pvf = { path = "../node/core/pvf", optional = true }
 
-sp-core = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-frame-benchmarking-cli = { git = "https://github.com/purestake/substrate", optional = true , branch = "moonbeam-polkadot-v0.9.12" }
-try-runtime-cli = { git = "https://github.com/purestake/substrate", optional = true , branch = "moonbeam-polkadot-v0.9.12" }
-sc-cli = { git = "https://github.com/purestake/substrate", optional = true , branch = "moonbeam-polkadot-v0.9.12" }
-sc-service = { git = "https://github.com/purestake/substrate", optional = true , branch = "moonbeam-polkadot-v0.9.12" }
+sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+frame-benchmarking-cli = { git = "https://github.com/AXIA-DEV/axlib-axtend", optional = true , branch = "master" }
+try-runtime-cli = { git = "https://github.com/AXIA-DEV/axlib-axtend", optional = true , branch = "master" }
+sc-cli = { git = "https://github.com/AXIA-DEV/axlib-axtend", optional = true , branch = "master" }
+sc-service = { git = "https://github.com/AXIA-DEV/axlib-axtend", optional = true , branch = "master" }
 
 # this crate is used only to enable `trie-memory-tracker` feature
 # see https://github.com/paritytech/substrate/pull/6745
-sp-trie = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+sp-trie = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 
 [build-dependencies]
-substrate-build-script-utils = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+substrate-build-script-utils = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [features]
 default = [ "wasmtime", "db", "cli", "full-node", "trie-memory-tracker", "polkadot-native" ]

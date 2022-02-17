@@ -14,8 +14,8 @@ bp-polkadot-core = { path = "../polkadot-core", default-features = false }
 bp-runtime = { path = "../runtime", default-features = false }
 
 # Substrate Based Dependencies
-sp-api = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-std = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+sp-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-std = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 
 [features]
 default = ["std"]

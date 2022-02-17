@@ -14,26 +14,26 @@ serde = { version = "1.0.130", features = [ "derive" ], optional = true }
 derive_more = "0.99.14"
 bitflags = "1.3.2"
 
-sp-api = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-inherents = { package = "sp-inherents", git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-std = { package = "sp-std", git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-io = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-runtime = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-session = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-staking = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-core = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-keystore = { git = "https://github.com/purestake/substrate", optional = true , branch = "moonbeam-polkadot-v0.9.12" }
+sp-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+inherents = { package = "sp-inherents", git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-std = { package = "sp-std", git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-io = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-session = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-staking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", optional = true , branch = "master" }
 
-pallet-authority-discovery = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-authorship = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-balances = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-session = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-staking = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-timestamp = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-pallet-vesting = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-frame-benchmarking = { git = "https://github.com/purestake/substrate", default-features = false, optional = true , branch = "moonbeam-polkadot-v0.9.12" }
-frame-support = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-frame-system = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
+pallet-authority-discovery = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+pallet-authorship = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+pallet-balances = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+pallet-session = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+pallet-staking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+pallet-timestamp = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+pallet-vesting = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+frame-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false, optional = true , branch = "master" }
+frame-support = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+frame-system = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 
 xcm = { package = "xcm", path = "../../xcm", default-features = false }
 xcm-executor = { package = "xcm-executor", path = "../../xcm/xcm-executor", default-features = false }
@@ -45,9 +45,9 @@ rand_chacha = { version = "0.3.1", default-features = false }
 [dev-dependencies]
 futures = "0.3.17"
 hex-literal = "0.3.3"
-keyring = { package = "sp-keyring", git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-frame-support-test = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sc-keystore = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+keyring = { package = "sp-keyring", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+frame-support-test = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sc-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 
 [features]

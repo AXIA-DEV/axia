@@ -15,7 +15,7 @@ futures = "0.3.17"
 tracing = "0.1.29"
 
 [dev-dependencies]
-sp-core = { git = "https://github.com/purestake/substrate", features = ["std"] , branch = "moonbeam-polkadot-v0.9.12" }
+sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", features = ["std"] , branch = "master" }
 
 polkadot-node-subsystem-util = { path = "../../subsystem-util" }
 polkadot-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }

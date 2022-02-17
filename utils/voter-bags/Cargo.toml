@@ -5,8 +5,8 @@ authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
 
 [dependencies]
-generate-bags = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sp-io = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+generate-bags = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sp-io = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 structopt = "0.3.21"
 
 westend-runtime = { path = "../../runtime/westend" }

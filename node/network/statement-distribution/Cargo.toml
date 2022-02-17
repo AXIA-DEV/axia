@@ -9,8 +9,8 @@ edition = "2018"
 futures = "0.3.17"
 tracing = "0.1.29"
 polkadot-primitives = { path = "../../../primitives" }
-sp-staking = { git = "https://github.com/purestake/substrate", default-features = false , branch = "moonbeam-polkadot-v0.9.12" }
-sp-keystore = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+sp-staking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
+sp-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../../subsystem" }
 polkadot-node-primitives = { path = "../../primitives" }
 polkadot-node-subsystem-util = { path = "../../subsystem-util" }
@@ -24,11 +24,11 @@ thiserror = "1.0.30"
 [dev-dependencies]
 polkadot-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
 assert_matches = "1.4.0"
-sp-keyring = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sp-core = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sp-application-crypto = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sp-keystore = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sp-tracing = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sc-keystore = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sc-network = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+sp-keyring = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sp-application-crypto = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sp-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sp-tracing = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sc-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sc-network = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 futures-timer = "3.0.2"

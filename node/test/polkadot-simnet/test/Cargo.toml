@@ -6,16 +6,16 @@ edition = "2018"
 
 [dependencies]
 # substrate primitives
-sp-core = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sp-blockchain = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-sp-runtime = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sp-blockchain = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 # frame pallets
-system = { package = "frame-system", git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
-balances = { package = "pallet-balances", git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+system = { package = "frame-system", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+balances = { package = "pallet-balances", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 # substrate client libs
-sc-client-api = { git = "https://github.com/purestake/substrate", branch = "moonbeam-polkadot-v0.9.12" }
+sc-client-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 # polkadot deps
 polkadot-simnet = { path = "../common" }
