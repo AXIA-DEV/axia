@@ -21,10 +21,10 @@ xcm-executor = { path = "../xcm-executor", default-features = false }
 
 [dev-dependencies]
 pallet-balances = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
-polkadot-runtime-parachains = { path = "../../runtime/parachains" }
+axia-runtime-allychains = { path = "../../runtime/allychains" }
 sp-io = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 xcm-builder = { path = "../xcm-builder" }
-polkadot-parachain = { path = "../../parachain" }
+axia-allychain = { path = "../../allychain" }
 
 [features]
 default = ["std"]

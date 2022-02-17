@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::{
 	configuration::{self, HostConfiguration},
@@ -57,12 +57,12 @@ pub struct HrmpOpenChannelRequest {
 #[derive(Encode, Decode, TypeInfo)]
 #[cfg_attr(test, derive(Debug))]
 pub struct HrmpChannel {
-	// NOTE: This structure is used by parachains via merkle proofs. Therefore, this struct requires
+	// NOTE: This structure is used by allychains via merkle proofs. Therefore, this struct requires
 	// special treatment.
 	//
-	// A parachain requested this struct can only depend on the subset of this struct. Specifically,
+	// A allychain requested this struct can only depend on the subset of this struct. Specifically,
 	// only a first few fields can be depended upon (See `AbridgedHrmpChannel`). These fields cannot
-	// be changed without corresponding migration of parachains.
+	// be changed without corresponding migration of allychains.
 	/// The maximum number of messages that can be pending in the channel at once.
 	pub max_capacity: u32,
 	/// The maximum total size of the messages that can be pending in the channel at once.
@@ -323,8 +323,8 @@ pub mod pallet {
 	pub type HrmpIngressChannelsIndex<T: Config> =
 		StorageMap<_, Twox64Concat, ParaId, Vec<ParaId>, ValueQuery>;
 
-	// NOTE that this field is used by parachains via merkle storage proofs, therefore changing
-	// the format will require migration of parachains.
+	// NOTE that this field is used by allychains via merkle storage proofs, therefore changing
+	// the format will require migration of allychains.
 	#[pallet::storage]
 	pub type HrmpEgressChannelsIndex<T: Config> =
 		StorageMap<_, Twox64Concat, ParaId, Vec<ParaId>, ValueQuery>;
@@ -383,7 +383,7 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Initiate opening a channel from a parachain to a given recipient with given channel
+		/// Initiate opening a channel from a allychain to a given recipient with given channel
 		/// parameters.
 		///
 		/// - `proposed_max_capacity` - specifies how many messages can be in the channel at once.
@@ -444,7 +444,7 @@ pub mod pallet {
 
 		/// This extrinsic triggers the cleanup of all the HRMP storage items that
 		/// a para may have. Normally this happens once per session, but this allows
-		/// you to trigger the cleanup immediately for a specific parachain.
+		/// you to trigger the cleanup immediately for a specific allychain.
 		///
 		/// Origin must be Root.
 		#[pallet::weight(0)]
@@ -746,7 +746,7 @@ impl<T: Config> Pallet<T> {
 		// (a) For ensuring that messages are eventually, a rule requires each parablock new
 		//     watermark should be greater than the last one.
 		//
-		// (b) However, a parachain cannot read into "the future", therefore the watermark should
+		// (b) However, a allychain cannot read into "the future", therefore the watermark should
 		//     not be greater than the relay-chain context block which the parablock refers to.
 		if let Some(last_watermark) = <Self as Store>::HrmpWatermarks::get(&recipient) {
 			if new_hrmp_watermark <= last_watermark {
@@ -851,7 +851,7 @@ impl<T: Config> Pallet<T> {
 		let mut weight = 0;
 
 		// sift through the incoming messages digest to collect the paras that sent at least one
-		// message to this parachain between the old and new watermarks.
+		// message to this allychain between the old and new watermarks.
 		let senders = <Self as Store>::HrmpChannelDigests::mutate(&recipient, |digest| {
 			let mut senders = BTreeSet::new();
 			let mut leftover = Vec::with_capacity(digest.len());
@@ -979,7 +979,7 @@ impl<T: Config> Pallet<T> {
 		weight
 	}
 
-	/// Initiate opening a channel from a parachain to a given recipient with given channel
+	/// Initiate opening a channel from a allychain to a given recipient with given channel
 	/// parameters.
 	///
 	/// Basically the same as [`hrmp_init_open_channel`](Pallet::hrmp_init_open_channel) but intendend for calling directly from
@@ -1082,7 +1082,7 @@ impl<T: Config> Pallet<T> {
 			.ok_or(Error::<T>::AcceptHrmpChannelDoesntExist)?;
 		ensure!(!channel_req.confirmed, Error::<T>::AcceptHrmpChannelAlreadyConfirmed);
 
-		// check if by accepting this open channel request, this parachain would exceed the
+		// check if by accepting this open channel request, this allychain would exceed the
 		// number of inbound channels.
 		let config = <configuration::Pallet<T>>::config();
 		let channel_num_limit = if <paras::Pallet<T>>::is_parathread(origin) {
@@ -1381,7 +1381,7 @@ mod tests {
 		assert_ok!(Paras::schedule_para_initialize(
 			id,
 			crate::paras::ParaGenesisArgs {
-				parachain: true,
+				allychain: true,
 				genesis_head: vec![1].into(),
 				validation_code: vec![1].into(),
 			},
@@ -1461,7 +1461,7 @@ mod tests {
 				.collect::<HashSet<_>>(),
 		);
 
-		// A HRMP watermark can be None for an onboarded parachain. However, an offboarded parachain
+		// A HRMP watermark can be None for an onboarded allychain. However, an offboarded allychain
 		// cannot have an HRMP watermark: it should've been cleanup.
 		assert_contains_only_onboarded(
 			<Hrmp as Store>::HrmpWatermarks::iter().map(|(k, _)| k),
@@ -1573,7 +1573,7 @@ mod tests {
 		let para_b_origin: crate::Origin = 3.into();
 
 		new_test_ext(GenesisConfigBuilder::default().build()).execute_with(|| {
-			// We need both A & B to be registered and alive parachains.
+			// We need both A & B to be registered and alive allychains.
 			register_parachain(para_a);
 			register_parachain(para_b);
 
@@ -1801,7 +1801,7 @@ mod tests {
 		let para_b = 21.into();
 
 		new_test_ext(GenesisConfigBuilder::default().build()).execute_with(|| {
-			// Register two parachains, wait until a session change, then initiate channel open
+			// Register two allychains, wait until a session change, then initiate channel open
 			// request and accept that, and finally wait until the next session.
 			register_parachain(para_a);
 			register_parachain(para_b);
@@ -1892,7 +1892,7 @@ mod tests {
 		genesis.hrmp_sender_deposit = 20;
 		genesis.hrmp_recipient_deposit = 15;
 		new_test_ext(genesis.build()).execute_with(|| {
-			// Register two parachains funded with different amounts of funds and arrange a channel.
+			// Register two allychains funded with different amounts of funds and arrange a channel.
 			register_parachain_with_balance(para_a, 100);
 			register_parachain_with_balance(para_b, 110);
 			run_to_block(5, Some(vec![4, 5]));
@@ -1920,7 +1920,7 @@ mod tests {
 		genesis.hrmp_sender_deposit = 20;
 		genesis.hrmp_recipient_deposit = 15;
 		new_test_ext(genesis.build()).execute_with(|| {
-			// Register two parachains and open a channel between them.
+			// Register two allychains and open a channel between them.
 			register_parachain_with_balance(para_a, 100);
 			register_parachain_with_balance(para_b, 110);
 			run_to_block(5, Some(vec![4, 5]));
@@ -1931,7 +1931,7 @@ mod tests {
 			run_to_block(8, Some(vec![8]));
 			assert!(channel_exists(para_a, para_b));
 
-			// Then deregister one parachain.
+			// Then deregister one allychain.
 			deregister_parachain(para_a);
 			run_to_block(10, Some(vec![9, 10]));
 
@@ -1954,7 +1954,7 @@ mod tests {
 		genesis.hrmp_sender_deposit = 20;
 		genesis.hrmp_recipient_deposit = 15;
 		new_test_ext(genesis.build()).execute_with(|| {
-			// Register two parachains and open a channel between them.
+			// Register two allychains and open a channel between them.
 			register_parachain_with_balance(para_a, 100);
 			register_parachain_with_balance(para_b, 110);
 			run_to_block(5, Some(vec![4, 5]));
@@ -1963,7 +1963,7 @@ mod tests {
 			Hrmp::init_open_channel(para_a, para_b, 2, 8).unwrap();
 			assert_eq!(<Test as Config>::Currency::free_balance(&para_a.into_account()), 80);
 
-			// Then deregister one parachain, but don't wait two sessions until it takes effect.
+			// Then deregister one allychain, but don't wait two sessions until it takes effect.
 			// Instead, para_b will confirm the request, which will take place the same time
 			// the offboarding should happen.
 			deregister_parachain(para_a);
@@ -1989,7 +1989,7 @@ mod tests {
 		genesis.hrmp_sender_deposit = 20;
 		genesis.hrmp_recipient_deposit = 15;
 		new_test_ext(genesis.build()).execute_with(|| {
-			// Register two parachains and open a channel between them.
+			// Register two allychains and open a channel between them.
 			register_parachain_with_balance(para_a, 100);
 			register_parachain_with_balance(para_b, 110);
 			run_to_block(5, Some(vec![4, 5]));

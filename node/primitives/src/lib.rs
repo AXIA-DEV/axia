@@ -1,22 +1,22 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Primitive types used on the node-side.
 //!
-//! Unlike the `polkadot-primitives` crate, these primitives are only used on the node-side,
+//! Unlike the `axia-primitives` crate, these primitives are only used on the node-side,
 //! not shared between the node and the runtime. This crate builds on top of the primitives defined
 //! there.
 
@@ -34,14 +34,14 @@ pub use sp_consensus_babe::{
 };
 pub use sp_core::traits::SpawnNamed;
 
-use polkadot_primitives::v1::{
+use axia_primitives::v1::{
 	BlakeTwo256, CandidateCommitments, CandidateHash, CollatorPair, CommittedCandidateReceipt,
 	CompactStatement, EncodeAs, Hash, HashT, HeadData, Id as ParaId, OutboundHrmpMessage,
 	PersistedValidationData, SessionIndex, Signed, UncheckedSigned, UpwardMessage, ValidationCode,
 	ValidatorIndex, MAX_CODE_SIZE, MAX_POV_SIZE,
 };
 
-pub use polkadot_parachain::primitives::BlockData;
+pub use axia_parachain::primitives::BlockData;
 
 pub mod approval;
 
@@ -66,7 +66,7 @@ pub const VALIDATION_CODE_BOMB_LIMIT: usize = (MAX_CODE_SIZE * 4u32) as usize;
 pub const POV_BOMB_LIMIT: usize = (MAX_POV_SIZE * 4u32) as usize;
 
 /// It would be nice to draw this from the chain state, but we have no tools for it right now.
-/// On Polkadot this is 1 day, and on AxiaTest it's 6 hours.
+/// On Axia this is 1 day, and on AxiaTest it's 6 hours.
 ///
 /// Number of sessions we want to consider in disputes.
 pub const DISPUTE_WINDOW: SessionIndex = 6;
@@ -214,19 +214,19 @@ impl PoV {
 ///
 /// This differs from `CandidateCommitments` in two ways:
 ///
-/// - does not contain the erasure root; that's computed at the Polkadot level, not at Cumulus
+/// - does not contain the erasure root; that's computed at the Axia level, not at Cumulus
 /// - contains a proof of validity.
 #[derive(Clone, Encode, Decode)]
-pub struct Collation<BlockNumber = polkadot_primitives::v1::BlockNumber> {
+pub struct Collation<BlockNumber = axia_primitives::v1::BlockNumber> {
 	/// Messages destined to be interpreted by the Relay chain itself.
 	pub upward_messages: Vec<UpwardMessage>,
-	/// The horizontal messages sent by the parachain.
+	/// The horizontal messages sent by the allychain.
 	pub horizontal_messages: Vec<OutboundHrmpMessage<ParaId>>,
 	/// New validation code.
 	pub new_validation_code: Option<ValidationCode>,
 	/// The head-data produced as a result of execution.
 	pub head_data: HeadData,
-	/// Proof to verify the state transition of the parachain.
+	/// Proof to verify the state transition of the allychain.
 	pub proof_of_validity: PoV,
 	/// The number of messages processed from the DMQ.
 	pub processed_downward_messages: u32,
@@ -252,7 +252,7 @@ pub struct CollationResult {
 	/// An optional result sender that should be informed about a successfully seconded collation.
 	///
 	/// There is no guarantee that this sender is informed ever about any result, it is completely okay to just drop it.
-	/// However, if it is called, it should be called with the signed statement of a parachain validator seconding the
+	/// However, if it is called, it should be called with the signed statement of a allychain validator seconding the
 	/// collation.
 	pub result_sender: Option<futures::channel::oneshot::Sender<CollationSecondedSignal>>,
 }
@@ -268,8 +268,8 @@ impl CollationResult {
 
 /// Collation function.
 ///
-/// Will be called with the hash of the relay chain block the parachain block should be build on and the
-/// [`ValidationData`] that provides information about the state of the parachain on the relay chain.
+/// Will be called with the hash of the relay chain block the allychain block should be build on and the
+/// [`ValidationData`] that provides information about the state of the allychain on the relay chain.
 ///
 /// Returns an optional [`CollationResult`].
 pub type CollatorFn = Box<
@@ -287,7 +287,7 @@ pub struct CollationGenerationConfig {
 	pub key: CollatorPair,
 	/// Collation function. See [`CollatorFn`] for more details.
 	pub collator: CollatorFn,
-	/// The parachain that this collator collates for
+	/// The allychain that this collator collates for
 	pub para_id: ParaId,
 }
 

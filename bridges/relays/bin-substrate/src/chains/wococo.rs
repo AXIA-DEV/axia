@@ -62,12 +62,12 @@ impl CliEncodeCall for Wococo {
 		match *call {
 			relay_wococo_client::runtime::Call::System(relay_wococo_client::runtime::SystemCall::remark(_)) => {
 				Ok(DispatchInfo {
-					weight: crate::chains::rococo::SYSTEM_REMARK_CALL_WEIGHT,
+					weight: crate::chains::betanet::SYSTEM_REMARK_CALL_WEIGHT,
 					class: DispatchClass::Normal,
 					pays_fee: Pays::Yes,
 				})
 			}
-			_ => anyhow::bail!("Unsupported Rococo call: {:?}", call),
+			_ => anyhow::bail!("Unsupported Betanet call: {:?}", call),
 		}
 	}
 }

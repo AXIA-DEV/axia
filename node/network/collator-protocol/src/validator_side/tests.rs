@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::*;
 use assert_matches::assert_matches;
@@ -22,19 +22,19 @@ use sp_keyring::Sr25519Keyring;
 use sp_keystore::{testing::KeyStore as TestKeyStore, SyncCryptoStore};
 use std::{iter, sync::Arc, time::Duration};
 
-use polkadot_node_network_protocol::{
+use axia_node_network_protocol::{
 	our_view,
 	request_response::{Requests, ResponseSender},
 	ObservedRole,
 };
-use polkadot_node_primitives::BlockData;
-use polkadot_node_subsystem_util::TimeoutExt;
-use polkadot_primitives::v1::{
+use axia_node_primitives::BlockData;
+use axia_node_subsystem_util::TimeoutExt;
+use axia_primitives::v1::{
 	CandidateDescriptor, CollatorPair, CoreState, GroupIndex, GroupRotationInfo, OccupiedCore,
 	ScheduledCore, ValidatorId, ValidatorIndex,
 };
-use polkadot_subsystem::messages::{AllMessages, RuntimeApiMessage, RuntimeApiRequest};
-use polkadot_subsystem_testhelpers as test_helpers;
+use axia_subsystem::messages::{AllMessages, RuntimeApiMessage, RuntimeApiRequest};
+use axia_subsystem_testhelpers as test_helpers;
 
 const ACTIVITY_TIMEOUT: Duration = Duration::from_millis(500);
 const DECLARE_TIMEOUT: Duration = Duration::from_millis(25);
@@ -120,7 +120,7 @@ struct TestHarness {
 fn test_harness<T: Future<Output = VirtualOverseer>>(test: impl FnOnce(TestHarness) -> T) {
 	let _ = env_logger::builder()
 		.is_test(true)
-		.filter(Some("polkadot_collator_protocol"), log::LevelFilter::Trace)
+		.filter(Some("axia_collator_protocol"), log::LevelFilter::Trace)
 		.filter(Some(LOG_TARGET), log::LevelFilter::Trace)
 		.try_init();
 
@@ -131,7 +131,7 @@ fn test_harness<T: Future<Output = VirtualOverseer>>(test: impl FnOnce(TestHarne
 	let keystore = TestKeyStore::new();
 	keystore
 		.sr25519_generate_new(
-			polkadot_primitives::v1::PARACHAIN_KEY_TYPE_ID,
+			axia_primitives::v1::PARACHAIN_KEY_TYPE_ID,
 			Some(&Sr25519Keyring::Alice.to_seed()),
 		)
 		.unwrap();

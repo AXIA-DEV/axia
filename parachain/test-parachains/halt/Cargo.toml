@@ -1,8 +1,8 @@
 [package]
-name = "test-parachain-halt"
+name = "test-allychain-halt"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
-description = "Test parachain which executes forever"
+description = "Test allychain which executes forever"
 edition = "2018"
 build = "build.rs"
 

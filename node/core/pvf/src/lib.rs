@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 #![warn(missing_docs)]
 
@@ -23,7 +23,7 @@
 //!
 //! Then using the handle the client can send two types of requests:
 //!
-//! (a) PVF execution. This accepts the PVF [`params`][`polkadot_parachain::primitives::ValidationParams`]
+//! (a) PVF execution. This accepts the PVF [`params`][`axia_parachain::primitives::ValidationParams`]
 //!     and the PVF [code][`Pvf`], prepares (verifies and compiles) the code, and then executes PVF
 //!     with the `params`.
 //!
@@ -70,7 +70,7 @@
 //!
 //! The execute workers will be fed by the requests from the execution queue, which is basically a
 //! combination of a path to the compiled artifact and the
-//! [`params`][`polkadot_parachain::primitives::ValidationParams`].
+//! [`params`][`axia_parachain::primitives::ValidationParams`].
 //!
 //! Each fixed interval of time a pruning task will run. This task will remove all artifacts that
 //! weren't used or received a heads up signal for a while.
@@ -102,4 +102,4 @@ pub use metrics::Metrics;
 pub use execute::worker_entrypoint as execute_worker_entrypoint;
 pub use prepare::worker_entrypoint as prepare_worker_entrypoint;
 
-const LOG_TARGET: &str = "parachain::pvf";
+const LOG_TARGET: &str = "allychain::pvf";

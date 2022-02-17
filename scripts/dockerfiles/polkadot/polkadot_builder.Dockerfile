@@ -1,36 +1,36 @@
-# This is the build stage for Polkadot. Here we create the binary in a temporary image.
+# This is the build stage for Axia. Here we create the binary in a temporary image.
 FROM docker.io/paritytech/ci-linux:production as builder
 
-WORKDIR /polkadot
-COPY . /polkadot
+WORKDIR /axia
+COPY . /axia
 
 RUN cargo build --locked --release
 
-# This is the 2nd stage: a very small image where we copy the Polkadot binary."
+# This is the 2nd stage: a very small image where we copy the Axia binary."
 FROM docker.io/library/ubuntu:20.04
 
-LABEL description="Multistage Docker image for Polkadot: a platform for web3" \
+LABEL description="Multistage Docker image for Axia: a platform for web3" \
 	io.parity.image.type="builder" \
 	io.parity.image.authors="chevdor@gmail.com, devops-team@parity.io" \
 	io.parity.image.vendor="Parity Technologies" \
-	io.parity.image.description="Polkadot: a platform for web3" \
-	io.parity.image.source="https://github.com/paritytech/polkadot/blob/${VCS_REF}/scripts/dockerfiles/polkadot/polkadot_builder.Dockerfile" \
-	io.parity.image.documentation="https://github.com/paritytech/polkadot/"
+	io.parity.image.description="Axia: a platform for web3" \
+	io.parity.image.source="https://github.com/paritytech/axia/blob/${VCS_REF}/scripts/dockerfiles/axia/axia_builder.Dockerfile" \
+	io.parity.image.documentation="https://github.com/paritytech/axia/"
 
-COPY --from=builder /polkadot/target/release/polkadot /usr/local/bin
+COPY --from=builder /axia/target/release/axia /usr/local/bin
 
-RUN useradd -m -u 1000 -U -s /bin/sh -d /polkadot polkadot && \
-	mkdir -p /data /polkadot/.local/share && \
-	chown -R polkadot:polkadot /data && \
-	ln -s /data /polkadot/.local/share/polkadot && \
+RUN useradd -m -u 1000 -U -s /bin/sh -d /axia axia && \
+	mkdir -p /data /axia/.local/share && \
+	chown -R axia:axia /data && \
+	ln -s /data /axia/.local/share/axia && \
 # unclutter and minimize the attack surface
 	rm -rf /usr/bin /usr/sbin && \
 # check if executable works in this container
-	/usr/local/bin/polkadot --version
+	/usr/local/bin/axia --version
 
-USER polkadot
+USER axia
 
 EXPOSE 30333 9933 9944 9615
 VOLUME ["/data"]
 
-ENTRYPOINT ["/usr/local/bin/polkadot"]
+ENTRYPOINT ["/usr/local/bin/axia"]

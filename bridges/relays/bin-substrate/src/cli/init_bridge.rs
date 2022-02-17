@@ -84,14 +84,14 @@ macro_rules! select_bridge {
 				$generic
 			}
 			InitBridgeName::WestendToMillau => {
-				type Source = relay_westend_client::Westend;
+				type Source = relay_westend_client::Alphanet;
 				type Target = relay_millau_client::Millau;
 
 				fn encode_init_bridge(
 					init_data: InitializationData<<Source as ChainBase>::Header>,
 				) -> <Target as Chain>::Call {
-					// at Westend -> Millau initialization we're not using sudo, because otherwise our deployments
-					// may fail, because we need to initialize both Rialto -> Millau and Westend -> Millau bridge.
+					// at Alphanet -> Millau initialization we're not using sudo, because otherwise our deployments
+					// may fail, because we need to initialize both Rialto -> Millau and Alphanet -> Millau bridge.
 					// => since there's single possible sudo account, one of transaction may fail with duplicate nonce error
 					millau_runtime::BridgeGrandpaWestendCall::<
 						millau_runtime::Runtime,
@@ -103,7 +103,7 @@ macro_rules! select_bridge {
 				$generic
 			}
 			InitBridgeName::RococoToWococo => {
-				type Source = relay_rococo_client::Rococo;
+				type Source = relay_rococo_client::Betanet;
 				type Target = relay_wococo_client::Wococo;
 
 				fn encode_init_bridge(
@@ -118,7 +118,7 @@ macro_rules! select_bridge {
 			}
 			InitBridgeName::WococoToRococo => {
 				type Source = relay_wococo_client::Wococo;
-				type Target = relay_rococo_client::Rococo;
+				type Target = relay_rococo_client::Betanet;
 
 				fn encode_init_bridge(
 					init_data: InitializationData<<Source as ChainBase>::Header>,

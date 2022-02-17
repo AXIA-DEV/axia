@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-node-core-runtime-api"
+name = "axia-node-core-runtime-api"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -15,12 +15,12 @@ sp-authority-discovery = { git = "https://github.com/AXIA-DEV/axlib-axtend", bra
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-consensus-babe = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-polkadot-primitives = { path = "../../../primitives" }
-polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../../subsystem" }
-polkadot-node-subsystem-util = { path = "../../subsystem-util" }
+axia-primitives = { path = "../../../primitives" }
+axia-subsystem = { package = "axia-node-subsystem", path = "../../subsystem" }
+axia-node-subsystem-util = { path = "../../subsystem-util" }
 
 [dev-dependencies]
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 futures = { version = "0.3.17", features = ["thread-pool"] }
-polkadot-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
-polkadot-node-primitives = { path = "../../primitives" }
+axia-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
+axia-node-primitives = { path = "../../primitives" }

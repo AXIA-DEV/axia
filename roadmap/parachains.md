@@ -1,5 +1,5 @@
-# Parachains Roadmap
-This is a roadmap for the core technology underlying Parachains - what protocols, APIs, and code paths need to be in place to fully instantiate a self-sufficient and secure parachain. We don't attempt to cover anything on what APIs a parachain toolkit might expose in order to make use of parachain features - only how those features are implemented and the low-level APIs that they expose to the validation function, if any.
+# Allychains Roadmap
+This is a roadmap for the core technology underlying Allychains - what protocols, APIs, and code paths need to be in place to fully instantiate a self-sufficient and secure allychain. We don't attempt to cover anything on what APIs a allychain toolkit might expose in order to make use of allychain features - only how those features are implemented and the low-level APIs that they expose to the validation function, if any.
 
 ## Categories
 We will use these categories to delineate features:
@@ -20,9 +20,9 @@ This section contains various sub-projects and the features that make them up.
 
 Category: Networking
 
-Validators assigned to a parachain need a way to discover and connect to collators in order to get fresh parachain blocks to validate.
+Validators assigned to a allychain need a way to discover and connect to collators in order to get fresh allychain blocks to validate.
 
-Collators need to discover and connect to validators in order to submit parachain blocks.
+Collators need to discover and connect to validators in order to submit allychain blocks.
 
 Fishermen need to talk to validators and collators to fetch available data and circulate reports.
 
@@ -30,7 +30,7 @@ Some connections are long-lived, some are just for a single request.
 
 #### Custom libp2p sub-protocols
 
-Polkadot parachains involve many distinct networking protocols. Ideally, we'd be able to spawn each of these as a separate futures task which communicates via channel with other protocols or node code as necessary. This requires changes in Axlib and libp2p.
+Axia allychains involve many distinct networking protocols. Ideally, we'd be able to spawn each of these as a separate futures task which communicates via channel with other protocols or node code as necessary. This requires changes in Axlib and libp2p.
 
 ---
 ### Assignment
@@ -39,13 +39,13 @@ Polkadot parachains involve many distinct networking protocols. Ideally, we'd be
 
 Category: Runtime
 
-Auctioning and registration of parachains. This is already implemented and follows the [Parachain Allocation — Research at W3F](https://research.web3.foundation/en/latest/polkadot/Parachain-Allocation.html) document.
+Auctioning and registration of allychains. This is already implemented and follows the [Allychain Allocation — Research at W3F](https://research.web3.foundation/en/latest/axia/Allychain-Allocation.html) document.
 
 #### *Parathread Auctions*
 
 Category: Runtime
 
-Parathreads are pay-as-you-go parachains. This consists of an on-chain mechanism for resolving an auction by collators and ensuring that they author a block.
+Parathreads are pay-as-you-go allychains. This consists of an on-chain mechanism for resolving an auction by collators and ensuring that they author a block.
 
 The node-side portion of parathreads is for collators to actually cast bids and to be configured for which conditions to cast bids under.
 
@@ -53,7 +53,7 @@ The node-side portion of parathreads is for collators to actually cast bids and 
 
 Category: Runtime
 
-Assignment of validators to parachains. Validators are only assigned to parachains for a short period of time. Tweakable parameters include length of time assigned to each parachain and length of time in advance that the network is aware of validators' assignments.
+Assignment of validators to allychains. Validators are only assigned to allychains for a short period of time. Tweakable parameters include length of time assigned to each allychain and length of time in advance that the network is aware of validators' assignments.
 
 ---
 ### Agreement
@@ -62,19 +62,19 @@ Assignment of validators to parachains. Validators are only assigned to parachai
 
 Category: Networking
 
-A black-box networking component for circulating attestation messages (`Candidate`, `Valid`, `Invalid`) between validators of any given parachain to create a quorum on which blocks can be included.
+A black-box networking component for circulating attestation messages (`Candidate`, `Valid`, `Invalid`) between validators of any given allychain to create a quorum on which blocks can be included.
 
 #### *Availability Erasure-coding*
 
 Category: Node, Networking
 
-For each potential, considered parachain block, perform an erasure-coding of the PoV and outgoing messages of the block. Call the number of validators on the relay chain for the Relay-chain block this parachain block is being considered for inclusion in `n`. Erasure-code into `n` pieces, where any `f + 1` can recover (`f` being the maximum number of tolerated faulty nodes = ~ `n / 3`). The `i'th` validator stores the `i'th` piece of the coding and provides it to any who ask.
+For each potential, considered allychain block, perform an erasure-coding of the PoV and outgoing messages of the block. Call the number of validators on the relay chain for the Relay-chain block this allychain block is being considered for inclusion in `n`. Erasure-code into `n` pieces, where any `f + 1` can recover (`f` being the maximum number of tolerated faulty nodes = ~ `n / 3`). The `i'th` validator stores the `i'th` piece of the coding and provides it to any who ask.
 
 #### *PoV block fetching*
 
 Category: Networking
 
-A black-box networking component for validators or fishermen on a parachain to obtain the PoV block referenced by hash in an attestation, for the purpose of validating. When fetching "current" PoV blocks (close to the head of the chain, or relating to the block currently being built), this should be fast. When fetching "old" PoV blocks, it should be possible and fall back on recovering from the availability erasure-coding.
+A black-box networking component for validators or fishermen on a allychain to obtain the PoV block referenced by hash in an attestation, for the purpose of validating. When fetching "current" PoV blocks (close to the head of the chain, or relating to the block currently being built), this should be fast. When fetching "old" PoV blocks, it should be possible and fall back on recovering from the availability erasure-coding.
 
 #### *Parathread Auction Voting*
 
@@ -88,7 +88,7 @@ Category: Node, Networking
 
 The main event loop of a collator node:
  1. new relay chain block B
- 2. sync new parachain head P w.r.t. B
+ 2. sync new allychain head P w.r.t. B
  3. build new child of P
  4. submit to validators
 
@@ -96,9 +96,9 @@ The main event loop of a collator node:
 ### Cross-chain Messaging
 
 https://hackmd.io/ILoQltEISP697oMYe4HbrA?view
-https://github.com/paritytech/polkadot/issues/597
+https://github.com/paritytech/axia/issues/597
 
-The biggest sub-project of the parachains roadmap - how messages are sent between parachains. This involves the state-machine ordering of incoming messages, protocols for fetching those messages, and node logic for persisting the messages.
+The biggest sub-project of the allychains roadmap - how messages are sent between allychains. This involves the state-machine ordering of incoming messages, protocols for fetching those messages, and node logic for persisting the messages.
 
 This is designed around a concept of unidirectional _channels_ between paras, which consist of a sender and receiver. At each relay chain block, each para has an opportunity to send a message on each channel for which it controls the sending half. It will also attempt to process messages on each receiving half of the channel which it controls _in order_: messages sent at block height `b` must be processed before those sent at block height `b+1`. For messages on different channels sent at the same block height, there will be some well-defined order in which they should be processed.
 
@@ -155,17 +155,17 @@ Runtime logic for paras to open and close channels by putting down a deposit. Th
 
 Category: Runtime
 
-In Polkadot, a bad parachain group can force inclusion of an invalid or unavailable parachain block. It is the job of fishermen to detect those blocks and report them to the runtime. This item is about the report handler
+In Axia, a bad allychain group can force inclusion of an invalid or unavailable allychain block. It is the job of fishermen to detect those blocks and report them to the runtime. This item is about the report handler
 
-The W3F-research writeup on availability/validity provides a high-level view of the dispute resolution process: [Availability and Validity — Research at W3F](https://research.web3.foundation/en/latest/polkadot/Availability_and_Validity.html)
+The W3F-research writeup on availability/validity provides a high-level view of the dispute resolution process: [Availability and Validity — Research at W3F](https://research.web3.foundation/en/latest/axia/Availability_and_Validity.html)
 
-One of the main behaviors that is unimplemented and needs to be is the _rollback_ that occurs when the dispute resolution process concludes that an error has been made. When we mark a parachain block as having been invalid or unavailable, we need to roll back all parachains to a point from just before this state.  We would also need to roll back relay chain state, because there may have been messages from a parachain to a relay chain that now need to be rolled back. The easiest thing to do would be to side-step that by putting a delay on upwards messages, but this would impact the UX of parachain participation in slot auctions, council votes, etc. considerably. Assuming we can't side-step this, we will have to find a way to roll back selected state of the relay chain.
+One of the main behaviors that is unimplemented and needs to be is the _rollback_ that occurs when the dispute resolution process concludes that an error has been made. When we mark a allychain block as having been invalid or unavailable, we need to roll back all allychains to a point from just before this state.  We would also need to roll back relay chain state, because there may have been messages from a allychain to a relay chain that now need to be rolled back. The easiest thing to do would be to side-step that by putting a delay on upwards messages, but this would impact the UX of allychain participation in slot auctions, council votes, etc. considerably. Assuming we can't side-step this, we will have to find a way to roll back selected state of the relay chain.
 
 #### *Double-vote Slash Handler*
 
 Category: Runtime
 
-In the attestation process, validators may submit only one `Candidate` message for a given relay chain block. If issuing a `Candidate` message on a parachain block, neither a `Valid` or `Invalid` vote cannot be issued on that parachain block, as the `Candidate` message is an implicit validity vote. Otherwise, it is illegal to cast both a `Valid` and `Invalid` vote on a given parachain block.
+In the attestation process, validators may submit only one `Candidate` message for a given relay chain block. If issuing a `Candidate` message on a allychain block, neither a `Valid` or `Invalid` vote cannot be issued on that allychain block, as the `Candidate` message is an implicit validity vote. Otherwise, it is illegal to cast both a `Valid` and `Invalid` vote on a given allychain block.
 
 Runtime handlers that take two conflicting votes as arguments and slash the offender are needed.
 
@@ -173,7 +173,7 @@ Runtime handlers that take two conflicting votes as arguments and slash the offe
 
 Category: Node
 
-This code-path is also taken by validators who self-select based on VRF [Availability and Validity — Research at W3F](https://research.web3.foundation/en/latest/polkadot/Availability_and_Validity.html). Validators and fishermen will select parachain blocks to re-validate. In these steps:
+This code-path is also taken by validators who self-select based on VRF [Availability and Validity — Research at W3F](https://research.web3.foundation/en/latest/axia/Availability_and_Validity.html). Validators and fishermen will select allychain blocks to re-validate. In these steps:
 * Attempt to recover the PoV block, falling back on the erasure-coding. If not available, issue report.
 * Attempt to validate the PoV block. If invalid, issue report.
 
@@ -189,7 +189,7 @@ Nodes that observe a double-vote in the attestation process should submit a repo
 This roadmap is divided up into phases, where each represents another set of deliverables or iteration on a black-box component with respect to the prior phase.
 
 ## Phase 0: MVP
-The very first phase - this is parachains without slashing (full security) or cross-chain messaging. It is primarily a PoC that registration and validation are working correctly.
+The very first phase - this is allychains without slashing (full security) or cross-chain messaging. It is primarily a PoC that registration and validation are working correctly.
 
 ### Infrastructure/API:
   - Custom libp2p sub-protocols
@@ -211,7 +211,7 @@ The very first phase - this is parachains without slashing (full security) or cr
 
 ## Phase 1: Fishing and Slashing
 
-This phase marks advancement in the security of parachains. Once completed, parachains are a full-fledged cryptoeconomically secure rollup primitive. This phase also includes implementation work on XCMP, but does not enable it fully.
+This phase marks advancement in the security of allychains. Once completed, allychains are a full-fledged cryptoeconomically secure rollup primitive. This phase also includes implementation work on XCMP, but does not enable it fully.
 
 ### Agreement
   - Availability Erasure-coding (black box: targeted distribution)

@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Unit tests for Gossip Support Subsystem.
 
@@ -27,13 +27,13 @@ use sc_network::multiaddr::Protocol;
 use sp_consensus_babe::{AllowedSlots, BabeEpochConfiguration, Epoch as BabeEpoch};
 use sp_keyring::Sr25519Keyring;
 
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	jaeger,
 	messages::{AllMessages, RuntimeApiMessage, RuntimeApiRequest},
 	ActivatedLeaf, LeafStatus,
 };
-use polkadot_node_subsystem_test_helpers as test_helpers;
-use polkadot_node_subsystem_util::TimeoutExt as _;
+use axia_node_subsystem_test_helpers as test_helpers;
+use axia_node_subsystem_util::TimeoutExt as _;
 use test_helpers::mock::make_ferdie_keystore;
 
 use super::*;
@@ -88,14 +88,14 @@ impl MockAuthorityDiscovery {
 impl AuthorityDiscovery for MockAuthorityDiscovery {
 	async fn get_addresses_by_authority_id(
 		&mut self,
-		authority: polkadot_primitives::v1::AuthorityDiscoveryId,
+		authority: axia_primitives::v1::AuthorityDiscoveryId,
 	) -> Option<Vec<sc_network::Multiaddr>> {
 		self.addrs.get(&authority).cloned()
 	}
 	async fn get_authority_id_by_peer_id(
 		&mut self,
-		peer_id: polkadot_node_network_protocol::PeerId,
-	) -> Option<polkadot_primitives::v1::AuthorityDiscoveryId> {
+		peer_id: axia_node_network_protocol::PeerId,
+	) -> Option<axia_primitives::v1::AuthorityDiscoveryId> {
 		self.authorities.get(&peer_id).cloned()
 	}
 }

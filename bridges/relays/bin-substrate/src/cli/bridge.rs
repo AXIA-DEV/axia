@@ -98,7 +98,7 @@ macro_rules! select_full_bridge {
 				$generic
 			}
 			FullBridge::RococoToWococo => {
-				type Source = relay_rococo_client::Rococo;
+				type Source = relay_rococo_client::Betanet;
 				#[allow(dead_code)]
 				type Target = relay_wococo_client::Wococo;
 
@@ -122,7 +122,7 @@ macro_rules! select_full_bridge {
 			FullBridge::WococoToRococo => {
 				type Source = relay_wococo_client::Wococo;
 				#[allow(dead_code)]
-				type Target = relay_rococo_client::Rococo;
+				type Target = relay_rococo_client::Betanet;
 
 				// Derive-account
 				#[allow(unused_imports)]

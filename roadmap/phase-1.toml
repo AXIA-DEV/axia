@@ -9,11 +9,11 @@ items = []
 
 [[group]]
 name = "two-phase-inclusion"
-label = "Two-phase inclusion of parachain candidates"
+label = "Two-phase inclusion of allychain candidates"
 requires = ["phase-0"]
 items = [
-	{ label = "Buffer submitted parachain candidate until considered available." },
-	{ label = "Validators submit signed bitfields re: availability of parachains" },
+	{ label = "Buffer submitted allychain candidate until considered available." },
+	{ label = "Validators submit signed bitfields re: availability of allychains" },
 	{ label = "relay chain fully includes candidate once considered available" }
 ]
 

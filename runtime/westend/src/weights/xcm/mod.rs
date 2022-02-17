@@ -9,7 +9,7 @@ use xcm::{latest::prelude::*, DoubleEncoded};
 use pallet_xcm_benchmarks_fungible::WeightInfo as XcmBalancesWeight;
 use pallet_xcm_benchmarks_generic::WeightInfo as XcmGeneric;
 
-/// Types of asset supported by the westend runtime.
+/// Types of asset supported by the alphanet runtime.
 pub enum AssetTypes {
 	/// An asset backed by `pallet-balances`.
 	Balances,
@@ -31,7 +31,7 @@ trait WeighMultiAssets {
 	fn weigh_multi_assets(&self, balances_weight: Weight) -> Weight;
 }
 
-// Westend only knows about one asset, the balances pallet.
+// Alphanet only knows about one asset, the balances pallet.
 const MAX_ASSETS: u32 = 1;
 
 impl WeighMultiAssets for MultiAssetFilter {

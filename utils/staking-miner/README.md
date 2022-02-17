@@ -14,7 +14,7 @@ staking-miner --help
 
 ## Building
 
-You can build from the root of the Polkadot repository using:
+You can build from the root of the Axia repository using:
 ```
 cargo build --release --locked --package staking-miner
 ```
@@ -28,7 +28,7 @@ There are 2 options to build a staking-miner Docker image:
 ### Building the injected image
 
 First build the binary as documented [above](#building).
-You may then inject the binary into a Docker base image usingfrom the root of the Polkadot repository:
+You may then inject the binary into a Docker base image usingfrom the root of the Axia repository:
 ```
 docker build -t staking-miner -f scripts/docker/staking-miner/staking-miner_injected.Dockerfile target/release
 ```
@@ -37,7 +37,7 @@ docker build -t staking-miner -f scripts/docker/staking-miner/staking-miner_inje
 
 Unlike the injected image that requires a Linux pre-built binary, this option does not requires a Linux host, nor Rust to be installed.
 The trade-off however is that it takes a little longer to build and this option is less ideal for CI tasks.
-You may build the multi-stage image the root of the Polkadot repository with:
+You may build the multi-stage image the root of the Axia repository with:
 ```
 docker build -t staking-miner -f scripts/docker/staking-miner/staking-miner_builder.Dockerfile .
 ```

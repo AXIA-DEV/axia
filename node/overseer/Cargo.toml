@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-overseer"
+name = "axia-overseer"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -10,12 +10,12 @@ sp-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 futures = "0.3.17"
 futures-timer = "3.0.2"
 parking_lot = "0.11.1"
-polkadot-node-network-protocol = { path = "../network/protocol" }
-polkadot-node-primitives = { path = "../primitives" }
-polkadot-node-subsystem-types = { path = "../subsystem-types" }
-polkadot-node-metrics = { path = "../metrics" }
-polkadot-primitives = { path = "../../primitives" }
-polkadot-overseer-gen = { path = "./overseer-gen" }
+axia-node-network-protocol = { path = "../network/protocol" }
+axia-node-primitives = { path = "../primitives" }
+axia-node-subsystem-types = { path = "../subsystem-types" }
+axia-node-metrics = { path = "../metrics" }
+axia-primitives = { path = "../../primitives" }
+axia-overseer-gen = { path = "./overseer-gen" }
 tracing = "0.1.29"
 lru = "0.7"
 parity-util-mem = { version = ">= 0.10.1", default-features = false }

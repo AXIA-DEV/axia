@@ -9,10 +9,10 @@ LABEL io.parity.image.authors="devops-team@parity.io" \
 	io.parity.image.vendor="Parity Technologies" \
 	io.parity.image.title="${IMAGE_NAME}" \
 	io.parity.image.description="${IMAGE_NAME} for axlib based chains" \
-	io.parity.image.source="https://github.com/paritytech/polkadot/blob/${VCS_REF}/scripts/docker/${IMAGE_NAME}/${IMAGE_NAME}_injected.Dockerfile" \
+	io.parity.image.source="https://github.com/paritytech/axia/blob/${VCS_REF}/scripts/docker/${IMAGE_NAME}/${IMAGE_NAME}_injected.Dockerfile" \
 	io.parity.image.revision="${VCS_REF}" \
 	io.parity.image.created="${BUILD_DATE}" \
-	io.parity.image.documentation="https://github.com/paritytech/polkadot/"
+	io.parity.image.documentation="https://github.com/paritytech/axia/"
 
 # show backtraces
 ENV RUST_BACKTRACE 1
@@ -34,7 +34,7 @@ COPY ./staking-miner /usr/local/bin
 USER miner
 
 ENV SEED=""
-ENV URI="wss://rpc.polkadot.io"
+ENV URI="wss://rpc.axia.io"
 ENV RUST_LOG="info"
 
 # check if the binary works in this container

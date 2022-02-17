@@ -1,6 +1,6 @@
 # .gitlab-ci.yml
 #
-# polkadot
+# axia
 #
 # pipelines can be triggered manually in the web
 # setting DEPLOY_TAG will only deploy the tagged image
@@ -75,14 +75,14 @@ default:
 .rules-test:                       &rules-test
   # these jobs run always*
   rules:
-    - if: $CI_COMMIT_REF_NAME == "rococo-v1"
+    - if: $CI_COMMIT_REF_NAME == "betanet-v1"
       when: never
     - when: always
 
 .pr-only:                          &rules-pr-only
   # these jobs run only on PRs
   rules:
-    - if: $CI_COMMIT_REF_NAME == "rococo-v1"
+    - if: $CI_COMMIT_REF_NAME == "betanet-v1"
       when: never
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
@@ -194,21 +194,21 @@ test-build-linux-stable:
     - if: $CI_COMMIT_REF_NAME == "master"
     - if: $CI_COMMIT_REF_NAME =~ /^v[0-9]+\.[0-9]+.*$/              # i.e. v1.0, v2.1rc1
     - if: $CI_COMMIT_REF_NAME =~ /^[0-9]+$/                         # PRs
-    - if: $CI_COMMIT_REF_NAME == "rococo-v1"
+    - if: $CI_COMMIT_REF_NAME == "betanet-v1"
   script:
     - ./scripts/gitlab/test_linux_stable.sh
     # we're using the bin built here, instead of having a parallel `build-linux-release`
-    - time cargo build --release --verbose --bin polkadot
+    - time cargo build --release --verbose --bin axia
     - sccache -s
     # pack artifacts
     - mkdir -p ./artifacts
     - VERSION="${CI_COMMIT_REF_NAME}" # will be tag or branch name
-    - mv ./target/release/polkadot ./artifacts/.
-    - sha256sum ./artifacts/polkadot | tee ./artifacts/polkadot.sha256
-    - EXTRATAG="$(./artifacts/polkadot --version |
-        sed -n -r 's/^polkadot ([0-9.]+.*-[0-9a-f]{7,13})-.*$/\1/p')"
-    - EXTRATAG="${CI_COMMIT_REF_NAME}-${EXTRATAG}-$(cut -c 1-8 ./artifacts/polkadot.sha256)"
-    - echo "Polkadot version = ${VERSION} (EXTRATAG = ${EXTRATAG})"
+    - mv ./target/release/axia ./artifacts/.
+    - sha256sum ./artifacts/axia | tee ./artifacts/axia.sha256
+    - EXTRATAG="$(./artifacts/axia --version |
+        sed -n -r 's/^axia ([0-9.]+.*-[0-9a-f]{7,13})-.*$/\1/p')"
+    - EXTRATAG="${CI_COMMIT_REF_NAME}-${EXTRATAG}-$(cut -c 1-8 ./artifacts/axia.sha256)"
+    - echo "Axia version = ${VERSION} (EXTRATAG = ${EXTRATAG})"
     - echo -n ${VERSION} > ./artifacts/VERSION
     - echo -n ${EXTRATAG} > ./artifacts/EXTRATAG
     - cp -r scripts/* ./artifacts
@@ -231,7 +231,7 @@ check-no-default-features:
   <<:                              *compiler-info
   <<:                              *vault-secrets
   script:
-    # Check that polkadot-cli will compile no default features.
+    # Check that axia-cli will compile no default features.
     - ./scripts/gitlab/check_no_default_features.sh
     - sccache -s
 
@@ -257,9 +257,9 @@ build-adder-collator:
     - if: $CI_PIPELINE_SOURCE == "schedule"
     - if: $CI_COMMIT_REF_NAME == "master"
     - if: $CI_COMMIT_REF_NAME =~ /^[0-9]+$/                         # PRs
-    - if: $CI_COMMIT_REF_NAME == "rococo-v1"
+    - if: $CI_COMMIT_REF_NAME == "betanet-v1"
   script:
-    - time cargo build --release --verbose -p test-parachain-adder-collator
+    - time cargo build --release --verbose -p test-allychain-adder-collator
     - sccache -s
     # pack artifacts
     - mkdir -p ./artifacts
@@ -282,8 +282,8 @@ build-adder-collator:
         https://github.com/paritytech/pipeline-scripts
     - ./pipeline-scripts/check_dependent_project.sh
         paritytech
-        polkadot
-        --polkadot
+        axia
+        --axia
         "$DEPENDENT_REPO"
         "$GITHUB_PR_TOKEN"
     - cd "$DEPENDENT_REPO" && git rev-parse --abbrev-ref HEAD
@@ -305,7 +305,7 @@ check-transaction-versions:
       artifacts:                   true
   before_script:
     - apt-get -y update; apt-get -y install jq lsof
-    - npm install --ignore-scripts -g @polkadot/metadata-cmp
+    - npm install --ignore-scripts -g @axia/metadata-cmp
     - git fetch origin release
   script:
     - scripts/gitlab/check_extrinsics_ordering.sh
@@ -339,7 +339,7 @@ build-rustdoc:
     - mv ./target/doc ./crate-docs
     # FIXME: remove me after CI image gets nonroot
     - chown -R nonroot:nonroot ./crate-docs
-    - echo "<meta http-equiv=refresh content=0;url=polkadot_service/index.html>" > ./crate-docs/index.html
+    - echo "<meta http-equiv=refresh content=0;url=axia_service/index.html>" > ./crate-docs/index.html
     - sccache -s
 
 .build-push-image:                 &build-push-image
@@ -355,7 +355,7 @@ build-rustdoc:
     - test -s ./artifacts/EXTRATAG || exit 1
     - VERSION="$(cat ./artifacts/VERSION)"
     - EXTRATAG="$(cat ./artifacts/EXTRATAG)"
-    - echo "Polkadot version = ${VERSION} (EXTRATAG = ${EXTRATAG})"
+    - echo "Axia version = ${VERSION} (EXTRATAG = ${EXTRATAG})"
   script:
     - test "$DOCKER_USER" -a "$DOCKER_PASS" ||
         ( echo "no docker credentials provided"; exit 1 )
@@ -377,13 +377,13 @@ build-rustdoc:
   after_script:
     - buildah logout --all
 
-publish-polkadot-image:
+publish-axia-image:
   stage:                           build
   <<:                              *build-push-image
   variables:
     <<:                            *image-variables
-    # scripts/dockerfiles/polkadot_injected_debug.Dockerfile
-    DOCKERFILE:                    dockerfiles/polkadot_injected_debug.Dockerfile
+    # scripts/dockerfiles/axia_injected_debug.Dockerfile
+    DOCKERFILE:                    dockerfiles/axia_injected_debug.Dockerfile
     IMAGE_NAME:                    docker.io/paritypr/synth-wave
   rules:
     # Don't run on releases - this is handled by the Github Action here:
@@ -393,10 +393,10 @@ publish-polkadot-image:
     - if: $CI_PIPELINE_SOURCE == "schedule"
     - if: $CI_COMMIT_REF_NAME == "master"
     - if: $CI_COMMIT_REF_NAME =~ /^[0-9]+$/                         # PRs
-    - if: $CI_COMMIT_REF_NAME == "rococo-v1"
+    - if: $CI_COMMIT_REF_NAME == "betanet-v1"
       variables:
         <<:                        *image-variables
-        IMAGE_NAME:                docker.io/parity/rococo
+        IMAGE_NAME:                docker.io/parity/betanet
         DOCKER_USER:               ${DOCKER_HUB_USER}
         DOCKER_PASS:               ${DOCKER_HUB_PASS}
   needs:
@@ -405,12 +405,12 @@ publish-polkadot-image:
   after_script:
     # pass artifacts to the simnet-tests job
     # https://docs.gitlab.com/ee/ci/multi_project_pipelines.html#with-variable-inheritance
-    - echo "PARACHAINS_IMAGE_NAME=${IMAGE_NAME}" > ./artifacts/parachains.env
-    - echo "PARACHAINS_IMAGE_TAG=$(cat ./artifacts/EXTRATAG)" >> ./artifacts/parachains.env
+    - echo "PARACHAINS_IMAGE_NAME=${IMAGE_NAME}" > ./artifacts/allychains.env
+    - echo "PARACHAINS_IMAGE_TAG=$(cat ./artifacts/EXTRATAG)" >> ./artifacts/allychains.env
   artifacts:
     reports:
       # this artifact is used in simnet-tests job
-      dotenv: ./artifacts/parachains.env
+      dotenv: ./artifacts/allychains.env
 
 publish-adder-collator-image:
   # service image for Simnet
@@ -425,7 +425,7 @@ publish-adder-collator-image:
     - if: $CI_PIPELINE_SOURCE == "schedule"
     - if: $CI_COMMIT_REF_NAME == "master"
     - if: $CI_COMMIT_REF_NAME =~ /^[0-9]+$/                         # PRs
-    - if: $CI_COMMIT_REF_NAME == "rococo-v1"
+    - if: $CI_COMMIT_REF_NAME == "betanet-v1"
   needs:
     - job:                         build-adder-collator
       artifacts:                   true
@@ -445,7 +445,7 @@ publish-adder-collator-image:
   tags:
     - weights
   variables:
-    RUNTIME:                       polkadot
+    RUNTIME:                       axia
   artifacts:
     paths:
       - ${RUNTIME}_weights_${CI_COMMIT_SHORT_SHA}.patch
@@ -453,7 +453,7 @@ publish-adder-collator-image:
     ./scripts/run_benches_for_runtime.sh $RUNTIME
     git diff -P > ${RUNTIME}_weights_${CI_COMMIT_SHORT_SHA}.patch
 
-update_polkadot_weights:
+update_axia_weights:
   <<:                              *update-weights
 
 update_axctest_weights:
@@ -464,7 +464,7 @@ update_axctest_weights:
 update_westend_weights:
   <<:                              *update-weights
   variables:
-    RUNTIME:                       westend
+    RUNTIME:                       alphanet
 
 #### stage:                        publish
 
@@ -478,7 +478,7 @@ publish-s3-release:                &publish-s3
   image:                           paritytech/awscli:latest
   variables:
     GIT_STRATEGY:                  none
-    PREFIX:                        "builds/polkadot/${ARCH}-${DOCKER_OS}"
+    PREFIX:                        "builds/axia/${ARCH}-${DOCKER_OS}"
   rules:
     # publishing binaries nightly
     - if: $CI_PIPELINE_SOURCE == "schedule"
@@ -497,10 +497,10 @@ publish-s3-release:                &publish-s3
     - |
       cat <<-EOM
       |
-      |  polkadot binary paths:
+      |  axia binary paths:
       |
-      |  - https://releases.parity.io/${PREFIX}/${EXTRATAG}/polkadot
-      |  - https://releases.parity.io/${PREFIX}/${VERSION}/polkadot
+      |  - https://releases.parity.io/${PREFIX}/${EXTRATAG}/axia
+      |  - https://releases.parity.io/${PREFIX}/${VERSION}/axia
       |
       EOM
   after_script:
@@ -528,7 +528,7 @@ publish-rustdoc:
     - rm -rf .git/config
     - git config user.email "devops-team@parity.io"
     - git config user.name "${GITHUB_USER}"
-    - git config remote.origin.url "https://${GITHUB_TOKEN}@github.com/paritytech/polkadot.git"
+    - git config remote.origin.url "https://${GITHUB_TOKEN}@github.com/paritytech/axia.git"
     - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
     - git fetch origin gh-pages
     # Save README and docs
@@ -556,13 +556,13 @@ deploy-polkasync-axctest:
   stage:                           deploy
   rules:
     # former .rules-build
-    - if: $CI_COMMIT_REF_NAME == "rococo-v1"
+    - if: $CI_COMMIT_REF_NAME == "betanet-v1"
       when: never
     - if: $CI_PIPELINE_SOURCE == "schedule"
     - if: $CI_COMMIT_REF_NAME == "master"
   variables:
-    POLKADOT_CI_COMMIT_NAME:       "${CI_COMMIT_REF_NAME}"
-    POLKADOT_CI_COMMIT_REF:        "${CI_COMMIT_SHORT_SHA}"
+    AXIA_CI_COMMIT_NAME:       "${CI_COMMIT_REF_NAME}"
+    AXIA_CI_COMMIT_REF:        "${CI_COMMIT_SHORT_SHA}"
   allow_failure:                   true
   trigger:                         "parity/infrastructure/parity-testnet"
 
@@ -574,11 +574,11 @@ simnet-tests:
     - if: $CI_PIPELINE_SOURCE == "schedule"
     - if: $CI_COMMIT_REF_NAME == "master"
     - if: $CI_COMMIT_REF_NAME =~ /^[0-9]+$/                         # PRs
-    - if: $CI_COMMIT_REF_NAME == "rococo-v1"
+    - if: $CI_COMMIT_REF_NAME == "betanet-v1"
   needs:
-    - job:                         publish-polkadot-image
+    - job:                         publish-axia-image
     - job:                         publish-adder-collator-image
-  # `parachains.env` brings here `$PARACHAINS_IMAGE_NAME` and `$PARACHAINS_IMAGE_TAG`
+  # `allychains.env` brings here `$PARACHAINS_IMAGE_NAME` and `$PARACHAINS_IMAGE_TAG`
   # (`$EXTRATAG` here, # i.e. `2643-0.8.29-5f689e0a-6b24dc54`).
   # `collator.env` brings here `$COLLATOR_IMAGE_NAME` and  `$COLLATOR_IMAGE_TAG`
   # For local tests with docker `$PARACHAINS_IMAGE_TAG` and `$COLLATOR_IMAGE_TAG`
@@ -592,7 +592,7 @@ simnet-tests:
         ${COLLATOR_IMAGE_NAME} ${COLLATOR_IMAGE_TAG}"
   script:
     - /home/nonroot/simnet/gurke/scripts/run-test-environment-manager.sh
-        --github-remote-dir="https://github.com/paritytech/polkadot/tree/master/simnet_tests"
+        --github-remote-dir="https://github.com/paritytech/axia/tree/master/simnet_tests"
         --config="simnet_tests/configs/simple_rococo_testnet.toml"
         --image="${PARACHAINS_IMAGE_NAME}:${PARACHAINS_IMAGE_TAG}"
         --image-2="${COLLATOR_IMAGE_NAME}:${COLLATOR_IMAGE_TAG}"
@@ -600,4 +600,4 @@ simnet-tests:
   allow_failure:                   true
   retry: 2
   tags:
-    - polkadot-simnet
+    - axia-simnet

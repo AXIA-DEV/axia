@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-node-core-parachains-inherent"
+name = "axia-node-core-allychains-inherent"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -10,8 +10,8 @@ futures-timer = "3.0.2"
 tracing = "0.1.29"
 thiserror = "1.0.30"
 async-trait = "0.1.51"
-polkadot-node-subsystem = { path = "../../subsystem" }
-polkadot-primitives = { path = "../../../primitives" }
+axia-node-subsystem = { path = "../../subsystem" }
+axia-primitives = { path = "../../../primitives" }
 sp-blockchain = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-inherents = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

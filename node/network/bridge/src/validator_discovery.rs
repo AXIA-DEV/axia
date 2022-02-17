@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! A validator discovery service for the Network Bridge.
 
@@ -25,14 +25,14 @@ use futures::channel::oneshot;
 
 use sc_network::multiaddr::{self, Multiaddr};
 
-pub use polkadot_node_network_protocol::authority_discovery::AuthorityDiscovery;
-use polkadot_node_network_protocol::{
+pub use axia_node_network_protocol::authority_discovery::AuthorityDiscovery;
+use axia_node_network_protocol::{
 	peer_set::{PeerSet, PerPeerSet},
 	PeerId,
 };
-use polkadot_primitives::v1::AuthorityDiscoveryId;
+use axia_primitives::v1::AuthorityDiscoveryId;
 
-const LOG_TARGET: &str = "parachain::validator-discovery";
+const LOG_TARGET: &str = "allychain::validator-discovery";
 
 pub(super) struct Service<N, AD> {
 	state: PerPeerSet<StatePerPeerSet>,
@@ -156,7 +156,7 @@ mod tests {
 
 	use async_trait::async_trait;
 	use futures::stream::BoxStream;
-	use polkadot_node_network_protocol::{request_response::outgoing::Requests, PeerId};
+	use axia_node_network_protocol::{request_response::outgoing::Requests, PeerId};
 	use sc_network::{Event as NetworkEvent, IfDisconnected};
 	use sp_keyring::Sr25519Keyring;
 	use std::{borrow::Cow, collections::HashMap};

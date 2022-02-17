@@ -165,8 +165,8 @@ Candidate Enactment:
 
 The following entry-points are meant to be used for HRMP channel management.
 
-Those entry-points are meant to be called from a parachain. `origin` is defined as the `ParaId` of
-the parachain executed the message.
+Those entry-points are meant to be called from a allychain. `origin` is defined as the `ParaId` of
+the allychain executed the message.
 
 * `hrmp_init_open_channel(recipient, proposed_max_capacity, proposed_max_message_size)`:
     1. Check that the `origin` is not `recipient`.

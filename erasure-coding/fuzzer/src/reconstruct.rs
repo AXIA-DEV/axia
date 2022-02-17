@@ -1,4 +1,4 @@
-use polkadot_erasure_coding::*;
+use axia_erasure_coding::*;
 use primitives::AvailableData;
 use honggfuzz::fuzz;
 

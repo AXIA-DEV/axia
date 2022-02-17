@@ -19,14 +19,14 @@ frame-system = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-featu
 pallet-transaction-payment = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 log = { version = "0.4.0", default-features = false }
 
-# Polkadot dependencies
-polkadot-parachain = { path = "../../parachain", default-features = false }
+# Axia dependencies
+axia-allychain = { path = "../../allychain", default-features = false }
 
 [dev-dependencies]
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 pallet-balances = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 pallet-xcm = { path = "../pallet-xcm" }
-polkadot-runtime-parachains = { path = "../../runtime/parachains" }
+axia-runtime-allychains = { path = "../../runtime/allychains" }
 [features]
 default = ["std"]
 runtime-benchmarks = []
@@ -41,6 +41,6 @@ std = [
 	"sp-io/std",
 	"sp-runtime/std",
 	"frame-support/std",
-	"polkadot-parachain/std",
+	"axia-allychain/std",
 	"pallet-transaction-payment/std",
 ]

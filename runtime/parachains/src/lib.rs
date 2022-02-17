@@ -1,20 +1,20 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Runtime modules for parachains code.
+//! Runtime modules for allychains code.
 //!
 //! It is crucial to include all the modules from this crate in the runtime, in
 //! particular the `Initializer` module, as it is responsible for initializing the state
@@ -62,12 +62,12 @@ pub fn schedule_para_cleanup<T: paras::Config>(id: primitives::v1::Id) -> Result
 	<paras::Pallet<T>>::schedule_para_cleanup(id).map_err(|_| ())
 }
 
-/// Schedule a parathread to be upgraded to a parachain.
+/// Schedule a parathread to be upgraded to a allychain.
 pub fn schedule_parathread_upgrade<T: paras::Config>(id: ParaId) -> Result<(), ()> {
 	paras::Pallet::<T>::schedule_parathread_upgrade(id).map_err(|_| ())
 }
 
-/// Schedule a parachain to be downgraded to a parathread.
+/// Schedule a allychain to be downgraded to a parathread.
 pub fn schedule_parachain_downgrade<T: paras::Config>(id: ParaId) -> Result<(), ()> {
 	paras::Pallet::<T>::schedule_parachain_downgrade(id).map_err(|_| ())
 }

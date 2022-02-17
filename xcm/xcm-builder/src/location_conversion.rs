@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use frame_support::traits::Get;
 use parity_scale_codec::Encode;
@@ -64,7 +64,7 @@ impl<ParaId: From<u32> + Into<u32> + AccountIdConversion<AccountId>, AccountId: 
 {
 	fn convert_ref(location: impl Borrow<MultiLocation>) -> Result<AccountId, ()> {
 		match location.borrow() {
-			MultiLocation { parents: 0, interior: X1(Parachain(id)) } =>
+			MultiLocation { parents: 0, interior: X1(Allychain(id)) } =>
 				Ok(ParaId::from(*id).into_account()),
 			_ => Err(()),
 		}
@@ -72,7 +72,7 @@ impl<ParaId: From<u32> + Into<u32> + AccountIdConversion<AccountId>, AccountId: 
 
 	fn reverse_ref(who: impl Borrow<AccountId>) -> Result<MultiLocation, ()> {
 		if let Some(id) = ParaId::try_from_account(who.borrow()) {
-			Ok(Parachain(id.into()).into())
+			Ok(Allychain(id.into()).into())
 		} else {
 			Err(())
 		}
@@ -85,7 +85,7 @@ impl<ParaId: From<u32> + Into<u32> + AccountIdConversion<AccountId>, AccountId: 
 {
 	fn convert_ref(location: impl Borrow<MultiLocation>) -> Result<AccountId, ()> {
 		match location.borrow() {
-			MultiLocation { parents: 1, interior: X1(Parachain(id)) } =>
+			MultiLocation { parents: 1, interior: X1(Allychain(id)) } =>
 				Ok(ParaId::from(*id).into_account()),
 			_ => Err(()),
 		}
@@ -93,7 +93,7 @@ impl<ParaId: From<u32> + Into<u32> + AccountIdConversion<AccountId>, AccountId: 
 
 	fn reverse_ref(who: impl Borrow<AccountId>) -> Result<MultiLocation, ()> {
 		if let Some(id) = ParaId::try_from_account(who.borrow()) {
-			Ok(MultiLocation::new(1, X1(Parachain(id.into()))))
+			Ok(MultiLocation::new(1, X1(Allychain(id.into()))))
 		} else {
 			Err(())
 		}
@@ -167,16 +167,16 @@ impl<Network: Get<NetworkId>, AccountId: From<[u8; 20]> + Into<[u8; 20]> + Clone
 /// # fn main() {
 /// parameter_types!{
 ///     pub Ancestry: MultiLocation = X2(
-///         Parachain(1),
+///         Allychain(1),
 ///         AccountKey20 { network: Any, key: Default::default() },
 ///     ).into();
 /// }
 ///
-/// let input = MultiLocation::new(2, X2(Parachain(2), AccountId32 { network: Any, id: Default::default() }));
+/// let input = MultiLocation::new(2, X2(Allychain(2), AccountId32 { network: Any, id: Default::default() }));
 /// let inverted = LocationInverter::<Ancestry>::invert_location(&input);
 /// assert_eq!(inverted, Ok(MultiLocation::new(
 ///     2,
-///     X2(Parachain(1), AccountKey20 { network: Any, key: Default::default() }),
+///     X2(Allychain(1), AccountKey20 { network: Any, key: Default::default() }),
 /// )));
 /// # }
 /// ```
@@ -225,12 +225,12 @@ mod tests {
 	#[test]
 	fn inverter_works_in_tree() {
 		parameter_types! {
-			pub Ancestry: MultiLocation = X3(Parachain(1), account20(), account20()).into();
+			pub Ancestry: MultiLocation = X3(Allychain(1), account20(), account20()).into();
 		}
 
-		let input = MultiLocation::new(3, X2(Parachain(2), account32()));
+		let input = MultiLocation::new(3, X2(Allychain(2), account32()));
 		let inverted = LocationInverter::<Ancestry>::invert_location(&input).unwrap();
-		assert_eq!(inverted, MultiLocation::new(2, X3(Parachain(1), account20(), account20())));
+		assert_eq!(inverted, MultiLocation::new(2, X3(Allychain(1), account20(), account20())));
 	}
 
 	// Network Topology
@@ -269,7 +269,7 @@ mod tests {
 			pub Ancestry: MultiLocation = Here.into();
 		}
 
-		let input = MultiLocation { parents: 99, interior: X1(Parachain(88)) };
+		let input = MultiLocation { parents: 99, interior: X1(Allychain(88)) };
 		let inverted = LocationInverter::<Ancestry>::invert_location(&input);
 		assert_eq!(inverted, Err(()));
 	}

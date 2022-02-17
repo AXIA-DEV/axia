@@ -1,20 +1,20 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Basic parachain that adds a number as part of its state.
+//! Basic allychain that adds a number as part of its state.
 
 #![no_std]
 #![cfg_attr(
@@ -53,7 +53,7 @@ pub fn wasm_binary_unwrap() -> &'static [u8] {
 	)
 }
 
-/// Head data for this parachain.
+/// Head data for this allychain.
 #[derive(Default, Clone, Hash, Eq, PartialEq, Encode, Decode, Debug)]
 pub struct HeadData {
 	/// Block number
@@ -70,7 +70,7 @@ impl HeadData {
 	}
 }
 
-/// Block data for this parachain.
+/// Block data for this allychain.
 #[derive(Default, Clone, Encode, Decode, Debug)]
 pub struct BlockData {
 	/// State to begin from.

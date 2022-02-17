@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use frame_support::{
 	construct_runtime, parameter_types,
@@ -23,8 +23,8 @@ use sp_core::H256;
 use sp_runtime::{testing::Header, traits::IdentityLookup, AccountId32};
 use sp_std::cell::RefCell;
 
-use polkadot_parachain::primitives::Id as ParaId;
-use polkadot_runtime_parachains::{configuration, origin, shared};
+use axia_parachain::primitives::Id as ParaId;
+use axia_runtime_parachains::{configuration, origin, shared};
 use xcm::latest::{opaque, prelude::*};
 use xcm_executor::XcmExecutor;
 
@@ -113,7 +113,7 @@ impl configuration::Config for Runtime {
 
 // aims to closely emulate the AxiaTest XcmConfig
 parameter_types! {
-	pub const KsmLocation: MultiLocation = MultiLocation::here();
+	pub const AxctLocation: MultiLocation = MultiLocation::here();
 	pub const AxiaTestNetwork: NetworkId = NetworkId::AxiaTest;
 	pub Ancestry: MultiLocation = Here.into();
 	pub CheckAccount: AccountId = XcmPallet::check_account();
@@ -124,7 +124,7 @@ pub type SovereignAccountOf =
 
 pub type LocalAssetTransactor = XcmCurrencyAdapter<
 	Balances,
-	IsConcrete<KsmLocation>,
+	IsConcrete<AxctLocation>,
 	SovereignAccountOf,
 	AccountId,
 	CheckAccount,
@@ -139,7 +139,7 @@ type LocalOriginConverter = (
 
 parameter_types! {
 	pub const BaseXcmWeight: Weight = 1_000_000_000;
-	pub KsmPerSecond: (AssetId, u128) = (KsmLocation::get().into(), 1);
+	pub AxctPerSecond: (AssetId, u128) = (AxctLocation::get().into(), 1);
 }
 
 pub type Barrier = (
@@ -151,7 +151,7 @@ pub type Barrier = (
 
 parameter_types! {
 	pub const AxiaTestForStatemint: (MultiAssetFilter, MultiLocation) =
-		(MultiAssetFilter::Wild(WildMultiAsset::AllOf { id: Concrete(MultiLocation::here()), fun: WildFungible }), X1(Parachain(1000)).into());
+		(MultiAssetFilter::Wild(WildMultiAsset::AllOf { id: Concrete(MultiLocation::here()), fun: WildFungible }), X1(Allychain(1000)).into());
 	pub const MaxInstructions: u32 = 100;
 }
 pub type TrustedTeleporters = (xcm_builder::Case<AxiaTestForStatemint>,);
@@ -167,7 +167,7 @@ impl xcm_executor::Config for XcmConfig {
 	type LocationInverter = LocationInverter<Ancestry>;
 	type Barrier = Barrier;
 	type Weigher = FixedWeightBounds<BaseXcmWeight, Call, MaxInstructions>;
-	type Trader = FixedRateOfFungible<KsmPerSecond, ()>;
+	type Trader = FixedRateOfFungible<AxctPerSecond, ()>;
 	type ResponseHandler = XcmPallet;
 	type AssetTrap = XcmPallet;
 	type AssetClaims = XcmPallet;

@@ -1,18 +1,18 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! The statement table: generic implementation.
 //!
@@ -20,7 +20,7 @@
 //!
 //! These messages are used to create a proposal submitted to a BFT consensus process.
 //!
-//! Each parachain is associated with a committee of authorities, who issue statements
+//! Each allychain is associated with a committee of authorities, who issue statements
 //! indicating whether the candidate is valid or invalid. Once a threshold of the committee
 //! has signed validity statements, the candidate may be marked includable.
 
@@ -593,7 +593,7 @@ mod tests {
 
 	#[derive(Debug, PartialEq, Eq)]
 	struct TestContext {
-		// v -> parachain group
+		// v -> allychain group
 		authorities: HashMap<AuthorityId, GroupId>,
 	}
 

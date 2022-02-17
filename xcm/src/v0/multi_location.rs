@@ -1,18 +1,18 @@
 // Copyright 2020-2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Cross-Consensus Message format data structures.
 
@@ -27,8 +27,8 @@ use parity_scale_codec::{self, Decode, Encode};
 /// Ethereum, for example, could be considered a location.
 ///
 /// A very-much non-exhaustive list of types of location include:
-/// - A (normal, layer-1) block chain, e.g. the Bitcoin mainnet or a parachain.
-/// - A layer-0 super-chain, e.g. the Polkadot Relay chain.
+/// - A (normal, layer-1) block chain, e.g. the Bitcoin mainnet or a allychain.
+/// - A layer-0 super-chain, e.g. the Axia Relay chain.
 /// - A layer-2 smart contract, e.g. an ERC-20 on Ethereum.
 /// - A logical functional component of a chain, e.g. a single instance of a pallet on a Frame-based Axlib chain.
 /// - An account.
@@ -490,9 +490,9 @@ impl MultiLocation {
 	/// ```rust
 	/// # use xcm::v0::{MultiLocation::*, Junction::*};
 	/// # fn main() {
-	/// let mut m = X3(Parent, Parachain(21), OnlyChild);
+	/// let mut m = X3(Parent, Allychain(21), OnlyChild);
 	/// assert_eq!(m.append_with(X2(Parent, PalletInstance(3))), Ok(()));
-	/// assert_eq!(m, X3(Parent, Parachain(21), PalletInstance(3)));
+	/// assert_eq!(m, X3(Parent, Allychain(21), PalletInstance(3)));
 	/// # }
 	/// ```
 	pub fn append_with(&mut self, suffix: MultiLocation) -> Result<(), MultiLocation> {
@@ -518,7 +518,7 @@ impl MultiLocation {
 	/// # use xcm::v0::{MultiLocation::*, Junction::*, NetworkId::Any};
 	/// # fn main() {
 	/// let mut m = X3(Parent, Parent, PalletInstance(3));
-	/// assert_eq!(m.prepend_with(X3(Parent, Parachain(21), OnlyChild)), Ok(()));
+	/// assert_eq!(m.prepend_with(X3(Parent, Allychain(21), OnlyChild)), Ok(()));
 	/// assert_eq!(m, X2(Parent, PalletInstance(3)));
 	/// # }
 	/// ```
@@ -592,10 +592,10 @@ mod tests {
 
 	#[test]
 	fn match_and_split_works() {
-		let m = X3(Parent, Parachain(42), AccountIndex64 { network: Any, index: 23 });
+		let m = X3(Parent, Allychain(42), AccountIndex64 { network: Any, index: 23 });
 		assert_eq!(m.match_and_split(&X1(Parent)), None);
 		assert_eq!(
-			m.match_and_split(&X2(Parent, Parachain(42))),
+			m.match_and_split(&X2(Parent, Allychain(42))),
 			Some(&AccountIndex64 { network: Any, index: 23 })
 		);
 		assert_eq!(m.match_and_split(&m), None);
@@ -604,32 +604,32 @@ mod tests {
 	#[test]
 	fn append_with_works() {
 		let acc = AccountIndex64 { network: Any, index: 23 };
-		let mut m = X2(Parent, Parachain(42));
+		let mut m = X2(Parent, Allychain(42));
 		assert_eq!(m.append_with(X2(PalletInstance(3), acc.clone())), Ok(()));
-		assert_eq!(m, X4(Parent, Parachain(42), PalletInstance(3), acc.clone()));
+		assert_eq!(m, X4(Parent, Allychain(42), PalletInstance(3), acc.clone()));
 
 		// cannot append to create overly long multilocation
 		let acc = AccountIndex64 { network: Any, index: 23 };
-		let mut m = X7(Parent, Parent, Parent, Parent, Parent, Parent, Parachain(42));
+		let mut m = X7(Parent, Parent, Parent, Parent, Parent, Parent, Allychain(42));
 		let suffix = X2(PalletInstance(3), acc.clone());
 		assert_eq!(m.append_with(suffix.clone()), Err(suffix));
 	}
 
 	#[test]
 	fn prepend_with_works() {
-		let mut m = X3(Parent, Parachain(42), AccountIndex64 { network: Any, index: 23 });
+		let mut m = X3(Parent, Allychain(42), AccountIndex64 { network: Any, index: 23 });
 		assert_eq!(m.prepend_with(X2(Parent, OnlyChild)), Ok(()));
-		assert_eq!(m, X3(Parent, Parachain(42), AccountIndex64 { network: Any, index: 23 }));
+		assert_eq!(m, X3(Parent, Allychain(42), AccountIndex64 { network: Any, index: 23 }));
 
 		// cannot prepend to create overly long multilocation
-		let mut m = X7(Parent, Parent, Parent, Parent, Parent, Parent, Parachain(42));
+		let mut m = X7(Parent, Parent, Parent, Parent, Parent, Parent, Allychain(42));
 		let prefix = X2(Parent, Parent);
 		assert_eq!(m.prepend_with(prefix.clone()), Err(prefix));
 
 		// Can handle shared prefix and resizing correctly.
 		let mut m = X1(Parent);
 		let prefix = X8(
-			Parachain(100),
+			Allychain(100),
 			OnlyChild,
 			OnlyChild,
 			OnlyChild,
@@ -639,7 +639,7 @@ mod tests {
 			Parent,
 		);
 		assert_eq!(m.prepend_with(prefix.clone()), Ok(()));
-		assert_eq!(m, X5(Parachain(100), OnlyChild, OnlyChild, OnlyChild, OnlyChild));
+		assert_eq!(m, X5(Allychain(100), OnlyChild, OnlyChild, OnlyChild, OnlyChild));
 
 		let mut m = X1(Parent);
 		let prefix = X8(Parent, Parent, Parent, Parent, Parent, Parent, Parent, Parent);
@@ -662,33 +662,33 @@ mod tests {
 		m.canonicalize();
 		assert_eq!(m, X1(Parent));
 
-		let mut m = X1(Parachain(1));
+		let mut m = X1(Allychain(1));
 		m.canonicalize();
-		assert_eq!(m, X1(Parachain(1)));
+		assert_eq!(m, X1(Allychain(1)));
 
-		let mut m = X6(Parent, Parachain(1), Parent, Parachain(2), Parent, Parachain(3));
+		let mut m = X6(Parent, Allychain(1), Parent, Allychain(2), Parent, Allychain(3));
 		m.canonicalize();
-		assert_eq!(m, X2(Parent, Parachain(3)));
+		assert_eq!(m, X2(Parent, Allychain(3)));
 
-		let mut m = X5(Parachain(1), Parent, Parachain(2), Parent, Parachain(3));
+		let mut m = X5(Allychain(1), Parent, Allychain(2), Parent, Allychain(3));
 		m.canonicalize();
-		assert_eq!(m, X1(Parachain(3)));
+		assert_eq!(m, X1(Allychain(3)));
 
-		let mut m = X6(Parachain(1), Parent, Parachain(2), Parent, Parachain(3), Parent);
+		let mut m = X6(Allychain(1), Parent, Allychain(2), Parent, Allychain(3), Parent);
 		m.canonicalize();
 		assert_eq!(m, Null);
 
-		let mut m = X5(Parachain(1), Parent, Parent, Parent, Parachain(3));
+		let mut m = X5(Allychain(1), Parent, Parent, Parent, Allychain(3));
 		m.canonicalize();
-		assert_eq!(m, X3(Parent, Parent, Parachain(3)));
+		assert_eq!(m, X3(Parent, Parent, Allychain(3)));
 
-		let mut m = X4(Parachain(1), Parachain(2), Parent, Parent);
+		let mut m = X4(Allychain(1), Allychain(2), Parent, Parent);
 		m.canonicalize();
 		assert_eq!(m, Null);
 
-		let mut m = X4(Parent, Parent, Parachain(1), Parachain(2));
+		let mut m = X4(Parent, Parent, Allychain(1), Allychain(2));
 		m.canonicalize();
-		assert_eq!(m, X4(Parent, Parent, Parachain(1), Parachain(2)));
+		assert_eq!(m, X4(Parent, Parent, Allychain(1), Allychain(2)));
 	}
 
 	#[test]
@@ -700,12 +700,12 @@ mod tests {
 
 		takes_multilocation(Null);
 		takes_multilocation(Parent);
-		takes_multilocation([Parent, Parachain(4)]);
+		takes_multilocation([Parent, Allychain(4)]);
 
 		assert_eq!(v1::MultiLocation::here().try_into(), Ok(MultiLocation::Null));
 		assert_eq!(
-			v1::MultiLocation::new(1, Junctions::X1(Junction::Parachain(8))).try_into(),
-			Ok(X2(Parent, Parachain(8))),
+			v1::MultiLocation::new(1, Junctions::X1(Junction::Allychain(8))).try_into(),
+			Ok(X2(Parent, Allychain(8))),
 		);
 		assert_eq!(
 			v1::MultiLocation::new(24, Junctions::Here).try_into(),

@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Generic remote tests for the voter bags module.
 
@@ -28,7 +28,7 @@ use sp_storage::well_known_keys;
 const LOG_TARGET: &'static str = "remote-ext-tests::bags-list";
 
 /// Test voter bags migration. `currency_unit` is the number of planks per the
-/// the runtimes `UNITS` (i.e. number of decimal places per DOT, KSM etc)
+/// the runtimes `UNITS` (i.e. number of decimal places per AXC, AXCT etc)
 pub(crate) async fn test_voter_bags_migration<
 	Runtime: pallet_staking::Config + pallet_bags_list::Config + EPM::Config,
 	Block: BlockT,
@@ -79,7 +79,7 @@ pub(crate) async fn test_voter_bags_migration<
 		// and log some info about how voters are distributed within the bags.
 		let mut seen_in_bags = 0;
 		for vote_weight_thresh in <Runtime as pallet_bags_list::Config>::BagThresholds::get() {
-			// threshold in terms of UNITS (e.g. KSM, DOT etc)
+			// threshold in terms of UNITS (e.g. AXCT, AXC etc)
 			let vote_weight_thresh_as_unit = *vote_weight_thresh as f64 / currency_unit as f64;
 			let pretty_thresh = format!("Threshold: {}.", vote_weight_thresh_as_unit);
 

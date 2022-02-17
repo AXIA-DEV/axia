@@ -1,20 +1,20 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! The Polkadot runtime. This can be compiled with `#[no_std]`, ready for Wasm.
+//! The Axia runtime. This can be compiled with `#[no_std]`, ready for Wasm.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.
@@ -111,10 +111,10 @@ mod tests;
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
-/// Runtime version (Westend).
+/// Runtime version (Alphanet).
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("westend"),
-	impl_name: create_runtime_str!("parity-westend"),
+	spec_name: create_runtime_str!("alphanet"),
+	impl_name: create_runtime_str!("parity-alphanet"),
 	authoring_version: 2,
 	spec_version: 9122,
 	impl_version: 0,
@@ -589,7 +589,7 @@ where
 }
 
 parameter_types! {
-	// Minimum 100 bytes/KSM deposited (1 CENT/byte)
+	// Minimum 100 bytes/AXCT deposited (1 CENT/byte)
 	pub const BasicDeposit: Balance = 1000 * CENTS;       // 258 bytes on-chain
 	pub const FieldDeposit: Balance = 250 * CENTS;        // 66 bytes on-chain
 	pub const SubAccountDeposit: Balance = 200 * CENTS;   // 53 bytes on-chain
@@ -927,7 +927,7 @@ impl auctions::Config for Runtime {
 parameter_types! {
 	pub const WndLocation: MultiLocation = Here.into();
 	pub const Ancestry: MultiLocation = Here.into();
-	pub WestendNetwork: NetworkId = NetworkId::Named(b"Westend".to_vec());
+	pub WestendNetwork: NetworkId = NetworkId::Named(b"Alphanet".to_vec());
 	pub CheckAccount: AccountId = XcmPallet::check_account();
 }
 
@@ -957,12 +957,12 @@ type LocalOriginConverter = (
 /// The XCM router. When we want to send an XCM message, we use this type. It amalgamates all of our
 /// individual routers.
 pub type XcmRouter = (
-	// Only one router so far - use DMP to communicate with child parachains.
+	// Only one router so far - use DMP to communicate with child allychains.
 	xcm_sender::ChildParachainRouter<Runtime, XcmPallet>,
 );
 
 parameter_types! {
-	pub const Westmint: MultiLocation = Parachain(1000).into();
+	pub const Westmint: MultiLocation = Allychain(1000).into();
 	pub const WestendForWestmint: (MultiAssetFilter, MultiLocation) =
 		(Wild(AllOf { fun: WildFungible, id: Concrete(WndLocation::get()) }), Westmint::get());
 	pub const MaxInstructions: u32 = 100;
@@ -975,7 +975,7 @@ pub type Barrier = (
 	TakeWeightCredit,
 	// If the message is one that immediately attemps to pay for execution, then allow it.
 	AllowTopLevelPaidExecutionFrom<Everything>,
-	// Messages coming from system parachains need not pay for execution.
+	// Messages coming from system allychains need not pay for execution.
 	AllowUnpaidExecutionFrom<IsChildSystemParachain<ParaId>>,
 	// Expected responses are OK.
 	AllowKnownQueryResponses<XcmPallet>,
@@ -1084,7 +1084,7 @@ construct_runtime! {
 		// Provides a semi-sorted list of nominators for staking.
 		BagsList: pallet_bags_list::{Pallet, Call, Storage, Event<T>} = 25,
 
-		// Parachains pallets. Start indices at 40 to leave room.
+		// Allychains pallets. Start indices at 40 to leave room.
 		ParachainsOrigin: parachains_origin::{Pallet, Origin} = 41,
 		Configuration: parachains_configuration::{Pallet, Call, Storage, Config<T>} = 42,
 		ParasShared: parachains_shared::{Pallet, Call, Storage} = 43,
@@ -1098,7 +1098,7 @@ construct_runtime! {
 		Hrmp: parachains_hrmp::{Pallet, Call, Storage, Event<T>} = 51,
 		ParaSessionInfo: parachains_session_info::{Pallet, Storage} = 52,
 
-		// Parachain Onboarding Pallets. Start indices at 60 to leave room.
+		// Allychain Onboarding Pallets. Start indices at 60 to leave room.
 		Registrar: paras_registrar::{Pallet, Call, Storage, Event<T>, Config} = 60,
 		Slots: slots::{Pallet, Call, Storage, Event<T>} = 61,
 		ParasSudoWrapper: paras_sudo_wrapper::{Pallet, Call} = 62,
@@ -1349,7 +1349,7 @@ sp_api::impl_runtime_apis! {
 			// probability of a slot being empty), is done in accordance to the
 			// slot duration and expected target block time, for safely
 			// resisting network delays of maximum two seconds.
-			// <https://research.web3.foundation/en/latest/polkadot/BABE/Babe/#6-practical-results>
+			// <https://research.web3.foundation/en/latest/axia/BABE/Babe/#6-practical-results>
 			babe_primitives::BabeGenesisConfiguration {
 				slot_duration: Babe::slot_duration(),
 				epoch_length: EpochDuration::get(),
@@ -1435,7 +1435,7 @@ sp_api::impl_runtime_apis! {
 	#[cfg(feature = "try-runtime")]
 	impl frame_try_runtime::TryRuntime<Block> for Runtime {
 		fn on_runtime_upgrade() -> (Weight, Weight) {
-			log::info!("try-runtime::on_runtime_upgrade westend.");
+			log::info!("try-runtime::on_runtime_upgrade alphanet.");
 			let weight = Executive::try_runtime_upgrade().unwrap();
 			(weight, BlockWeights::get().max_block)
 		}
@@ -1461,7 +1461,7 @@ sp_api::impl_runtime_apis! {
 
 			let mut list = Vec::<BenchmarkList>::new();
 
-			// Polkadot
+			// Axia
 			// NOTE: Make sure to prefix these `runtime_common::` so that path resolves correctly
 			// in the generated file.
 			list_benchmark!(list, extra, runtime_common::auctions, Auctions);
@@ -1573,7 +1573,7 @@ sp_api::impl_runtime_apis! {
 			let mut batches = Vec::<BenchmarkBatch>::new();
 			let params = (&config, &whitelist);
 
-			// Polkadot
+			// Axia
 			// NOTE: Make sure to prefix these `runtime_common::` so that path resolves correctly
 			// in the generated file.
 			add_benchmark!(params, batches, runtime_common::auctions, Auctions);

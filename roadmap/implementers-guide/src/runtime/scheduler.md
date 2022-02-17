@@ -4,21 +4,21 @@
 
 The Scheduler module is responsible for two main tasks:
 
-- Partitioning validators into groups and assigning groups to parachains and parathreads.
-- Scheduling parachains and parathreads
+- Partitioning validators into groups and assigning groups to allychains and parathreads.
+- Scheduling allychains and parathreads
 
 It aims to achieve these tasks with these goals in mind:
 
-- It should be possible to know at least a block ahead-of-time, ideally more, which validators are going to be assigned to which parachains.
-- Parachains that have a candidate pending availability in this fork of the chain should not be assigned.
+- It should be possible to know at least a block ahead-of-time, ideally more, which validators are going to be assigned to which allychains.
+- Allychains that have a candidate pending availability in this fork of the chain should not be assigned.
 - Validator assignments should not be gameable. Malicious cartels should not be able to manipulate the scheduler to assign themselves as desired.
-- High or close to optimal throughput of parachains and parathreads. Work among validator groups should be balanced.
+- High or close to optimal throughput of allychains and parathreads. Work among validator groups should be balanced.
 
 ## Availability Cores
 
-The Scheduler manages resource allocation using the concept of "Availability Cores". There will be one availability core for each parachain, and a fixed number of cores used for multiplexing parathreads. Validators will be partitioned into groups, with the same number of groups as availability cores. Validator groups will be assigned to different availability cores over time.
+The Scheduler manages resource allocation using the concept of "Availability Cores". There will be one availability core for each allychain, and a fixed number of cores used for multiplexing parathreads. Validators will be partitioned into groups, with the same number of groups as availability cores. Validator groups will be assigned to different availability cores over time.
 
-An availability core can exist in either one of two states at the beginning or end of a block: free or occupied. A free availability core can have a parachain or parathread assigned to it for the potential to have a backed candidate included. After backing, the core enters the occupied state as the backed candidate is pending availability. There is an important distinction: a core is not considered occupied until it is in charge of a block pending availability, although the implementation may treat scheduled cores the same as occupied ones for brevity. A core exits the occupied state when the candidate is no longer pending availability - either on timeout or on availability. A core starting in the occupied state can move to the free state and back to occupied all within a single block, as availability bitfields are processed before backed candidates. At the end of the block, there is a possible timeout on availability which can move the core back to the free state if occupied.
+An availability core can exist in either one of two states at the beginning or end of a block: free or occupied. A free availability core can have a allychain or parathread assigned to it for the potential to have a backed candidate included. After backing, the core enters the occupied state as the backed candidate is pending availability. There is an important distinction: a core is not considered occupied until it is in charge of a block pending availability, although the implementation may treat scheduled cores the same as occupied ones for brevity. A core exits the occupied state when the candidate is no longer pending availability - either on timeout or on availability. A core starting in the occupied state can move to the free state and back to occupied all within a single block, as availability bitfields are processed before backed candidates. At the end of the block, there is a possible timeout on availability which can move the core back to the free state if occupied.
 
 Cores are treated as an ordered list and are typically referred to by their index in that list.
 
@@ -82,11 +82,11 @@ digraph {
 
 ## Validator Groups
 
-Validator group assignments do not need to change very quickly. The security benefits of fast rotation are redundant with the challenge mechanism in the [Approval process](../protocol-approval.md). Because of this, we only divide validators into groups at the beginning of the session and do not shuffle membership during the session. However, we do take steps to ensure that no particular validator group has dominance over a single parachain or parathread-multiplexer for an entire session to provide better guarantees of live-ness.
+Validator group assignments do not need to change very quickly. The security benefits of fast rotation are redundant with the challenge mechanism in the [Approval process](../protocol-approval.md). Because of this, we only divide validators into groups at the beginning of the session and do not shuffle membership during the session. However, we do take steps to ensure that no particular validator group has dominance over a single allychain or parathread-multiplexer for an entire session to provide better guarantees of live-ness.
 
 Validator groups rotate across availability cores in a round-robin fashion, with rotation occurring at fixed intervals. The i'th group will be assigned to the `(i+k)%n`'th core at any point in time, where `k` is the number of rotations that have occurred in the session, and `n` is the number of cores. This makes upcoming rotations within the same session predictable.
 
-When a rotation occurs, validator groups are still responsible for distributing availability chunks for any previous cores that are still occupied and pending availability. In practice, rotation and availability-timeout frequencies should be set so this will only be the core they have just been rotated from. It is possible that a validator group is rotated onto a core which is currently occupied. In this case, the validator group will have nothing to do until the previously-assigned group finishes their availability work and frees the core or the availability process times out. Depending on if the core is for a parachain or parathread, a different timeout `t` from the [`HostConfiguration`](../types/runtime.md#host-configuration) will apply. Availability timeouts should only be triggered in the first `t-1` blocks after the beginning of a rotation.
+When a rotation occurs, validator groups are still responsible for distributing availability chunks for any previous cores that are still occupied and pending availability. In practice, rotation and availability-timeout frequencies should be set so this will only be the core they have just been rotated from. It is possible that a validator group is rotated onto a core which is currently occupied. In this case, the validator group will have nothing to do until the previously-assigned group finishes their availability work and frees the core or the availability process times out. Depending on if the core is for a allychain or parathread, a different timeout `t` from the [`HostConfiguration`](../types/runtime.md#host-configuration) will apply. Availability timeouts should only be triggered in the first `t-1` blocks after the beginning of a rotation.
 
 ## Claims
 
@@ -125,11 +125,11 @@ struct ParathreadQueue {
 
 enum CoreOccupied {
   Parathread(ParathreadEntry), // claim & retries
-  Parachain,
+  Allychain,
 }
 
 enum AssignmentKind {
-  Parachain,
+  Allychain,
   Parathread(CollatorId, u32),
 }
 
@@ -154,7 +154,7 @@ ValidatorGroups: Vec<Vec<ValidatorIndex>>;
 /// A queue of upcoming claims and which core they should be mapped onto.
 ParathreadQueue: ParathreadQueue;
 /// One entry for each availability core. Entries are `None` if the core is not currently occupied.
-/// The i'th parachain belongs to the i'th core, with the remaining cores all being
+/// The i'th allychain belongs to the i'th core, with the remaining cores all being
 /// parathread-multiplexers.
 AvailabilityCores: Vec<Option<CoreOccupied>>;
 /// An index used to ensure that only one claim on a parathread exists in the queue or is
@@ -180,7 +180,7 @@ Actions:
 1. Set `configuration = Configuration::configuration()` (see [`HostConfiguration`](../types/runtime.md#host-configuration))
 1. Fetch `Shared::ActiveValidators` as AV.
 1. Determine the number of cores & validator groups as `n_cores`. This is the maximum of
-   1. `Paras::parachains().len() + configuration.parathread_cores`
+   1. `Paras::allychains().len() + configuration.parathread_cores`
    1. `n_validators / max_validators_per_core` if `configuration.max_validators_per_core` is `Some` and non-zero.
 1. Resize `AvailabilityCores` to have length `n_cores` with all `None` entries.
 1. Compute new validator groups by shuffling using a secure randomness beacon
@@ -206,11 +206,11 @@ No finalization routine runs for this module.
 - `add_parathread_claim(ParathreadClaim)`: Add a parathread claim to the queue.
   - Fails if any parathread claim on the same parathread is currently indexed.
   - Fails if the queue length is >= `config.scheduling_lookahead * config.parathread_cores`.
-  - The core used for the parathread claim is the `next_core` field of the `ParathreadQueue` and adding `Paras::parachains().len()` to it.
+  - The core used for the parathread claim is the `next_core` field of the `ParathreadQueue` and adding `Paras::allychains().len()` to it.
   - `next_core` is then updated by adding 1 and taking it modulo `config.parathread_cores`.
   - The claim is then added to the claim index.
 - `free_cores(Vec<(CoreIndex, FreedReason)>)`: indicate previosuly-occupied cores which are to be considered returned and why they are being returned.
-  - All freed parachain cores should be assigned to their respective parachain
+  - All freed allychain cores should be assigned to their respective allychain
   - All freed parathread cores whose reason for freeing was `FreedReason::Concluded` should have the claim removed from the claim index.
   - All freed parathread cores whose reason for freeing was `FreedReason::TimedOut` should have the claim added to the parathread queue again without retries incremented
   - All freed parathread cores should take the next parathread entry from the queue.
@@ -225,9 +225,9 @@ No finalization routine runs for this module.
   - Since both the availability cores and the newly-occupied cores lists are sorted ascending, this method can be implemented efficiently.
 - `core_para(CoreIndex) -> ParaId`: return the currently-scheduled or occupied ParaId for the given core.
 - `group_validators(GroupIndex) -> Option<Vec<ValidatorIndex>>`: return all validators in a given group, if the group index is valid for this session.
-- `availability_timeout_predicate() -> Option<impl Fn(CoreIndex, BlockNumber) -> bool>`: returns an optional predicate that should be used for timing out occupied cores. if `None`, no timing-out should be done. The predicate accepts the index of the core, and the block number since which it has been occupied. The predicate should be implemented based on the time since the last validator group rotation, and the respective parachain and parathread timeouts, i.e. only within `max(config.chain_availability_period, config.thread_availability_period)` of the last rotation would this return `Some`.
+- `availability_timeout_predicate() -> Option<impl Fn(CoreIndex, BlockNumber) -> bool>`: returns an optional predicate that should be used for timing out occupied cores. if `None`, no timing-out should be done. The predicate accepts the index of the core, and the block number since which it has been occupied. The predicate should be implemented based on the time since the last validator group rotation, and the respective allychain and parathread timeouts, i.e. only within `max(config.chain_availability_period, config.thread_availability_period)` of the last rotation would this return `Some`.
 - `group_rotation_info(now: BlockNumber) -> GroupRotationInfo`: Returns a helper for determining group rotation.
-- `next_up_on_available(CoreIndex) -> Option<ScheduledCore>`: Return the next thing that will be scheduled on this core assuming it is currently occupied and the candidate occupying it became available. Returns in `ScheduledCore` format (todo: link to Runtime APIs page; linkcheck doesn't allow this right now). For parachains, this is always the ID of the parachain and no specified collator. For parathreads, this is based on the next item in the `ParathreadQueue` assigned to that core, and is `None` if there isn't one.
-- `next_up_on_time_out(CoreIndex) -> Option<ScheduledCore>`: Return the next thing that will be scheduled on this core assuming it is currently occupied and the candidate occupying it timed out. Returns in `ScheduledCore` format (todo: link to Runtime APIs page; linkcheck doesn't allow this right now). For parachains, this is always the ID of the parachain and no specified collator. For parathreads, this is based on the next item in the `ParathreadQueue` assigned to that core, or if there isn't one, the claim that is currently occupying the core. Otherwise `None`.
+- `next_up_on_available(CoreIndex) -> Option<ScheduledCore>`: Return the next thing that will be scheduled on this core assuming it is currently occupied and the candidate occupying it became available. Returns in `ScheduledCore` format (todo: link to Runtime APIs page; linkcheck doesn't allow this right now). For allychains, this is always the ID of the allychain and no specified collator. For parathreads, this is based on the next item in the `ParathreadQueue` assigned to that core, and is `None` if there isn't one.
+- `next_up_on_time_out(CoreIndex) -> Option<ScheduledCore>`: Return the next thing that will be scheduled on this core assuming it is currently occupied and the candidate occupying it timed out. Returns in `ScheduledCore` format (todo: link to Runtime APIs page; linkcheck doesn't allow this right now). For allychains, this is always the ID of the allychain and no specified collator. For parathreads, this is based on the next item in the `ParathreadQueue` assigned to that core, or if there isn't one, the claim that is currently occupying the core. Otherwise `None`.
 - `clear()`:
   - Free all scheduled cores and return parathread claims to queue, with retries incremented. Skip parathreads which no longer exist under paras.

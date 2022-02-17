@@ -861,7 +861,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "bp-polkadot-core"
+name = "bp-axia-core"
 version = "0.1.0"
 dependencies = [
  "bp-messages",
@@ -893,11 +893,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "bp-rococo"
+name = "bp-betanet"
 version = "0.1.0"
 dependencies = [
  "bp-messages",
- "bp-polkadot-core",
+ "bp-axia-core",
  "bp-runtime",
  "frame-support",
  "parity-scale-codec",
@@ -944,8 +944,8 @@ name = "bp-wococo"
 version = "0.1.0"
 dependencies = [
  "bp-messages",
- "bp-polkadot-core",
- "bp-rococo",
+ "bp-axia-core",
+ "bp-betanet",
  "bp-runtime",
  "parity-scale-codec",
  "sp-api",
@@ -3289,9 +3289,9 @@ dependencies = [
  "pallet-vesting",
  "pallet-xcm",
  "parity-scale-codec",
- "polkadot-primitives",
- "polkadot-runtime-common",
- "polkadot-runtime-parachains",
+ "axia-primitives",
+ "axia-runtime-common",
+ "axia-runtime-allychains",
  "rustc-hex",
  "scale-info",
  "separator",
@@ -5535,8 +5535,8 @@ dependencies = [
  "log",
  "pallet-balances",
  "parity-scale-codec",
- "polkadot-parachain",
- "polkadot-runtime-parachains",
+ "axia-allychain",
+ "axia-runtime-allychains",
  "scale-info",
  "serde",
  "sp-core",
@@ -5560,8 +5560,8 @@ dependencies = [
  "pallet-balances",
  "pallet-xcm",
  "parity-scale-codec",
- "polkadot-primitives",
- "polkadot-runtime-common",
+ "axia-primitives",
+ "axia-runtime-common",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -5900,31 +5900,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "989d43012e2ca1c4a02507c67282691a0a3207f9dc67cec596b43fe925b3d325"
 
 [[package]]
-name = "polkadot"
+name = "axia"
 version = "0.9.12"
 dependencies = [
  "assert_cmd",
  "color-eyre",
  "nix",
  "parity-util-mem",
- "polkadot-cli",
+ "axia-cli",
  "tempfile",
 ]
 
 [[package]]
-name = "polkadot-approval-distribution"
+name = "axia-approval-distribution"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
  "env_logger 0.9.0",
  "futures 0.3.17",
  "log",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "rand_core 0.5.1",
  "schnorrkel",
  "sp-core",
@@ -5932,7 +5932,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-availability-bitfield-distribution"
+name = "axia-availability-bitfield-distribution"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -5941,11 +5941,11 @@ dependencies = [
  "futures 0.3.17",
  "log",
  "maplit",
- "polkadot-node-network-protocol",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-network-protocol",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sp-application-crypto",
  "sp-core",
  "sp-keystore",
@@ -5953,7 +5953,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-availability-distribution"
+name = "axia-availability-distribution"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -5962,13 +5962,13 @@ dependencies = [
  "futures-timer 3.0.2",
  "lru 0.7.0",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-erasure-coding",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "rand 0.8.4",
  "sc-network",
  "sp-core",
@@ -5980,7 +5980,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-availability-recovery"
+name = "axia-availability-recovery"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -5990,13 +5990,13 @@ dependencies = [
  "log",
  "lru 0.7.0",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-erasure-coding",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "rand 0.8.4",
  "sc-network",
  "sp-application-crypto",
@@ -6007,15 +6007,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-cli"
+name = "axia-cli"
 version = "0.9.12"
 dependencies = [
  "axlib-build-script-utils",
  "frame-benchmarking-cli",
  "futures 0.3.17",
  "log",
- "polkadot-node-core-pvf",
- "polkadot-service",
+ "axia-node-core-pvf",
+ "axia-service",
  "sc-cli",
  "sc-service",
  "sp-core",
@@ -6026,7 +6026,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-client"
+name = "axia-client"
 version = "0.9.12"
 dependencies = [
  "beefy-primitives",
@@ -6035,9 +6035,9 @@ dependencies = [
  "axctest-runtime",
  "pallet-mmr-primitives",
  "pallet-transaction-payment-rpc-runtime-api",
- "polkadot-primitives",
- "polkadot-runtime",
- "rococo-runtime",
+ "axia-primitives",
+ "axia-runtime",
+ "betanet-runtime",
  "sc-client-api",
  "sc-consensus",
  "sc-executor",
@@ -6054,11 +6054,11 @@ dependencies = [
  "sp-session",
  "sp-storage",
  "sp-transaction-pool",
- "westend-runtime",
+ "alphanet-runtime",
 ]
 
 [[package]]
-name = "polkadot-collator-protocol"
+name = "axia-collator-protocol"
 version = "0.9.12"
 dependencies = [
  "always-assert",
@@ -6069,12 +6069,12 @@ dependencies = [
  "futures-timer 3.0.2",
  "log",
  "parity-scale-codec",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sc-network",
  "sp-core",
  "sp-keyring",
@@ -6085,7 +6085,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-core-primitives"
+name = "axia-core-primitives"
 version = "0.9.12"
 dependencies = [
  "parity-scale-codec",
@@ -6097,7 +6097,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-dispute-distribution"
+name = "axia-dispute-distribution"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6108,13 +6108,13 @@ dependencies = [
  "lazy_static",
  "lru 0.7.0",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-erasure-coding",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sc-keystore",
  "sc-network",
  "sp-application-crypto",
@@ -6126,12 +6126,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-erasure-coding"
+name = "axia-erasure-coding"
 version = "0.9.12"
 dependencies = [
  "parity-scale-codec",
- "polkadot-node-primitives",
- "polkadot-primitives",
+ "axia-node-primitives",
+ "axia-primitives",
  "reed-solomon-novelpoly",
  "sp-core",
  "sp-trie",
@@ -6139,7 +6139,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-gossip-support"
+name = "axia-gossip-support"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6147,11 +6147,11 @@ dependencies = [
  "futures 0.3.17",
  "futures-timer 3.0.2",
  "lazy_static",
- "polkadot-node-network-protocol",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-network-protocol",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "rand 0.8.4",
  "rand_chacha 0.3.1",
  "sc-network",
@@ -6165,7 +6165,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-network-bridge"
+name = "axia-network-bridge"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6174,12 +6174,12 @@ dependencies = [
  "futures-timer 3.0.2",
  "parity-scale-codec",
  "parking_lot",
- "polkadot-node-network-protocol",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-primitives",
+ "axia-node-network-protocol",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-overseer",
+ "axia-primitives",
  "sc-network",
  "sp-consensus",
  "sp-core",
@@ -6188,17 +6188,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-collation-generation"
+name = "axia-node-collation-generation"
 version = "0.9.12"
 dependencies = [
  "futures 0.3.17",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-erasure-coding",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sp-core",
  "sp-maybe-compressed-blob",
  "thiserror",
@@ -6206,7 +6206,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-approval-voting"
+name = "axia-node-core-approval-voting"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6220,13 +6220,13 @@ dependencies = [
  "merlin",
  "parity-scale-codec",
  "parking_lot",
- "polkadot-node-jaeger",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-primitives",
+ "axia-node-jaeger",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-overseer",
+ "axia-primitives",
  "rand_core 0.5.1",
  "sc-keystore",
  "schnorrkel",
@@ -6242,7 +6242,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-av-store"
+name = "axia-node-core-av-store"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6255,13 +6255,13 @@ dependencies = [
  "log",
  "parity-scale-codec",
  "parking_lot",
- "polkadot-erasure-coding",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-primitives",
+ "axia-erasure-coding",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-overseer",
+ "axia-primitives",
  "sp-core",
  "sp-keyring",
  "thiserror",
@@ -6269,19 +6269,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-backing"
+name = "axia-node-core-backing"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
  "bitvec 0.20.1",
  "futures 0.3.17",
- "polkadot-erasure-coding",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
- "polkadot-statement-table",
+ "axia-erasure-coding",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
+ "axia-statement-table",
  "sc-keystore",
  "sp-application-crypto",
  "sp-core",
@@ -6293,14 +6293,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-bitfield-signing"
+name = "axia-node-core-bitfield-signing"
 version = "0.9.12"
 dependencies = [
  "futures 0.3.17",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sp-keystore",
  "thiserror",
  "tracing",
@@ -6308,20 +6308,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-candidate-validation"
+name = "axia-node-core-candidate-validation"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
  "async-trait",
  "futures 0.3.17",
  "parity-scale-codec",
- "polkadot-node-core-pvf",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-parachain",
- "polkadot-primitives",
+ "axia-node-core-pvf",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-allychain",
+ "axia-primitives",
  "sp-core",
  "sp-keyring",
  "sp-maybe-compressed-blob",
@@ -6329,17 +6329,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-chain-api"
+name = "axia-node-core-chain-api"
 version = "0.9.12"
 dependencies = [
  "futures 0.3.17",
  "maplit",
  "parity-scale-codec",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sc-client-api",
  "sc-consensus-babe",
  "sp-blockchain",
@@ -6348,7 +6348,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-chain-selection"
+name = "axia-node-core-chain-selection"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6358,18 +6358,18 @@ dependencies = [
  "kvdb-memorydb",
  "parity-scale-codec",
  "parking_lot",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sp-core",
  "thiserror",
  "tracing",
 ]
 
 [[package]]
-name = "polkadot-node-core-dispute-coordinator"
+name = "axia-node-core-dispute-coordinator"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6379,11 +6379,11 @@ dependencies = [
  "kvdb",
  "kvdb-memorydb",
  "parity-scale-codec",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sc-keystore",
  "sp-core",
  "sp-keyring",
@@ -6393,30 +6393,30 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-dispute-participation"
+name = "axia-node-core-dispute-participation"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
  "futures 0.3.17",
  "parity-scale-codec",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-primitives",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-primitives",
  "sp-core",
  "thiserror",
  "tracing",
 ]
 
 [[package]]
-name = "polkadot-node-core-parachains-inherent"
+name = "axia-node-core-allychains-inherent"
 version = "0.9.12"
 dependencies = [
  "async-trait",
  "futures 0.3.17",
  "futures-timer 3.0.2",
- "polkadot-node-subsystem",
- "polkadot-primitives",
+ "axia-node-subsystem",
+ "axia-primitives",
  "sp-blockchain",
  "sp-inherents",
  "sp-runtime",
@@ -6425,16 +6425,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-provisioner"
+name = "axia-node-core-provisioner"
 version = "0.9.12"
 dependencies = [
  "bitvec 0.20.1",
  "futures 0.3.17",
  "futures-timer 3.0.2",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sp-application-crypto",
  "sp-keystore",
  "thiserror",
@@ -6442,7 +6442,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-core-pvf"
+name = "axia-node-core-pvf"
 version = "0.9.12"
 dependencies = [
  "always-assert",
@@ -6455,9 +6455,9 @@ dependencies = [
  "libc",
  "parity-scale-codec",
  "pin-project 1.0.8",
- "polkadot-core-primitives",
- "polkadot-node-subsystem-util",
- "polkadot-parachain",
+ "axia-core-primitives",
+ "axia-node-subsystem-util",
+ "axia-allychain",
  "rand 0.8.4",
  "sc-executor",
  "sc-executor-common",
@@ -6470,23 +6470,23 @@ dependencies = [
  "sp-tracing",
  "sp-wasm-interface",
  "tempfile",
- "test-parachain-adder",
- "test-parachain-halt",
+ "test-allychain-adder",
+ "test-allychain-halt",
  "tracing",
 ]
 
 [[package]]
-name = "polkadot-node-core-runtime-api"
+name = "axia-node-core-runtime-api"
 version = "0.9.12"
 dependencies = [
  "futures 0.3.17",
  "memory-lru",
  "parity-util-mem",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sp-api",
  "sp-authority-discovery",
  "sp-consensus-babe",
@@ -6495,7 +6495,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-jaeger"
+name = "axia-node-jaeger"
 version = "0.9.12"
 dependencies = [
  "async-std",
@@ -6504,15 +6504,15 @@ dependencies = [
  "mick-jaeger",
  "parity-scale-codec",
  "parking_lot",
- "polkadot-node-primitives",
- "polkadot-primitives",
+ "axia-node-primitives",
+ "axia-primitives",
  "sc-network",
  "sp-core",
  "thiserror",
 ]
 
 [[package]]
-name = "polkadot-node-metrics"
+name = "axia-node-metrics"
 version = "0.9.12"
 dependencies = [
  "axlib-prometheus-endpoint",
@@ -6522,16 +6522,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-network-protocol"
+name = "axia-node-network-protocol"
 version = "0.9.12"
 dependencies = [
  "async-trait",
  "derive_more",
  "futures 0.3.17",
  "parity-scale-codec",
- "polkadot-node-jaeger",
- "polkadot-node-primitives",
- "polkadot-primitives",
+ "axia-node-jaeger",
+ "axia-node-primitives",
+ "axia-primitives",
  "sc-authority-discovery",
  "sc-network",
  "strum 0.22.0",
@@ -6539,15 +6539,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-primitives"
+name = "axia-node-primitives"
 version = "0.9.12"
 dependencies = [
  "bounded-vec",
  "futures 0.3.17",
  "parity-scale-codec",
- "polkadot-erasure-coding",
- "polkadot-parachain",
- "polkadot-primitives",
+ "axia-erasure-coding",
+ "axia-allychain",
+ "axia-primitives",
  "schnorrkel",
  "serde",
  "sp-application-crypto",
@@ -6561,25 +6561,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-subsystem"
+name = "axia-node-subsystem"
 version = "0.9.12"
 dependencies = [
- "polkadot-node-jaeger",
- "polkadot-node-subsystem-types",
- "polkadot-overseer",
+ "axia-node-jaeger",
+ "axia-node-subsystem-types",
+ "axia-overseer",
 ]
 
 [[package]]
-name = "polkadot-node-subsystem-test-helpers"
+name = "axia-node-subsystem-test-helpers"
 version = "0.9.12"
 dependencies = [
  "async-trait",
  "futures 0.3.17",
  "parking_lot",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-util",
+ "axia-overseer",
+ "axia-primitives",
  "sc-keystore",
  "sp-application-crypto",
  "sp-core",
@@ -6588,25 +6588,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-node-subsystem-types"
+name = "axia-node-subsystem-types"
 version = "0.9.12"
 dependencies = [
  "axlib-prometheus-endpoint",
  "derive_more",
  "futures 0.3.17",
- "polkadot-node-jaeger",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-overseer-gen",
- "polkadot-primitives",
- "polkadot-statement-table",
+ "axia-node-jaeger",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-overseer-gen",
+ "axia-primitives",
+ "axia-statement-table",
  "sc-network",
  "smallvec",
  "thiserror",
 ]
 
 [[package]]
-name = "polkadot-node-subsystem-util"
+name = "axia-node-subsystem-util"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6620,13 +6620,13 @@ dependencies = [
  "metered-channel",
  "parity-scale-codec",
  "pin-project 1.0.8",
- "polkadot-node-jaeger",
- "polkadot-node-metrics",
- "polkadot-node-network-protocol",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-overseer",
- "polkadot-primitives",
+ "axia-node-jaeger",
+ "axia-node-metrics",
+ "axia-node-network-protocol",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-overseer",
+ "axia-primitives",
  "rand 0.8.4",
  "sp-application-crypto",
  "sp-core",
@@ -6636,7 +6636,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-overseer"
+name = "axia-overseer"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6647,12 +6647,12 @@ dependencies = [
  "metered-channel",
  "parity-util-mem",
  "parking_lot",
- "polkadot-node-metrics",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem-types",
- "polkadot-overseer-gen",
- "polkadot-primitives",
+ "axia-node-metrics",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-node-subsystem-types",
+ "axia-overseer-gen",
+ "axia-primitives",
  "sc-client-api",
  "sp-api",
  "sp-core",
@@ -6660,7 +6660,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-overseer-gen"
+name = "axia-overseer-gen"
 version = "0.9.12"
 dependencies = [
  "async-trait",
@@ -6668,16 +6668,16 @@ dependencies = [
  "futures-timer 3.0.2",
  "metered-channel",
  "pin-project 1.0.8",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-overseer-gen-proc-macro",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-overseer-gen-proc-macro",
  "thiserror",
  "tracing",
  "trybuild",
 ]
 
 [[package]]
-name = "polkadot-overseer-gen-proc-macro"
+name = "axia-overseer-gen-proc-macro"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6688,14 +6688,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-parachain"
+name = "axia-allychain"
 version = "0.9.12"
 dependencies = [
  "derive_more",
  "frame-support",
  "parity-scale-codec",
  "parity-util-mem",
- "polkadot-core-primitives",
+ "axia-core-primitives",
  "scale-info",
  "serde",
  "sp-core",
@@ -6704,7 +6704,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-primitives"
+name = "axia-primitives"
 version = "0.9.12"
 dependencies = [
  "bitvec 0.20.1",
@@ -6712,8 +6712,8 @@ dependencies = [
  "hex-literal",
  "parity-scale-codec",
  "parity-util-mem",
- "polkadot-core-primitives",
- "polkadot-parachain",
+ "axia-core-primitives",
+ "axia-allychain",
  "scale-info",
  "serde",
  "sp-api",
@@ -6733,7 +6733,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-rpc"
+name = "axia-rpc"
 version = "0.9.12"
 dependencies = [
  "axlib-frame-rpc-system",
@@ -6742,7 +6742,7 @@ dependencies = [
  "jsonrpc-core",
  "pallet-mmr-rpc",
  "pallet-transaction-payment-rpc",
- "polkadot-primitives",
+ "axia-primitives",
  "sc-chain-spec",
  "sc-client-api",
  "sc-consensus-babe",
@@ -6763,7 +6763,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-runtime"
+name = "axia-runtime"
 version = "0.9.12"
 dependencies = [
  "axlib-wasm-builder",
@@ -6812,9 +6812,9 @@ dependencies = [
  "pallet-utility",
  "pallet-vesting",
  "parity-scale-codec",
- "polkadot-primitives",
- "polkadot-runtime-common",
- "polkadot-runtime-parachains",
+ "axia-primitives",
+ "axia-runtime-common",
+ "axia-runtime-allychains",
  "rustc-hex",
  "scale-info",
  "separator",
@@ -6845,7 +6845,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-runtime-common"
+name = "axia-runtime-common"
 version = "0.9.12"
 dependencies = [
  "beefy-primitives",
@@ -6872,8 +6872,8 @@ dependencies = [
  "pallet-treasury",
  "pallet-vesting",
  "parity-scale-codec",
- "polkadot-primitives",
- "polkadot-runtime-parachains",
+ "axia-primitives",
+ "axia-runtime-allychains",
  "rustc-hex",
  "scale-info",
  "serde",
@@ -6895,7 +6895,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-runtime-parachains"
+name = "axia-runtime-allychains"
 version = "0.9.12"
 dependencies = [
  "bitflags",
@@ -6916,7 +6916,7 @@ dependencies = [
  "pallet-timestamp",
  "pallet-vesting",
  "parity-scale-codec",
- "polkadot-primitives",
+ "axia-primitives",
  "rand 0.8.4",
  "rand_chacha 0.3.1",
  "rustc-hex",
@@ -6938,7 +6938,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-service"
+name = "axia-service"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -6960,42 +6960,42 @@ dependencies = [
  "pallet-mmr-primitives",
  "pallet-staking",
  "pallet-transaction-payment-rpc-runtime-api",
- "polkadot-approval-distribution",
- "polkadot-availability-bitfield-distribution",
- "polkadot-availability-distribution",
- "polkadot-availability-recovery",
- "polkadot-client",
- "polkadot-collator-protocol",
- "polkadot-dispute-distribution",
- "polkadot-gossip-support",
- "polkadot-network-bridge",
- "polkadot-node-collation-generation",
- "polkadot-node-core-approval-voting",
- "polkadot-node-core-av-store",
- "polkadot-node-core-backing",
- "polkadot-node-core-bitfield-signing",
- "polkadot-node-core-candidate-validation",
- "polkadot-node-core-chain-api",
- "polkadot-node-core-chain-selection",
- "polkadot-node-core-dispute-coordinator",
- "polkadot-node-core-dispute-participation",
- "polkadot-node-core-parachains-inherent",
- "polkadot-node-core-provisioner",
- "polkadot-node-core-runtime-api",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-overseer",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-rpc",
- "polkadot-runtime",
- "polkadot-runtime-parachains",
- "polkadot-statement-distribution",
- "polkadot-test-client",
- "rococo-runtime",
+ "axia-approval-distribution",
+ "axia-availability-bitfield-distribution",
+ "axia-availability-distribution",
+ "axia-availability-recovery",
+ "axia-client",
+ "axia-collator-protocol",
+ "axia-dispute-distribution",
+ "axia-gossip-support",
+ "axia-network-bridge",
+ "axia-node-collation-generation",
+ "axia-node-core-approval-voting",
+ "axia-node-core-av-store",
+ "axia-node-core-backing",
+ "axia-node-core-bitfield-signing",
+ "axia-node-core-candidate-validation",
+ "axia-node-core-chain-api",
+ "axia-node-core-chain-selection",
+ "axia-node-core-dispute-coordinator",
+ "axia-node-core-dispute-participation",
+ "axia-node-core-allychains-inherent",
+ "axia-node-core-provisioner",
+ "axia-node-core-runtime-api",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-overseer",
+ "axia-allychain",
+ "axia-primitives",
+ "axia-rpc",
+ "axia-runtime",
+ "axia-runtime-allychains",
+ "axia-statement-distribution",
+ "axia-test-client",
+ "betanet-runtime",
  "sc-authority-discovery",
  "sc-basic-authorship",
  "sc-block-builder",
@@ -7036,11 +7036,11 @@ dependencies = [
  "sp-trie",
  "thiserror",
  "tracing",
- "westend-runtime",
+ "alphanet-runtime",
 ]
 
 [[package]]
-name = "polkadot-simnet"
+name = "axia-simnet"
 version = "0.9.12"
 dependencies = [
  "frame-benchmarking",
@@ -7051,11 +7051,11 @@ dependencies = [
  "pallet-democracy",
  "pallet-transaction-payment",
  "parity-scale-codec",
- "polkadot-cli",
- "polkadot-primitives",
- "polkadot-runtime",
- "polkadot-runtime-common",
- "polkadot-service",
+ "axia-cli",
+ "axia-primitives",
+ "axia-runtime",
+ "axia-runtime-common",
+ "axia-service",
  "sc-cli",
  "sc-consensus",
  "sc-consensus-babe",
@@ -7072,20 +7072,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-simnet-node"
+name = "axia-simnet-node"
 version = "0.9.12"
 dependencies = [
- "polkadot-simnet",
+ "axia-simnet",
 ]
 
 [[package]]
-name = "polkadot-simnet-test"
+name = "axia-simnet-test"
 version = "0.9.12"
 dependencies = [
  "frame-system",
  "pallet-balances",
- "polkadot-runtime",
- "polkadot-simnet",
+ "axia-runtime",
+ "axia-simnet",
  "sc-client-api",
  "sp-blockchain",
  "sp-core",
@@ -7093,7 +7093,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-statement-distribution"
+name = "axia-statement-distribution"
 version = "0.9.12"
 dependencies = [
  "arrayvec 0.5.2",
@@ -7103,12 +7103,12 @@ dependencies = [
  "futures-timer 3.0.2",
  "indexmap",
  "parity-scale-codec",
- "polkadot-node-network-protocol",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
- "polkadot-primitives",
+ "axia-node-network-protocol",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
+ "axia-primitives",
  "sc-keystore",
  "sc-network",
  "sp-application-crypto",
@@ -7122,25 +7122,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-statement-table"
+name = "axia-statement-table"
 version = "0.9.12"
 dependencies = [
  "parity-scale-codec",
- "polkadot-primitives",
+ "axia-primitives",
  "sp-core",
 ]
 
 [[package]]
-name = "polkadot-test-client"
+name = "axia-test-client"
 version = "0.9.12"
 dependencies = [
  "axlib-test-client",
  "futures 0.3.17",
  "parity-scale-codec",
- "polkadot-node-subsystem",
- "polkadot-primitives",
- "polkadot-test-runtime",
- "polkadot-test-service",
+ "axia-node-subsystem",
+ "axia-primitives",
+ "axia-test-runtime",
+ "axia-test-service",
  "sc-block-builder",
  "sc-consensus",
  "sc-service",
@@ -7157,7 +7157,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-test-malus"
+name = "axia-test-malus"
 version = "0.9.12"
 dependencies = [
  "assert_matches",
@@ -7165,18 +7165,18 @@ dependencies = [
  "color-eyre",
  "futures 0.3.17",
  "parity-util-mem",
- "polkadot-cli",
- "polkadot-node-core-candidate-validation",
- "polkadot-node-core-pvf",
- "polkadot-node-subsystem",
- "polkadot-node-subsystem-test-helpers",
- "polkadot-node-subsystem-util",
+ "axia-cli",
+ "axia-node-core-candidate-validation",
+ "axia-node-core-pvf",
+ "axia-node-subsystem",
+ "axia-node-subsystem-test-helpers",
+ "axia-node-subsystem-util",
  "sp-core",
  "structopt",
 ]
 
 [[package]]
-name = "polkadot-test-runtime"
+name = "axia-test-runtime"
 version = "0.9.12"
 dependencies = [
  "axlib-wasm-builder",
@@ -7208,10 +7208,10 @@ dependencies = [
  "pallet-vesting",
  "pallet-xcm",
  "parity-scale-codec",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-runtime-common",
- "polkadot-runtime-parachains",
+ "axia-allychain",
+ "axia-primitives",
+ "axia-runtime-common",
+ "axia-runtime-allychains",
  "rustc-hex",
  "scale-info",
  "serde",
@@ -7241,7 +7241,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-test-service"
+name = "axia-test-service"
 version = "0.9.12"
 dependencies = [
  "axlib-test-client",
@@ -7254,16 +7254,16 @@ dependencies = [
  "pallet-balances",
  "pallet-staking",
  "pallet-transaction-payment",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-overseer",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-rpc",
- "polkadot-runtime-common",
- "polkadot-runtime-parachains",
- "polkadot-service",
- "polkadot-test-runtime",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-overseer",
+ "axia-allychain",
+ "axia-primitives",
+ "axia-rpc",
+ "axia-runtime-common",
+ "axia-runtime-allychains",
+ "axia-service",
+ "axia-test-runtime",
  "rand 0.8.4",
  "sc-authority-discovery",
  "sc-chain-spec",
@@ -7295,15 +7295,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "polkadot-voter-bags"
+name = "axia-voter-bags"
 version = "0.9.0"
 dependencies = [
  "generate-bags",
  "axctest-runtime",
- "polkadot-runtime",
+ "axia-runtime",
  "sp-io",
  "structopt",
- "westend-runtime",
+ "alphanet-runtime",
 ]
 
 [[package]]
@@ -7870,7 +7870,7 @@ dependencies = [
  "pallet-bags-list",
  "pallet-election-provider-multi-phase",
  "pallet-staking",
- "polkadot-runtime",
+ "axia-runtime",
  "remote-externalities",
  "sp-core",
  "sp-runtime",
@@ -7960,13 +7960,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "rococo-runtime"
+name = "betanet-runtime"
 version = "0.9.12"
 dependencies = [
  "axlib-wasm-builder",
  "beefy-primitives",
  "bp-messages",
- "bp-rococo",
+ "bp-betanet",
  "bp-runtime",
  "bp-wococo",
  "bridge-runtime-common",
@@ -8005,10 +8005,10 @@ dependencies = [
  "pallet-utility",
  "pallet-xcm",
  "parity-scale-codec",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-runtime-common",
- "polkadot-runtime-parachains",
+ "axia-allychain",
+ "axia-primitives",
+ "axia-runtime-common",
+ "axia-runtime-allychains",
  "scale-info",
  "serde",
  "serde_derive",
@@ -10203,9 +10203,9 @@ dependencies = [
  "pallet-transaction-payment",
  "parity-scale-codec",
  "paste",
- "polkadot-core-primitives",
- "polkadot-runtime",
- "polkadot-runtime-common",
+ "axia-core-primitives",
+ "axia-runtime",
+ "axia-runtime-common",
  "remote-externalities",
  "sc-transaction-pool-api",
  "serde",
@@ -10219,7 +10219,7 @@ dependencies = [
  "sub-tokens",
  "thiserror",
  "tokio",
- "westend-runtime",
+ "alphanet-runtime",
 ]
 
 [[package]]
@@ -10453,20 +10453,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "test-parachain-adder"
+name = "test-allychain-adder"
 version = "0.9.12"
 dependencies = [
  "axlib-wasm-builder",
  "dlmalloc",
  "parity-scale-codec",
- "polkadot-parachain",
+ "axia-allychain",
  "sp-io",
  "sp-std",
  "tiny-keccak",
 ]
 
 [[package]]
-name = "test-parachain-adder-collator"
+name = "test-allychain-adder-collator"
 version = "0.9.12"
 dependencies = [
  "axlib-test-utils",
@@ -10474,38 +10474,38 @@ dependencies = [
  "futures-timer 3.0.2",
  "log",
  "parity-scale-codec",
- "polkadot-cli",
- "polkadot-node-core-pvf",
- "polkadot-node-primitives",
- "polkadot-node-subsystem",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-service",
- "polkadot-test-service",
+ "axia-cli",
+ "axia-node-core-pvf",
+ "axia-node-primitives",
+ "axia-node-subsystem",
+ "axia-allychain",
+ "axia-primitives",
+ "axia-service",
+ "axia-test-service",
  "sc-cli",
  "sc-service",
  "sp-core",
  "sp-keyring",
  "structopt",
- "test-parachain-adder",
+ "test-allychain-adder",
  "tokio",
 ]
 
 [[package]]
-name = "test-parachain-halt"
+name = "test-allychain-halt"
 version = "0.9.12"
 dependencies = [
  "axlib-wasm-builder",
 ]
 
 [[package]]
-name = "test-parachains"
+name = "test-allychains"
 version = "0.9.12"
 dependencies = [
  "parity-scale-codec",
  "sp-core",
- "test-parachain-adder",
- "test-parachain-halt",
+ "test-allychain-adder",
+ "test-allychain-halt",
  "tiny-keccak",
 ]
 
@@ -11543,7 +11543,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "westend-runtime"
+name = "alphanet-runtime"
 version = "0.9.12"
 dependencies = [
  "axlib-wasm-builder",
@@ -11596,10 +11596,10 @@ dependencies = [
  "pallet-xcm",
  "pallet-xcm-benchmarks",
  "parity-scale-codec",
- "polkadot-parachain",
- "polkadot-primitives",
- "polkadot-runtime-common",
- "polkadot-runtime-parachains",
+ "axia-allychain",
+ "axia-primitives",
+ "axia-runtime-common",
+ "axia-runtime-allychains",
  "rustc-hex",
  "scale-info",
  "serde",
@@ -11747,8 +11747,8 @@ dependencies = [
  "pallet-transaction-payment",
  "pallet-xcm",
  "parity-scale-codec",
- "polkadot-parachain",
- "polkadot-runtime-parachains",
+ "axia-allychain",
+ "axia-runtime-allychains",
  "scale-info",
  "sp-arithmetic",
  "sp-core",
@@ -11784,9 +11784,9 @@ dependencies = [
  "frame-system",
  "futures 0.3.17",
  "pallet-xcm",
- "polkadot-test-client",
- "polkadot-test-runtime",
- "polkadot-test-service",
+ "axia-test-client",
+ "axia-test-runtime",
+ "axia-test-service",
  "sp-consensus",
  "sp-keyring",
  "sp-runtime",
@@ -11812,9 +11812,9 @@ dependencies = [
  "frame-support",
  "parity-scale-codec",
  "paste",
- "polkadot-core-primitives",
- "polkadot-parachain",
- "polkadot-runtime-parachains",
+ "axia-core-primitives",
+ "axia-allychain",
+ "axia-runtime-allychains",
  "sp-io",
  "sp-std",
  "xcm",
@@ -11830,9 +11830,9 @@ dependencies = [
  "pallet-balances",
  "pallet-xcm",
  "parity-scale-codec",
- "polkadot-core-primitives",
- "polkadot-parachain",
- "polkadot-runtime-parachains",
+ "axia-core-primitives",
+ "axia-allychain",
+ "axia-runtime-allychains",
  "scale-info",
  "sp-core",
  "sp-io",
@@ -11854,9 +11854,9 @@ dependencies = [
  "pallet-balances",
  "pallet-xcm",
  "parity-scale-codec",
- "polkadot-core-primitives",
- "polkadot-parachain",
- "polkadot-runtime-parachains",
+ "axia-core-primitives",
+ "axia-allychain",
+ "axia-runtime-allychains",
  "scale-info",
  "sp-core",
  "sp-io",

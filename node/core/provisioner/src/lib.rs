@@ -1,21 +1,21 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! The provisioner is responsible for assembling a relay chain block
-//! from a set of available parachain candidates of its choice.
+//! from a set of available allychain candidates of its choice.
 
 #![deny(missing_docs, unused_crate_dependencies)]
 
@@ -25,7 +25,7 @@ use futures::{
 	prelude::*,
 };
 use futures_timer::Delay;
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	errors::{ChainApiError, RuntimeApiError},
 	jaeger,
 	messages::{
@@ -34,13 +34,13 @@ use polkadot_node_subsystem::{
 	},
 	PerLeafSpan, SubsystemSender,
 };
-use polkadot_node_subsystem_util::{
+use axia_node_subsystem_util::{
 	self as util,
 	metrics::{self, prometheus},
 	request_availability_cores, request_persisted_validation_data, JobSender, JobSubsystem,
 	JobTrait,
 };
-use polkadot_primitives::v1::{
+use axia_primitives::v1::{
 	BackedCandidate, BlockNumber, CandidateReceipt, CoreState, DisputeStatement,
 	DisputeStatementSet, Hash, MultiDisputeStatementSet, OccupiedCoreAssumption,
 	SignedAvailabilityBitfield, ValidatorIndex,
@@ -54,7 +54,7 @@ mod tests;
 /// How long to wait before proposing.
 const PRE_PROPOSE_TIMEOUT: std::time::Duration = core::time::Duration::from_millis(2000);
 
-const LOG_TARGET: &str = "parachain::provisioner";
+const LOG_TARGET: &str = "allychain::provisioner";
 
 enum InherentAfter {
 	Ready,
@@ -275,8 +275,8 @@ type CoreAvailability = BitVec<bitvec::order::Lsb0, u8>;
 /// block. To engage this functionality, a
 /// `ProvisionerMessage::RequestInherentData` is sent; the response is a set of
 /// non-conflicting candidates and the appropriate bitfields. Non-conflicting
-/// means that there are never two distinct parachain candidates included for
-/// the same parachain and that new parachain candidates cannot be included
+/// means that there are never two distinct allychain candidates included for
+/// the same allychain and that new allychain candidates cannot be included
 /// until the previous one either gets declared available or expired.
 ///
 /// The main complication here is going to be around handling

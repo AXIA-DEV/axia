@@ -1,18 +1,18 @@
 // Copyright 2020-2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Pallet to handle XCM messages.
 
@@ -478,8 +478,8 @@ pub mod pallet {
 		/// local weights.
 		///
 		/// - `origin`: Must be capable of withdrawing the `assets` and executing XCM.
-		/// - `dest`: Destination context for the assets. Will typically be `X2(Parent, Parachain(..))` to send
-		///   from parachain to parachain, or `X1(Parachain(..))` to send from relay to parachain.
+		/// - `dest`: Destination context for the assets. Will typically be `X2(Parent, Allychain(..))` to send
+		///   from allychain to allychain, or `X1(Allychain(..))` to send from relay to allychain.
 		/// - `beneficiary`: A beneficiary location for the assets in the context of `dest`. Will generally be
 		///   an `AccountId32` value.
 		/// - `assets`: The assets to be withdrawn. The first item should be the currency used to to pay the fee on the
@@ -519,8 +519,8 @@ pub mod pallet {
 		/// local weights.
 		///
 		/// - `origin`: Must be capable of withdrawing the `assets` and executing XCM.
-		/// - `dest`: Destination context for the assets. Will typically be `X2(Parent, Parachain(..))` to send
-		///   from parachain to parachain, or `X1(Parachain(..))` to send from relay to parachain.
+		/// - `dest`: Destination context for the assets. Will typically be `X2(Parent, Allychain(..))` to send
+		///   from allychain to allychain, or `X1(Allychain(..))` to send from relay to allychain.
 		/// - `beneficiary`: A beneficiary location for the assets in the context of `dest`. Will generally be
 		///   an `AccountId32` value.
 		/// - `assets`: The assets to be withdrawn. This should include the assets used to pay the fee on the
@@ -671,8 +671,8 @@ pub mod pallet {
 		/// Fee payment on the destination side is made from the first asset listed in the `assets` vector.
 		///
 		/// - `origin`: Must be capable of withdrawing the `assets` and executing XCM.
-		/// - `dest`: Destination context for the assets. Will typically be `X2(Parent, Parachain(..))` to send
-		///   from parachain to parachain, or `X1(Parachain(..))` to send from relay to parachain.
+		/// - `dest`: Destination context for the assets. Will typically be `X2(Parent, Allychain(..))` to send
+		///   from allychain to allychain, or `X1(Allychain(..))` to send from relay to allychain.
 		/// - `beneficiary`: A beneficiary location for the assets in the context of `dest`. Will generally be
 		///   an `AccountId32` value.
 		/// - `assets`: The assets to be withdrawn. This should include the assets used to pay the fee on the
@@ -715,8 +715,8 @@ pub mod pallet {
 		/// Fee payment on the destination side is made from the first asset listed in the `assets` vector.
 		///
 		/// - `origin`: Must be capable of withdrawing the `assets` and executing XCM.
-		/// - `dest`: Destination context for the assets. Will typically be `X2(Parent, Parachain(..))` to send
-		///   from parachain to parachain, or `X1(Parachain(..))` to send from relay to parachain.
+		/// - `dest`: Destination context for the assets. Will typically be `X2(Parent, Allychain(..))` to send
+		///   from allychain to allychain, or `X1(Allychain(..))` to send from relay to allychain.
 		/// - `beneficiary`: A beneficiary location for the assets in the context of `dest`. Will generally be
 		///   an `AccountId32` value.
 		/// - `assets`: The assets to be withdrawn. The first item should be the currency used to to pay the fee on the
@@ -1407,7 +1407,7 @@ pub mod pallet {
 											call_index,
 										);
 										Self::deposit_event(e);
-										// Not much to do with the result as it is. It's up to the parachain to ensure that the
+										// Not much to do with the result as it is. It's up to the allychain to ensure that the
 										// message makes sense.
 										error_and_info.post_info.actual_weight
 									},

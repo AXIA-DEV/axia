@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use parity_scale_codec::{Decode, Encode};
 use sp_std::{borrow::Borrow, convert::TryFrom, prelude::*, result::Result};
@@ -146,8 +146,8 @@ impl<T: Clone + Encode + Decode> Convert<Vec<u8>, T> for Decoded {
 /// impl ConvertOrigin<u32> for BumpParaId {
 /// 	fn convert_origin(origin: impl Into<MultiLocation>, _: OriginKind) -> Result<u32, MultiLocation> {
 /// 		match origin.into() {
-/// 			MultiLocation { parents: 0, interior: Junctions::X1(Junction::Parachain(id)) } => {
-/// 				Err(Junctions::X1(Junction::Parachain(id + 1)).into())
+/// 			MultiLocation { parents: 0, interior: Junctions::X1(Junction::Allychain(id)) } => {
+/// 				Err(Junctions::X1(Junction::Allychain(id + 1)).into())
 /// 			}
 /// 			_ => unreachable!()
 /// 		}
@@ -158,7 +158,7 @@ impl<T: Clone + Encode + Decode> Convert<Vec<u8>, T> for Decoded {
 /// impl ConvertOrigin<u32> for AcceptPara7 {
 /// 	fn convert_origin(origin: impl Into<MultiLocation>, _: OriginKind) -> Result<u32, MultiLocation> {
 /// 		match origin.into() {
-/// 			MultiLocation { parents: 0, interior: Junctions::X1(Junction::Parachain(id)) } if id == 7 => {
+/// 			MultiLocation { parents: 0, interior: Junctions::X1(Junction::Allychain(id)) } if id == 7 => {
 /// 				Ok(7)
 /// 			}
 /// 			o => Err(o)
@@ -166,7 +166,7 @@ impl<T: Clone + Encode + Decode> Convert<Vec<u8>, T> for Decoded {
 /// 	}
 /// }
 /// # fn main() {
-/// let origin: MultiLocation = Junctions::X1(Junction::Parachain(6)).into();
+/// let origin: MultiLocation = Junctions::X1(Junction::Allychain(6)).into();
 /// assert!(
 /// 	<(BumpParaId, AcceptPara7) as ConvertOrigin<u32>>::convert_origin(origin, OriginKind::Native)
 /// 		.is_ok()

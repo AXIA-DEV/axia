@@ -1,27 +1,27 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::{relay_chain_selection::*, *};
 
 use futures::channel::oneshot::Receiver;
-use polkadot_node_primitives::approval::{VRFOutput, VRFProof};
-use polkadot_node_subsystem_test_helpers as test_helpers;
-use polkadot_node_subsystem_util::TimeoutExt;
-use polkadot_subsystem::messages::{AllMessages, BlockDescription};
-use polkadot_test_client::Sr25519Keyring;
+use axia_node_primitives::approval::{VRFOutput, VRFProof};
+use axia_node_subsystem_test_helpers as test_helpers;
+use axia_node_subsystem_util::TimeoutExt;
+use axia_subsystem::messages::{AllMessages, BlockDescription};
+use axia_test_client::Sr25519Keyring;
 use sp_consensus_babe::{
 	digests::{CompatibleDigestItem, PreDigest, SecondaryVRFPreDigest},
 	Transcript,
@@ -36,14 +36,14 @@ use assert_matches::assert_matches;
 use std::{sync::Arc, time::Duration};
 
 use futures::{channel::oneshot, prelude::*};
-use polkadot_primitives::v1::{Block, BlockNumber, Hash, Header};
-use polkadot_subsystem::messages::{
+use axia_primitives::v1::{Block, BlockNumber, Hash, Header};
+use axia_subsystem::messages::{
 	ApprovalVotingMessage, ChainSelectionMessage, DisputeCoordinatorMessage,
 	HighestApprovedAncestorBlock,
 };
 
-use polkadot_node_subsystem_test_helpers::TestSubsystemSender;
-use polkadot_overseer::{SubsystemContext, SubsystemSender};
+use axia_node_subsystem_test_helpers::TestSubsystemSender;
+use axia_overseer::{SubsystemContext, SubsystemSender};
 
 type VirtualOverseer = test_helpers::TestSubsystemContextHandle<ApprovalVotingMessage>;
 
@@ -281,7 +281,7 @@ impl ChainBuilder {
 		block
 	}
 
-	/// Add a relay chain block that contains a disputed parachain block.
+	/// Add a relay chain block that contains a disputed allychain block.
 	/// For simplicity this is not modeled explicitly.
 	pub fn fast_forward_disputed(
 		&mut self,

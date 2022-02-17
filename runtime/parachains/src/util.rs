@@ -1,18 +1,18 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Utilities that don't belong to any particular module but may draw
 //! on all modules.
@@ -22,7 +22,7 @@ use sp_std::{collections::btree_set::BTreeSet, vec::Vec};
 
 use crate::{configuration, hrmp, paras};
 
-/// Make the persisted validation data for a particular parachain, a specified relay-parent and it's
+/// Make the persisted validation data for a particular allychain, a specified relay-parent and it's
 /// storage root.
 ///
 /// This ties together the storage of several modules.
@@ -64,7 +64,7 @@ pub fn split_active_subset<T: Clone>(active: &[ValidatorIndex], all: &[T]) -> (V
 
 	if active_result.len() != active.len() {
 		log::warn!(
-			target: "runtime::parachains",
+			target: "runtime::allychains",
 			"Took active validators from set with wrong size.",
 		);
 	}
@@ -89,7 +89,7 @@ pub fn take_active_subset<T: Clone>(active: &[ValidatorIndex], set: &[T]) -> Vec
 
 	if subset.len() != active.len() {
 		log::warn!(
-			target: "runtime::parachains",
+			target: "runtime::allychains",
 			"Took active validators from set with wrong size",
 		);
 	}

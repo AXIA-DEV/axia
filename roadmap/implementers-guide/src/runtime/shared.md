@@ -3,9 +3,9 @@
 This module is responsible for managing shared storage and configuration for other modules.
 
 It is important that other pallets are able to use the Shared Module, so it should not have a
-dependency on any other modules in the Parachains Runtime.
+dependency on any other modules in the Allychains Runtime.
 
-For the moment, it is used exclusively to track the current session index across the Parachains
+For the moment, it is used exclusively to track the current session index across the Allychains
 Runtime system, and when it should be allowed to schedule future changes to Paras or Configurations.
 
 ## Constants
@@ -20,12 +20,12 @@ pub(crate) const SESSION_DELAY: SessionIndex = 2;
 ## Storage
 
 ```rust
-/// The current session index within the Parachains Runtime system.
+/// The current session index within the Allychains Runtime system.
 CurrentSessionIndex: SessionIndex;
-/// All the validators actively participating in parachain consensus.
+/// All the validators actively participating in allychain consensus.
 /// Indices are into the broader validator set.
 ActiveValidatorIndices: Vec<ValidatorIndex>,
-/// The parachain attestation keys of the validators actively participating in parachain consensus.
+/// The allychain attestation keys of the validators actively participating in allychain consensus.
 /// This should be the same length as `ActiveValidatorIndices`.
 ActiveValidatorKeys: Vec<ValidatorId>
 ```
@@ -58,5 +58,5 @@ The Shared Module currently has no finalization routines.
 ## Functions
 
 * `scheduled_sessions() -> SessionIndex`: Return the next session index where updates to the
-  Parachains Runtime system would be safe to apply.
+  Allychains Runtime system would be safe to apply.
 * `set_session_index(SessionIndex)`: For tests. Set the current session index in the Shared Module.

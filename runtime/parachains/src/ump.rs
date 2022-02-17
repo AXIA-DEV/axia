@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::{
 	configuration::{self, HostConfiguration},
@@ -28,7 +28,7 @@ use xcm::latest::Outcome;
 
 pub use pallet::*;
 
-/// All upward messages coming from parachains will be funneled into an implementation of this trait.
+/// All upward messages coming from allychains will be funneled into an implementation of this trait.
 ///
 /// The message is opaque from the perspective of UMP. The message size can range from 0 to
 /// `config.max_upward_message_size`.
@@ -41,7 +41,7 @@ pub use pallet::*;
 /// in the sink after the candidate was enacted. That typically depends on the UMP traffic, the sizes
 /// of upward messages and the configuration of UMP.
 ///
-/// It is possible that by the time the message is sank the origin parachain was offboarded. It is
+/// It is possible that by the time the message is sank the origin allychain was offboarded. It is
 /// up to the implementer to check that if it cares.
 pub trait UmpSink {
 	/// Process an incoming upward message and return the amount of weight it consumed, or `None` if
@@ -111,7 +111,7 @@ impl<XcmExecutor: xcm::latest::ExecuteXcm<C::Call>, C: Config> UmpSink for XcmSi
 				Ok(0)
 			},
 			Ok(Ok(xcm_message)) => {
-				let xcm_junction = Junction::Parachain(origin.into());
+				let xcm_junction = Junction::Allychain(origin.into());
 				let outcome = XcmExecutor::execute_xcm(xcm_junction, xcm_message, max_weight);
 				match outcome {
 					Outcome::Error(XcmError::WeightLimitReached(required)) => Err((id, required)),
@@ -230,7 +230,7 @@ pub mod pallet {
 		WeightOverLimit,
 	}
 
-	/// The messages waiting to be handled by the relay-chain originating from a certain parachain.
+	/// The messages waiting to be handled by the relay-chain originating from a certain allychain.
 	///
 	/// Note that some upward messages might have been already processed by the inclusion logic. E.g.
 	/// channel management messages.
@@ -251,8 +251,8 @@ pub mod pallet {
 	///
 	/// Invariant:
 	/// - The set of keys should exactly match the set of keys of `RelayDispatchQueues`.
-	// NOTE that this field is used by parachains via merkle storage proofs, therefore changing
-	// the format will require migration of parachains.
+	// NOTE that this field is used by allychains via merkle storage proofs, therefore changing
+	// the format will require migration of allychains.
 	#[pallet::storage]
 	pub type RelayDispatchQueueSize<T: Config> =
 		StorageMap<_, Twox64Concat, ParaId, (u32, u32), ValueQuery>;
@@ -344,7 +344,7 @@ impl<T: Config> Pallet<T> {
 		}
 	}
 
-	/// Remove all relevant storage items for an outgoing parachain.
+	/// Remove all relevant storage items for an outgoing allychain.
 	fn clean_ump_after_outgoing(outgoing_para: &ParaId) {
 		<Self as Store>::RelayDispatchQueueSize::remove(outgoing_para);
 		<Self as Store>::RelayDispatchQueues::remove(outgoing_para);

@@ -28,27 +28,27 @@ pub mod wococo_messages_to_rococo;
 
 mod millau;
 mod rialto;
-mod rococo;
-mod westend;
+mod betanet;
+mod alphanet;
 mod wococo;
 
 use relay_utils::metrics::{FloatJsonValueMetric, MetricsParams};
 
-pub(crate) fn add_polkadot_axctest_price_metrics<T: finality_relay::FinalitySyncPipeline>(
+pub(crate) fn add_axia_axctest_price_metrics<T: finality_relay::FinalitySyncPipeline>(
 	params: MetricsParams,
 ) -> anyhow::Result<MetricsParams> {
 	Ok(
 		relay_utils::relay_metrics(Some(finality_relay::metrics_prefix::<T>()), params)
-			// Polkadot/AxiaTest prices are added as metrics here, because atm we don't have Polkadot <-> AxiaTest
+			// Axia/AxiaTest prices are added as metrics here, because atm we don't have Axia <-> AxiaTest
 			// relays, but we want to test metrics/dashboards in advance
 			.standalone_metric(|registry, prefix| {
 				FloatJsonValueMetric::new(
 					registry,
 					prefix,
-					"https://api.coingecko.com/api/v3/simple/price?ids=Polkadot&vs_currencies=btc".into(),
-					"$.polkadot.btc".into(),
-					"polkadot_to_base_conversion_rate".into(),
-					"Rate used to convert from DOT to some BASE tokens".into(),
+					"https://api.coingecko.com/api/v3/simple/price?ids=Axia&vs_currencies=btc".into(),
+					"$.axia.btc".into(),
+					"axia_to_base_conversion_rate".into(),
+					"Rate used to convert from AXC to some BASE tokens".into(),
 				)
 			})
 			.map_err(|e| anyhow::format_err!("{}", e))?
@@ -59,7 +59,7 @@ pub(crate) fn add_polkadot_axctest_price_metrics<T: finality_relay::FinalitySync
 					"https://api.coingecko.com/api/v3/simple/price?ids=AxiaTest&vs_currencies=btc".into(),
 					"$.axctest.btc".into(),
 					"axctest_to_base_conversion_rate".into(),
-					"Rate used to convert from KSM to some BASE tokens".into(),
+					"Rate used to convert from AXCT to some BASE tokens".into(),
 				)
 			})
 			.map_err(|e| anyhow::format_err!("{}", e))?

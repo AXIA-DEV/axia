@@ -1,20 +1,20 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! The Polkadot runtime. This can be compiled with `#[no_std]`, ready for Wasm.
+//! The Axia runtime. This can be compiled with `#[no_std]`, ready for Wasm.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.
@@ -99,11 +99,11 @@ mod weights;
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
-// Polkadot version identifier;
-/// Runtime version (Polkadot).
+// Axia version identifier;
+/// Runtime version (Axia).
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("polkadot"),
-	impl_name: create_runtime_str!("parity-polkadot"),
+	spec_name: create_runtime_str!("axia"),
+	impl_name: create_runtime_str!("parity-axia"),
 	authoring_version: 0,
 	spec_version: 9122,
 	impl_version: 0,
@@ -377,9 +377,9 @@ parameter_types! {
 	pub const SignedMaxSubmissions: u32 = 16;
 	// 40 DOTs fixed deposit..
 	pub const SignedDepositBase: Balance = deposit(2, 0);
-	// 0.01 DOT per KB of solution data.
+	// 0.01 AXC per KB of solution data.
 	pub const SignedDepositByte: Balance = deposit(0, 10) / 1024;
-	// Each good submission will get 1 DOT as reward
+	// Each good submission will get 1 AXC as reward
 	pub SignedRewardBase: Balance = 1 * UNITS;
 	pub SolutionImprovementThreshold: Perbill = Perbill::from_rational(5u32, 10_000);
 
@@ -440,13 +440,13 @@ impl pallet_election_provider_multi_phase::Config for Runtime {
 
 // TODO #6469: This shouldn't be static, but a lazily cached value, not built unless needed, and
 // re-built in case input parameters have changed. The `ideal_stake` should be determined by the
-// amount of parachain slots being bid on: this should be around `(75 - 25.min(slots / 4))%`.
+// amount of allychain slots being bid on: this should be around `(75 - 25.min(slots / 4))%`.
 pallet_staking_reward_curve::build! {
 	const REWARD_CURVE: PiecewiseLinear<'static> = curve!(
 		min_inflation: 0_025_000,
 		max_inflation: 0_100_000,
-		// 3:2:1 staked : parachains : float.
-		// while there's no parachains, then this is 75% staked : 25% float.
+		// 3:2:1 staked : allychains : float.
+		// while there's no allychains, then this is 75% staked : 25% float.
 		ideal_stake: 0_750_000,
 		falloff: 0_050_000,
 		max_piece_count: 40,
@@ -886,7 +886,7 @@ parameter_types! {
 }
 
 parameter_types! {
-	pub Prefix: &'static [u8] = b"Pay DOTs to the Polkadot account:";
+	pub Prefix: &'static [u8] = b"Pay DOTs to the Axia account:";
 }
 
 impl claims::Config for Runtime {
@@ -1173,8 +1173,8 @@ impl paras_registrar::Config for Runtime {
 parameter_types! {
 	// 12 weeks = 3 months per lease period -> 8 lease periods ~ 2 years
 	pub const LeasePeriod: BlockNumber = 12 * WEEKS;
-	// Polkadot Genesis was on May 26, 2020.
-	// Target Parachain Onboarding Date: Dec 15, 2021.
+	// Axia Genesis was on May 26, 2020.
+	// Target Allychain Onboarding Date: Dec 15, 2021.
 	// Difference is 568 days.
 	// We want a lease period to start on the target onboarding date.
 	// 568 % (12 * 7) = 64 day offset
@@ -1300,7 +1300,7 @@ construct_runtime! {
 		// Election pallet. Only works with staking, but placed here to maintain indices.
 		ElectionProviderMultiPhase: pallet_election_provider_multi_phase::{Pallet, Call, Storage, Event<T>, ValidateUnsigned} = 36,
 
-		// Parachains pallets. Start indices at 50 to leave room.
+		// Allychains pallets. Start indices at 50 to leave room.
 		ParachainsOrigin: parachains_origin::{Pallet, Origin} = 50,
 		Configuration: parachains_configuration::{Pallet, Call, Storage, Config<T>} = 51,
 		ParasShared: parachains_shared::{Pallet, Call, Storage} = 52,
@@ -1314,7 +1314,7 @@ construct_runtime! {
 		Hrmp: parachains_hrmp::{Pallet, Call, Storage, Event<T>} = 60,
 		ParaSessionInfo: parachains_session_info::{Pallet, Storage} = 61,
 
-		// Parachain Onboarding Pallets. Start indices at 70 to leave room.
+		// Allychain Onboarding Pallets. Start indices at 70 to leave room.
 		Registrar: paras_registrar::{Pallet, Call, Storage, Event<T>} = 70,
 		Slots: slots::{Pallet, Call, Storage, Event<T>} = 71,
 		Auctions: auctions::{Pallet, Call, Storage, Event<T>} = 72,
@@ -1357,7 +1357,7 @@ pub type Executive = frame_executive::Executive<
 /// The payload being signed in transactions.
 pub type SignedPayload = generic::SignedPayload<Call, SignedExtra>;
 
-/// Set the initial host configuration for Polkadot.
+/// Set the initial host configuration for Axia.
 pub struct SetInitialHostConfiguration;
 impl OnRuntimeUpgrade for SetInitialHostConfiguration {
 	fn on_runtime_upgrade() -> frame_support::weights::Weight {
@@ -1416,17 +1416,17 @@ impl OnRuntimeUpgrade for SetInitialHostConfiguration {
 			// storage migration (performed as part of [#3575]). As the result a call to
 			// `StorageVersion::get::<Configuration>` will return `Some(1)`
 			//
-			// However, Polkadot is just about to have its first version of parachains runtime
+			// However, Axia is just about to have its first version of allychains runtime
 			// pallets and thus there is no existing storage which needs to be migrated. Above
 			// we just have set the active configuration of the actual version, i.e. the same as the
 			// version 1 on AxiaTest.
 			//
 			// The caveat here is when we deploy a module for the first time, it's runtime version
 			// will be empty and thus it will be considered as version 0. Since we want to avoid
-			// the situation where the same storage structure has version 0 on Polkadot and
+			// the situation where the same storage structure has version 0 on Axia and
 			// version 1 on AxiaTest we need to set the storage version explicitly.
 			//
-			// [#3575]: https://github.com/paritytech/polkadot/pull/3575
+			// [#3575]: https://github.com/paritytech/axia/pull/3575
 			use frame_support::traits::StorageVersion;
 			StorageVersion::new(1).put::<Configuration>();
 		}
@@ -1662,7 +1662,7 @@ sp_api::impl_runtime_apis! {
 			// probability of a slot being empty), is done in accordance to the
 			// slot duration and expected target block time, for safely
 			// resisting network delays of maximum two seconds.
-			// <https://research.web3.foundation/en/latest/polkadot/BABE/Babe/#6-practical-results>
+			// <https://research.web3.foundation/en/latest/axia/BABE/Babe/#6-practical-results>
 			babe_primitives::BabeGenesisConfiguration {
 				slot_duration: Babe::slot_duration(),
 				epoch_length: EpochDuration::get(),
@@ -1748,7 +1748,7 @@ sp_api::impl_runtime_apis! {
 	#[cfg(feature = "try-runtime")]
 	impl frame_try_runtime::TryRuntime<Block> for Runtime {
 		fn on_runtime_upgrade() -> (Weight, Weight) {
-			log::info!("try-runtime::on_runtime_upgrade polkadot.");
+			log::info!("try-runtime::on_runtime_upgrade axia.");
 			let weight = Executive::try_runtime_upgrade().unwrap();
 			(weight, BlockWeights::get().max_block)
 		}
@@ -1773,7 +1773,7 @@ sp_api::impl_runtime_apis! {
 
 			let mut list = Vec::<BenchmarkList>::new();
 
-			// Polkadot
+			// Axia
 			// NOTE: Make sure to prefix these `runtime_common::` so that path resolves correctly
 			// in the generated file.
 			list_benchmark!(list, extra, runtime_common::claims, Claims);
@@ -1848,7 +1848,7 @@ sp_api::impl_runtime_apis! {
 
 			let mut batches = Vec::<BenchmarkBatch>::new();
 			let params = (&config, &whitelist);
-			// Polkadot
+			// Axia
 			// NOTE: Make sure to prefix these `runtime_common::` so that path resolves correctly
 			// in the generated file.
 			add_benchmark!(params, batches, runtime_common::claims, Claims);
@@ -1993,7 +1993,7 @@ mod test_fees {
 			"can support {} voters in a single block for council elections; total bond {}",
 			voters, cost_dollars,
 		);
-		assert!(cost_dollars > 150_000); // DOLLAR ~ new DOT ~ 10e10
+		assert!(cost_dollars > 150_000); // DOLLAR ~ new AXC ~ 10e10
 	}
 
 	#[test]

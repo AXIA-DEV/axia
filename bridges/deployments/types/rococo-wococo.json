@@ -1,5 +1,5 @@
 {
-	"--1": "Rococo Types",
+	"--1": "Betanet Types",
 	"RococoBalance": "u128",
 	"RococoBlockHash": "H256",
 	"RococoBlockNumber": "u32",

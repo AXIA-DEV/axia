@@ -1,20 +1,20 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Declaration of the parachain specific origin and a pallet that hosts it.
+//! Declaration of the allychain specific origin and a pallet that hosts it.
 
 use primitives::v1::Id as ParaId;
 use sp_runtime::traits::BadOrigin;
@@ -22,14 +22,14 @@ use sp_std::result;
 
 pub use pallet::*;
 
-/// Ensure that the origin `o` represents a parachain.
-/// Returns `Ok` with the parachain ID that effected the extrinsic or an `Err` otherwise.
+/// Ensure that the origin `o` represents a allychain.
+/// Returns `Ok` with the allychain ID that effected the extrinsic or an `Err` otherwise.
 pub fn ensure_parachain<OuterOrigin>(o: OuterOrigin) -> result::Result<ParaId, BadOrigin>
 where
 	OuterOrigin: Into<result::Result<Origin, OuterOrigin>>,
 {
 	match o.into() {
-		Ok(Origin::Parachain(id)) => Ok(id),
+		Ok(Origin::Allychain(id)) => Ok(id),
 		_ => Err(BadOrigin),
 	}
 }
@@ -52,17 +52,17 @@ pub mod pallet {
 	#[pallet::config]
 	pub trait Config: frame_system::Config {}
 
-	/// Origin for the parachains.
+	/// Origin for the allychains.
 	#[pallet::origin]
 	#[derive(PartialEq, Eq, Clone, Encode, Decode, sp_core::RuntimeDebug, scale_info::TypeInfo)]
 	pub enum Origin {
-		/// It comes from a parachain.
-		Parachain(ParaId),
+		/// It comes from a allychain.
+		Allychain(ParaId),
 	}
 }
 
 impl From<u32> for Origin {
 	fn from(id: u32) -> Origin {
-		Origin::Parachain(id.into())
+		Origin::Allychain(id.into())
 	}
 }

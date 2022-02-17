@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-node-metrics"
+name = "axia-node-metrics"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"

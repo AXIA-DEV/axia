@@ -5,7 +5,7 @@ authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
 
 [dependencies]
-polkadot-runtime = { version = "0.9.8", path = "../../../runtime/polkadot" }
+axia-runtime = { version = "0.9.8", path = "../../../runtime/axia" }
 axctest-runtime = { version = "0.9.8", path = "../../../runtime/axctest" }
 
 pallet-staking = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

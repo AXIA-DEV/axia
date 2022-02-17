@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Types used to connect to the Westend chain.
+//! Types used to connect to the Alphanet chain.
 
 use codec::Encode;
 use relay_axlib_client::{Chain, ChainBase, ChainWithBalances, TransactionSignScheme};
@@ -22,25 +22,25 @@ use sp_core::{storage::StorageKey, Pair};
 use sp_runtime::{generic::SignedPayload, traits::IdentifyAccount};
 use std::time::Duration;
 
-/// Westend header id.
+/// Alphanet header id.
 pub type HeaderId = relay_utils::HeaderId<bp_westend::Hash, bp_westend::BlockNumber>;
 
-/// Westend header type used in headers sync.
+/// Alphanet header type used in headers sync.
 pub type SyncHeader = relay_axlib_client::SyncHeader<bp_westend::Header>;
 
-/// Westend chain definition
+/// Alphanet chain definition
 #[derive(Debug, Clone, Copy)]
-pub struct Westend;
+pub struct Alphanet;
 
-impl ChainBase for Westend {
+impl ChainBase for Alphanet {
 	type BlockNumber = bp_westend::BlockNumber;
 	type Hash = bp_westend::Hash;
 	type Hasher = bp_westend::Hasher;
 	type Header = bp_westend::Header;
 }
 
-impl Chain for Westend {
-	const NAME: &'static str = "Westend";
+impl Chain for Alphanet {
+	const NAME: &'static str = "Alphanet";
 	const AVERAGE_BLOCK_INTERVAL: Duration = Duration::from_secs(6);
 
 	type AccountId = bp_westend::AccountId;
@@ -50,14 +50,14 @@ impl Chain for Westend {
 	type Balance = bp_westend::Balance;
 }
 
-impl ChainWithBalances for Westend {
+impl ChainWithBalances for Alphanet {
 	fn account_info_storage_key(account_id: &Self::AccountId) -> StorageKey {
 		StorageKey(bp_westend::account_info_storage_key(account_id))
 	}
 }
 
-impl TransactionSignScheme for Westend {
-	type Chain = Westend;
+impl TransactionSignScheme for Alphanet {
+	type Chain = Alphanet;
 	type AccountKeyPair = sp_core::sr25519::Pair;
 	type SignedTransaction = bp_westend::UncheckedExtrinsic;
 
@@ -92,5 +92,5 @@ impl TransactionSignScheme for Westend {
 	}
 }
 
-/// Westend signing params.
+/// Alphanet signing params.
 pub type SigningParams = sp_core::sr25519::Pair;

@@ -1,20 +1,20 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! The inclusion pallet is responsible for inclusion and availability of scheduled parachains
+//! The inclusion pallet is responsible for inclusion and availability of scheduled allychains
 //! and parathreads.
 //!
 //! It is responsible for carrying candidates from being backable to being backed, and then from backed
@@ -476,7 +476,7 @@ impl<T: Config> Pallet<T> {
 
 				let validation_code_hash =
 					<paras::Pallet<T>>::validation_code_hash_at(para_id, now, None)
-						// A candidate for a parachain without current validation code is not scheduled.
+						// A candidate for a allychain without current validation code is not scheduled.
 						.ok_or_else(|| Error::<T>::UnscheduledCandidate)?;
 				ensure!(
 					backed_candidate.descriptor().validation_code_hash == validation_code_hash,
@@ -500,7 +500,7 @@ impl<T: Config> Pallet<T> {
 				) {
 					log::debug!(
 						target: LOG_TARGET,
-						"Validation outputs checking during inclusion of a candidate {} for parachain `{}` failed: {:?}",
+						"Validation outputs checking during inclusion of a candidate {} for allychain `{}` failed: {:?}",
 						candidate_idx,
 						u32::from(para_id),
 						err,
@@ -696,7 +696,7 @@ impl<T: Config> Pallet<T> {
 		) {
 			log::debug!(
 				target: LOG_TARGET,
-				"Validation outputs checking for parachain `{}` failed: {:?}",
+				"Validation outputs checking for allychain `{}` failed: {:?}",
 				u32::from(para_id),
 				err,
 			);
@@ -1019,7 +1019,7 @@ mod tests {
 							ParaGenesisArgs {
 								genesis_head: Vec::new().into(),
 								validation_code: Vec::new().into(),
-								parachain: is_chain,
+								allychain: is_chain,
 							},
 						)
 					})
@@ -1158,7 +1158,7 @@ mod tests {
 	}
 
 	fn expected_bits() -> usize {
-		Paras::parachains().len() + Configuration::config().parathread_cores as usize
+		Paras::allychains().len() + Configuration::config().parathread_cores as usize
 	}
 
 	fn default_bitfield() -> AvailabilityBitfield {
@@ -1599,7 +1599,7 @@ mod tests {
 				core if core == CoreIndex::from(0) => Some(chain_a),
 				core if core == CoreIndex::from(1) => Some(chain_b),
 				core if core == CoreIndex::from(2) => Some(thread_a),
-				_ => panic!("Core out of bounds for 2 parachains and 1 parathread core."),
+				_ => panic!("Core out of bounds for 2 allychains and 1 parathread core."),
 			};
 
 			let candidate_a = TestCandidateBuilder {
@@ -1783,7 +1783,7 @@ mod tests {
 					group_index if group_index == GroupIndex::from(0) => Some(vec![0, 1]),
 					group_index if group_index == GroupIndex::from(1) => Some(vec![2, 3]),
 					group_index if group_index == GroupIndex::from(2) => Some(vec![4]),
-					_ => panic!("Group index out of bounds for 2 parachains and 1 parathread core"),
+					_ => panic!("Group index out of bounds for 2 allychains and 1 parathread core"),
 				}
 				.map(|m| m.into_iter().map(ValidatorIndex).collect::<Vec<_>>())
 			};
@@ -1793,14 +1793,14 @@ mod tests {
 			let chain_a_assignment = CoreAssignment {
 				core: CoreIndex::from(0),
 				para_id: chain_a,
-				kind: AssignmentKind::Parachain,
+				kind: AssignmentKind::Allychain,
 				group_idx: GroupIndex::from(0),
 			};
 
 			let chain_b_assignment = CoreAssignment {
 				core: CoreIndex::from(1),
 				para_id: chain_b,
-				kind: AssignmentKind::Parachain,
+				kind: AssignmentKind::Allychain,
 				group_idx: GroupIndex::from(1),
 			};
 
@@ -2336,7 +2336,7 @@ mod tests {
 					group_index if group_index == GroupIndex::from(0) => Some(vec![0, 1]),
 					group_index if group_index == GroupIndex::from(1) => Some(vec![2, 3]),
 					group_index if group_index == GroupIndex::from(2) => Some(vec![4]),
-					_ => panic!("Group index out of bounds for 2 parachains and 1 parathread core"),
+					_ => panic!("Group index out of bounds for 2 allychains and 1 parathread core"),
 				}
 				.map(|vs| vs.into_iter().map(ValidatorIndex).collect::<Vec<_>>())
 			};
@@ -2346,14 +2346,14 @@ mod tests {
 			let chain_a_assignment = CoreAssignment {
 				core: CoreIndex::from(0),
 				para_id: chain_a,
-				kind: AssignmentKind::Parachain,
+				kind: AssignmentKind::Allychain,
 				group_idx: GroupIndex::from(0),
 			};
 
 			let chain_b_assignment = CoreAssignment {
 				core: CoreIndex::from(1),
 				para_id: chain_b,
-				kind: AssignmentKind::Parachain,
+				kind: AssignmentKind::Allychain,
 				group_idx: GroupIndex::from(1),
 			};
 
@@ -2607,7 +2607,7 @@ mod tests {
 			let group_validators = |group_index: GroupIndex| {
 				match group_index {
 					group_index if group_index == GroupIndex::from(0) => Some(vec![0, 1, 2, 3, 4]),
-					_ => panic!("Group index out of bounds for 1 parachain"),
+					_ => panic!("Group index out of bounds for 1 allychain"),
 				}
 				.map(|vs| vs.into_iter().map(ValidatorIndex).collect::<Vec<_>>())
 			};
@@ -2615,7 +2615,7 @@ mod tests {
 			let chain_a_assignment = CoreAssignment {
 				core: CoreIndex::from(0),
 				para_id: chain_a,
-				kind: AssignmentKind::Parachain,
+				kind: AssignmentKind::Allychain,
 				group_idx: GroupIndex::from(0),
 			};
 

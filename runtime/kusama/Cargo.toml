@@ -82,9 +82,9 @@ pallet-session-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend"
 frame-system-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false, optional = true , branch = "master" }
 hex-literal = { version = "0.3.3", optional = true }
 
-runtime-common = { package = "polkadot-runtime-common", path = "../common", default-features = false }
-runtime-parachains = { package = "polkadot-runtime-parachains", path = "../parachains", default-features = false }
-primitives = { package = "polkadot-primitives", path = "../../primitives", default-features = false }
+runtime-common = { package = "axia-runtime-common", path = "../common", default-features = false }
+runtime-allychains = { package = "axia-runtime-allychains", path = "../allychains", default-features = false }
+primitives = { package = "axia-primitives", path = "../../primitives", default-features = false }
 
 xcm = { package = "xcm", path = "../../xcm", default-features = false }
 xcm-executor = { package = "xcm-executor", path = "../../xcm/xcm-executor", default-features = false }
@@ -166,7 +166,7 @@ std = [
 	"babe-primitives/std",
 	"sp-session/std",
 	"runtime-common/std",
-	"runtime-parachains/std",
+	"runtime-allychains/std",
 	"frame-try-runtime/std",
 	"sp-npos-elections/std",
 	"beefy-primitives/std",

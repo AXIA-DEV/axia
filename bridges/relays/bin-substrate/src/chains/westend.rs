@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Westend chain specification for CLI.
+//! Alphanet chain specification for CLI.
 
 use crate::cli::{encode_message, CliChain};
 use frame_support::weights::Weight;
-use relay_westend_client::Westend;
+use relay_westend_client::Alphanet;
 use sp_version::RuntimeVersion;
 
-impl CliChain for Westend {
+impl CliChain for Alphanet {
 	const RUNTIME_VERSION: RuntimeVersion = bp_westend::VERSION;
 
 	type KeyPair = sp_core::sr25519::Pair;
@@ -36,6 +36,6 @@ impl CliChain for Westend {
 	}
 
 	fn encode_message(_message: encode_message::MessagePayload) -> Result<Self::MessagePayload, String> {
-		Err("Sending messages from Westend is not yet supported.".into())
+		Err("Sending messages from Alphanet is not yet supported.".into())
 	}
 }

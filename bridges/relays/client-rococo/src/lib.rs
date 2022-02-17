@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Types used to connect to the Rococo-Axlib chain.
+//! Types used to connect to the Betanet-Axlib chain.
 
 use codec::Encode;
 use relay_axlib_client::{Chain, ChainBase, ChainWithBalances, TransactionSignScheme};
@@ -24,25 +24,25 @@ use std::time::Duration;
 
 pub mod runtime;
 
-/// Rococo header id.
+/// Betanet header id.
 pub type HeaderId = relay_utils::HeaderId<bp_rococo::Hash, bp_rococo::BlockNumber>;
 
-/// Rococo header type used in headers sync.
+/// Betanet header type used in headers sync.
 pub type SyncHeader = relay_axlib_client::SyncHeader<bp_rococo::Header>;
 
-/// Rococo chain definition
+/// Betanet chain definition
 #[derive(Debug, Clone, Copy)]
-pub struct Rococo;
+pub struct Betanet;
 
-impl ChainBase for Rococo {
+impl ChainBase for Betanet {
 	type BlockNumber = bp_rococo::BlockNumber;
 	type Hash = bp_rococo::Hash;
 	type Hasher = bp_rococo::Hashing;
 	type Header = bp_rococo::Header;
 }
 
-impl Chain for Rococo {
-	const NAME: &'static str = "Rococo";
+impl Chain for Betanet {
+	const NAME: &'static str = "Betanet";
 	const AVERAGE_BLOCK_INTERVAL: Duration = Duration::from_secs(6);
 
 	type AccountId = bp_rococo::AccountId;
@@ -52,14 +52,14 @@ impl Chain for Rococo {
 	type Balance = bp_rococo::Balance;
 }
 
-impl ChainWithBalances for Rococo {
+impl ChainWithBalances for Betanet {
 	fn account_info_storage_key(account_id: &Self::AccountId) -> StorageKey {
 		StorageKey(bp_rococo::account_info_storage_key(account_id))
 	}
 }
 
-impl TransactionSignScheme for Rococo {
-	type Chain = Rococo;
+impl TransactionSignScheme for Betanet {
+	type Chain = Betanet;
 	type AccountKeyPair = sp_core::sr25519::Pair;
 	type SignedTransaction = crate::runtime::UncheckedExtrinsic;
 
@@ -94,5 +94,5 @@ impl TransactionSignScheme for Rococo {
 	}
 }
 
-/// Rococo signing params.
+/// Betanet signing params.
 pub type SigningParams = sp_core::sr25519::Pair;

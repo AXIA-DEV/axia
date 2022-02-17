@@ -1,12 +1,12 @@
 # Paras Module
 
-The Paras module is responsible for storing information on parachains and parathreads. Registered
-parachains and parathreads cannot change except at session boundaries and after at least a full
+The Paras module is responsible for storing information on allychains and parathreads. Registered
+allychains and parathreads cannot change except at session boundaries and after at least a full
 session has passed. This is primarily to ensure that the number and meaning of bits required for the
 availability bitfields does not change except at session boundaries.
 
-It's also responsible for managing parachain validation code upgrades as well as maintaining
-availability of old parachain code and its pruning.
+It's also responsible for managing allychain validation code upgrades as well as maintaining
+availability of old allychain code and its pruning.
 
 ## Storage
 
@@ -25,7 +25,7 @@ pub struct ReplacementTimes {
  activated_at: BlockNumber,
 }
 
-/// Metadata used to track previous parachain validation code that we keep in
+/// Metadata used to track previous allychain validation code that we keep in
 /// the state.
 pub struct ParaPastCodeMeta {
  // Block numbers where the code was expected to be replaced and where the code
@@ -50,8 +50,8 @@ struct ParaGenesisArgs {
   genesis_head: HeadData,
   /// The validation code to start with.
   validation_code: ValidationCode,
-  /// True if parachain, false if parathread.
-  parachain: bool,
+  /// True if allychain, false if parathread.
+  allychain: bool,
 }
 
 /// The possible states of a para, to take into account delayed lifecycle changes.
@@ -60,26 +60,26 @@ pub enum ParaLifecycle {
   Onboarding,
   /// Para is a Parathread.
   Parathread,
-  /// Para is a Parachain.
-  Parachain,
-  /// Para is a Parathread which is upgrading to a Parachain.
+  /// Para is a Allychain.
+  Allychain,
+  /// Para is a Parathread which is upgrading to a Allychain.
   UpgradingParathread,
-  /// Para is a Parachain which is downgrading to a Parathread.
+  /// Para is a Allychain which is downgrading to a Parathread.
   DowngradingParachain,
   /// Parathread is being offboarded.
   OutgoingParathread,
-  /// Parachain is being offboarded.
+  /// Allychain is being offboarded.
   OutgoingParachain,
 }
 ```
 
 #### Para Lifecycle
 
-Because the state of parachains and parathreads are delayed by a session, we track the specific
+Because the state of allychains and parathreads are delayed by a session, we track the specific
 state of the para using the `ParaLifecycle` enum.
 
 ```
-None                 Parathread                  Parachain
+None                 Parathread                  Allychain
  +                        +                          +
  |                        |                          |
  |   (2 Session Delay)    |                          |
@@ -110,8 +110,8 @@ During the transition period, the para object is still considered in its existin
 ### Storage Layout
 
 ```rust
-/// All parachains. Ordered ascending by ParaId. Parathreads are not included.
-Parachains: Vec<ParaId>,
+/// All allychains. Ordered ascending by ParaId. Parathreads are not included.
+Allychains: Vec<ParaId>,
 /// The current lifecycle state of all known Para Ids.
 ParaLifecycle: map ParaId => Option<ParaLifecycle>,
 /// The head-data of every registered para.
@@ -120,7 +120,7 @@ Heads: map ParaId => Option<HeadData>;
 CurrentCodeHash: map ParaId => Option<ValidationCodeHash>;
 /// Actual past code hash, indicated by the para id as well as the block number at which it became outdated.
 PastCodeHash: map (ParaId, BlockNumber) => Option<ValidationCodeHash>;
-/// Past code of parachains. The parachains themselves may not be registered anymore,
+/// Past code of allychains. The allychains themselves may not be registered anymore,
 /// but we also keep their code on-chain for the same amount of time as outdated code
 /// to keep it available for secondary checkers.
 PastCodeMeta: map ParaId => ParaPastCodeMeta;
@@ -128,7 +128,7 @@ PastCodeMeta: map ParaId => ParaPastCodeMeta;
 /// Note that this is the actual height of the included block, not the expected height at which the
 /// code upgrade would be applied, although they may be equal.
 /// This is to ensure the entire acceptance period is covered, not an offset acceptance period starting
-/// from the time at which the parachain perceives a code upgrade as having occurred.
+/// from the time at which the allychain perceives a code upgrade as having occurred.
 /// Multiple entries for a single para are permitted. Ordered ascending by block number.
 PastCodePruning: Vec<(ParaId, BlockNumber)>;
 /// The block number at which the planned code change is expected for a para.
@@ -137,27 +137,27 @@ PastCodePruning: Vec<(ParaId, BlockNumber)>;
 FutureCodeUpgrades: map ParaId => Option<BlockNumber>;
 /// The actual future code of a para.
 FutureCodeHash: map ParaId => Option<ValidationCodeHash>;
-/// This is used by the relay-chain to communicate to a parachain a go-ahead with in the upgrade procedure.
+/// This is used by the relay-chain to communicate to a allychain a go-ahead with in the upgrade procedure.
 ///
 /// This value is absent when there are no upgrades scheduled or during the time the relay chain
-/// performs the checks. It is set at the first relay-chain block when the corresponding parachain
-/// can switch its upgrade function. As soon as the parachain's block is included, the value
+/// performs the checks. It is set at the first relay-chain block when the corresponding allychain
+/// can switch its upgrade function. As soon as the allychain's block is included, the value
 /// gets reset to `None`.
 ///
-/// NOTE that this field is used by parachains via merkle storage proofs, therefore changing
-/// the format will require migration of parachains.
+/// NOTE that this field is used by allychains via merkle storage proofs, therefore changing
+/// the format will require migration of allychains.
 UpgradeGoAheadSignal: map hasher(twox_64_concat) ParaId => Option<UpgradeGoAhead>;
 /// This is used by the relay-chain to communicate that there are restrictions for performing
-/// an upgrade for this parachain.
+/// an upgrade for this allychain.
 ///
-/// This may be a because the parachain waits for the upgrade cooldown to expire. Another
+/// This may be a because the allychain waits for the upgrade cooldown to expire. Another
 /// potential use case is when we want to perform some maintanance (such as storage migration)
 /// we could restrict upgrades to make the process simpler.
 ///
-/// NOTE that this field is used by parachains via merkle storage proofs, therefore changing
-/// the format will require migration of parachains.
+/// NOTE that this field is used by allychains via merkle storage proofs, therefore changing
+/// the format will require migration of allychains.
 UpgradeRestrictionSignal: map hasher(twox_64_concat) ParaId => Option<UpgradeRestriction>;
-/// The list of parachains that are awaiting for their upgrade restriction to cooldown.
+/// The list of allychains that are awaiting for their upgrade restriction to cooldown.
 ///
 /// Ordered ascending by block number.
 UpgradeCooldowns: Vec<(ParaId, T::BlockNumber)>;
@@ -188,11 +188,11 @@ CodeByHash: map ValidationCodeHash => Option<ValidationCode>
         invariant.
   1. Apply all incoming paras by initializing the `Heads` and `CurrentCode` using the genesis
      parameters.
-  1. Amend the `Parachains` list and `ParaLifecycle` to reflect changes in registered parachains.
+  1. Amend the `Allychains` list and `ParaLifecycle` to reflect changes in registered allychains.
   1. Amend the `ParaLifecycle` set to reflect changes in registered parathreads.
-  1. Upgrade all parathreads that should become parachains, updating the `Parachains` list and
+  1. Upgrade all parathreads that should become allychains, updating the `Allychains` list and
      `ParaLifecycle`.
-  1. Downgrade all parachains that should become parathreads, updating the `Parachains` list and
+  1. Downgrade all allychains that should become parathreads, updating the `Allychains` list and
      `ParaLifecycle`.
   1. Return list of outgoing paras to the initializer for use by other modules.
 
@@ -209,10 +209,10 @@ CodeByHash: map ValidationCodeHash => Option<ValidationCode>
 * `schedule_para_initialize(ParaId, ParaGenesisArgs)`: Schedule a para to be initialized at the next
   session. Noop if para is already registered in the system with some `ParaLifecycle`.
 * `schedule_para_cleanup(ParaId)`: Schedule a para to be cleaned up after the next full session.
-* `schedule_parathread_upgrade(ParaId)`: Schedule a parathread to be upgraded to a parachain.
-* `schedule_parachain_downgrade(ParaId)`: Schedule a parachain to be downgraded to a parathread.
+* `schedule_parathread_upgrade(ParaId)`: Schedule a parathread to be upgraded to a allychain.
+* `schedule_parachain_downgrade(ParaId)`: Schedule a allychain to be downgraded to a parathread.
 * `schedule_code_upgrade(ParaId, CurrentCode, relay_parent: BlockNumber, HostConfiguration)`: Schedule a future code
-  upgrade of the given parachain, to be applied after inclusion of a block of the same parachain
+  upgrade of the given allychain, to be applied after inclusion of a block of the same allychain
   executed in the context of a relay-chain block with number >= `relay_parent + config.validation_upgrade_delay`. If the upgrade is scheduled `UpgradeRestrictionSignal` is set and it will remain set until `relay_parent + config.validation_upgrade_frequency`.
 * `note_new_head(ParaId, HeadData, BlockNumber)`: note that a para has progressed to a new head,
   where the new head was executed in the context of a relay-chain block with given number. This will
@@ -225,12 +225,12 @@ CodeByHash: map ValidationCodeHash => Option<ValidationCode>
   provided, must be before `at`. If the validation code has been pruned, this will return `None`.
 * `validation_code_hash_at(ParaId, at: BlockNumber, assume_intermediate: Option<BlockNumber>)`: Just like `validation_code_at`, but returns the code hash.
 * `lifecycle(ParaId) -> Option<ParaLifecycle>`: Return the `ParaLifecycle` of a para.
-* `is_parachain(ParaId) -> bool`: Returns true if the para ID references any live parachain,
+* `is_parachain(ParaId) -> bool`: Returns true if the para ID references any live allychain,
   including those which may be transitioning to a parathread in the future.
 * `is_parathread(ParaId) -> bool`: Returns true if the para ID references any live parathread,
-  including those which may be transitioning to a parachain in the future.
+  including those which may be transitioning to a allychain in the future.
 * `is_valid_para(ParaId) -> bool`: Returns true if the para ID references either a live parathread
-  or live parachain.
+  or live allychain.
 * `last_code_upgrade(id: ParaId, include_future: bool) -> Option<BlockNumber>`: The block number of
   the last scheduled upgrade of the requested para. Includes future upgrades if the flag is set.
   This is the `expected_at` number, not the `activated_at` number.

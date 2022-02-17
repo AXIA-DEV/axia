@@ -1,20 +1,20 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! The Network Bridge Subsystem - protocol multiplexer for Polkadot.
+//! The Network Bridge Subsystem - protocol multiplexer for Axia.
 
 #![deny(unused_crate_dependencies)]
 #![warn(missing_docs)]
@@ -25,14 +25,14 @@ use parking_lot::Mutex;
 use sc_network::Event as NetworkEvent;
 use sp_consensus::SyncOracle;
 
-use polkadot_node_network_protocol::{
+use axia_node_network_protocol::{
 	peer_set::PeerSet, v1 as protocol_v1, ObservedRole, OurView, PeerId,
 	UnifiedReputationChange as Rep, View,
 };
-use polkadot_node_subsystem_util::metrics::{self, prometheus};
-use polkadot_overseer::gen::{OverseerError, Subsystem};
-use polkadot_primitives::v1::{BlockNumber, Hash};
-use polkadot_subsystem::{
+use axia_node_subsystem_util::metrics::{self, prometheus};
+use axia_overseer::gen::{OverseerError, Subsystem};
+use axia_primitives::v1::{BlockNumber, Hash};
+use axia_subsystem::{
 	errors::{SubsystemError, SubsystemResult},
 	messages::{AllMessages, CollatorProtocolMessage, NetworkBridgeEvent, NetworkBridgeMessage},
 	overseer, ActivatedLeaf, ActiveLeavesUpdate, FromOverseer, OverseerSignal, SpawnedSubsystem,
@@ -42,7 +42,7 @@ use polkadot_subsystem::{
 /// Peer set info for network initialization.
 ///
 /// To be added to [`NetworkConfiguration::extra_sets`].
-pub use polkadot_node_network_protocol::peer_set::{peer_sets_info, IsAuthority};
+pub use axia_node_network_protocol::peer_set::{peer_sets_info, IsAuthority};
 
 use std::{
 	collections::{hash_map, HashMap, HashSet},
@@ -73,7 +73,7 @@ const MALFORMED_VIEW_COST: Rep = Rep::CostMajor("Malformed view");
 const EMPTY_VIEW_COST: Rep = Rep::CostMajor("Peer sent us an empty view");
 
 // network bridge log target
-const LOG_TARGET: &'static str = "parachain::network-bridge";
+const LOG_TARGET: &'static str = "allychain::network-bridge";
 
 /// Metrics for the network bridge.
 #[derive(Clone, Default)]
@@ -168,7 +168,7 @@ impl metrics::Metrics for Metrics {
 				prometheus::GaugeVec::new(
 					prometheus::Opts::new(
 						"parachain_peer_count",
-						"The number of peers on a parachain-related peer-set",
+						"The number of peers on a allychain-related peer-set",
 					),
 					&["protocol"]
 				)?,
@@ -178,7 +178,7 @@ impl metrics::Metrics for Metrics {
 				prometheus::CounterVec::new(
 					prometheus::Opts::new(
 						"parachain_peer_connect_events_total",
-						"The number of peer connect events on a parachain notifications protocol",
+						"The number of peer connect events on a allychain notifications protocol",
 					),
 					&["protocol"]
 				)?,
@@ -188,7 +188,7 @@ impl metrics::Metrics for Metrics {
 				prometheus::CounterVec::new(
 					prometheus::Opts::new(
 						"parachain_peer_disconnect_events_total",
-						"The number of peer disconnect events on a parachain notifications protocol",
+						"The number of peer disconnect events on a allychain notifications protocol",
 					),
 					&["protocol"]
 				)?,
@@ -198,7 +198,7 @@ impl metrics::Metrics for Metrics {
 				prometheus::GaugeVec::new(
 					prometheus::Opts::new(
 						"parachain_desired_peer_count",
-						"The number of peers that the local node is expected to connect to on a parachain-related peer-set (either including or not including unresolvable authorities, depending on whether `ConnectToValidators` or `ConnectToValidatorsResolved` was used.)",
+						"The number of peers that the local node is expected to connect to on a allychain-related peer-set (either including or not including unresolvable authorities, depending on whether `ConnectToValidators` or `ConnectToValidatorsResolved` was used.)",
 					),
 					&["protocol"]
 				)?,
@@ -208,7 +208,7 @@ impl metrics::Metrics for Metrics {
 				prometheus::CounterVec::new(
 					prometheus::Opts::new(
 						"parachain_notifications_received_total",
-						"The number of notifications received on a parachain protocol",
+						"The number of notifications received on a allychain protocol",
 					),
 					&["protocol"]
 				)?,
@@ -218,7 +218,7 @@ impl metrics::Metrics for Metrics {
 				prometheus::CounterVec::new(
 					prometheus::Opts::new(
 						"parachain_notifications_sent_total",
-						"The number of notifications sent on a parachain protocol",
+						"The number of notifications sent on a allychain protocol",
 					),
 					&["protocol"]
 				)?,
@@ -228,7 +228,7 @@ impl metrics::Metrics for Metrics {
 				prometheus::CounterVec::new(
 					prometheus::Opts::new(
 						"parachain_notification_bytes_received_total",
-						"The number of bytes received on a parachain notification protocol",
+						"The number of bytes received on a allychain notification protocol",
 					),
 					&["protocol"]
 				)?,
@@ -238,7 +238,7 @@ impl metrics::Metrics for Metrics {
 				prometheus::CounterVec::new(
 					prometheus::Opts::new(
 						"parachain_notification_bytes_sent_total",
-						"The number of bytes sent on a parachain notification protocol",
+						"The number of bytes sent on a allychain notification protocol",
 					),
 					&["protocol"]
 				)?,

@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-gossip-support"
+name = "axia-gossip-support"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -10,10 +10,10 @@ sp-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "mast
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sc-network = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-polkadot-node-network-protocol = { path = "../protocol" }
-polkadot-node-subsystem = { path = "../../subsystem" }
-polkadot-node-subsystem-util = { path = "../../subsystem-util" }
-polkadot-primitives = { path = "../../../primitives" }
+axia-node-network-protocol = { path = "../protocol" }
+axia-node-subsystem = { path = "../../subsystem" }
+axia-node-subsystem-util = { path = "../../subsystem-util" }
+axia-primitives = { path = "../../../primitives" }
 
 futures = "0.3.17"
 futures-timer = "3.0.2"
@@ -26,7 +26,7 @@ sp-keyring = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "maste
 sp-consensus-babe = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-tracing = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-polkadot-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
+axia-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
 
 assert_matches = "1.4.0"
 async-trait = "0.1.51"

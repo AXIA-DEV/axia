@@ -1,23 +1,23 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
-//! Attempts to upgrade the polkadot runtime, in a Simnet environment
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
+//! Attempts to upgrade the axia runtime, in a Simnet environment
 use std::{error::Error, str::FromStr};
 
-use polkadot_runtime::Event;
-use polkadot_simnet::{dispatch_with_root, run};
+use axia_runtime::Event;
+use axia_simnet::{dispatch_with_root, run};
 use sc_client_api::{CallExecutor, ExecutorProvider};
 use sp_blockchain::HeaderBackend;
 use sp_core::crypto::AccountId32;
@@ -31,8 +31,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 			.runtime_version(&BlockId::Hash(node.client().info().best_hash))?
 			.spec_version;
 
-		let wasm_binary = polkadot_runtime::WASM_BINARY
-			.ok_or("Polkadot development wasm not available")?
+		let wasm_binary = axia_runtime::WASM_BINARY
+			.ok_or("Axia development wasm not available")?
 			.to_vec();
 		// upgrade runtime.
 		dispatch_with_root(system::Call::set_code { code: wasm_binary }, &node).await?;

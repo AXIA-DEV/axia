@@ -1,23 +1,23 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Various implementations for `ShouldExecute`.
 
 use frame_support::{ensure, traits::Contains, weights::Weight};
-use polkadot_parachain::primitives::IsSystem;
+use axia_parachain::primitives::IsSystem;
 use sp_std::{marker::PhantomData, result::Result};
 use xcm::latest::{Instruction::*, Junction, Junctions, MultiLocation, WeightLimit::*, Xcm};
 use xcm_executor::traits::{OnResponse, ShouldExecute};
@@ -96,13 +96,13 @@ impl<T: Contains<MultiLocation>> ShouldExecute for AllowUnpaidExecutionFrom<T> {
 	}
 }
 
-/// Allows a message only if it is from a system-level child parachain.
+/// Allows a message only if it is from a system-level child allychain.
 pub struct IsChildSystemParachain<ParaId>(PhantomData<ParaId>);
 impl<ParaId: IsSystem + From<u32>> Contains<MultiLocation> for IsChildSystemParachain<ParaId> {
 	fn contains(l: &MultiLocation) -> bool {
 		matches!(
 			l.interior(),
-			Junctions::X1(Junction::Parachain(id))
+			Junctions::X1(Junction::Allychain(id))
 				if ParaId::from(*id).is_system() && l.parent_count() == 0,
 		)
 	}

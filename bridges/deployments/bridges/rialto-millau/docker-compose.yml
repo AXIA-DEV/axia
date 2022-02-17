@@ -3,7 +3,7 @@
 version: '3.5'
 services:
   # We provide overrides for these particular nodes since they are public facing
-  # nodes which we use to connect from things like Polkadot JS Apps.
+  # nodes which we use to connect from things like Axia JS Apps.
   rialto-node-charlie:
     environment:
       VIRTUAL_HOST: wss.rialto.brucke.link

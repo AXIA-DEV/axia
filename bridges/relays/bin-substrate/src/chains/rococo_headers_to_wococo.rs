@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Rococo-to-Wococo headers sync entrypoint.
+//! Betanet-to-Wococo headers sync entrypoint.
 
 use crate::chains::wococo_headers_to_rococo::MAXIMAL_BALANCE_DECREASE_PER_DAY;
 use crate::finality_pipeline::{AxlibFinalitySyncPipeline, AxlibFinalityToAxlib};
 
 use bp_header_chain::justification::GrandpaJustification;
 use codec::Encode;
-use relay_rococo_client::{Rococo, SyncHeader as RococoSyncHeader};
+use relay_rococo_client::{Betanet, SyncHeader as RococoSyncHeader};
 use relay_axlib_client::{Chain, TransactionSignScheme};
 use relay_utils::metrics::MetricsParams;
 use relay_wococo_client::{SigningParams as WococoSigningParams, Wococo};
 use sp_core::{Bytes, Pair};
 
-/// Rococo-to-Wococo finality sync pipeline.
-pub(crate) type RococoFinalityToWococo = AxlibFinalityToAxlib<Rococo, Wococo, WococoSigningParams>;
+/// Betanet-to-Wococo finality sync pipeline.
+pub(crate) type RococoFinalityToWococo = AxlibFinalityToAxlib<Betanet, Wococo, WococoSigningParams>;
 
 impl AxlibFinalitySyncPipeline for RococoFinalityToWococo {
 	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_rococo::BEST_FINALIZED_ROCOCO_HEADER_METHOD;
@@ -36,7 +36,7 @@ impl AxlibFinalitySyncPipeline for RococoFinalityToWococo {
 	type TargetChain = Wococo;
 
 	fn customize_metrics(params: MetricsParams) -> anyhow::Result<MetricsParams> {
-		crate::chains::add_polkadot_axctest_price_metrics::<Self>(params)
+		crate::chains::add_axia_axctest_price_metrics::<Self>(params)
 	}
 
 	fn start_relay_guards(&self) {

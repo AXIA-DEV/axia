@@ -1,35 +1,35 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::*;
 use assert_matches::assert_matches;
 use futures::executor::{self, block_on};
 use futures_timer::Delay;
 use parity_scale_codec::{Decode, Encode};
-use polkadot_node_network_protocol::{
+use axia_node_network_protocol::{
 	request_response::{
 		v1::{StatementFetchingRequest, StatementFetchingResponse},
 		IncomingRequest, Recipient, Requests,
 	},
 	view, ObservedRole,
 };
-use polkadot_node_primitives::Statement;
-use polkadot_node_subsystem_test_helpers::mock::make_ferdie_keystore;
-use polkadot_primitives::v1::{CommittedCandidateReceipt, SessionInfo, ValidationCode};
-use polkadot_subsystem::{
+use axia_node_primitives::Statement;
+use axia_node_subsystem_test_helpers::mock::make_ferdie_keystore;
+use axia_primitives::v1::{CommittedCandidateReceipt, SessionInfo, ValidationCode};
+use axia_subsystem::{
 	jaeger,
 	messages::{RuntimeApiMessage, RuntimeApiRequest},
 	ActivatedLeaf, LeafStatus,
@@ -480,7 +480,7 @@ fn peer_view_update_sends_messages() {
 	};
 
 	let pool = sp_core::testing::TaskExecutor::new();
-	let (mut ctx, mut handle) = polkadot_node_subsystem_test_helpers::make_subsystem_context::<
+	let (mut ctx, mut handle) = axia_node_subsystem_test_helpers::make_subsystem_context::<
 		StatementDistributionMessage,
 		_,
 	>(pool);
@@ -578,7 +578,7 @@ fn circulated_statement_goes_to_all_peers_with_view() {
 	.collect();
 
 	let pool = sp_core::testing::TaskExecutor::new();
-	let (mut ctx, mut handle) = polkadot_node_subsystem_test_helpers::make_subsystem_context::<
+	let (mut ctx, mut handle) = axia_node_subsystem_test_helpers::make_subsystem_context::<
 		StatementDistributionMessage,
 		_,
 	>(pool);
@@ -697,7 +697,7 @@ fn receiving_from_one_sends_to_another_and_to_candidate_backing() {
 	let session_index = 1;
 
 	let pool = sp_core::testing::TaskExecutor::new();
-	let (ctx, mut handle) = polkadot_node_subsystem_test_helpers::make_subsystem_context(pool);
+	let (ctx, mut handle) = axia_node_subsystem_test_helpers::make_subsystem_context(pool);
 
 	let (statement_req_receiver, _) = IncomingRequest::get_config_receiver();
 
@@ -889,7 +889,7 @@ fn receiving_large_statement_from_one_sends_to_another_and_to_candidate_backing(
 	let session_index = 1;
 
 	let pool = sp_core::testing::TaskExecutor::new();
-	let (ctx, mut handle) = polkadot_node_subsystem_test_helpers::make_subsystem_context(pool);
+	let (ctx, mut handle) = axia_node_subsystem_test_helpers::make_subsystem_context(pool);
 
 	let (statement_req_receiver, mut req_cfg) = IncomingRequest::get_config_receiver();
 
@@ -1388,7 +1388,7 @@ fn share_prioritizes_backing_group() {
 	let session_index = 1;
 
 	let pool = sp_core::testing::TaskExecutor::new();
-	let (ctx, mut handle) = polkadot_node_subsystem_test_helpers::make_subsystem_context(pool);
+	let (ctx, mut handle) = axia_node_subsystem_test_helpers::make_subsystem_context(pool);
 
 	let (statement_req_receiver, mut req_cfg) = IncomingRequest::get_config_receiver();
 
@@ -1674,7 +1674,7 @@ fn peer_cant_flood_with_large_statements() {
 	let session_index = 1;
 
 	let pool = sp_core::testing::TaskExecutor::new();
-	let (ctx, mut handle) = polkadot_node_subsystem_test_helpers::make_subsystem_context(pool);
+	let (ctx, mut handle) = axia_node_subsystem_test_helpers::make_subsystem_context(pool);
 
 	let (statement_req_receiver, _) = IncomingRequest::get_config_receiver();
 	let bg = async move {

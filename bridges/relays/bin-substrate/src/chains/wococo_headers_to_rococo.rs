@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Wococo-to-Rococo headers sync entrypoint.
+//! Wococo-to-Betanet headers sync entrypoint.
 
 use crate::finality_pipeline::{AxlibFinalitySyncPipeline, AxlibFinalityToAxlib};
 
 use bp_header_chain::justification::GrandpaJustification;
 use codec::Encode;
-use relay_rococo_client::{Rococo, SigningParams as RococoSigningParams};
+use relay_rococo_client::{Betanet, SigningParams as RococoSigningParams};
 use relay_axlib_client::{Chain, TransactionSignScheme};
 use relay_utils::metrics::MetricsParams;
 use relay_wococo_client::{SyncHeader as WococoSyncHeader, Wococo};
@@ -33,16 +33,16 @@ use sp_core::{Bytes, Pair};
 /// Note that this is in plancks, so this corresponds to `1500 UNITS`.
 pub(crate) const MAXIMAL_BALANCE_DECREASE_PER_DAY: bp_rococo::Balance = 1_500_000_000_000_000;
 
-/// Wococo-to-Rococo finality sync pipeline.
-pub(crate) type WococoFinalityToRococo = AxlibFinalityToAxlib<Wococo, Rococo, RococoSigningParams>;
+/// Wococo-to-Betanet finality sync pipeline.
+pub(crate) type WococoFinalityToRococo = AxlibFinalityToAxlib<Wococo, Betanet, RococoSigningParams>;
 
 impl AxlibFinalitySyncPipeline for WococoFinalityToRococo {
 	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_wococo::BEST_FINALIZED_WOCOCO_HEADER_METHOD;
 
-	type TargetChain = Rococo;
+	type TargetChain = Betanet;
 
 	fn customize_metrics(params: MetricsParams) -> anyhow::Result<MetricsParams> {
-		crate::chains::add_polkadot_axctest_price_metrics::<Self>(params)
+		crate::chains::add_axia_axctest_price_metrics::<Self>(params)
 	}
 
 	fn start_relay_guards(&self) {
@@ -63,7 +63,7 @@ impl AxlibFinalitySyncPipeline for WococoFinalityToRococo {
 
 	fn make_submit_finality_proof_transaction(
 		&self,
-		transaction_nonce: <Rococo as Chain>::Index,
+		transaction_nonce: <Betanet as Chain>::Index,
 		header: WococoSyncHeader,
 		proof: GrandpaJustification<bp_wococo::Header>,
 	) -> Bytes {
@@ -71,7 +71,7 @@ impl AxlibFinalitySyncPipeline for WococoFinalityToRococo {
 			relay_rococo_client::runtime::BridgeGrandpaWococoCall::submit_finality_proof(header.into_inner(), proof),
 		);
 		let genesis_hash = *self.target_client.genesis_hash();
-		let transaction = Rococo::sign_transaction(genesis_hash, &self.target_sign, transaction_nonce, call);
+		let transaction = Betanet::sign_transaction(genesis_hash, &self.target_sign, transaction_nonce, call);
 
 		Bytes(transaction.encode())
 	}
@@ -85,9 +85,9 @@ mod tests {
 
 	#[test]
 	fn maximal_balance_decrease_per_day_is_sane() {
-		// Rococo/Wococo GRANDPA pallet weights. They're now using Rialto weights => using `RialtoWeight` is justified.
+		// Betanet/Wococo GRANDPA pallet weights. They're now using Rialto weights => using `RialtoWeight` is justified.
 		//
-		// Using Rialto runtime this is slightly incorrect, because `DbWeight` of Rococo/Wococo runtime may differ
+		// Using Rialto runtime this is slightly incorrect, because `DbWeight` of Betanet/Wococo runtime may differ
 		// from the `DbWeight` of Rialto runtime. But now (and most probably forever) it is the same.
 		type RococoGrandpaPalletWeights = pallet_bridge_grandpa::weights::RialtoWeight<rialto_runtime::Runtime>;
 

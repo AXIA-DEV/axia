@@ -1,20 +1,20 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Parachain runtime mock.
+//! Allychain runtime mock.
 
 use codec::{Decode, Encode};
 use frame_support::{
@@ -31,8 +31,8 @@ use sp_runtime::{
 use sp_std::{convert::TryFrom, prelude::*};
 
 use pallet_xcm::XcmPassthrough;
-use polkadot_core_primitives::BlockNumber as RelayBlockNumber;
-use polkadot_parachain::primitives::{
+use axia_core_primitives::BlockNumber as RelayBlockNumber;
+use axia_parachain::primitives::{
 	DmpMessageHandler, Id as ParaId, Sibling, XcmpMessageFormat, XcmpMessageHandler,
 };
 use xcm::{latest::prelude::*, VersionedXcm};
@@ -101,9 +101,9 @@ parameter_types! {
 }
 
 parameter_types! {
-	pub const KsmLocation: MultiLocation = MultiLocation::parent();
+	pub const AxctLocation: MultiLocation = MultiLocation::parent();
 	pub const RelayNetwork: NetworkId = NetworkId::AxiaTest;
-	pub Ancestry: MultiLocation = Parachain(MsgQueue::parachain_id().into()).into();
+	pub Ancestry: MultiLocation = Allychain(MsgQueue::parachain_id().into()).into();
 }
 
 pub type LocationToAccountId = (
@@ -120,12 +120,12 @@ pub type XcmOriginToCallOrigin = (
 
 parameter_types! {
 	pub const UnitWeightCost: Weight = 1;
-	pub KsmPerSecond: (AssetId, u128) = (Concrete(Parent.into()), 1);
+	pub AxctPerSecond: (AssetId, u128) = (Concrete(Parent.into()), 1);
 	pub const MaxInstructions: u32 = 100;
 }
 
 pub type LocalAssetTransactor =
-	XcmCurrencyAdapter<Balances, IsConcrete<KsmLocation>, LocationToAccountId, AccountId, ()>;
+	XcmCurrencyAdapter<Balances, IsConcrete<AxctLocation>, LocationToAccountId, AccountId, ()>;
 
 pub type XcmRouter = super::ParachainXcmRouter<MsgQueue>;
 pub type Barrier = AllowUnpaidExecutionFrom<Everything>;
@@ -141,7 +141,7 @@ impl Config for XcmConfig {
 	type LocationInverter = LocationInverter<Ancestry>;
 	type Barrier = Barrier;
 	type Weigher = FixedWeightBounds<UnitWeightCost, Call, MaxInstructions>;
-	type Trader = FixedRateOfFungible<KsmPerSecond, ()>;
+	type Trader = FixedRateOfFungible<AxctPerSecond, ()>;
 	type ResponseHandler = ();
 	type AssetTrap = ();
 	type AssetClaims = ();
@@ -219,7 +219,7 @@ pub mod mock_msg_queue {
 			let hash = Encode::using_encoded(&xcm, T::Hashing::hash);
 			let (result, event) = match Xcm::<T::Call>::try_from(xcm) {
 				Ok(xcm) => {
-					let location = MultiLocation::new(1, X1(Parachain(sender.into())));
+					let location = MultiLocation::new(1, X1(Allychain(sender.into())));
 					match T::XcmExecutor::execute_xcm(location, xcm, max_weight) {
 						Outcome::Error(e) => (Err(e.clone()), Event::Fail(Some(hash), e)),
 						Outcome::Complete(w) => (Ok(w), Event::Success(Some(hash))),
@@ -322,6 +322,6 @@ construct_runtime!(
 		System: frame_system::{Pallet, Call, Storage, Config, Event<T>},
 		Balances: pallet_balances::{Pallet, Call, Storage, Config<T>, Event<T>},
 		MsgQueue: mock_msg_queue::{Pallet, Storage, Event<T>},
-		PolkadotXcm: pallet_xcm::{Pallet, Call, Event<T>, Origin},
+		AxiaXcm: pallet_xcm::{Pallet, Call, Event<T>, Origin},
 	}
 );

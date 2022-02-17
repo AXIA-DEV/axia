@@ -59,7 +59,7 @@ DLEQ
 DMP/SM
 DMQ
 DoS
-DOT
+AXC
 DOTs
 ECDSA
 ed25519
@@ -120,7 +120,7 @@ keccak256/M
 keypair/MS
 keystore/MS
 Kovan
-KSM/S
+AXCT/S
 Kubernetes/MS
 axctest/S
 KYC/M
@@ -169,7 +169,7 @@ ourself
 overseer/MS
 ownerless
 parablock/MS
-parachain/MS
+allychain/MS
 parameterization
 parameterize/D
 parathread/MS
@@ -180,8 +180,8 @@ permission/D
 phragmen
 picosecond/SM
 PoA/MS
-polkadot/MS
-Polkadot/MS
+axia/MS
+Axia/MS
 PoS/MS
 PoV/MS
 PoW/MS
@@ -295,7 +295,7 @@ wakeups
 warming/S
 wasm/M
 wasmtime
-Westend/M
+Alphanet/M
 wildcard/MS
 WND/S
 Wococo

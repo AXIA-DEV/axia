@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-simnet-test"
+name = "axia-simnet-test"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -17,6 +17,6 @@ balances = { package = "pallet-balances", git = "https://github.com/AXIA-DEV/axl
 # axlib client libs
 sc-client-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-# polkadot deps
-polkadot-simnet = { path = "../common" }
-polkadot-runtime = { path = "../../../../runtime/polkadot" }
+# axia deps
+axia-simnet = { path = "../common" }
+axia-runtime = { path = "../../../../runtime/axia" }

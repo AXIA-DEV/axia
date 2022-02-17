@@ -17,21 +17,21 @@
 //! Types that are specific to the Wococo runtime.
 
 use bp_messages::{LaneId, UnrewardedRelayersState};
-use bp_polkadot_core::PolkadotLike;
+use bp_axia_core::AxiaLike;
 use bp_runtime::Chain;
 use codec::{Decode, Encode};
 use frame_support::weights::Weight;
 
-/// Instance of messages pallet that is used to bridge with Rococo chain.
+/// Instance of messages pallet that is used to bridge with Betanet chain.
 pub type WithRococoMessagesInstance = pallet_bridge_messages::DefaultInstance;
 
 /// Unchecked Wococo extrinsic.
-pub type UncheckedExtrinsic = bp_polkadot_core::UncheckedExtrinsic<Call>;
+pub type UncheckedExtrinsic = bp_axia_core::UncheckedExtrinsic<Call>;
 
-/// Rococo account ownership digest from Wococo.
+/// Betanet account ownership digest from Wococo.
 ///
-/// The byte vector returned by this function should be signed with a Rococo account private key.
-/// This way, the owner of `wococo_account_id` on Rococo proves that the Rococo account private key
+/// The byte vector returned by this function should be signed with a Betanet account private key.
+/// This way, the owner of `wococo_account_id` on Betanet proves that the Betanet account private key
 /// is also under his control.
 pub fn wococo_to_rococo_account_ownership_digest<Call, AccountId, SpecVersion>(
 	rococo_call: &Call,
@@ -54,24 +54,24 @@ where
 
 /// Wococo Runtime `Call` enum.
 ///
-/// The enum represents a subset of possible `Call`s we can send to Rococo chain.
+/// The enum represents a subset of possible `Call`s we can send to Betanet chain.
 /// Ideally this code would be auto-generated from Metadata, because we want to
 /// avoid depending directly on the ENTIRE runtime just to get the encoding of `Dispatchable`s.
 ///
-/// All entries here (like pretty much in the entire file) must be kept in sync with Rococo
+/// All entries here (like pretty much in the entire file) must be kept in sync with Betanet
 /// `construct_runtime`, so that we maintain SCALE-compatibility.
 ///
-/// See: https://github.com/paritytech/polkadot/blob/master/runtime/rococo/src/lib.rs
+/// See: https://github.com/paritytech/axia/blob/master/runtime/betanet/src/lib.rs
 #[allow(clippy::large_enum_variant)]
 #[derive(Encode, Decode, Debug, PartialEq, Eq, Clone)]
 pub enum Call {
 	/// System pallet.
 	#[codec(index = 0)]
 	System(SystemCall),
-	/// Rococo bridge pallet.
+	/// Betanet bridge pallet.
 	#[codec(index = 40)]
 	BridgeGrandpaRococo(BridgeGrandpaRococoCall),
-	/// Rococo messages pallet.
+	/// Betanet messages pallet.
 	#[codec(index = 43)]
 	BridgeMessagesRococo(BridgeMessagesRococoCall),
 }
@@ -88,11 +88,11 @@ pub enum SystemCall {
 pub enum BridgeGrandpaRococoCall {
 	#[codec(index = 0)]
 	submit_finality_proof(
-		<PolkadotLike as Chain>::Header,
-		bp_header_chain::justification::GrandpaJustification<<PolkadotLike as Chain>::Header>,
+		<AxiaLike as Chain>::Header,
+		bp_header_chain::justification::GrandpaJustification<<AxiaLike as Chain>::Header>,
 	),
 	#[codec(index = 1)]
-	initialize(bp_header_chain::InitializationData<<PolkadotLike as Chain>::Header>),
+	initialize(bp_header_chain::InitializationData<<AxiaLike as Chain>::Header>),
 }
 
 #[derive(Encode, Decode, Debug, PartialEq, Eq, Clone)]

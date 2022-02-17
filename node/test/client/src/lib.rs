@@ -1,35 +1,35 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! A Polkadot test client.
+//! A Axia test client.
 //!
-//! This test client is using the Polkadot test runtime.
+//! This test client is using the Axia test runtime.
 
 mod block_builder;
 
-use polkadot_primitives::v1::Block;
+use axia_primitives::v1::Block;
 use sc_service::client;
 use sp_core::storage::Storage;
 use sp_runtime::BuildStorage;
 
 pub use block_builder::*;
-pub use polkadot_test_runtime as runtime;
-pub use polkadot_test_service::{
+pub use axia_test_runtime as runtime;
+pub use axia_test_service::{
 	construct_extrinsic, construct_transfer_extrinsic, Client, FullBackend,
-	PolkadotTestExecutorDispatch,
+	AxiaTestExecutorDispatch,
 };
 pub use axlib_test_client::*;
 
@@ -37,10 +37,10 @@ pub use axlib_test_client::*;
 pub type Executor = client::LocalCallExecutor<
 	Block,
 	FullBackend,
-	sc_executor::NativeElseWasmExecutor<PolkadotTestExecutorDispatch>,
+	sc_executor::NativeElseWasmExecutor<AxiaTestExecutorDispatch>,
 >;
 
-/// Test client builder for Polkadot.
+/// Test client builder for Axia.
 pub type TestClientBuilder =
 	axlib_test_client::TestClientBuilder<Block, Executor, FullBackend, GenesisParameters>;
 
@@ -53,7 +53,7 @@ pub struct GenesisParameters;
 
 impl axlib_test_client::GenesisInit for GenesisParameters {
 	fn genesis_storage(&self) -> Storage {
-		polkadot_test_service::chain_spec::polkadot_local_testnet_genesis()
+		axia_test_service::chain_spec::axia_local_testnet_genesis()
 			.build_storage()
 			.expect("Builds test runtime genesis storage")
 	}
@@ -97,7 +97,7 @@ mod tests {
 	fn ensure_test_client_can_build_and_import_block() {
 		let mut client = TestClientBuilder::new().build();
 
-		let block_builder = client.init_polkadot_block_builder();
+		let block_builder = client.init_axia_block_builder();
 		let block = block_builder.build().expect("Finalizes the block").block;
 
 		futures::executor::block_on(client.import(BlockOrigin::Own, block))
@@ -114,8 +114,8 @@ mod tests {
 			sp_keyring::Sr25519Keyring::Bob,
 			1000,
 		);
-		let mut block_builder = client.init_polkadot_block_builder();
-		block_builder.push_polkadot_extrinsic(transfer).expect("Pushes extrinsic");
+		let mut block_builder = client.init_axia_block_builder();
+		block_builder.push_axia_extrinsic(transfer).expect("Pushes extrinsic");
 
 		let block = block_builder.build().expect("Finalizes the block").block;
 

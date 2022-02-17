@@ -2,7 +2,7 @@
 
 ## `AssignmentId`
 
-The public key of a keypair used by a validator for determining assignments to approve included parachain candidates.
+The public key of a keypair used by a validator for determining assignments to approve included allychain candidates.
 
 ## `AssignmentCert`
 

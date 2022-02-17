@@ -1,36 +1,36 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! The scheduler module for parachains and parathreads.
+//! The scheduler module for allychains and parathreads.
 //!
 //! This module is responsible for two main tasks:
-//!   - Partitioning validators into groups and assigning groups to parachains and parathreads
-//!   - Scheduling parachains and parathreads
+//!   - Partitioning validators into groups and assigning groups to allychains and parathreads
+//!   - Scheduling allychains and parathreads
 //!
 //! It aims to achieve these tasks with these goals in mind:
 //! - It should be possible to know at least a block ahead-of-time, ideally more,
-//!   which validators are going to be assigned to which parachains.
-//! - Parachains that have a candidate pending availability in this fork of the chain
+//!   which validators are going to be assigned to which allychains.
+//! - Allychains that have a candidate pending availability in this fork of the chain
 //!   should not be assigned.
 //! - Validator assignments should not be gameable. Malicious cartels should not be able to
 //!   manipulate the scheduler to assign themselves as desired.
-//! - High or close to optimal throughput of parachains and parathreads. Work among validator groups should be balanced.
+//! - High or close to optimal throughput of allychains and parathreads. Work among validator groups should be balanced.
 //!
 //! The Scheduler manages resource allocation using the concept of "Availability Cores".
-//! There will be one availability core for each parachain, and a fixed number of cores
+//! There will be one availability core for each allychain, and a fixed number of cores
 //! used for multiplexing parathreads. Validators will be partitioned into groups, with the same
 //! number of groups as availability cores. Validator groups will be assigned to different availability cores
 //! over time.
@@ -101,8 +101,8 @@ pub enum FreedReason {
 #[derive(Clone, Encode, Decode, TypeInfo)]
 #[cfg_attr(feature = "std", derive(PartialEq, Debug))]
 pub enum AssignmentKind {
-	/// A parachain.
-	Parachain,
+	/// A allychain.
+	Allychain,
 	/// A parathread.
 	Parathread(CollatorId, u32),
 }
@@ -125,7 +125,7 @@ impl CoreAssignment {
 	/// Get the ID of a collator who is required to collate this block.
 	pub fn required_collator(&self) -> Option<&CollatorId> {
 		match self.kind {
-			AssignmentKind::Parachain => None,
+			AssignmentKind::Allychain => None,
 			AssignmentKind::Parathread(ref id, _) => Some(id),
 		}
 	}
@@ -133,7 +133,7 @@ impl CoreAssignment {
 	/// Get the `CoreOccupied` from this.
 	pub fn to_core_occupied(&self) -> CoreOccupied {
 		match self.kind {
-			AssignmentKind::Parachain => CoreOccupied::Parachain,
+			AssignmentKind::Allychain => CoreOccupied::Allychain,
 			AssignmentKind::Parathread(ref collator, retries) =>
 				CoreOccupied::Parathread(ParathreadEntry {
 					claim: ParathreadClaim(self.para_id, collator.clone()),
@@ -155,10 +155,10 @@ pub mod pallet {
 	pub trait Config: frame_system::Config + configuration::Config + paras::Config {}
 
 	/// All the validator groups. One for each core. Indices are into `ActiveValidators` - not the
-	/// broader set of Polkadot validators, but instead just the subset used for parachains during
+	/// broader set of Axia validators, but instead just the subset used for allychains during
 	/// this session.
 	///
-	/// Bound: The number of cores is the sum of the numbers of parachains and parathread multiplexers.
+	/// Bound: The number of cores is the sum of the numbers of allychains and parathread multiplexers.
 	/// Reasonably, 100-1000. The dominant factor is the number of validators: safe upper bound at 10k.
 	#[pallet::storage]
 	#[pallet::getter(fn validator_groups)]
@@ -173,11 +173,11 @@ pub mod pallet {
 
 	/// One entry for each availability core. Entries are `None` if the core is not currently occupied. Can be
 	/// temporarily `Some` if scheduled but not occupied.
-	/// The i'th parachain belongs to the i'th core, with the remaining cores all being
+	/// The i'th allychain belongs to the i'th core, with the remaining cores all being
 	/// parathread-multiplexers.
 	///
 	/// Bounded by the maximum of either of these two values:
-	///   * The number of parachains and parathread multiplexers
+	///   * The number of allychains and parathread multiplexers
 	///   * The number of validators divided by `configuration.max_validators_per_core`.
 	#[pallet::storage]
 	#[pallet::getter(fn availability_cores)]
@@ -192,7 +192,7 @@ pub mod pallet {
 
 	/// The block number where the session start occurred. Used to track how many group rotations have occurred.
 	///
-	/// Note that in the context of parachains modules the session change is signaled during
+	/// Note that in the context of allychains modules the session change is signaled during
 	/// the block and enacted at the end of the block (at the finalization stage, to be exact).
 	/// Thus for all intents and purposes the effect of the session change is observed at the
 	/// block following the session change, block number of which we save in this storage value.
@@ -202,7 +202,7 @@ pub mod pallet {
 
 	/// Currently scheduled cores - free but up to be occupied.
 	///
-	/// Bounded by the number of cores: one for each parachain and parathread multiplexer.
+	/// Bounded by the number of cores: one for each allychain and parathread multiplexer.
 	///
 	/// The value contained here will not be valid after the end of a block. Runtime APIs should be used to determine scheduled cores/
 	/// for the upcoming block.
@@ -229,7 +229,7 @@ impl<T: Config> Pallet<T> {
 		let config = new_config;
 
 		let mut thread_queue = ParathreadQueue::<T>::get();
-		let n_parachains = <paras::Pallet<T>>::parachains().len() as u32;
+		let n_parachains = <paras::Pallet<T>>::allychains().len() as u32;
 		let n_cores = core::cmp::max(
 			n_parachains + config.parathread_cores,
 			match config.max_validators_per_core {
@@ -379,7 +379,7 @@ impl<T: Config> Pallet<T> {
 				if (freed_index.0 as usize) < cores.len() {
 					match cores[freed_index.0 as usize].take() {
 						None => continue,
-						Some(CoreOccupied::Parachain) => {},
+						Some(CoreOccupied::Allychain) => {},
 						Some(CoreOccupied::Parathread(entry)) => {
 							match freed_reason {
 								FreedReason::Concluded => {
@@ -416,7 +416,7 @@ impl<T: Config> Pallet<T> {
 		Self::free_cores(just_freed_cores);
 
 		let cores = AvailabilityCores::<T>::get();
-		let parachains = <paras::Pallet<T>>::parachains();
+		let allychains = <paras::Pallet<T>>::allychains();
 		let mut scheduled = Scheduled::<T>::get();
 		let mut parathread_queue = ParathreadQueue::<T>::get();
 
@@ -467,11 +467,11 @@ impl<T: Config> Pallet<T> {
 
 				let core = CoreIndex(core_index as u32);
 
-				let core_assignment = if core_index < parachains.len() {
-					// parachain core.
+				let core_assignment = if core_index < allychains.len() {
+					// allychain core.
 					Some(CoreAssignment {
-						kind: AssignmentKind::Parachain,
-						para_id: parachains[core_index],
+						kind: AssignmentKind::Allychain,
+						para_id: allychains[core_index],
 						core: core.clone(),
 						group_idx: Self::group_assigned_to_core(core, now).expect(
 							"core is not out of bounds and we are guaranteed \
@@ -480,7 +480,7 @@ impl<T: Config> Pallet<T> {
 					})
 				} else {
 					// parathread core offset, rel. to beginning.
-					let core_offset = (core_index - parachains.len()) as u32;
+					let core_offset = (core_index - allychains.len()) as u32;
 
 					parathread_queue.take_next_on_core(core_offset).map(|entry| CoreAssignment {
 						kind: AssignmentKind::Parathread(entry.claim.1, entry.retries),
@@ -563,9 +563,9 @@ impl<T: Config> Pallet<T> {
 		let cores = AvailabilityCores::<T>::get();
 		match cores.get(core_index.0 as usize).and_then(|c| c.as_ref()) {
 			None => None,
-			Some(CoreOccupied::Parachain) => {
-				let parachains = <paras::Pallet<T>>::parachains();
-				Some(parachains[core_index.0 as usize])
+			Some(CoreOccupied::Allychain) => {
+				let allychains = <paras::Pallet<T>>::allychains();
+				Some(allychains[core_index.0 as usize])
 			},
 			Some(CoreOccupied::Parathread(ref entry)) => Some(entry.claim.0),
 		}
@@ -613,7 +613,7 @@ impl<T: Config> Pallet<T> {
 	/// Returns an optional predicate that should be used for timing out occupied cores.
 	///
 	/// If `None`, no timing-out should be done. The predicate accepts the index of the core, and the
-	/// block number since which it has been occupied, and the respective parachain and parathread
+	/// block number since which it has been occupied, and the respective allychain and parathread
 	/// timeouts, i.e. only within `max(config.chain_availability_period, config.thread_availability_period)`
 	/// of the last rotation would this return `Some`, unless there are no rotations.
 	///
@@ -642,7 +642,7 @@ impl<T: Config> Pallet<T> {
 				match availability_cores.get(core_index.0 as usize) {
 					None => true,       // out-of-bounds, doesn't really matter what is returned.
 					Some(None) => true, // core not occupied, still doesn't really matter.
-					Some(Some(CoreOccupied::Parachain)) => {
+					Some(Some(CoreOccupied::Allychain)) => {
 						if blocks_since_last_rotation >= config.chain_availability_period {
 							false // no pruning except recently after rotation.
 						} else {
@@ -673,16 +673,16 @@ impl<T: Config> Pallet<T> {
 	/// Return the next thing that will be scheduled on this core assuming it is currently
 	/// occupied and the candidate occupying it became available.
 	///
-	/// For parachains, this is always the ID of the parachain and no specified collator.
+	/// For allychains, this is always the ID of the allychain and no specified collator.
 	/// For parathreads, this is based on the next item in the `ParathreadQueue` assigned to that
 	/// core, and is None if there isn't one.
 	pub(crate) fn next_up_on_available(core: CoreIndex) -> Option<ScheduledCore> {
-		let parachains = <paras::Pallet<T>>::parachains();
-		if (core.0 as usize) < parachains.len() {
-			Some(ScheduledCore { para_id: parachains[core.0 as usize], collator: None })
+		let allychains = <paras::Pallet<T>>::allychains();
+		if (core.0 as usize) < allychains.len() {
+			Some(ScheduledCore { para_id: allychains[core.0 as usize], collator: None })
 		} else {
 			let queue = ParathreadQueue::<T>::get();
-			let core_offset = (core.0 as usize - parachains.len()) as u32;
+			let core_offset = (core.0 as usize - allychains.len()) as u32;
 			queue.get_next_on_core(core_offset).map(|entry| ScheduledCore {
 				para_id: entry.claim.0,
 				collator: Some(entry.claim.1.clone()),
@@ -693,19 +693,19 @@ impl<T: Config> Pallet<T> {
 	/// Return the next thing that will be scheduled on this core assuming it is currently
 	/// occupied and the candidate occupying it became available.
 	///
-	/// For parachains, this is always the ID of the parachain and no specified collator.
+	/// For allychains, this is always the ID of the allychain and no specified collator.
 	/// For parathreads, this is based on the next item in the `ParathreadQueue` assigned to that
 	/// core, or if there isn't one, the claim that is currently occupying the core, as long
 	/// as the claim's retries would not exceed the limit. Otherwise None.
 	pub(crate) fn next_up_on_time_out(core: CoreIndex) -> Option<ScheduledCore> {
-		let parachains = <paras::Pallet<T>>::parachains();
-		if (core.0 as usize) < parachains.len() {
-			Some(ScheduledCore { para_id: parachains[core.0 as usize], collator: None })
+		let allychains = <paras::Pallet<T>>::allychains();
+		if (core.0 as usize) < allychains.len() {
+			Some(ScheduledCore { para_id: allychains[core.0 as usize], collator: None })
 		} else {
 			let queue = ParathreadQueue::<T>::get();
 
 			// This is the next scheduled para on this core.
-			let core_offset = (core.0 as usize - parachains.len()) as u32;
+			let core_offset = (core.0 as usize - allychains.len()) as u32;
 			queue
 				.get_next_on_core(core_offset)
 				.map(|entry| ScheduledCore {
@@ -722,7 +722,7 @@ impl<T: Config> Pallet<T> {
 								para_id: entry.claim.0,
 								collator: Some(entry.claim.1.clone()),
 							}),
-							CoreOccupied::Parachain => None, // defensive; not possible.
+							CoreOccupied::Allychain => None, // defensive; not possible.
 						}
 					})
 				})
@@ -777,7 +777,7 @@ mod tests {
 			ParaGenesisArgs {
 				genesis_head: Vec::new().into(),
 				validation_code: Vec::new().into(),
-				parachain: is_chain,
+				allychain: is_chain,
 			}
 		));
 	}
@@ -1077,7 +1077,7 @@ mod tests {
 			let chain_a = ParaId::from(1);
 			let chain_b = ParaId::from(2);
 
-			// ensure that we have 5 groups by registering 2 parachains.
+			// ensure that we have 5 groups by registering 2 allychains.
 			schedule_blank_para(chain_a, true);
 			schedule_blank_para(chain_b, true);
 
@@ -1135,7 +1135,7 @@ mod tests {
 			let chain_b = ParaId::from(2);
 			let chain_c = ParaId::from(3);
 
-			// ensure that we have 5 groups by registering 2 parachains.
+			// ensure that we have 5 groups by registering 2 allychains.
 			schedule_blank_para(chain_a, true);
 			schedule_blank_para(chain_b, true);
 			schedule_blank_para(chain_c, false);
@@ -1190,7 +1190,7 @@ mod tests {
 		new_test_ext(genesis_config).execute_with(|| {
 			assert_eq!(default_config().parathread_cores, 3);
 
-			// register 2 parachains
+			// register 2 allychains
 			schedule_blank_para(chain_a, true);
 			schedule_blank_para(chain_b, true);
 
@@ -1224,7 +1224,7 @@ mod tests {
 					CoreAssignment {
 						core: CoreIndex(0),
 						para_id: chain_a,
-						kind: AssignmentKind::Parachain,
+						kind: AssignmentKind::Allychain,
 						group_idx: GroupIndex(0),
 					}
 				);
@@ -1234,7 +1234,7 @@ mod tests {
 					CoreAssignment {
 						core: CoreIndex(1),
 						para_id: chain_b,
-						kind: AssignmentKind::Parachain,
+						kind: AssignmentKind::Allychain,
 						group_idx: GroupIndex(1),
 					}
 				);
@@ -1255,7 +1255,7 @@ mod tests {
 					CoreAssignment {
 						core: CoreIndex(0),
 						para_id: chain_a,
-						kind: AssignmentKind::Parachain,
+						kind: AssignmentKind::Allychain,
 						group_idx: GroupIndex(0),
 					}
 				);
@@ -1265,7 +1265,7 @@ mod tests {
 					CoreAssignment {
 						core: CoreIndex(1),
 						para_id: chain_b,
-						kind: AssignmentKind::Parachain,
+						kind: AssignmentKind::Allychain,
 						group_idx: GroupIndex(1),
 					}
 				);
@@ -1317,7 +1317,7 @@ mod tests {
 		new_test_ext(genesis_config).execute_with(|| {
 			assert_eq!(default_config().parathread_cores, 3);
 
-			// register 2 parachains
+			// register 2 allychains
 			schedule_blank_para(chain_a, true);
 			schedule_blank_para(chain_b, true);
 
@@ -1379,7 +1379,7 @@ mod tests {
 			{
 				let scheduled = Scheduler::scheduled();
 
-				// cores 0 and 1 are occupied by parachains. cores 2 and 3 are occupied by parathread
+				// cores 0 and 1 are occupied by allychains. cores 2 and 3 are occupied by parathread
 				// claims. core 4 was free.
 				assert_eq!(scheduled.len(), 1);
 				assert_eq!(
@@ -1413,7 +1413,7 @@ mod tests {
 					CoreAssignment {
 						core: CoreIndex(0),
 						para_id: chain_a,
-						kind: AssignmentKind::Parachain,
+						kind: AssignmentKind::Allychain,
 						group_idx: GroupIndex(0),
 					}
 				);
@@ -1486,7 +1486,7 @@ mod tests {
 		new_test_ext(genesis_config).execute_with(|| {
 			assert_eq!(default_config().parathread_cores, 3);
 
-			// register 3 parachains
+			// register 3 allychains
 			schedule_blank_para(chain_a, true);
 			schedule_blank_para(chain_b, true);
 			schedule_blank_para(chain_c, true);
@@ -1544,7 +1544,7 @@ mod tests {
 					CoreAssignment {
 						core: CoreIndex(0),
 						para_id: chain_a,
-						kind: AssignmentKind::Parachain,
+						kind: AssignmentKind::Allychain,
 						group_idx: GroupIndex(0),
 					}
 				);
@@ -1553,7 +1553,7 @@ mod tests {
 					CoreAssignment {
 						core: CoreIndex(2),
 						para_id: chain_c,
-						kind: AssignmentKind::Parachain,
+						kind: AssignmentKind::Allychain,
 						group_idx: GroupIndex(2),
 					}
 				);
@@ -1753,7 +1753,7 @@ mod tests {
 			// assign some availability cores.
 			{
 				AvailabilityCores::<Test>::mutate(|cores| {
-					cores[0] = Some(CoreOccupied::Parachain);
+					cores[0] = Some(CoreOccupied::Allychain);
 					cores[1] = Some(CoreOccupied::Parathread(ParathreadEntry {
 						claim: ParathreadClaim(thread_a, collator),
 						retries: 0,
@@ -2000,7 +2000,7 @@ mod tests {
 
 				let cores = Scheduler::availability_cores();
 				match cores[0].as_ref().unwrap() {
-					CoreOccupied::Parachain => {},
+					CoreOccupied::Allychain => {},
 					_ => panic!("with no threads, only core should be a chain core"),
 				}
 
@@ -2054,7 +2054,7 @@ mod tests {
 
 				let cores = Scheduler::availability_cores();
 				match cores[0].as_ref().unwrap() {
-					CoreOccupied::Parachain => {},
+					CoreOccupied::Allychain => {},
 					_ => panic!("with no threads, only core should be a chain core"),
 				}
 
@@ -2082,7 +2082,7 @@ mod tests {
 			let chain_a = ParaId::from(1);
 			let chain_b = ParaId::from(2);
 
-			// ensure that we have 5 groups by registering 2 parachains.
+			// ensure that we have 5 groups by registering 2 allychains.
 			schedule_blank_para(chain_a, true);
 			schedule_blank_para(chain_b, true);
 
@@ -2137,7 +2137,7 @@ mod tests {
 				vec![CoreAssignment {
 					core: CoreIndex(0),
 					para_id: chain_a,
-					kind: AssignmentKind::Parachain,
+					kind: AssignmentKind::Allychain,
 					group_idx: GroupIndex(0),
 				}],
 			);

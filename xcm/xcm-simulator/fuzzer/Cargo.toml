@@ -23,9 +23,9 @@ xcm-simulator = { path = "../" }
 xcm-executor = { path = "../../xcm-executor" }
 xcm-builder = { path = "../../xcm-builder" }
 pallet-xcm = { path = "../../pallet-xcm" }
-polkadot-core-primitives = { path = "../../../core-primitives" }
-polkadot-runtime-parachains = { path = "../../../runtime/parachains" }
-polkadot-parachain = { path = "../../../parachain" }
+axia-core-primitives = { path = "../../../core-primitives" }
+axia-runtime-allychains = { path = "../../../runtime/allychains" }
+axia-allychain = { path = "../../../allychain" }
 
 [[bin]]
 path = "src/fuzz.rs"

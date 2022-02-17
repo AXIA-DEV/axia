@@ -1,24 +1,24 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use std::collections::{HashMap, HashSet};
 
 use futures::{channel::mpsc, future::RemoteHandle, Future, FutureExt, SinkExt};
 
-use polkadot_node_network_protocol::{
+use axia_node_network_protocol::{
 	request_response::{
 		outgoing::RequestError,
 		v1::{DisputeRequest, DisputeResponse},
@@ -26,11 +26,11 @@ use polkadot_node_network_protocol::{
 	},
 	IfDisconnected,
 };
-use polkadot_node_subsystem_util::{metrics, runtime::RuntimeInfo};
-use polkadot_primitives::v1::{
+use axia_node_subsystem_util::{metrics, runtime::RuntimeInfo};
+use axia_primitives::v1::{
 	AuthorityDiscoveryId, CandidateHash, Hash, SessionIndex, ValidatorIndex,
 };
-use polkadot_subsystem::{
+use axia_subsystem::{
 	messages::{AllMessages, NetworkBridgeMessage},
 	SubsystemContext,
 };
@@ -46,12 +46,12 @@ use crate::{
 ///
 /// Keeps track of all the validators that have to be reached for a dispute.
 pub struct SendTask {
-	/// The request we are supposed to get out to all parachain validators of the dispute's session
+	/// The request we are supposed to get out to all allychain validators of the dispute's session
 	/// and to all current authorities.
 	request: DisputeRequest,
 
 	/// The set of authorities we need to send our messages to. This set will change at session
-	/// boundaries. It will always be at least the parachain validators of the session where the
+	/// boundaries. It will always be at least the allychain validators of the session where the
 	/// dispute happened and the authorities of the current sessions as determined by active heads.
 	deliveries: HashMap<AuthorityDiscoveryId, DeliveryStatus>,
 
@@ -231,7 +231,7 @@ impl SendTask {
 
 	/// Determine all validators that should receive the given dispute requests.
 	///
-	/// This is all parachain validators of the session the candidate occurred and all authorities
+	/// This is all allychain validators of the session the candidate occurred and all authorities
 	/// of all currently active sessions, determined by currently active heads.
 	async fn get_relevant_validators<Context: SubsystemContext>(
 		&self,
@@ -240,7 +240,7 @@ impl SendTask {
 		active_sessions: &HashMap<SessionIndex, Hash>,
 	) -> Result<HashSet<AuthorityDiscoveryId>> {
 		let ref_head = self.request.0.candidate_receipt.descriptor.relay_parent;
-		// Parachain validators:
+		// Allychain validators:
 		let info = runtime
 			.get_session_info_by_index(ctx.sender(), ref_head, self.request.0.session_index)
 			.await?;

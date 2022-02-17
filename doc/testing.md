@@ -4,7 +4,7 @@ Automated testing is an essential tool to assure correctness.
 
 ## Scopes
 
-The testing strategy for polkadot is 4-fold:
+The testing strategy for axia is 4-fold:
 
 ### Unit testing (1)
 
@@ -41,7 +41,7 @@ The scale is handled by spawning a kubernetes cluster and the meta description
 is covered by [Gurke][Gurke].
 Asserts are made using Grafana rules, based on the existing prometheus metrics. This can
 be extended by adding an additional service translating `jaeger` spans into addition
-prometheus avoiding additional polkadot source changes.
+prometheus avoiding additional axia source changes.
 
 _Behavior tests_ and _testing at scale_ have naturally soft boundary.
 The most significant difference is the presence of a real network and
@@ -99,7 +99,7 @@ bash <(curl -s https://codecov.io/bash) -f lcov.info
 
 or just printed as part of the PR using a github action i.e. [`jest-lcov-reporter`](https://github.com/marketplace/actions/jest-lcov-reporter).
 
-For full examples on how to use [`grcov` /w polkadot specifics see the github repo](https://github.com/mozilla/grcov#coverallscodecov-output).
+For full examples on how to use [`grcov` /w axia specifics see the github repo](https://github.com/mozilla/grcov#coverallscodecov-output).
 
 ## Fuzzing
 
@@ -175,7 +175,7 @@ It could be extracted as `proc` macro and generative `proc-macro`.
 This would replace the `AllSubsystems` type as well as implicitly create
 the `AllMessages` enum as  `AllSubsystemsGen` does today.
 
-The implementation is yet to be completed, see the [implementation PR](https://github.com/paritytech/polkadot/pull/2962) for details.
+The implementation is yet to be completed, see the [implementation PR](https://github.com/paritytech/axia/pull/2962) for details.
 
 ##### Declare an overseer implementation
 
@@ -218,7 +218,7 @@ impl OverseerGen for BehaveMaleficient {
 			.map_err(|e| e.into())
 
         // A builder pattern will simplify this further
-        // WIP https://github.com/paritytech/polkadot/pull/2962
+        // WIP https://github.com/paritytech/axia/pull/2962
 	}
 }
 
@@ -226,7 +226,7 @@ fn main() -> eyre::Result<()> {
 	color_eyre::install()?;
 	let cli = Cli::from_args();
 	assert_matches::assert_matches!(cli.subcommand, None);
-	polkadot_cli::run_node(cli, BehaveMaleficient)?;
+	axia_cli::run_node(cli, BehaveMaleficient)?;
 	Ok(())
 }
 ```

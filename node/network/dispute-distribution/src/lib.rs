@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! # Sending and receiving of `DisputeRequest`s.
 //!
@@ -26,13 +26,13 @@
 
 use futures::{channel::mpsc, FutureExt, StreamExt, TryFutureExt};
 
-use polkadot_node_network_protocol::authority_discovery::AuthorityDiscovery;
+use axia_node_network_protocol::authority_discovery::AuthorityDiscovery;
 use sp_keystore::SyncCryptoStorePtr;
 
-use polkadot_node_network_protocol::request_response::{incoming::IncomingRequestReceiver, v1};
-use polkadot_node_primitives::DISPUTE_WINDOW;
-use polkadot_node_subsystem_util::{runtime, runtime::RuntimeInfo};
-use polkadot_subsystem::{
+use axia_node_network_protocol::request_response::{incoming::IncomingRequestReceiver, v1};
+use axia_node_primitives::DISPUTE_WINDOW;
+use axia_node_subsystem_util::{runtime, runtime::RuntimeInfo};
+use axia_subsystem::{
 	messages::DisputeDistributionMessage, overseer, FromOverseer, OverseerSignal, SpawnedSubsystem,
 	SubsystemContext, SubsystemError,
 };
@@ -91,7 +91,7 @@ mod metrics;
 //// Prometheus `Metrics` for dispute distribution.
 pub use metrics::Metrics;
 
-const LOG_TARGET: &'static str = "parachain::dispute-distribution";
+const LOG_TARGET: &'static str = "allychain::dispute-distribution";
 
 /// The dispute distribution subsystem.
 pub struct DisputeDistributionSubsystem<AD> {

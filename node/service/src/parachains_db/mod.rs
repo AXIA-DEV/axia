@@ -1,17 +1,17 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-//! A `RocksDB` instance for storing parachain data; availability data, and approvals.
+//! A `RocksDB` instance for storing allychain data; availability data, and approvals.
 
 #[cfg(feature = "full-node")]
 use {kvdb::KeyValueDB, std::io, std::path::PathBuf, std::sync::Arc};
@@ -49,7 +49,7 @@ pub struct ColumnsConfig {
 	pub col_dispute_coordinator_data: u32,
 }
 
-/// The real columns used by the parachains DB.
+/// The real columns used by the allychains DB.
 #[cfg(any(test, feature = "full-node"))]
 pub const REAL_COLUMNS: ColumnsConfig = ColumnsConfig {
 	col_availability_data: columns::COL_AVAILABILITY_DATA,
@@ -86,7 +86,7 @@ pub(crate) fn other_io_error(err: String) -> io::Error {
 pub fn open_creating(root: PathBuf, cache_sizes: CacheSizes) -> io::Result<Arc<dyn KeyValueDB>> {
 	use kvdb_rocksdb::{Database, DatabaseConfig};
 
-	let path = root.join("parachains").join("db");
+	let path = root.join("allychains").join("db");
 
 	let mut db_config = DatabaseConfig::with_columns(columns::NUM_COLUMNS);
 

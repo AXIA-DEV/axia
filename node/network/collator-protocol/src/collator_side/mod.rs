@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use std::{
 	collections::{HashMap, HashSet, VecDeque},
@@ -25,7 +25,7 @@ use futures::{
 };
 use sp_core::Pair;
 
-use polkadot_node_network_protocol::{
+use axia_node_network_protocol::{
 	peer_set::PeerSet,
 	request_response::{
 		incoming::{self, OutgoingResponse},
@@ -34,17 +34,17 @@ use polkadot_node_network_protocol::{
 	},
 	v1 as protocol_v1, OurView, PeerId, UnifiedReputationChange as Rep, View,
 };
-use polkadot_node_primitives::{CollationSecondedSignal, PoV, Statement};
-use polkadot_node_subsystem_util::{
+use axia_node_primitives::{CollationSecondedSignal, PoV, Statement};
+use axia_node_subsystem_util::{
 	metrics::{self, prometheus},
 	runtime::{get_availability_cores, get_group_rotation_info, RuntimeInfo},
 	TimeoutExt,
 };
-use polkadot_primitives::v1::{
+use axia_primitives::v1::{
 	AuthorityDiscoveryId, CandidateHash, CandidateReceipt, CollatorPair, CoreIndex, CoreState,
 	GroupIndex, Hash, Id as ParaId,
 };
-use polkadot_subsystem::{
+use axia_subsystem::{
 	jaeger,
 	messages::{CollatorProtocolMessage, NetworkBridgeEvent, NetworkBridgeMessage},
 	overseer, FromOverseer, OverseerSignal, PerLeafSpan, SubsystemContext,

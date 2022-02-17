@@ -1,18 +1,18 @@
 // Copyright 2020-2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Implements a `CandidateBackingSubsystem`.
 
@@ -30,22 +30,22 @@ use futures::{
 	Future, FutureExt, SinkExt, StreamExt,
 };
 
-use polkadot_node_primitives::{
+use axia_node_primitives::{
 	AvailableData, PoV, SignedDisputeStatement, SignedFullStatement, Statement, ValidationResult,
 	BACKING_EXECUTION_TIMEOUT,
 };
-use polkadot_node_subsystem_util::{
+use axia_node_subsystem_util::{
 	self as util,
 	metrics::{self, prometheus},
 	request_from_runtime, request_session_index_for_child, request_validator_groups,
 	request_validators, FromJobCommand, JobSender, Validator,
 };
-use polkadot_primitives::v1::{
+use axia_primitives::v1::{
 	BackedCandidate, CandidateCommitments, CandidateDescriptor, CandidateHash, CandidateReceipt,
 	CollatorId, CommittedCandidateReceipt, CoreIndex, CoreState, Hash, Id as ParaId, SessionIndex,
 	SigningContext, ValidatorId, ValidatorIndex, ValidatorSignature, ValidityAttestation,
 };
-use polkadot_subsystem::{
+use axia_subsystem::{
 	jaeger,
 	messages::{
 		AllMessages, AvailabilityDistributionMessage, AvailabilityStoreMessage,
@@ -69,7 +69,7 @@ use thiserror::Error;
 #[cfg(test)]
 mod tests;
 
-const LOG_TARGET: &str = "parachain::candidate-backing";
+const LOG_TARGET: &str = "allychain::candidate-backing";
 
 /// Errors that can occur in candidate backing.
 #[derive(Debug, Error)]
@@ -323,7 +323,7 @@ async fn make_pov_available(
 	n_validators: usize,
 	pov: Arc<PoV>,
 	candidate_hash: CandidateHash,
-	validation_data: polkadot_primitives::v1::PersistedValidationData,
+	validation_data: axia_primitives::v1::PersistedValidationData,
 	expected_erasure_root: Hash,
 	span: Option<&jaeger::Span>,
 ) -> Result<Result<(), InvalidErasureRoot>, Error> {
@@ -1395,4 +1395,4 @@ impl metrics::Metrics for Metrics {
 
 /// The candidate backing subsystem.
 pub type CandidateBackingSubsystem<Spawner> =
-	polkadot_node_subsystem_util::JobSubsystem<CandidateBackingJob, Spawner>;
+	axia_node_subsystem_util::JobSubsystem<CandidateBackingJob, Spawner>;

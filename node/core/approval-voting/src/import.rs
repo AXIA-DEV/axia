@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Block import logic for the approval voting subsystem.
 //!
@@ -28,22 +28,22 @@
 //!
 //! We maintain a rolling window of session indices. This starts as empty
 
-use polkadot_node_jaeger as jaeger;
-use polkadot_node_primitives::approval::{
+use axia_node_jaeger as jaeger;
+use axia_node_primitives::approval::{
 	self as approval_types, BlockApprovalMeta, RelayVRFStory,
 };
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	messages::{
 		ApprovalDistributionMessage, ChainApiMessage, ChainSelectionMessage, RuntimeApiMessage,
 		RuntimeApiRequest,
 	},
 	overseer, SubsystemContext, SubsystemError, SubsystemResult,
 };
-use polkadot_node_subsystem_util::{
+use axia_node_subsystem_util::{
 	determine_new_blocks,
 	rolling_session_window::{RollingSessionWindow, SessionWindowUpdate},
 };
-use polkadot_primitives::v1::{
+use axia_primitives::v1::{
 	BlockNumber, CandidateEvent, CandidateHash, CandidateReceipt, ConsensusLog, CoreIndex,
 	GroupIndex, Hash, Header, SessionIndex,
 };
@@ -162,7 +162,7 @@ async fn imported_block_info(
 		// block in BABE has the epoch _it was authored in_ within its post-state. So we use the
 		// block, and not its parent.
 		//
-		// It's worth nothing that Polkadot session changes, at least for the purposes of parachains,
+		// It's worth nothing that Axia session changes, at least for the purposes of allychains,
 		// would function the same way, except for the fact that they're always delayed by one block.
 		// This gives us the opposite invariant for sessions - the parent block's post-state gives
 		// us the canonical information about the session index for any of its children, regardless
@@ -446,7 +446,7 @@ pub(crate) async fn handle_new_head(
 		let validator_group_lens: Vec<usize> =
 			session_info.validator_groups.iter().map(|v| v.len()).collect();
 		// insta-approve candidates on low-node testnets:
-		// cf. https://github.com/paritytech/polkadot/issues/2411
+		// cf. https://github.com/paritytech/axia/issues/2411
 		let num_candidates = included_candidates.len();
 		let approved_bitfield = {
 			if needed_approvals == 0 {
@@ -572,10 +572,10 @@ pub(crate) mod tests {
 	use assert_matches::assert_matches;
 	use kvdb::KeyValueDB;
 	use merlin::Transcript;
-	use polkadot_node_primitives::approval::{VRFOutput, VRFProof};
-	use polkadot_node_subsystem::messages::AllMessages;
-	use polkadot_node_subsystem_test_helpers::make_subsystem_context;
-	use polkadot_primitives::v1::{SessionInfo, ValidatorIndex};
+	use axia_node_primitives::approval::{VRFOutput, VRFProof};
+	use axia_node_subsystem::messages::AllMessages;
+	use axia_node_subsystem_test_helpers::make_subsystem_context;
+	use axia_primitives::v1::{SessionInfo, ValidatorIndex};
 	pub(crate) use sp_consensus_babe::{
 		digests::{CompatibleDigestItem, PreDigest, SecondaryVRFPreDigest},
 		AllowedSlots, BabeEpochConfiguration, Epoch as BabeEpoch,
@@ -633,26 +633,26 @@ pub(crate) mod tests {
 		fn compute_assignments(
 			&self,
 			_keystore: &LocalKeystore,
-			_relay_vrf_story: polkadot_node_primitives::approval::RelayVRFStory,
+			_relay_vrf_story: axia_node_primitives::approval::RelayVRFStory,
 			_config: &criteria::Config,
 			_leaving_cores: Vec<(
 				CandidateHash,
-				polkadot_primitives::v1::CoreIndex,
-				polkadot_primitives::v1::GroupIndex,
+				axia_primitives::v1::CoreIndex,
+				axia_primitives::v1::GroupIndex,
 			)>,
-		) -> HashMap<polkadot_primitives::v1::CoreIndex, criteria::OurAssignment> {
+		) -> HashMap<axia_primitives::v1::CoreIndex, criteria::OurAssignment> {
 			HashMap::new()
 		}
 
 		fn check_assignment_cert(
 			&self,
-			_claimed_core_index: polkadot_primitives::v1::CoreIndex,
-			_validator_index: polkadot_primitives::v1::ValidatorIndex,
+			_claimed_core_index: axia_primitives::v1::CoreIndex,
+			_validator_index: axia_primitives::v1::ValidatorIndex,
 			_config: &criteria::Config,
-			_relay_vrf_story: polkadot_node_primitives::approval::RelayVRFStory,
-			_assignment: &polkadot_node_primitives::approval::AssignmentCert,
-			_backing_group: polkadot_primitives::v1::GroupIndex,
-		) -> Result<polkadot_node_primitives::approval::DelayTranche, criteria::InvalidAssignment> {
+			_relay_vrf_story: axia_node_primitives::approval::RelayVRFStory,
+			_assignment: &axia_node_primitives::approval::AssignmentCert,
+			_backing_group: axia_primitives::v1::GroupIndex,
+		) -> Result<axia_node_primitives::approval::DelayTranche, criteria::InvalidAssignment> {
 			Ok(0)
 		}
 	}

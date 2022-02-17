@@ -1,20 +1,20 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Primitive types which are strictly necessary from a parachain-execution point
+//! Primitive types which are strictly necessary from a allychain-execution point
 //! of view.
 
 use sp_std::vec::Vec;
@@ -34,12 +34,12 @@ use sp_core::bytes;
 #[cfg(feature = "std")]
 use parity_util_mem::MallocSizeOf;
 
-use polkadot_core_primitives::{Hash, OutboundHrmpMessage};
+use axia_core_primitives::{Hash, OutboundHrmpMessage};
 
 /// Block number type used by the relay chain.
-pub use polkadot_core_primitives::BlockNumber as RelayChainBlockNumber;
+pub use axia_core_primitives::BlockNumber as RelayChainBlockNumber;
 
-/// Parachain head data included in the chain.
+/// Allychain head data included in the chain.
 #[derive(
 	PartialEq, Eq, Clone, PartialOrd, Ord, Encode, Decode, RuntimeDebug, derive_more::From, TypeInfo,
 )]
@@ -53,7 +53,7 @@ impl HeadData {
 	}
 }
 
-/// Parachain validation code.
+/// Allychain validation code.
 #[derive(
 	Default, PartialEq, Eq, Clone, Encode, Decode, RuntimeDebug, derive_more::From, TypeInfo,
 )]
@@ -112,14 +112,14 @@ impl sp_std::fmt::LowerHex for ValidationCodeHash {
 	}
 }
 
-/// Parachain block data.
+/// Allychain block data.
 ///
 /// Contains everything required to validate para-block, may contain block and witness data.
 #[derive(PartialEq, Eq, Clone, Encode, Decode, derive_more::From, TypeInfo)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, Debug, MallocSizeOf))]
 pub struct BlockData(#[cfg_attr(feature = "std", serde(with = "bytes"))] pub Vec<u8>);
 
-/// Unique identifier of a parachain.
+/// Unique identifier of a allychain.
 #[derive(
 	Clone,
 	CompactAs,
@@ -190,10 +190,10 @@ impl From<i32> for Id {
 const USER_INDEX_START: u32 = 1000;
 const PUBLIC_INDEX_START: u32 = 2000;
 
-/// The ID of the first user (non-system) parachain.
+/// The ID of the first user (non-system) allychain.
 pub const LOWEST_USER_ID: Id = Id(USER_INDEX_START);
 
-/// The ID of the first publicly registerable parachain.
+/// The ID of the first publicly registerable allychain.
 pub const LOWEST_PUBLIC_ID: Id = Id(PUBLIC_INDEX_START);
 
 impl Id {
@@ -203,9 +203,9 @@ impl Id {
 	}
 }
 
-/// Determine if a parachain is a system parachain or not.
+/// Determine if a allychain is a system allychain or not.
 pub trait IsSystem {
-	/// Returns `true` if a parachain is a system parachain, `false` otherwise.
+	/// Returns `true` if a allychain is a system allychain, `false` otherwise.
 	fn is_system(&self) -> bool;
 }
 
@@ -304,7 +304,7 @@ impl<'a> parity_scale_codec::Input for TrailingZeroInput<'a> {
 	}
 }
 
-/// Format is b"para" ++ encode(parachain ID) ++ 00.... where 00... is indefinite trailing
+/// Format is b"para" ++ encode(allychain ID) ++ 00.... where 00... is indefinite trailing
 /// zeroes to fill [`AccountId`].
 impl<T: Encode + Decode + Default> AccountIdConversion<T> for Id {
 	fn into_account(&self) -> T {
@@ -352,7 +352,7 @@ impl HrmpChannelId {
 	}
 }
 
-/// A message from a parachain to its Relay Chain.
+/// A message from a allychain to its Relay Chain.
 pub type UpwardMessage = Vec<u8>;
 
 /// Something that should be called when a downward message is received.
@@ -408,8 +408,8 @@ impl XcmpMessageHandler for () {
 	}
 }
 
-/// Validation parameters for evaluating the parachain validity function.
-// TODO: balance downloads (https://github.com/paritytech/polkadot/issues/220)
+/// Validation parameters for evaluating the allychain validity function.
+// TODO: balance downloads (https://github.com/paritytech/axia/issues/220)
 #[derive(PartialEq, Eq, Decode, Clone)]
 #[cfg_attr(feature = "std", derive(Debug, Encode))]
 pub struct ValidationParams {
@@ -423,8 +423,8 @@ pub struct ValidationParams {
 	pub relay_parent_storage_root: Hash,
 }
 
-/// The result of parachain validation.
-// TODO: balance uploads (https://github.com/paritytech/polkadot/issues/220)
+/// The result of allychain validation.
+// TODO: balance uploads (https://github.com/paritytech/axia/issues/220)
 #[derive(PartialEq, Eq, Clone, Encode)]
 #[cfg_attr(feature = "std", derive(Debug, Decode))]
 pub struct ValidationResult {
@@ -432,13 +432,13 @@ pub struct ValidationResult {
 	pub head_data: HeadData,
 	/// An update to the validation code that should be scheduled in the relay chain.
 	pub new_validation_code: Option<ValidationCode>,
-	/// Upward messages send by the Parachain.
+	/// Upward messages send by the Allychain.
 	pub upward_messages: Vec<UpwardMessage>,
-	/// Outbound horizontal messages sent by the parachain.
+	/// Outbound horizontal messages sent by the allychain.
 	pub horizontal_messages: Vec<OutboundHrmpMessage<Id>>,
-	/// Number of downward messages that were processed by the Parachain.
+	/// Number of downward messages that were processed by the Allychain.
 	///
-	/// It is expected that the Parachain processes them from first to last.
+	/// It is expected that the Allychain processes them from first to last.
 	pub processed_downward_messages: u32,
 	/// The mark which specifies the block number up to which all inbound HRMP messages are processed.
 	pub hrmp_watermark: RelayChainBlockNumber,

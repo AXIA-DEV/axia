@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-node-subsystem-test-helpers"
+name = "axia-node-subsystem-test-helpers"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -9,9 +9,9 @@ description = "Subsystem traits and message definitions"
 async-trait = "0.1.51"
 futures = "0.3.17"
 parking_lot = "0.11.1"
-polkadot-node-subsystem = { path = "../subsystem" }
-polkadot-node-subsystem-util = { path = "../subsystem-util" }
-polkadot-primitives = { path = "../../primitives" }
+axia-node-subsystem = { path = "../subsystem" }
+axia-node-subsystem-util = { path = "../subsystem-util" }
+axia-primitives = { path = "../../primitives" }
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sc-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
@@ -19,4 +19,4 @@ sp-keyring = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "maste
 sp-application-crypto = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [dev-dependencies]
-polkadot-overseer = { path = "../overseer" }
+axia-overseer = { path = "../overseer" }

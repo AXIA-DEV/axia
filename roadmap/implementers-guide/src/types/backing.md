@@ -53,20 +53,20 @@ Note the presence of the [`SigningContext`](../types/candidate.md#signing-contex
 The [Candidate Backing subsystem](../node/backing/candidate-backing.md) issues and signs these after candidate validation.
 
 ```rust
-/// A statement about the validity of a parachain candidate.
+/// A statement about the validity of a allychain candidate.
 enum Statement {
   /// A statement about a new candidate being seconded by a validator. This is an implicit validity vote.
   ///
   /// The main semantic difference between `Seconded` and `Valid` comes from the fact that every validator may
   /// second only 1 candidate; this places an upper bound on the total number of candidates whose validity
-  /// needs to be checked. A validator who seconds more than 1 parachain candidate per relay head is subject
+  /// needs to be checked. A validator who seconds more than 1 allychain candidate per relay head is subject
   /// to slashing.
   Seconded(CommittedCandidateReceipt),
   /// A statement about the validity of a candidate, based on candidate's hash.
   Valid(Hash),
 }
 
-/// A statement about the validity of a parachain candidate.
+/// A statement about the validity of a allychain candidate.
 ///
 /// This variant should only be used in the production of `SignedStatement`s. The only difference between
 /// this enum and `Statement` is that the `Seconded` variant contains a `Hash` instead of a `CandidateReceipt`.

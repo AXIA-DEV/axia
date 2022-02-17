@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Implements the dispute coordinator subsystem.
 //!
@@ -34,11 +34,11 @@ use std::{
 use futures::{channel::oneshot, prelude::*};
 use kvdb::KeyValueDB;
 use parity_scale_codec::{Decode, Encode, Error as CodecError};
-use polkadot_node_primitives::{
+use axia_node_primitives::{
 	CandidateVotes, DisputeMessage, DisputeMessageCheckError, SignedDisputeStatement,
 	DISPUTE_WINDOW,
 };
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	errors::{ChainApiError, RuntimeApiError},
 	messages::{
 		BlockDescription, DisputeCoordinatorMessage, DisputeDistributionMessage,
@@ -46,10 +46,10 @@ use polkadot_node_subsystem::{
 	},
 	overseer, FromOverseer, OverseerSignal, SpawnedSubsystem, SubsystemContext, SubsystemError,
 };
-use polkadot_node_subsystem_util::rolling_session_window::{
+use axia_node_subsystem_util::rolling_session_window::{
 	RollingSessionWindow, SessionWindowUpdate,
 };
-use polkadot_primitives::v1::{
+use axia_primitives::v1::{
 	BlockNumber, CandidateHash, CandidateReceipt, CompactStatement, DisputeStatement,
 	DisputeStatementSet, Hash, ScrapedOnChainVotes, SessionIndex, SessionInfo,
 	ValidDisputeStatementKind, ValidatorId, ValidatorIndex, ValidatorPair, ValidatorSignature,
@@ -66,7 +66,7 @@ mod db;
 #[cfg(test)]
 mod tests;
 
-const LOG_TARGET: &str = "parachain::dispute-coordinator";
+const LOG_TARGET: &str = "allychain::dispute-coordinator";
 
 // The choice here is fairly arbitrary. But any dispute that concluded more than a few minutes ago
 // is not worth considering anymore. Changing this value has little to no bearing on consensus,
@@ -692,7 +692,7 @@ async fn scrape_on_chain_votes(
 			overlay_db,
 			state,
 			candidate_hash,
-			// TODO <https://github.com/paritytech/polkadot/issues/4011>
+			// TODO <https://github.com/paritytech/axia/issues/4011>
 			MaybeCandidateReceipt::AssumeBackingVotePresent,
 			session,
 			statements,
@@ -872,7 +872,7 @@ async fn handle_import_statements(
 
 	let n_validators = validators.len();
 
-	let supermajority_threshold = polkadot_primitives::v1::supermajority_threshold(n_validators);
+	let supermajority_threshold = axia_primitives::v1::supermajority_threshold(n_validators);
 
 	// In case we are not provided with a candidate receipt
 	// we operate under the assumption, that a previous vote

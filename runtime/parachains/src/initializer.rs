@@ -1,21 +1,21 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! This module is responsible for maintaining a consistent initialization order for all other
-//! parachains modules. It's also responsible for finalization and session change notifications.
+//! allychains modules. It's also responsible for finalization and session change notifications.
 //!
 //! This module can throw fatal errors if session-change notifications are received after initialization.
 
@@ -111,13 +111,13 @@ pub mod pallet {
 	{
 		/// A randomness beacon.
 		type Randomness: Randomness<Self::Hash, Self::BlockNumber>;
-		/// An origin which is allowed to force updates to parachains.
+		/// An origin which is allowed to force updates to allychains.
 		type ForceOrigin: EnsureOrigin<<Self as frame_system::Config>::Origin>;
 		/// Weight information for extrinsics in this pallet.
 		type WeightInfo: WeightInfo;
 	}
 
-	/// Whether the parachains modules have been initialized within this block.
+	/// Whether the allychains modules have been initialized within this block.
 	///
 	/// Semantically a `bool`, but this guarantees it should never hit the trie,
 	/// as this is cleared in `on_finalize` and Frame optimizes `None` values to be empty values.
@@ -197,7 +197,7 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Issue a signal to the consensus engine to forcibly act as though all parachain
+		/// Issue a signal to the consensus engine to forcibly act as though all allychain
 		/// blocks in all relay chain blocks up to and including the given number in the current
 		/// chain are valid and should be finalized.
 		#[pallet::weight((
@@ -226,7 +226,7 @@ impl<T: Config> Pallet<T> {
 		let random_seed = {
 			let mut buf = [0u8; 32];
 			// TODO: audit usage of randomness API
-			// https://github.com/paritytech/polkadot/issues/2601
+			// https://github.com/paritytech/axia/issues/2601
 			let (random_hash, _) = T::Randomness::random(&b"paras"[..]);
 			let len = sp_std::cmp::min(32, random_hash.as_ref().len());
 			buf[..len].copy_from_slice(&random_hash.as_ref()[..len]);
@@ -425,7 +425,7 @@ mod tests {
 		let c = ParaId::from(123);
 
 		let mock_genesis = crate::paras::ParaGenesisArgs {
-			parachain: true,
+			allychain: true,
 			genesis_head: Default::default(),
 			validation_code: Default::default(),
 		};

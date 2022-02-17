@@ -1,18 +1,18 @@
 // Copyright 2019-2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Mocking utilities for testing.
 
@@ -25,7 +25,7 @@ use std::{cell::RefCell, collections::HashMap};
 
 thread_local! {
 	static OPERATIONS: RefCell<Vec<(ParaId, u32, bool)>> = RefCell::new(Vec::new());
-	static PARACHAINS: RefCell<Vec<ParaId>> = RefCell::new(Vec::new());
+	static ALLYCHAINS: RefCell<Vec<ParaId>> = RefCell::new(Vec::new());
 	static PARATHREADS: RefCell<Vec<ParaId>> = RefCell::new(Vec::new());
 	static LOCKS: RefCell<HashMap<ParaId, bool>> = RefCell::new(HashMap::new());
 	static MANAGERS: RefCell<HashMap<ParaId, Vec<u8>>> = RefCell::new(HashMap::new());
@@ -40,8 +40,8 @@ impl<T: frame_system::Config> Registrar for TestRegistrar<T> {
 		MANAGERS.with(|x| x.borrow().get(&id).and_then(|v| T::AccountId::decode(&mut &v[..]).ok()))
 	}
 
-	fn parachains() -> Vec<ParaId> {
-		PARACHAINS.with(|x| x.borrow().clone())
+	fn allychains() -> Vec<ParaId> {
+		ALLYCHAINS.with(|x| x.borrow().clone())
 	}
 
 	fn is_parathread(id: ParaId) -> bool {
@@ -62,11 +62,11 @@ impl<T: frame_system::Config> Registrar for TestRegistrar<T> {
 		_genesis_head: HeadData,
 		_validation_code: ValidationCode,
 	) -> DispatchResult {
-		// Should not be parachain.
-		PARACHAINS.with(|x| {
-			let parachains = x.borrow_mut();
-			match parachains.binary_search(&id) {
-				Ok(_) => Err(DispatchError::Other("Already Parachain")),
+		// Should not be allychain.
+		ALLYCHAINS.with(|x| {
+			let allychains = x.borrow_mut();
+			match allychains.binary_search(&id) {
+				Ok(_) => Err(DispatchError::Other("Already Allychain")),
 				Err(_) => Ok(()),
 			}
 		})?;
@@ -86,11 +86,11 @@ impl<T: frame_system::Config> Registrar for TestRegistrar<T> {
 	}
 
 	fn deregister(id: ParaId) -> DispatchResult {
-		// Should not be parachain.
-		PARACHAINS.with(|x| {
-			let parachains = x.borrow_mut();
-			match parachains.binary_search(&id) {
-				Ok(_) => Err(DispatchError::Other("cannot deregister parachain")),
+		// Should not be allychain.
+		ALLYCHAINS.with(|x| {
+			let allychains = x.borrow_mut();
+			match allychains.binary_search(&id) {
+				Ok(_) => Err(DispatchError::Other("cannot deregister allychain")),
 				Err(_) => Ok(()),
 			}
 		})?;
@@ -120,12 +120,12 @@ impl<T: frame_system::Config> Registrar for TestRegistrar<T> {
 				Err(_) => Err(DispatchError::Other("not parathread, so cannot `make_parachain`")),
 			}
 		})?;
-		PARACHAINS.with(|x| {
-			let mut parachains = x.borrow_mut();
-			match parachains.binary_search(&id) {
-				Ok(_) => Err(DispatchError::Other("already parachain, so cannot `make_parachain`")),
+		ALLYCHAINS.with(|x| {
+			let mut allychains = x.borrow_mut();
+			match allychains.binary_search(&id) {
+				Ok(_) => Err(DispatchError::Other("already allychain, so cannot `make_parachain`")),
 				Err(i) => {
-					parachains.insert(i, id);
+					allychains.insert(i, id);
 					Ok(())
 				},
 			}
@@ -140,14 +140,14 @@ impl<T: frame_system::Config> Registrar for TestRegistrar<T> {
 		Ok(())
 	}
 	fn make_parathread(id: ParaId) -> DispatchResult {
-		PARACHAINS.with(|x| {
-			let mut parachains = x.borrow_mut();
-			match parachains.binary_search(&id) {
+		ALLYCHAINS.with(|x| {
+			let mut allychains = x.borrow_mut();
+			match allychains.binary_search(&id) {
 				Ok(i) => {
-					parachains.remove(i);
+					allychains.remove(i);
 					Ok(())
 				},
-				Err(_) => Err(DispatchError::Other("not parachain, so cannot `make_parathread`")),
+				Err(_) => Err(DispatchError::Other("not allychain, so cannot `make_parathread`")),
 			}
 		})?;
 		PARATHREADS.with(|x| {
@@ -193,8 +193,8 @@ impl<T: frame_system::Config> TestRegistrar<T> {
 	}
 
 	#[allow(dead_code)]
-	pub fn parachains() -> Vec<ParaId> {
-		PARACHAINS.with(|x| x.borrow().clone())
+	pub fn allychains() -> Vec<ParaId> {
+		ALLYCHAINS.with(|x| x.borrow().clone())
 	}
 
 	#[allow(dead_code)]
@@ -205,7 +205,7 @@ impl<T: frame_system::Config> TestRegistrar<T> {
 	#[allow(dead_code)]
 	pub fn clear_storage() {
 		OPERATIONS.with(|x| x.borrow_mut().clear());
-		PARACHAINS.with(|x| x.borrow_mut().clear());
+		ALLYCHAINS.with(|x| x.borrow_mut().clear());
 		PARATHREADS.with(|x| x.borrow_mut().clear());
 		MANAGERS.with(|x| x.borrow_mut().clear());
 	}

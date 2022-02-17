@@ -1,24 +1,24 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-//! Core Polkadot types.
+//! Core Axia types.
 //!
-//! These core Polkadot types are used by the relay chain and the Parachains.
+//! These core Axia types are used by the relay chain and the Allychains.
 
 use parity_scale_codec::{Decode, Encode};
 #[cfg(feature = "std")]
@@ -32,7 +32,7 @@ use sp_runtime::{
 
 pub use sp_runtime::traits::{BlakeTwo256, Hash as HashT};
 
-/// The block number type used by Polkadot.
+/// The block number type used by Axia.
 /// 32-bits will allow for 136 years of blocks assuming 1 block per second.
 pub type BlockNumber = u32;
 
@@ -108,10 +108,10 @@ pub use sp_runtime::OpaqueExtrinsic as UncheckedExtrinsic;
 /// will generally be used for identifying the reason for the transfer. Typically it will hold the
 /// destination account to which the transfer should be credited. If still more information is
 /// needed, then this should be a hash with the pre-image presented via an off-chain mechanism on
-/// the parachain.
+/// the allychain.
 pub type Remark = [u8; 32];
 
-/// A message sent from the relay-chain down to a parachain.
+/// A message sent from the relay-chain down to a allychain.
 ///
 /// The size of the message is limited by the `config.max_downward_message_size` parameter.
 pub type DownwardMessage = sp_std::vec::Vec<u8>;

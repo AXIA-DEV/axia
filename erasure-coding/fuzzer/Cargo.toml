@@ -5,9 +5,9 @@ authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
 
 [dependencies]
-polkadot-erasure-coding = { path = ".." }
+axia-erasure-coding = { path = ".." }
 honggfuzz = "0.5"
-primitives = { package = "polkadot-node-primitives", path = "../../node/primitives/" }
+primitives = { package = "axia-node-primitives", path = "../../node/primitives/" }
 
 [[bin]]
 name = "reconstruct"

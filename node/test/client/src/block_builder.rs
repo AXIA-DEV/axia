@@ -1,23 +1,23 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::{Client, FullBackend};
 use parity_scale_codec::{Decode, Encode};
-use polkadot_primitives::v1::{Block, InherentData as ParachainsInherentData};
-use polkadot_test_runtime::{GetLastTimestamp, UncheckedExtrinsic};
+use axia_primitives::v1::{Block, InherentData as ParachainsInherentData};
+use axia_test_runtime::{GetLastTimestamp, UncheckedExtrinsic};
 use sc_block_builder::{BlockBuilder, BlockBuilderProvider};
 use sp_api::ProvideRuntimeApi;
 use sp_consensus_babe::{
@@ -27,32 +27,32 @@ use sp_consensus_babe::{
 use sp_runtime::{generic::BlockId, Digest, DigestItem};
 use sp_state_machine::BasicExternalities;
 
-/// An extension for the test client to initialize a Polkadot specific block builder.
-pub trait InitPolkadotBlockBuilder {
-	/// Init a Polkadot specific block builder that works for the test runtime.
+/// An extension for the test client to initialize a Axia specific block builder.
+pub trait InitAxiaBlockBuilder {
+	/// Init a Axia specific block builder that works for the test runtime.
 	///
 	/// This will automatically create and push the inherents for you to make the block valid for the test runtime.
-	fn init_polkadot_block_builder(
+	fn init_axia_block_builder(
 		&self,
 	) -> sc_block_builder::BlockBuilder<Block, Client, FullBackend>;
 
-	/// Init a Polkadot specific block builder at a specific block that works for the test runtime.
+	/// Init a Axia specific block builder at a specific block that works for the test runtime.
 	///
-	/// Same as [`InitPolkadotBlockBuilder::init_polkadot_block_builder`] besides that it takes a [`BlockId`] to say
+	/// Same as [`InitAxiaBlockBuilder::init_axia_block_builder`] besides that it takes a [`BlockId`] to say
 	/// which should be the parent block of the block that is being build.
-	fn init_polkadot_block_builder_at(
+	fn init_axia_block_builder_at(
 		&self,
 		at: &BlockId<Block>,
 	) -> sc_block_builder::BlockBuilder<Block, Client, FullBackend>;
 }
 
-impl InitPolkadotBlockBuilder for Client {
-	fn init_polkadot_block_builder(&self) -> BlockBuilder<Block, Client, FullBackend> {
+impl InitAxiaBlockBuilder for Client {
+	fn init_axia_block_builder(&self) -> BlockBuilder<Block, Client, FullBackend> {
 		let chain_info = self.chain_info();
-		self.init_polkadot_block_builder_at(&BlockId::Hash(chain_info.best_hash))
+		self.init_axia_block_builder_at(&BlockId::Hash(chain_info.best_hash))
 	}
 
-	fn init_polkadot_block_builder_at(
+	fn init_axia_block_builder_at(
 		&self,
 		at: &BlockId<Block>,
 	) -> BlockBuilder<Block, Client, FullBackend> {
@@ -61,7 +61,7 @@ impl InitPolkadotBlockBuilder for Client {
 
 		// `MinimumPeriod` is a storage parameter type that requires externalities to access the value.
 		let minimum_period = BasicExternalities::new_empty()
-			.execute_with(|| polkadot_test_runtime::MinimumPeriod::get());
+			.execute_with(|| axia_test_runtime::MinimumPeriod::get());
 
 		let timestamp = if last_timestamp == 0 {
 			std::time::SystemTime::now()
@@ -74,7 +74,7 @@ impl InitPolkadotBlockBuilder for Client {
 
 		// `SlotDuration` is a storage parameter type that requires externalities to access the value.
 		let slot_duration = BasicExternalities::new_empty()
-			.execute_with(|| polkadot_test_runtime::SlotDuration::get());
+			.execute_with(|| axia_test_runtime::SlotDuration::get());
 
 		let slot = (timestamp / slot_duration).into();
 
@@ -110,10 +110,10 @@ impl InitPolkadotBlockBuilder for Client {
 
 		inherent_data
 			.put_data(
-				polkadot_primitives::v1::PARACHAINS_INHERENT_IDENTIFIER,
+				axia_primitives::v1::PARACHAINS_INHERENT_IDENTIFIER,
 				&parachains_inherent_data,
 			)
-			.expect("Put parachains inherent data");
+			.expect("Put allychains inherent data");
 
 		let inherents = block_builder.create_inherents(inherent_data).expect("Creates inherents");
 
@@ -125,23 +125,23 @@ impl InitPolkadotBlockBuilder for Client {
 	}
 }
 
-/// Polkadot specific extensions for the [`BlockBuilder`].
+/// Axia specific extensions for the [`BlockBuilder`].
 pub trait BlockBuilderExt {
-	/// Push a Polkadot test runtime specific extrinsic to the block.
+	/// Push a Axia test runtime specific extrinsic to the block.
 	///
 	/// This will internally use the [`BlockBuilder::push`] method, but this method expects a opaque extrinsic. So,
 	/// we provide this wrapper which converts a test runtime specific extrinsic to a opaque extrinsic and pushes it to
 	/// the block.
 	///
 	/// Returns the result of the application of the extrinsic.
-	fn push_polkadot_extrinsic(
+	fn push_axia_extrinsic(
 		&mut self,
 		ext: UncheckedExtrinsic,
 	) -> Result<(), sp_blockchain::Error>;
 }
 
 impl BlockBuilderExt for BlockBuilder<'_, Block, Client, FullBackend> {
-	fn push_polkadot_extrinsic(
+	fn push_axia_extrinsic(
 		&mut self,
 		ext: UncheckedExtrinsic,
 	) -> Result<(), sp_blockchain::Error> {

@@ -8,10 +8,10 @@ jobs:
     strategy:
       matrix:
         channel:
-        - '!LhjZccBOqFNYKLdmbb:polkadot.builders' # #AxiaTestValidatorLounge:polkadot.builders
+        - '!LhjZccBOqFNYKLdmbb:axia.builders' # #AxiaTestValidatorLounge:axia.builders
         - '!FMwxpQnYhRCNDRsYGI:matrix.parity.io' # #axctest-announcements:matrix.parity.io
-        - '!NZrbtteFeqYKCUGQtr:matrix.parity.io' # #polkadotvalidatorlounge:web3.foundation
-        - '!UqHPWiCBGZWxrmYBkF:matrix.parity.io' # #polkadot-announcements:matrix.parity.io
+        - '!NZrbtteFeqYKCUGQtr:matrix.parity.io' # #axiavalidatorlounge:web3.foundation
+        - '!UqHPWiCBGZWxrmYBkF:matrix.parity.io' # #axia-announcements:matrix.parity.io
         - '!NTogofoetwjbTwOoPi:matrix.parity.io' # Internal release-notes channel
     runs-on: ubuntu-latest
     steps:
@@ -19,5 +19,5 @@ jobs:
         with:
           room_id: ${{ matrix.channel }} # heh
           access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-          message: "***Polkadot ${{github.event.release.tag_name}} has been released!***<br/>${{github.event.release.html_url}}<br/><br/>${{github.event.release.body}}<br/>"
+          message: "***Axia ${{github.event.release.tag_name}} has been released!***<br/>${{github.event.release.html_url}}<br/><br/>${{github.event.release.body}}<br/>"
           server: "matrix.parity.io"

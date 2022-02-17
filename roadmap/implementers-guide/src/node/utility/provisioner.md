@@ -1,8 +1,8 @@
 # Provisioner
 
-Relay chain block authorship authority is governed by BABE and is beyond the scope of the Overseer and the rest of the subsystems. That said, ultimately the block author needs to select a set of backable parachain candidates and other consensus data, and assemble a block from them. This subsystem is responsible for providing the necessary data to all potential block authors.
+Relay chain block authorship authority is governed by BABE and is beyond the scope of the Overseer and the rest of the subsystems. That said, ultimately the block author needs to select a set of backable allychain candidates and other consensus data, and assemble a block from them. This subsystem is responsible for providing the necessary data to all potential block authors.
 
-A major feature of the provisioner: this subsystem is responsible for ensuring that parachain block candidates are sufficiently available before sending them to potential block authors.
+A major feature of the provisioner: this subsystem is responsible for ensuring that allychain block candidates are sufficiently available before sending them to potential block authors.
 
 ## Provisionable Data
 
@@ -10,7 +10,7 @@ There are several distinct types of provisionable data, but they share this prop
 
 ### Backed Candidates
 
-The block author can choose 0 or 1 backed parachain candidates per parachain; the only constraint is that each backed candidate has the appropriate relay parent. However, the choice of a backed candidate must be the block author's; the provisioner must ensure that block authors are aware of all available [`BackedCandidate`s](../../types/backing.md#backed-candidate).
+The block author can choose 0 or 1 backed allychain candidates per allychain; the only constraint is that each backed candidate has the appropriate relay parent. However, the choice of a backed candidate must be the block author's; the provisioner must ensure that block authors are aware of all available [`BackedCandidate`s](../../types/backing.md#backed-candidate).
 
 ### Signed Bitfields
 
@@ -24,7 +24,7 @@ Note that there is no mechanism in place which forces a block author to include 
 
 ### Dispute Inherent
 
-The dispute inherent is similar to a misbehavior report in that it is an attestation of misbehavior on the part of a validator or group of validators. Unlike a misbehavior report, it is not self-contained: resolution requires coordinated action by several validators. The canonical example of a dispute inherent involves an approval checker discovering that a set of validators has improperly approved an invalid parachain block: resolving this requires the entire validator set to re-validate the block, so that the minority can be slashed.
+The dispute inherent is similar to a misbehavior report in that it is an attestation of misbehavior on the part of a validator or group of validators. Unlike a misbehavior report, it is not self-contained: resolution requires coordinated action by several validators. The canonical example of a dispute inherent involves an approval checker discovering that a set of validators has improperly approved an invalid allychain block: resolving this requires the entire validator set to re-validate the block, so that the minority can be slashed.
 
 Dispute resolution is complex and is explained in substantially more detail [here](../../runtime/disputes.md).
 
@@ -36,11 +36,11 @@ Input: [`ProvisionerMessage`](../../types/overseer-protocol.md#provisioner-messa
 
 At initialization, this subsystem has no outputs.
 
-Block authors request the inherent data they should use for constructing the inherent in the block which contains parachain execution information.
+Block authors request the inherent data they should use for constructing the inherent in the block which contains allychain execution information.
 
 ## Block Production
 
-When a validator is selected by BABE to author a block, it becomes a block producer. The provisioner is the subsystem best suited to choosing which specific backed candidates and availability bitfields should be assembled into the block. To engage this functionality, a `ProvisionerMessage::RequestInherentData` is sent; the response is a [`ParaInherentData`](../../types/runtime.md#parainherentdata). There are never two distinct parachain candidates included for the same parachain and that new parachain candidates cannot be backed until the previous one either gets declared available or expired. Appropriate bitfields, as outlined in the section on [bitfield selection](#bitfield-selection), and any dispute statements should be attached as well.
+When a validator is selected by BABE to author a block, it becomes a block producer. The provisioner is the subsystem best suited to choosing which specific backed candidates and availability bitfields should be assembled into the block. To engage this functionality, a `ProvisionerMessage::RequestInherentData` is sent; the response is a [`ParaInherentData`](../../types/runtime.md#parainherentdata). There are never two distinct allychain candidates included for the same allychain and that new allychain candidates cannot be backed until the previous one either gets declared available or expired. Appropriate bitfields, as outlined in the section on [bitfield selection](#bitfield-selection), and any dispute statements should be attached as well.
 
 ### Bitfield Selection
 

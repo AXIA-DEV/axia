@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-node-core-chain-selection"
+name = "axia-node-core-chain-selection"
 description = "Chain Selection Subsystem"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
@@ -9,16 +9,16 @@ edition = "2018"
 futures = "0.3.17"
 futures-timer = "3"
 tracing = "0.1.29"
-polkadot-primitives = { path = "../../../primitives" }
-polkadot-node-primitives = { path = "../../primitives" }
-polkadot-node-subsystem = { path = "../../subsystem" }
-polkadot-node-subsystem-util = { path = "../../subsystem-util" }
+axia-primitives = { path = "../../../primitives" }
+axia-node-primitives = { path = "../../primitives" }
+axia-node-subsystem = { path = "../../subsystem" }
+axia-node-subsystem-util = { path = "../../subsystem-util" }
 kvdb = "0.10.0"
 thiserror = "1.0.30"
 parity-scale-codec = "2"
 
 [dev-dependencies]
-polkadot-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
+axia-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 parking_lot = "0.11"
 assert_matches = "1"

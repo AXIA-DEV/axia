@@ -1,6 +1,6 @@
 # Testing Scenarios
 
-In the scenarios, for simplicity, we call the chains AxiaTest (KSM token) and Polkadot (DOT token),
+In the scenarios, for simplicity, we call the chains AxiaTest (AXCT token) and Axia (AXC token),
 but they should be applicable to any other chains. The first scenario has detailed description about
 the entire process (also see the [sequence diagram](./scenario1.html)). Other scenarios only contain
 a simplified interaction focusing on things that are unique for that particular scenario.
@@ -8,9 +8,9 @@ a simplified interaction focusing on things that are unique for that particular 
 Notation:
 - kX - user X interacting with AxiaTest chain.
 - `k(kX)` - AxiaTest account id of user kX (native account id; usable on AxiaTest)
-- `p(kX)` - Polkadot account id of user kX (account id derived from `k(kX)` usable on Polkadot)
+- `p(kX)` - Axia account id of user kX (account id derived from `k(kX)` usable on Axia)
 - [AxiaTest] ... - Interaction happens on AxiaTest (e.g. the user interacts with AxiaTest chain)
-- [Polkadot] ... - Interaction happens on Polkadot
+- [Axia] ... - Interaction happens on Axia
 
 Basic Scenarios
 ===========================
@@ -18,10 +18,10 @@ Basic Scenarios
 Scenario 1: AxiaTest's Alice receiving & spending DOTs
 ---------------------------
 
-AxiaTest's Alice (kAlice) receives 5 DOTs from Polkadot's Bob (pBob) and sends half of them to
+AxiaTest's Alice (kAlice) receives 5 DOTs from Axia's Bob (pBob) and sends half of them to
 kCharlie.
 
-1. Generate kAlice's DOT address (`p(kAlice)`).
+1. Generate kAlice's AXC address (`p(kAlice)`).
    See function:
 
    ```rust
@@ -31,29 +31,29 @@ kCharlie.
    or:
 
    ```rust
-   let hash = bp_polkadot::derive_axctest_account_id(kAlice);
-   let p_kAlice = bp_polkadot::AccountIdConverter::convert(hash);
+   let hash = bp_axia::derive_axctest_account_id(kAlice);
+   let p_kAlice = bp_axia::AccountIdConverter::convert(hash);
    ```
 
-2. [Polkadot] pBob transfers 5 DOTs to `p(kAlice)`
+2. [Axia] pBob transfers 5 DOTs to `p(kAlice)`
    1. Creates & Signs a transaction with `Call::Transfer(..)`
    1. It is included in block.
-   1. kAlice observers Polkadot chain to see her balance at `p(kAlice)` updated.
+   1. kAlice observers Axia chain to see her balance at `p(kAlice)` updated.
 
 3. [AxiaTest] kAlice sends 2.5 DOTs to `p(kCharlie)`
    1. kAlice prepares:
       ```rust
-        let call = polkadot::Call::Balances(polkadot::Balances::Transfer(p(kCharlie), 2.5DOT)).encode();
+        let call = axia::Call::Balances(axia::Balances::Transfer(p(kCharlie), 2.5DOT)).encode();
         let weight = call.get_dispatch_info().weight;
       ```
 
    1. kAlice prepares AxiaTest transaction:
       ```rust
-      axctest::Call::Messages::<Instance=Polkadot>::send_message(
+      axctest::Call::Messages::<Instance=Axia>::send_message(
         // dot-transfer-lane (truncated to 4bytes)
         lane_id,
         payload: MessagePayload {
-          // Get from current polkadot runtime (kind of hardcoded)
+          // Get from current axia runtime (kind of hardcoded)
           spec_version: 1,
           // kAlice should know the exact dispatch weight of the call on the target
           // source verifies: at least to cover call.length() and below max weight
@@ -91,7 +91,7 @@ kCharlie.
 1. Relayer prepares transaction which delivers `B1` and with all of the missing
    ancestors to the target chain (one header per transaction).
 
-1. After the transaction is succesfully dispatched the Polkadot on-chain light client of the AxiaTest
+1. After the transaction is succesfully dispatched the Axia on-chain light client of the AxiaTest
    chain learns about block `B1` - it is stored in the on-chain storage.
 
 ### Syncing finality loop
@@ -113,14 +113,14 @@ kCharlie.
     - syncing on demand (what blocks miss finality)
     - and syncing as notifications are received (recently finalized on-chain)
 
-1. Eventually Polkadot on-chain light client of AxiaTest learns about finality of `B1`.
+1. Eventually Axia on-chain light client of AxiaTest learns about finality of `B1`.
 
 ### Syncing messages loop
 
 13. The relayer checks the on-chain storage (last finalized header on the source, best header on the
     target):
     - AxiaTest outbound lane
-    - Polkadot inbound lane
+    - Axia inbound lane
     Lanes contains `latest_generated_nonce` and `latest_received_nonce` respectively. The relayer
     syncs messages between that range.
 
@@ -169,8 +169,8 @@ Scenario 2: AxiaTest's Alice nominating validators with her DOTs
 
 kAlice receives 10 DOTs from pBob and nominates `p(pCharlie)` and `p(pDave)`.
 
-1. Generate kAlice's DOT address (`p(kAlice)`)
-2. [Polkadot] pBob transfers 5 DOTs to `p(kAlice)`
+1. Generate kAlice's AXC address (`p(kAlice)`)
+2. [Axia] pBob transfers 5 DOTs to `p(kAlice)`
 3. [AxiaTest] kAlice sends a batch transaction:
   - `staking::Bond` transaction to create stash account choosing `p(kAlice)` as the controller account.
   - `staking::Nominate(vec![p(pCharlie)])` to nominate pCharlie using the controller account.
@@ -182,14 +182,14 @@ Scenario 3: AxiaTest Treasury receiving & spending DOTs
 pBob sends 15 DOTs to AxiaTest Treasury which AxiaTest Governance decides to transfer to kCharlie.
 
 1. Generate source account for the treasury (`kTreasury`).
-2. [Polkadot] pBob tarnsfers 15 DOTs to `p(kTreasury)`.
+2. [Axia] pBob tarnsfers 15 DOTs to `p(kTreasury)`.
 2. [AxiaTest] Send a governance proposal to send a bridge message which transfers funds to `p(kCharlie)`.
 3. [AxiaTest] Dispatch the governance proposal using `kTreasury` account id.
 
 Extra scenarios
 ===========================
 
-Scenario 4: AxiaTest's Alice setting up 1-of-2 multi-sig to spend from either AxiaTest or Polkadot
+Scenario 4: AxiaTest's Alice setting up 1-of-2 multi-sig to spend from either AxiaTest or Axia
 ---------------------------
 
 Assuming `p(pAlice)` has at least 7 DOTs already.
@@ -202,19 +202,19 @@ Assuming `p(pAlice)` has at least 7 DOTs already.
 Scenario 5: AxiaTest Treasury staking & nominating validators with DOTs
 ---------------------------
 
-Scenario 6: AxiaTest Treasury voting in Polkadot's democracy proposal
+Scenario 6: AxiaTest Treasury voting in Axia's democracy proposal
 ---------------------------
 
 Potentially interesting scenarios
 ===========================
 
-Scenario 7: Polkadot's Bob spending his DOTs by using AxiaTest chain
+Scenario 7: Axia's Bob spending his DOTs by using AxiaTest chain
 ---------------------------
 
-We can assume he holds KSM. Problem: he can pay fees, but can't really send (sign) a transaction?
+We can assume he holds AXCT. Problem: he can pay fees, but can't really send (sign) a transaction?
 Shall we support some kind of dispatcher?
 
-Scenario 8: AxiaTest Governance taking over AxiaTest's Alice DOT holdings
+Scenario 8: AxiaTest Governance taking over AxiaTest's Alice AXC holdings
 ---------------------------
 
 We use `SourceRoot` call to transfer her's DOTs to AxiaTest treasury. Source chain root

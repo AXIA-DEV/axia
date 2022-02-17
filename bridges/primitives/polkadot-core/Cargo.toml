@@ -1,6 +1,6 @@
 [package]
-name = "bp-polkadot-core"
-description = "Primitives of Polkadot-like runtime."
+name = "bp-axia-core"
+description = "Primitives of Axia-like runtime."
 version = "0.1.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"

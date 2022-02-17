@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-test-service"
+name = "axia-test-service"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -13,17 +13,17 @@ rand = "0.8.3"
 tempfile = "3.2.0"
 tokio = "1.12.0"
 
-# Polkadot dependencies
-polkadot-overseer = { path = "../../overseer" }
-polkadot-primitives = { path = "../../../primitives" }
-polkadot-parachain = { path = "../../../parachain" }
-polkadot-rpc = { path = "../../../rpc" }
-polkadot-runtime-common = { path = "../../../runtime/common" }
-polkadot-service = { path = "../../service" }
-polkadot-node-subsystem = { path = "../../subsystem" }
-polkadot-node-primitives = { path = "../../primitives" }
-polkadot-test-runtime = { path = "../../../runtime/test-runtime" }
-polkadot-runtime-parachains = { path = "../../../runtime/parachains" }
+# Axia dependencies
+axia-overseer = { path = "../../overseer" }
+axia-primitives = { path = "../../../primitives" }
+axia-allychain = { path = "../../../allychain" }
+axia-rpc = { path = "../../../rpc" }
+axia-runtime-common = { path = "../../../runtime/common" }
+axia-service = { path = "../../service" }
+axia-node-subsystem = { path = "../../subsystem" }
+axia-node-primitives = { path = "../../primitives" }
+axia-test-runtime = { path = "../../../runtime/test-runtime" }
+axia-runtime-allychains = { path = "../../../runtime/allychains" }
 
 # Axlib dependencies
 sp-authority-discovery = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

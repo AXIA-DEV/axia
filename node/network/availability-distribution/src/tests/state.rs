@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use std::{
 	collections::{HashMap, HashSet},
@@ -20,8 +20,8 @@ use std::{
 	time::Duration,
 };
 
-use polkadot_node_subsystem_util::TimeoutExt;
-use polkadot_subsystem_testhelpers::TestSubsystemContextHandle;
+use axia_node_subsystem_util::TimeoutExt;
+use axia_subsystem_testhelpers::TestSubsystemContextHandle;
 
 use futures::{
 	channel::{mpsc, oneshot},
@@ -34,23 +34,23 @@ use sc_network::{config as netconfig, config::RequestResponseConfig, IfDisconnec
 use sp_core::{testing::TaskExecutor, traits::SpawnNamed};
 use sp_keystore::SyncCryptoStorePtr;
 
-use polkadot_node_network_protocol::{
+use axia_node_network_protocol::{
 	jaeger,
 	request_response::{v1, IncomingRequest, OutgoingRequest, Requests},
 };
-use polkadot_node_primitives::ErasureChunk;
-use polkadot_primitives::v1::{
+use axia_node_primitives::ErasureChunk;
+use axia_primitives::v1::{
 	CandidateHash, CoreState, GroupIndex, Hash, Id as ParaId, ScheduledCore, SessionInfo,
 	ValidatorIndex,
 };
-use polkadot_subsystem::{
+use axia_subsystem::{
 	messages::{
 		AllMessages, AvailabilityDistributionMessage, AvailabilityStoreMessage,
 		NetworkBridgeMessage, RuntimeApiMessage, RuntimeApiRequest,
 	},
 	ActivatedLeaf, ActiveLeavesUpdate, FromOverseer, LeafStatus, OverseerSignal,
 };
-use polkadot_subsystem_testhelpers as test_helpers;
+use axia_subsystem_testhelpers as test_helpers;
 use test_helpers::{mock::make_ferdie_keystore, SingleItemSink};
 
 use super::mock::{make_session_info, OccupiedCoreBuilder};

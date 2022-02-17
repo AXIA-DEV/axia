@@ -1,5 +1,5 @@
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! The statement table.
 //!
@@ -10,7 +10,7 @@
 //! Proposals are formed of sets of candidates which have the requisite number of
 //! validity and availability votes.
 //!
-//! Each parachain is associated with two sets of authorities: those which can
+//! Each allychain is associated with two sets of authorities: those which can
 //! propose and attest to validity of candidates, and those who can only attest
 //! to availability.
 

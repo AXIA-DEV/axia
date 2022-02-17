@@ -25,12 +25,12 @@ bp-axctest = { path = "../../primitives/chain-axctest" }
 bp-messages = { path = "../../primitives/messages" }
 bp-message-dispatch = { path = "../../primitives/message-dispatch" }
 bp-millau = { path = "../../primitives/chain-millau" }
-bp-polkadot = { path = "../../primitives/chain-polkadot" }
+bp-axia = { path = "../../primitives/chain-axia" }
 bp-rialto = { path = "../../primitives/chain-rialto" }
-bp-rococo = { path = "../../primitives/chain-rococo" }
+bp-betanet = { path = "../../primitives/chain-betanet" }
 bp-wococo = { path = "../../primitives/chain-wococo" }
 bp-runtime = { path = "../../primitives/runtime" }
-bp-westend = { path = "../../primitives/chain-westend" }
+bp-alphanet = { path = "../../primitives/chain-alphanet" }
 bridge-runtime-common = { path = "../../bin/runtime-common" }
 finality-grandpa = "0.14.1"
 finality-relay = { path = "../finality" }
@@ -40,13 +40,13 @@ millau-runtime = { path = "../../bin/millau/runtime" }
 pallet-bridge-messages = { path = "../../modules/messages" }
 relay-axctest-client = { path = "../client-axctest" }
 relay-millau-client = { path = "../client-millau" }
-relay-polkadot-client = { path = "../client-polkadot" }
+relay-axia-client = { path = "../client-axia" }
 relay-rialto-client = { path = "../client-rialto" }
-relay-rococo-client = { path = "../client-rococo" }
+relay-betanet-client = { path = "../client-betanet" }
 relay-wococo-client = { path = "../client-wococo" }
 relay-axlib-client = { path = "../client-axlib" }
 relay-utils = { path = "../utils" }
-relay-westend-client = { path = "../client-westend" }
+relay-alphanet-client = { path = "../client-alphanet" }
 rialto-runtime = { path = "../../bin/rialto/runtime" }
 
 # Axlib Dependencies

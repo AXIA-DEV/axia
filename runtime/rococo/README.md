@@ -1,6 +1,6 @@
-# Rococo: v1
+# Betanet: v1
 
-Rococo is a testnet runtime with no stability guarantees.
+Betanet is a testnet runtime with no stability guarantees.
 
 ## How to run
 
@@ -8,4 +8,4 @@ Rococo is a testnet runtime with no stability guarantees.
 
 ### Alice
 
-`cargo run --release -- --alice --tmp --validator --chain rococo-local`
+`cargo run --release -- --alice --tmp --validator --chain betanet-local`

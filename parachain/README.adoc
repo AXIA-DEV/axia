@@ -1,5 +1,5 @@
 
-= Polkadot Parachain
+= Axia Allychain
 
 placeholder
-//TODO Write content :) (https://github.com/paritytech/polkadot/issues/159)
+//TODO Write content :) (https://github.com/paritytech/axia/issues/159)

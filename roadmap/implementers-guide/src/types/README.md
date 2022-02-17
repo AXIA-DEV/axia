@@ -6,7 +6,7 @@ This section of the guide provides type definitions of various categories.
 
 Diagrams are rendered in high resolution; open them in a separate tab to see full scale.
 
-These data types are defined in `polkadot/primitives/src/v1.rs`:
+These data types are defined in `axia/primitives/src/v1.rs`:
 
 ```dot process
 digraph {
@@ -31,8 +31,8 @@ digraph {
     CandidateDescriptor:collator -> CollatorId:w
     CandidateDescriptor:persisted_validation_data_hash -> PersistedValidationDataHash
 
-    Id [label="polkadot_parachain::primitives::Id"]
-    CollatorId [label="polkadot_primitives::v0::CollatorId"]
+    Id [label="axia_parachain::primitives::Id"]
+    CollatorId [label="axia_primitives::v0::CollatorId"]
 
     PoVHash [label = "Hash", shape="doublecircle", fill="gray90"]
 
@@ -114,7 +114,7 @@ digraph {
         </table>
     >]
 
-    TransientValidationData:balance -> "polkadot_core_primitives::v1::Balance":w
+    TransientValidationData:balance -> "axia_core_primitives::v1::Balance":w
 
     CandidateCommitments [label = <
         <table>
@@ -128,11 +128,11 @@ digraph {
         </table>
     >]
 
-    CandidateCommitments:upward_messages -> "polkadot_parachain::primitives::UpwardMessage":w
-    CandidateCommitments:horizontal_messages -> "polkadot_core_primitives::v1::OutboundHrmpMessage":w
+    CandidateCommitments:upward_messages -> "axia_parachain::primitives::UpwardMessage":w
+    CandidateCommitments:horizontal_messages -> "axia_core_primitives::v1::OutboundHrmpMessage":w
     CandidateCommitments:head_data -> HeadData:w
-    CandidateCommitments:horizontal_messages -> "polkadot_parachain::primitives::Id":w
-    CandidateCommitments:new_validation_code -> "polkadot_parachain::primitives::ValidationCode":w
+    CandidateCommitments:horizontal_messages -> "axia_parachain::primitives::Id":w
+    CandidateCommitments:new_validation_code -> "axia_parachain::primitives::ValidationCode":w
 
     PoV [label = <
         <table>
@@ -141,7 +141,7 @@ digraph {
         </table>
     >]
 
-    PoV:block_data -> "polkadot_parachain::primitives::BlockData":w
+    PoV:block_data -> "axia_parachain::primitives::BlockData":w
 
     BackedCandidate [label = <
         <table>
@@ -153,9 +153,9 @@ digraph {
     >]
 
     BackedCandidate:candidate -> CommittedCandidateReceipt:name
-    BackedCandidate:validity_votes  -> "polkadot_primitives:v0:ValidityAttestation":w
+    BackedCandidate:validity_votes  -> "axia_primitives:v0:ValidityAttestation":w
 
-    HeadData [label = "polkadot_parachain::primitives::HeadData"]
+    HeadData [label = "axia_parachain::primitives::HeadData"]
 
     CoreIndex [label = <
         <table>
@@ -201,7 +201,7 @@ digraph {
         <table>
             <tr><td border="0" colspan="2" port="name"><i>enum</i> CoreOccupied</td></tr>
             <tr><td></td><td port="parathread">Parathread(ParathreadEntry)</td></tr>
-            <tr><td></td><td port="parachain">Parachain</td></tr>
+            <tr><td></td><td port="allychain">Allychain</td></tr>
         </table>
     >]
 
@@ -302,9 +302,9 @@ digraph {
     SessionInfo:discovery_keys -> AuthorityDiscoveryId:w
     SessionInfo:validator_groups -> ValidatorIndex:w
 
-    ValidatorId [label = "polkadot_primitives::v0::ValidatorId"]
+    ValidatorId [label = "axia_primitives::v0::ValidatorId"]
     AuthorityDiscoveryId [label = "sp_authority_discovery::AuthorityId"]
-    ValidatorIndex [label = "polkadot_primitives::v0::ValidatorIndex"]
+    ValidatorIndex [label = "axia_primitives::v0::ValidatorIndex"]
 
     AbridgedHostConfiguration [label = <
         <table>
@@ -337,7 +337,7 @@ digraph {
 }
 ```
 
-These data types are defined in `polkadot/parachain/src/primitives.rs`:
+These data types are defined in `axia/allychain/src/primitives.rs`:
 
 ```dot process
 digraph {
@@ -405,7 +405,7 @@ digraph {
     ValidationParams:block_data -> BlockData:name
     ValidationParams:relay_parent_number -> RelayChainBlockNumber:w
 
-    RelayChainBlockNumber [label = "polkadot_core_primitives::BlockNumber"]
+    RelayChainBlockNumber [label = "axia_core_primitives::BlockNumber"]
 
     ValidationResult [label = <
         <table>
@@ -427,6 +427,6 @@ digraph {
     ValidationResult:hrmp_watermark -> RelayChainBlockNumber:w
 
     UpwardMessage [label = "Vec<u8>"]
-    OutboundHrmpMessage [label = "polkadot_core_primitives::OutboundHrmpMessage"]
+    OutboundHrmpMessage [label = "axia_core_primitives::OutboundHrmpMessage"]
 }
 ```

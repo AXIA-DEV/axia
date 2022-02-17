@@ -1,20 +1,20 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Runtime component for handling disputes of parachain candidates.
+//! Runtime component for handling disputes of allychain candidates.
 
 use crate::{
 	configuration::{self, HostConfiguration},
@@ -104,11 +104,11 @@ impl PunishValidators for () {
 
 /// Hook into disputes handling.
 ///
-/// Allows decoupling parachains handling from disputes so that it can
+/// Allows decoupling allychains handling from disputes so that it can
 /// potentially be disabled when instantiating a specific runtime.
 pub trait DisputesHandler<BlockNumber> {
 	/// Whether the chain is frozen, if the chain is frozen it will not accept
-	/// any new parachain blocks for backing or inclusion.
+	/// any new allychain blocks for backing or inclusion.
 	fn is_frozen() -> bool;
 
 	/// Handler for filtering any dispute statements before including them as part
@@ -284,7 +284,7 @@ pub mod pallet {
 	pub(super) type SpamSlots<T> = StorageMap<_, Twox64Concat, SessionIndex, Vec<u32>>;
 
 	/// Whether the chain is frozen. Starts as `None`. When this is `Some`,
-	/// the chain will not accept any new parachain blocks for backing or inclusion,
+	/// the chain will not accept any new allychain blocks for backing or inclusion,
 	/// and its value indicates the last valid block number in the chain.
 	/// It can only be set back to `None` by governance intervention.
 	#[pallet::storage]
@@ -692,7 +692,7 @@ impl<T: Config> Pallet<T> {
 				<Disputes<T>>::remove_prefix(to_prune, None);
 
 				// This is larger, and will be extracted to the `shared` module for more proper pruning.
-				// TODO: https://github.com/paritytech/polkadot/issues/3469
+				// TODO: https://github.com/paritytech/axia/issues/3469
 				<Included<T>>::remove_prefix(to_prune, None);
 				SpamSlots::<T>::remove(to_prune);
 			}

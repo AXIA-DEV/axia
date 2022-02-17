@@ -1,20 +1,20 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Polkadot-specific GRANDPA integration utilities.
+//! Axia-specific GRANDPA integration utilities.
 
 use std::sync::Arc;
 
@@ -23,7 +23,7 @@ use sp_runtime::traits::{Block as BlockT, Header as _, NumberFor};
 use crate::HeaderProvider;
 
 #[cfg(feature = "full-node")]
-use polkadot_primitives::v1::Hash;
+use axia_primitives::v1::Hash;
 
 /// Returns the block hash of the block at the given `target_number` by walking
 /// backwards from the given `current_header`.
@@ -117,7 +117,7 @@ where
 #[cfg(feature = "full-node")]
 pub(crate) fn axctest_hard_forks() -> Vec<(
 	grandpa_primitives::SetId,
-	(Hash, polkadot_primitives::v1::BlockNumber),
+	(Hash, axia_primitives::v1::BlockNumber),
 	grandpa_primitives::AuthorityList,
 )> {
 	use sp_core::crypto::Ss58Codec;
@@ -218,8 +218,8 @@ pub(crate) fn axctest_hard_forks() -> Vec<(
 mod tests {
 	use consensus_common::BlockOrigin;
 	use grandpa::VotingRule;
-	use polkadot_test_client::{
-		ClientBlockImportExt, DefaultTestClientBuilderExt, InitPolkadotBlockBuilder,
+	use axia_test_client::{
+		ClientBlockImportExt, DefaultTestClientBuilderExt, InitAxiaBlockBuilder,
 		TestClientBuilder, TestClientBuilderExt,
 	};
 	use sp_blockchain::HeaderBackend;
@@ -237,7 +237,7 @@ mod tests {
 
 			move |n| {
 				for _ in 0..n {
-					let block = client.init_polkadot_block_builder().build().unwrap().block;
+					let block = client.init_axia_block_builder().build().unwrap().block;
 					futures::executor::block_on(client.import(BlockOrigin::Own, block)).unwrap();
 				}
 			}

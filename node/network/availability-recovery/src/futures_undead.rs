@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! FuturesUndead: A `FuturesUnordered` with support for semi canceled futures. Those undead
 //! futures will still get polled, but will not count towards length. So length will only count
@@ -32,7 +32,7 @@ use std::{
 };
 
 use futures::{future::BoxFuture, stream::FuturesUnordered, Future, Stream, StreamExt};
-use polkadot_node_subsystem_util::TimeoutExt;
+use axia_node_subsystem_util::TimeoutExt;
 
 /// FuturesUndead - `FuturesUnordered` with semi canceled (undead) futures.
 ///

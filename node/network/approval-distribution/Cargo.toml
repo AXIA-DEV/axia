@@ -1,15 +1,15 @@
 [package]
-name = "polkadot-approval-distribution"
+name = "axia-approval-distribution"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
 
 [dependencies]
-polkadot-node-primitives = { path = "../../primitives" }
-polkadot-node-network-protocol = { path = "../protocol" }
-polkadot-node-subsystem = { path = "../../subsystem" }
-polkadot-node-subsystem-util = { path = "../../subsystem-util" }
-polkadot-primitives = { path = "../../../primitives" }
+axia-node-primitives = { path = "../../primitives" }
+axia-node-network-protocol = { path = "../protocol" }
+axia-node-subsystem = { path = "../../subsystem" }
+axia-node-subsystem-util = { path = "../../subsystem-util" }
+axia-primitives = { path = "../../../primitives" }
 
 futures = "0.3.17"
 tracing = "0.1.29"
@@ -17,8 +17,8 @@ tracing = "0.1.29"
 [dev-dependencies]
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", features = ["std"] , branch = "master" }
 
-polkadot-node-subsystem-util = { path = "../../subsystem-util" }
-polkadot-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
+axia-node-subsystem-util = { path = "../../subsystem-util" }
+axia-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
 
 assert_matches = "1.4.0"
 schnorrkel = { version = "0.9.1", default-features = false }

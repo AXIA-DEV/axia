@@ -93,7 +93,7 @@ gurke  spawn --config "${SCRIPT_PATH}"/configs/simple_rococo_testnet.toml \
 
 echo "INFO: Checking if pods launched correctly"
 kubectl -n "${NAMESPACE}" get pods -o wide
-echo "INFO: Updating Polkadot JS API"
+echo "INFO: Updating Axia JS API"
 update_api
 forward_port
 

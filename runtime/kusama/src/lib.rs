@@ -1,18 +1,18 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot. If not, see <http://www.gnu.org/licenses/>.
+// along with Axia. If not, see <http://www.gnu.org/licenses/>.
 
 //! The AxiaTest runtime. This can be compiled with `#[no_std]`, ready for Wasm.
 
@@ -350,7 +350,7 @@ parameter_types! {
 	pub const SignedMaxSubmissions: u32 = 16;
 	pub const SignedDepositBase: Balance = deposit(2, 0);
 	pub const SignedDepositByte: Balance = deposit(0, 10) / 1024;
-	// Each good submission will get 1/10 KSM as reward
+	// Each good submission will get 1/10 AXCT as reward
 	pub SignedRewardBase: Balance =  UNITS / 10;
 	pub SolutionImprovementThreshold: Perbill = Perbill::from_rational(5u32, 10_000);
 
@@ -467,7 +467,7 @@ impl pallet_staking::EraPayout<Balance> for EraPayout {
 		era_duration_millis: u64,
 	) -> (Balance, Balance) {
 		// TODO: #3011 Update with proper auctioned slots tracking.
-		// This should be fine for the first year of parachains.
+		// This should be fine for the first year of allychains.
 		let auctioned_slots: u64 = auctions::Pallet::<Runtime>::auction_counter().into();
 		const MAX_ANNUAL_INFLATION: Perquintill = Perquintill::from_percent(10);
 		const MILLISECONDS_PER_YEAR: u64 = 1000 * 3600 * 24 * 36525 / 100;
@@ -868,7 +868,7 @@ where
 }
 
 parameter_types! {
-	pub Prefix: &'static [u8] = b"Pay KSMs to the AxiaTest account:";
+	pub Prefix: &'static [u8] = b"Pay AXCTs to the AxiaTest account:";
 }
 
 impl claims::Config for Runtime {
@@ -881,7 +881,7 @@ impl claims::Config for Runtime {
 }
 
 parameter_types! {
-	// Minimum 100 bytes/KSM deposited (1 CENT/byte)
+	// Minimum 100 bytes/AXCT deposited (1 CENT/byte)
 	pub const BasicDeposit: Balance = 1000 * CENTS;       // 258 bytes on-chain
 	pub const FieldDeposit: Balance = 250 * CENTS;        // 66 bytes on-chain
 	pub const SubAccountDeposit: Balance = 200 * CENTS;   // 53 bytes on-chain
@@ -1213,8 +1213,8 @@ impl slots::Config for Runtime {
 
 parameter_types! {
 	pub const CrowdloanId: PalletId = PalletId(*b"py/cfund");
-	pub const SubmissionDeposit: Balance = 3 * GRAND; // ~ 10 KSM
-	pub const MinContribution: Balance = 3_000 * CENTS; // ~ .1 KSM
+	pub const SubmissionDeposit: Balance = 3 * GRAND; // ~ 10 AXCT
+	pub const MinContribution: Balance = 3_000 * CENTS; // ~ .1 AXCT
 	pub const RemoveKeysLimit: u32 = 1000;
 	// Allow 32 bytes for an additional memo to a crowdloan.
 	pub const MaxMemoLength: u8 = 32;
@@ -1258,10 +1258,10 @@ impl auctions::Config for Runtime {
 }
 
 parameter_types! {
-	/// The location of the KSM token, from the context of this chain. Since this token is native to this
+	/// The location of the AXCT token, from the context of this chain. Since this token is native to this
 	/// chain, we make it synonymous with it and thus it is the `Here` location, which means "equivalent to
 	/// the context".
-	pub const KsmLocation: MultiLocation = Here.into();
+	pub const AxctLocation: MultiLocation = Here.into();
 	/// The AxiaTest network ID. This is named.
 	pub const AxiaTestNetwork: NetworkId = NetworkId::AxiaTest;
 	/// Our XCM location ancestry - i.e. what, if anything, `Parent` means evaluated in our context. Since
@@ -1274,7 +1274,7 @@ parameter_types! {
 /// The canonical means of converting a `MultiLocation` into an `AccountId`, used when we want to determine
 /// the sovereign account controlled by a location.
 pub type SovereignAccountOf = (
-	// We can convert a child parachain using the standard `AccountId` conversion.
+	// We can convert a child allychain using the standard `AccountId` conversion.
 	ChildParachainConvertsVia<ParaId, AccountId>,
 	// We can directly alias an `AccountId32` into a local account.
 	AccountId32Aliases<AxiaTestNetwork, AccountId>,
@@ -1283,12 +1283,12 @@ pub type SovereignAccountOf = (
 /// Our asset transactor. This is what allows us to interest with the runtime facilities from the point of
 /// view of XCM-only concepts like `MultiLocation` and `MultiAsset`.
 ///
-/// Ours is only aware of the Balances pallet, which is mapped to `KsmLocation`.
+/// Ours is only aware of the Balances pallet, which is mapped to `AxctLocation`.
 pub type LocalAssetTransactor = XcmCurrencyAdapter<
 	// Use this currency:
 	Balances,
 	// Use this currency when it is a fungible asset matching the given location or name:
-	IsConcrete<KsmLocation>,
+	IsConcrete<AxctLocation>,
 	// We can convert the MultiLocations with our converter above:
 	SovereignAccountOf,
 	// Our chain's account ID type (we can't get away without mentioning it explicitly):
@@ -1301,11 +1301,11 @@ pub type LocalAssetTransactor = XcmCurrencyAdapter<
 type LocalOriginConverter = (
 	// A `Signed` origin of the sovereign account that the original location controls.
 	SovereignSignedViaLocation<SovereignAccountOf, Origin>,
-	// A child parachain, natively expressed, has the `Parachain` origin.
+	// A child allychain, natively expressed, has the `Allychain` origin.
 	ChildParachainAsNative<parachains_origin::Origin, Origin>,
 	// The AccountId32 location type can be expressed natively as a `Signed` origin.
 	SignedAccountId32AsNative<AxiaTestNetwork, Origin>,
-	// A system child parachain, expressed as a Superuser, converts to the `Root` origin.
+	// A system child allychain, expressed as a Superuser, converts to the `Root` origin.
 	ChildSystemParachainAsSuperuser<ParaId, Origin>,
 );
 
@@ -1320,19 +1320,19 @@ parameter_types! {
 /// The XCM router. When we want to send an XCM message, we use this type. It amalgamates all of our
 /// individual routers.
 pub type XcmRouter = (
-	// Only one router so far - use DMP to communicate with child parachains.
+	// Only one router so far - use DMP to communicate with child allychains.
 	xcm_sender::ChildParachainRouter<Runtime, XcmPallet>,
 );
 
 parameter_types! {
-	pub const AxiaTest: MultiAssetFilter = Wild(AllOf { fun: WildFungible, id: Concrete(KsmLocation::get()) });
-	pub const AxiaTestForStatemint: (MultiAssetFilter, MultiLocation) = (AxiaTest::get(), Parachain(1000).into());
+	pub const AxiaTest: MultiAssetFilter = Wild(AllOf { fun: WildFungible, id: Concrete(AxctLocation::get()) });
+	pub const AxiaTestForStatemint: (MultiAssetFilter, MultiLocation) = (AxiaTest::get(), Allychain(1000).into());
 }
 pub type TrustedTeleporters = (xcm_builder::Case<AxiaTestForStatemint>,);
 
 match_type! {
 	pub type OnlyParachains: impl Contains<MultiLocation> = {
-		MultiLocation { parents: 0, interior: X1(Parachain(_)) }
+		MultiLocation { parents: 0, interior: X1(Allychain(_)) }
 	};
 }
 
@@ -1342,7 +1342,7 @@ pub type Barrier = (
 	TakeWeightCredit,
 	// If the message is one that immediately attemps to pay for execution, then allow it.
 	AllowTopLevelPaidExecutionFrom<Everything>,
-	// Messages coming from system parachains need not pay for execution.
+	// Messages coming from system allychains need not pay for execution.
 	AllowUnpaidExecutionFrom<IsChildSystemParachain<ParaId>>,
 	// Expected responses are OK.
 	AllowKnownQueryResponses<XcmPallet>,
@@ -1362,7 +1362,7 @@ impl xcm_executor::Config for XcmConfig {
 	type Barrier = Barrier;
 	type Weigher = FixedWeightBounds<BaseXcmWeight, Call, MaxInstructions>;
 	// The weight trader piggybacks on the existing transaction-fee conversion logic.
-	type Trader = UsingComponents<WeightToFee, KsmLocation, AccountId, Balances, ToAuthor<Runtime>>;
+	type Trader = UsingComponents<WeightToFee, AxctLocation, AccountId, Balances, ToAuthor<Runtime>>;
 	type ResponseHandler = XcmPallet;
 	type AssetTrap = XcmPallet;
 	type AssetClaims = XcmPallet;
@@ -1511,7 +1511,7 @@ construct_runtime! {
 		// Provides a semi-sorted list of nominators for staking.
 		BagsList: pallet_bags_list::{Pallet, Call, Storage, Event<T>} = 39,
 
-		// Parachains pallets. Start indices at 50 to leave room.
+		// Allychains pallets. Start indices at 50 to leave room.
 		ParachainsOrigin: parachains_origin::{Pallet, Origin} = 50,
 		Configuration: parachains_configuration::{Pallet, Call, Storage, Config<T>} = 51,
 		ParasShared: parachains_shared::{Pallet, Call, Storage} = 52,
@@ -1525,7 +1525,7 @@ construct_runtime! {
 		Hrmp: parachains_hrmp::{Pallet, Call, Storage, Event<T>} = 60,
 		ParaSessionInfo: parachains_session_info::{Pallet, Storage} = 61,
 
-		// Parachain Onboarding Pallets. Start indices at 70 to leave room.
+		// Allychain Onboarding Pallets. Start indices at 70 to leave room.
 		Registrar: paras_registrar::{Pallet, Call, Storage, Event<T>} = 70,
 		Slots: slots::{Pallet, Call, Storage, Event<T>} = 71,
 		Auctions: auctions::{Pallet, Call, Storage, Event<T>} = 72,
@@ -1775,7 +1775,7 @@ sp_api::impl_runtime_apis! {
 			// probability of a slot being empty), is done in accordance to the
 			// slot duration and expected target block time, for safely
 			// resisting network delays of maximum two seconds.
-			// <https://research.web3.foundation/en/latest/polkadot/BABE/Babe/#6-practical-results>
+			// <https://research.web3.foundation/en/latest/axia/BABE/Babe/#6-practical-results>
 			babe_primitives::BabeGenesisConfiguration {
 				slot_duration: Babe::slot_duration(),
 				epoch_length: EpochDuration::get(),
@@ -1885,7 +1885,7 @@ sp_api::impl_runtime_apis! {
 
 			let mut list = Vec::<BenchmarkList>::new();
 
-			// Polkadot
+			// Axia
 			// NOTE: Make sure to prefix these `runtime_common::` so that path resolves correctly
 			// in the generated file.
 			list_benchmark!(list, extra, runtime_common::auctions, Auctions);
@@ -1962,7 +1962,7 @@ sp_api::impl_runtime_apis! {
 
 			let mut batches = Vec::<BenchmarkBatch>::new();
 			let params = (&config, &whitelist);
-			// Polkadot
+			// Axia
 			// NOTE: Make sure to prefix these `runtime_common::` so that path resolves correctly
 			// in the generated file.
 			add_benchmark!(params, batches, runtime_common::auctions, Auctions);
@@ -2014,7 +2014,7 @@ mod tests_fess {
 	#[test]
 	fn signed_deposit_is_sensible() {
 		// ensure this number does not change, or that it is checked after each change.
-		// a 1 MB solution should need around 0.16 KSM deposit
+		// a 1 MB solution should need around 0.16 AXCT deposit
 		let deposit = SignedDepositBase::get() + (SignedDepositByte::get() * 1024 * 1024);
 		assert_eq_error_rate!(deposit, UNITS * 16 / 100, UNITS / 100);
 	}

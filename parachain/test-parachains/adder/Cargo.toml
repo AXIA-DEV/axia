@@ -1,13 +1,13 @@
 [package]
-name = "test-parachain-adder"
+name = "test-allychain-adder"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
-description = "Test parachain which adds to a number as its state transition"
+description = "Test allychain which adds to a number as its state transition"
 edition = "2018"
 build = "build.rs"
 
 [dependencies]
-parachain = { package = "polkadot-parachain", path = "../../", default-features = false, features = [ "wasm-api" ] }
+allychain = { package = "axia-allychain", path = "../../", default-features = false, features = [ "wasm-api" ] }
 parity-scale-codec = { version = "2.3.1", default-features = false, features = ["derive"] }
 sp-std = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 tiny-keccak = { version = "2.0.2", features = ["keccak"] }
@@ -22,6 +22,6 @@ axlib-wasm-builder = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch 
 [features]
 default = [ "std" ]
 std = [
-	"parachain/std",
+	"allychain/std",
 	"sp-std/std",
 ]

@@ -1,26 +1,26 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! # Parachain `Crowdloaning` pallet
+//! # Allychain `Crowdloaning` pallet
 //!
-//! The point of this pallet is to allow parachain projects to offer the ability to help fund a
-//! deposit for the parachain. When the crowdloan has ended, the funds are returned.
+//! The point of this pallet is to allow allychain projects to offer the ability to help fund a
+//! deposit for the allychain. When the crowdloan has ended, the funds are returned.
 //!
 //! Each fund has a child-trie which stores all contributors account IDs together with the amount
-//! they contributed; the root of this can then be used by the parachain to allow contributors to
+//! they contributed; the root of this can then be used by the allychain to allow contributors to
 //! prove that they made some particular contribution to the project (e.g. to be rewarded through
 //! some token or badge). The trie is retained for later (efficient) redistribution back to the
 //! contributors.
@@ -41,12 +41,12 @@
 //! Contributors will get a refund of their contributions from completed funds before the crowdloan
 //! can be dissolved.
 //!
-//! Funds may accept contributions at any point before their success or end. When a parachain
-//! slot auction enters its ending period, then parachains will each place a bid; the bid will be
-//! raised once per block if the parachain had additional funds contributed since the last bid.
+//! Funds may accept contributions at any point before their success or end. When a allychain
+//! slot auction enters its ending period, then allychains will each place a bid; the bid will be
+//! raised once per block if the allychain had additional funds contributed since the last bid.
 //!
 //! Successful funds remain tracked (in the `Funds` storage item and the associated child trie) as long as
-//! the parachain remains active. Users can withdraw their funds once the slot is completed and funds are
+//! the allychain remains active. Users can withdraw their funds once the slot is completed and funds are
 //! returned to the crowdloan account.
 
 use crate::{
@@ -135,7 +135,7 @@ pub enum LastContribution<BlockNumber> {
 	Ending(BlockNumber),
 }
 
-/// Information on a funding effort for a pre-existing parachain. We assume that the parachain ID
+/// Information on a funding effort for a pre-existing allychain. We assume that the allychain ID
 /// is known as it's used for the key of the storage item for which this is the value (`Funds`).
 #[derive(Encode, Decode, Clone, PartialEq, Eq, RuntimeDebug, TypeInfo)]
 #[codec(dumb_trait_bound)]
@@ -200,7 +200,7 @@ pub mod pallet {
 		#[pallet::constant]
 		type RemoveKeysLimit: Get<u32>;
 
-		/// The parachain registrar type. We just use this to ensure that only the manager of a para is able to
+		/// The allychain registrar type. We just use this to ensure that only the manager of a para is able to
 		/// start a crowdloan for its slot.
 		type Registrar: Registrar<AccountId = Self::AccountId>;
 
@@ -266,7 +266,7 @@ pub mod pallet {
 		Edited(ParaId),
 		/// A memo has been updated. `[who, fund_index, memo]`
 		MemoUpdated(T::AccountId, ParaId, Vec<u8>),
-		/// A parachain has been moved to `NewRaise`
+		/// A allychain has been moved to `NewRaise`
 		AddedToNewRaise(ParaId),
 	}
 
@@ -296,11 +296,11 @@ pub mod pallet {
 		ContributionPeriodOver,
 		/// The origin of this call is invalid.
 		InvalidOrigin,
-		/// This crowdloan does not correspond to a parachain.
+		/// This crowdloan does not correspond to a allychain.
 		NotParachain,
-		/// This parachain lease is still active and retirement cannot yet begin.
+		/// This allychain lease is still active and retirement cannot yet begin.
 		LeaseActive,
-		/// This parachain's bid or lease is still active and withdraw cannot yet begin.
+		/// This allychain's bid or lease is still active and withdraw cannot yet begin.
 		BidOrLeaseActive,
 		/// The crowdloan has not yet ended.
 		FundNotEnded,
@@ -355,10 +355,10 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Create a new crowdloaning campaign for a parachain slot with the given lease period range.
+		/// Create a new crowdloaning campaign for a allychain slot with the given lease period range.
 		///
-		/// This applies a lock to your parachain configuration, ensuring that it cannot be changed
-		/// by the parachain manager.
+		/// This applies a lock to your allychain configuration, ensuring that it cannot be changed
+		/// by the allychain manager.
 		#[pallet::weight(T::WeightInfo::create())]
 		pub fn create(
 			origin: OriginFor<T>,
@@ -434,7 +434,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Contribute to a crowd sale. This will transfer some balance over to fund a parachain
+		/// Contribute to a crowd sale. This will transfer some balance over to fund a allychain
 		/// slot. It will be withdrawable when the crowdloan has ended and the funds are unused.
 		#[pallet::weight(T::WeightInfo::contribute())]
 		pub fn contribute(
@@ -537,7 +537,7 @@ pub mod pallet {
 		/// number.
 		///
 		/// - `who`: The account whose contribution should be withdrawn.
-		/// - `index`: The parachain to whose crowdloan the contribution was made.
+		/// - `index`: The allychain to whose crowdloan the contribution was made.
 		#[pallet::weight(T::WeightInfo::withdraw())]
 		pub fn withdraw(
 			origin: OriginFor<T>,

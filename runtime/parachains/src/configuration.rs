@@ -1,20 +1,20 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Configuration manager for the Polkadot runtime parachains logic.
+//! Configuration manager for the Axia runtime allychains logic.
 //!
 //! Configuration can change only at session boundaries and is buffered until then.
 
@@ -36,27 +36,27 @@ pub mod migration;
 #[allow(dead_code)]
 const LOG_TARGET: &str = "runtime::configuration";
 
-/// All configuration of the runtime with respect to parachains and parathreads.
+/// All configuration of the runtime with respect to allychains and parathreads.
 #[derive(Clone, Encode, Decode, PartialEq, sp_core::RuntimeDebug, scale_info::TypeInfo)]
 #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
 pub struct HostConfiguration<BlockNumber> {
-	// NOTE: This structure is used by parachains via merkle proofs. Therefore, this struct requires
+	// NOTE: This structure is used by allychains via merkle proofs. Therefore, this struct requires
 	// special treatment.
 	//
-	// A parachain requested this struct can only depend on the subset of this struct. Specifically,
+	// A allychain requested this struct can only depend on the subset of this struct. Specifically,
 	// only a first few fields can be depended upon. These fields cannot be changed without
-	// corresponding migration of the parachains.
+	// corresponding migration of the allychains.
 	/**
-	 * The parameters that are required for the parachains.
+	 * The parameters that are required for the allychains.
 	 */
 
 	/// The maximum validation code size, in bytes.
 	pub max_code_size: u32,
 	/// The maximum head-data size, in bytes.
 	pub max_head_data_size: u32,
-	/// Total number of individual messages allowed in the parachain -> relay-chain message queue.
+	/// Total number of individual messages allowed in the allychain -> relay-chain message queue.
 	pub max_upward_queue_count: u32,
-	/// Total size of messages allowed in the parachain -> relay-chain message queue before which
+	/// Total size of messages allowed in the allychain -> relay-chain message queue before which
 	/// no further messages may be added to it. If it exceeds this then the queue may contain only
 	/// a single message.
 	pub max_upward_queue_size: u32,
@@ -72,13 +72,13 @@ pub struct HostConfiguration<BlockNumber> {
 	///
 	/// This parameter affects the upper bound of size of `CandidateCommitments`.
 	pub hrmp_max_message_num_per_candidate: u32,
-	/// The minimum frequency at which parachains can update their validation code.
+	/// The minimum frequency at which allychains can update their validation code.
 	pub validation_upgrade_frequency: BlockNumber,
 	/// The delay, in blocks, before a validation upgrade is applied.
 	pub validation_upgrade_delay: BlockNumber,
 
 	/**
-	 * The parameters that are not essential, but still may be of interest for parachains.
+	 * The parameters that are not essential, but still may be of interest for allychains.
 	 */
 
 	/// The maximum POV block size, in bytes.
@@ -86,7 +86,7 @@ pub struct HostConfiguration<BlockNumber> {
 	/// The maximum size of a message that can be put in a downward message queue.
 	///
 	/// Since we require receiving at least one DMP message the obvious upper bound of the size is
-	/// the PoV size. Of course, there is a lot of other different things that a parachain may
+	/// the PoV size. Of course, there is a lot of other different things that a allychain may
 	/// decide to do with its PoV so this value in practice will be picked as a fraction of the PoV
 	/// size.
 	pub max_downward_message_size: u32,
@@ -95,7 +95,7 @@ pub struct HostConfiguration<BlockNumber> {
 	///
 	/// NOTE that this is a soft limit and could be exceeded.
 	pub ump_service_total_weight: Weight,
-	/// The maximum number of outbound HRMP channels a parachain is allowed to open.
+	/// The maximum number of outbound HRMP channels a allychain is allowed to open.
 	pub hrmp_max_parachain_outbound_channels: u32,
 	/// The maximum number of outbound HRMP channels a parathread is allowed to open.
 	pub hrmp_max_parathread_outbound_channels: u32,
@@ -107,7 +107,7 @@ pub struct HostConfiguration<BlockNumber> {
 	pub hrmp_channel_max_capacity: u32,
 	/// The maximum total size of messages in bytes allowed in an HRMP channel at once.
 	pub hrmp_channel_max_total_size: u32,
-	/// The maximum number of inbound HRMP channels a parachain is allowed to accept.
+	/// The maximum number of inbound HRMP channels a allychain is allowed to accept.
 	pub hrmp_max_parachain_inbound_channels: u32,
 	/// The maximum number of inbound HRMP channels a parathread is allowed to accept.
 	pub hrmp_max_parathread_inbound_channels: u32,
@@ -117,7 +117,7 @@ pub struct HostConfiguration<BlockNumber> {
 	pub hrmp_channel_max_message_size: u32,
 
 	/**
-	 * Parameters that will unlikely be needed by parachains.
+	 * Parameters that will unlikely be needed by allychains.
 	 */
 
 	/// How long to keep code on-chain, in blocks. This should be sufficiently long that disputes
@@ -127,11 +127,11 @@ pub struct HostConfiguration<BlockNumber> {
 	pub parathread_cores: u32,
 	/// The number of retries that a parathread author has to submit their block.
 	pub parathread_retries: u32,
-	/// How often parachain groups should be rotated across parachains.
+	/// How often allychain groups should be rotated across allychains.
 	///
 	/// Must be non-zero.
 	pub group_rotation_frequency: BlockNumber,
-	/// The availability period, in blocks, for parachains. This is the amount of blocks
+	/// The availability period, in blocks, for allychains. This is the amount of blocks
 	/// after inclusion that validators have to make the block available and signal its availability to
 	/// the chain.
 	///
@@ -142,13 +142,13 @@ pub struct HostConfiguration<BlockNumber> {
 	///
 	/// Must be at least 1.
 	pub thread_availability_period: BlockNumber,
-	/// The amount of blocks ahead to schedule parachains and parathreads.
+	/// The amount of blocks ahead to schedule allychains and parathreads.
 	pub scheduling_lookahead: u32,
 	/// The maximum number of validators to have per core.
 	///
 	/// `None` means no maximum.
 	pub max_validators_per_core: Option<u32>,
-	/// The maximum number of validators to use for parachain consensus, period.
+	/// The maximum number of validators to use for allychain consensus, period.
 	///
 	/// `None` means no maximum.
 	pub max_validators: Option<u32>,
@@ -470,7 +470,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Set the parachain validator-group rotation frequency
+		/// Set the allychain validator-group rotation frequency
 		#[pallet::weight((
 			T::WeightInfo::set_config_with_block_number(),
 			DispatchClass::Operational,
@@ -489,7 +489,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Set the availability period for parachains.
+		/// Set the availability period for allychains.
 		#[pallet::weight((
 			T::WeightInfo::set_config_with_block_number(),
 			DispatchClass::Operational,
@@ -556,7 +556,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Set the maximum number of validators to use in parachain consensus.
+		/// Set the maximum number of validators to use in allychain consensus.
 		#[pallet::weight((
 			T::WeightInfo::set_config_with_option_u32(),
 			DispatchClass::Operational,
@@ -842,7 +842,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Sets the maximum number of inbound HRMP channels a parachain is allowed to accept.
+		/// Sets the maximum number of inbound HRMP channels a allychain is allowed to accept.
 		#[pallet::weight((
 			T::WeightInfo::set_config_with_u32(),
 			DispatchClass::Operational,
@@ -887,7 +887,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Sets the maximum number of outbound HRMP channels a parachain is allowed to open.
+		/// Sets the maximum number of outbound HRMP channels a allychain is allowed to open.
 		#[pallet::weight((
 			T::WeightInfo::set_config_with_u32(),
 			DispatchClass::Operational,
@@ -988,7 +988,7 @@ impl<T: Config> Pallet<T> {
 	}
 
 	/// Forcibly set the active config. This should be used with extreme care, and typically
-	/// only when enabling parachains runtime modules for the first time on a chain which has
+	/// only when enabling allychains runtime modules for the first time on a chain which has
 	/// been running without them.
 	pub fn force_set_active_config(config: HostConfiguration<T::BlockNumber>) {
 		<Self as Store>::ActiveConfig::set(config);

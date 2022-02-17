@@ -1,23 +1,23 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! # Overseer
 //!
 //! `overseer` implements the Overseer architecture described in the
-//! [implementers-guide](https://w3f.github.io/parachain-implementers-guide/node/index.html).
+//! [implementers-guide](https://w3f.github.io/allychain-implementers-guide/node/index.html).
 //! For the motivations behind implementing the overseer itself you should
 //! check out that guide, documentation in this crate will be mostly discussing
 //! technical stuff.
@@ -71,11 +71,11 @@ use futures::{channel::oneshot, future::BoxFuture, select, Future, FutureExt, St
 use lru::LruCache;
 
 use client::{BlockImportNotification, BlockchainEvents, FinalityNotification};
-use polkadot_primitives::v1::{Block, BlockId, BlockNumber, Hash, ParachainHost};
+use axia_primitives::v1::{Block, BlockId, BlockNumber, Hash, ParachainHost};
 use sp_api::{ApiExt, ProvideRuntimeApi};
 
-use polkadot_node_network_protocol::v1 as protocol_v1;
-use polkadot_node_subsystem_types::messages::{
+use axia_node_network_protocol::v1 as protocol_v1;
+use axia_node_subsystem_types::messages::{
 	ApprovalDistributionMessage, ApprovalVotingMessage, AvailabilityDistributionMessage,
 	AvailabilityRecoveryMessage, AvailabilityStoreMessage, BitfieldDistributionMessage,
 	BitfieldSigningMessage, CandidateBackingMessage, CandidateValidationMessage, ChainApiMessage,
@@ -84,7 +84,7 @@ use polkadot_node_subsystem_types::messages::{
 	GossipSupportMessage, NetworkBridgeEvent, NetworkBridgeMessage, ProvisionerMessage,
 	RuntimeApiMessage, StatementDistributionMessage,
 };
-pub use polkadot_node_subsystem_types::{
+pub use axia_node_subsystem_types::{
 	errors::{SubsystemError, SubsystemResult},
 	jaeger, ActivatedLeaf, ActiveLeavesUpdate, LeafStatus, OverseerSignal,
 };
@@ -96,15 +96,15 @@ pub use self::metrics::Metrics as OverseerMetrics;
 pub mod dummy;
 pub use self::dummy::DummySubsystem;
 
-pub use polkadot_node_metrics::{
+pub use axia_node_metrics::{
 	metrics::{prometheus, Metrics as MetricsTrait},
 	Metronome,
 };
 
 use parity_util_mem::MemoryAllocationTracker;
 
-pub use polkadot_overseer_gen as gen;
-pub use polkadot_overseer_gen::{
+pub use axia_overseer_gen as gen;
+pub use axia_overseer_gen::{
 	overlord, FromOverseer, MapSubsystem, MessagePacket, SignalsReceived, SpawnNamed, Subsystem,
 	SubsystemContext, SubsystemIncomingMessages, SubsystemInstance, SubsystemMeterReadouts,
 	SubsystemMeters, SubsystemSender, TimeoutExt, ToOverseer,
@@ -117,9 +117,9 @@ pub const KNOWN_LEAVES_CACHE_SIZE: usize = 2 * 24 * 3600 / 6;
 #[cfg(test)]
 mod tests;
 
-/// Whether a header supports parachain consensus or not.
+/// Whether a header supports allychain consensus or not.
 pub trait HeadSupportsParachains {
-	/// Return true if the given header supports parachain consensus. Otherwise, false.
+	/// Return true if the given header supports allychain consensus. Otherwise, false.
 	fn head_supports_parachains(&self, head: &Hash) -> bool;
 }
 
@@ -327,8 +327,8 @@ pub async fn forward_events<P: BlockchainEvents<Block>>(client: Arc<P>, mut hand
 /// # use std::time::Duration;
 /// # use futures::{executor, pin_mut, select, FutureExt};
 /// # use futures_timer::Delay;
-/// # use polkadot_primitives::v1::Hash;
-/// # use polkadot_overseer::{
+/// # use axia_primitives::v1::Hash;
+/// # use axia_overseer::{
 /// # 	self as overseer,
 /// #   OverseerSignal,
 /// # 	SubsystemSender as _,
@@ -342,7 +342,7 @@ pub async fn forward_events<P: BlockchainEvents<Block>>(client: Arc<P>, mut hand
 /// # 		SpawnedSubsystem,
 /// # 	},
 /// # };
-/// # use polkadot_node_subsystem_types::messages::{
+/// # use axia_node_subsystem_types::messages::{
 /// # 	CandidateValidationMessage, CandidateBackingMessage,
 /// # 	NetworkBridgeMessage,
 /// # };
@@ -485,7 +485,7 @@ pub struct Overseer<SupportsParachains> {
 	/// The set of the "active leaves".
 	pub active_leaves: HashMap<Hash, BlockNumber>,
 
-	/// An implementation for checking whether a header supports parachain consensus.
+	/// An implementation for checking whether a header supports allychain consensus.
 	pub supports_parachains: SupportsParachains,
 
 	/// An LRU cache for keeping track of relay-chain heads that have already been seen.
@@ -701,7 +701,7 @@ where
 		Ok(())
 	}
 
-	/// Handles a header activation. If the header's state doesn't support the parachains API,
+	/// Handles a header activation. If the header's state doesn't support the allychains API,
 	/// this returns `None`.
 	fn on_head_activated(
 		&mut self,

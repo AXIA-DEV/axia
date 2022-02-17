@@ -1,23 +1,23 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! The parachain inherent data provider
+//! The allychain inherent data provider
 //!
-//! Parachain backing and approval is an off-chain process, but the parachain needs to progress on chain as well. To
-//! make it progress on chain a block producer needs to forward information about the state of a parachain to the
+//! Allychain backing and approval is an off-chain process, but the allychain needs to progress on chain as well. To
+//! make it progress on chain a block producer needs to forward information about the state of a allychain to the
 //! runtime. This information is forwarded through an inherent to the runtime. Here we provide the
 //! [`ParachainInherentDataProvider`] that requests the relevant data from the provisioner subsystem and creates the
 //! the inherent data that the runtime will use to create an inherent.
@@ -25,10 +25,10 @@
 #![deny(unused_crate_dependencies, unused_results)]
 
 use futures::{select, FutureExt};
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	errors::SubsystemError, messages::ProvisionerMessage, overseer::Handle,
 };
-use polkadot_primitives::v1::{Block, Hash, InherentData as ParachainsInherentData};
+use axia_primitives::v1::{Block, Hash, InherentData as ParachainsInherentData};
 use sp_blockchain::HeaderBackend;
 use sp_runtime::generic::BlockId;
 use std::time;
@@ -36,7 +36,7 @@ use std::time;
 /// How long to wait for the provisioner, before giving up.
 const PROVISIONER_TIMEOUT: time::Duration = core::time::Duration::from_millis(2500);
 
-/// Provides the parachains inherent data.
+/// Provides the allychains inherent data.
 pub struct ParachainsInherentDataProvider {
 	inherent_data: ParachainsInherentData,
 }
@@ -112,7 +112,7 @@ impl sp_inherents::InherentDataProvider for ParachainsInherentDataProvider {
 		inherent_data: &mut sp_inherents::InherentData,
 	) -> Result<(), sp_inherents::Error> {
 		inherent_data
-			.put_data(polkadot_primitives::v1::PARACHAINS_INHERENT_IDENTIFIER, &self.inherent_data)
+			.put_data(axia_primitives::v1::PARACHAINS_INHERENT_IDENTIFIER, &self.inherent_data)
 	}
 
 	async fn try_handle_error(

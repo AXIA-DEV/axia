@@ -108,7 +108,7 @@ macro_rules! select_bridge {
 			RelayHeadersAndMessages::RococoWococo(_) => {
 				type Params = RococoWococoHeadersAndMessages;
 
-				type Left = relay_rococo_client::Rococo;
+				type Left = relay_rococo_client::Betanet;
 				type Right = relay_wococo_client::Wococo;
 
 				type LeftToRightFinality = crate::chains::rococo_headers_to_wococo::RococoFinalityToWococo;
@@ -132,11 +132,11 @@ macro_rules! select_bridge {
 // All supported chains.
 declare_chain_options!(Millau, millau);
 declare_chain_options!(Rialto, rialto);
-declare_chain_options!(Rococo, rococo);
+declare_chain_options!(Betanet, betanet);
 declare_chain_options!(Wococo, wococo);
 // All supported bridges.
 declare_bridge_options!(Millau, Rialto);
-declare_bridge_options!(Rococo, Wococo);
+declare_bridge_options!(Betanet, Wococo);
 
 impl RelayHeadersAndMessages {
 	/// Run the command.

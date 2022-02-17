@@ -6,11 +6,11 @@ on:
     inputs:
       reference_url:
         description: The WebSocket url of the reference node
-        default: wss://axctest-rpc.polkadot.io
+        default: wss://axctest-rpc.axia.io
         required: true
       binary_url:
         description: A url to a Linux binary for the node containing the runtime to test
-        default: https://releases.parity.io/polkadot/x86_64-debian:stretch/v0.9.10/polkadot
+        default: https://releases.parity.io/axia/x86_64-debian:stretch/v0.9.10/axia
         required: true
       chain:
         description: The name of the chain under test. Usually, you would pass a local chain
@@ -33,17 +33,17 @@ jobs:
         run: |
           echo Fetching $BIN_URL
           wget $BIN_URL
-          chmod a+x polkadot
-          ./polkadot --version
+          chmod a+x axia
+          ./axia --version
 
       - name: Start local node
         run: |
           echo Running on $CHAIN
-          ./polkadot --chain=$CHAIN &
+          ./axia --chain=$CHAIN &
 
       - name: Prepare output
         run: |
-          VERSION=$(./polkadot --version)
+          VERSION=$(./axia --version)
           echo "Metadata comparison:" >> output.txt
           echo "Date: $(date)" >> output.txt
           echo "Reference: $REF_URL" >> output.txt
@@ -51,12 +51,12 @@ jobs:
           echo "Chain: $CHAIN" >> output.txt
           echo "----------------------------------------------------------------------" >> output.txt
 
-      - name: Pull polkadot-js-tools image
-        run: docker pull jacogr/polkadot-js-tools
+      - name: Pull axia-js-tools image
+        run: docker pull jacogr/axia-js-tools
 
       - name: Compare the metadata
         run: |
-          CMD="docker run --pull always --network host jacogr/polkadot-js-tools metadata $REF_URL ws://localhost:9944"
+          CMD="docker run --pull always --network host jacogr/axia-js-tools metadata $REF_URL ws://localhost:9944"
           echo -e "Running:\n$CMD"
           $CMD >> output.txt
           sed -z -i 's/\n\n/\n/g' output.txt
@@ -70,7 +70,7 @@ jobs:
           cat output.txt
 
       - name: Stop our local node
-        run: pkill polkadot
+        run: pkill axia
 
       - name: Save output as artifact
         uses: actions/upload-artifact@v2

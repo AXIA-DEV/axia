@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Westend-to-Millau headers sync entrypoint.
+//! Alphanet-to-Millau headers sync entrypoint.
 
 use crate::finality_pipeline::{AxlibFinalitySyncPipeline, AxlibFinalityToAxlib};
 
@@ -23,11 +23,11 @@ use codec::Encode;
 use relay_millau_client::{Millau, SigningParams as MillauSigningParams};
 use relay_axlib_client::{Chain, TransactionSignScheme};
 use relay_utils::metrics::MetricsParams;
-use relay_westend_client::{SyncHeader as WestendSyncHeader, Westend};
+use relay_westend_client::{SyncHeader as WestendSyncHeader, Alphanet};
 use sp_core::{Bytes, Pair};
 
-/// Westend-to-Millau finality sync pipeline.
-pub(crate) type WestendFinalityToMillau = AxlibFinalityToAxlib<Westend, Millau, MillauSigningParams>;
+/// Alphanet-to-Millau finality sync pipeline.
+pub(crate) type WestendFinalityToMillau = AxlibFinalityToAxlib<Alphanet, Millau, MillauSigningParams>;
 
 impl AxlibFinalitySyncPipeline for WestendFinalityToMillau {
 	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_westend::BEST_FINALIZED_WESTEND_HEADER_METHOD;
@@ -35,7 +35,7 @@ impl AxlibFinalitySyncPipeline for WestendFinalityToMillau {
 	type TargetChain = Millau;
 
 	fn customize_metrics(params: MetricsParams) -> anyhow::Result<MetricsParams> {
-		crate::chains::add_polkadot_axctest_price_metrics::<Self>(params)
+		crate::chains::add_axia_axctest_price_metrics::<Self>(params)
 	}
 
 	fn transactions_author(&self) -> bp_millau::AccountId {

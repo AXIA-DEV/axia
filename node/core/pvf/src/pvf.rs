@@ -1,25 +1,25 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::artifacts::ArtifactId;
-use polkadot_parachain::primitives::ValidationCodeHash;
+use axia_parachain::primitives::ValidationCodeHash;
 use sp_core::blake2_256;
 use std::{fmt, sync::Arc};
 
-/// A struct that carries code of a parachain validation function and it's hash.
+/// A struct that carries code of a allychain validation function and it's hash.
 ///
 /// Should be cheap to clone.
 #[derive(Clone)]

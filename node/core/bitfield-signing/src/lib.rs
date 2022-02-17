@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! The bitfield signing subsystem produces `SignedAvailabilityBitfield`s once per block.
 
@@ -27,7 +27,7 @@ use futures::{
 	prelude::*,
 	Future,
 };
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	errors::RuntimeApiError,
 	jaeger,
 	messages::{
@@ -36,12 +36,12 @@ use polkadot_node_subsystem::{
 	},
 	PerLeafSpan, SubsystemSender,
 };
-use polkadot_node_subsystem_util::{
+use axia_node_subsystem_util::{
 	self as util,
 	metrics::{self, prometheus},
 	JobSender, JobSubsystem, JobTrait, Validator,
 };
-use polkadot_primitives::v1::{AvailabilityBitfield, CoreState, Hash, ValidatorIndex};
+use axia_primitives::v1::{AvailabilityBitfield, CoreState, Hash, ValidatorIndex};
 use sp_keystore::{Error as KeystoreError, SyncCryptoStorePtr};
 use std::{iter::FromIterator, pin::Pin, sync::Arc, time::Duration};
 use wasm_timer::{Delay, Instant};
@@ -51,7 +51,7 @@ mod tests;
 
 /// Delay between starting a bitfield signing job and its attempting to create a bitfield.
 const JOB_DELAY: Duration = Duration::from_millis(1500);
-const LOG_TARGET: &str = "parachain::bitfield-signing";
+const LOG_TARGET: &str = "allychain::bitfield-signing";
 
 /// Each `BitfieldSigningJob` prepares a signed bitfield for a single relay parent.
 pub struct BitfieldSigningJob;

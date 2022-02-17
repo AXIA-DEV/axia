@@ -29,9 +29,9 @@ xcm-builder = { path = "../xcm-builder" }
 xcm = { path = ".." }
 # temp
 pallet-xcm = { path = "../pallet-xcm" }
-polkadot-runtime-common = { path = "../../runtime/common" }
-# westend-runtime = { path = "../../runtime/westend", features = ["runtime-benchmarks"] }
-polkadot-primitives = { path = "../../primitives" }
+axia-runtime-common = { path = "../../runtime/common" }
+# alphanet-runtime = { path = "../../runtime/alphanet", features = ["runtime-benchmarks"] }
+axia-primitives = { path = "../../primitives" }
 
 [features]
 default = ["std"]

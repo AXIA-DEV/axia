@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-availability-bitfield-distribution"
+name = "axia-availability-bitfield-distribution"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -7,13 +7,13 @@ edition = "2018"
 [dependencies]
 futures = "0.3.17"
 tracing = "0.1.29"
-polkadot-primitives = { path = "../../../primitives" }
-polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../../subsystem" }
-polkadot-node-subsystem-util = { path = "../../subsystem-util" }
-polkadot-node-network-protocol = { path = "../../network/protocol" }
+axia-primitives = { path = "../../../primitives" }
+axia-subsystem = { package = "axia-node-subsystem", path = "../../subsystem" }
+axia-node-subsystem-util = { path = "../../subsystem-util" }
+axia-node-network-protocol = { path = "../../network/protocol" }
 
 [dev-dependencies]
-polkadot-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
+axia-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
 bitvec = { version = "0.20.1", default-features = false, features = ["alloc"] }
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-application-crypto = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

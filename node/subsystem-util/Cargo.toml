@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-node-subsystem-util"
+name = "axia-node-subsystem-util"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -17,12 +17,12 @@ tracing = "0.1.29"
 derive_more = "0.99.11"
 lru = "0.7.0"
 
-polkadot-node-subsystem = { package = "polkadot-node-subsystem", path = "../subsystem" }
-polkadot-node-jaeger = { path = "../jaeger" }
-polkadot-node-metrics = { path = "../metrics" }
-polkadot-node-network-protocol = { path = "../network/protocol" }
-polkadot-primitives = { path = "../../primitives" }
-polkadot-overseer = { path = "../overseer" }
+axia-node-subsystem = { package = "axia-node-subsystem", path = "../subsystem" }
+axia-node-jaeger = { path = "../jaeger" }
+axia-node-metrics = { path = "../metrics" }
+axia-node-network-protocol = { path = "../network/protocol" }
+axia-primitives = { path = "../../primitives" }
+axia-overseer = { path = "../overseer" }
 metered-channel = { path = "../metered-channel" }
 
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
@@ -34,4 +34,4 @@ assert_matches = "1.4.0"
 env_logger = "0.9.0"
 futures = { version = "0.3.17", features = ["thread-pool"] }
 log = "0.4.13"
-polkadot-node-subsystem-test-helpers = { path = "../subsystem-test-helpers" }
+axia-node-subsystem-test-helpers = { path = "../subsystem-test-helpers" }

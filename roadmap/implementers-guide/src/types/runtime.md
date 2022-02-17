@@ -4,11 +4,11 @@ Types used within the runtime exclusively and pervasively.
 
 ## Host Configuration
 
-The internal-to-runtime configuration of the parachain host. This is expected to be altered only by governance procedures.
+The internal-to-runtime configuration of the allychain host. This is expected to be altered only by governance procedures.
 
 ```rust
 struct HostConfiguration {
-	/// The minimum frequency at which parachains can update their validation code.
+	/// The minimum frequency at which allychains can update their validation code.
 	pub validation_upgrade_frequency: BlockNumber,
 	/// The delay, in blocks, before a validation upgrade is applied.
 	pub validation_upgrade_delay: BlockNumber,
@@ -23,9 +23,9 @@ struct HostConfiguration {
 	pub parathread_cores: u32,
 	/// The number of retries that a parathread author has to submit their block.
 	pub parathread_retries: u32,
-	/// How often parachain groups should be rotated across parachains.
+	/// How often allychain groups should be rotated across allychains.
 	pub group_rotation_frequency: BlockNumber,
-	/// The availability period, in blocks, for parachains. This is the amount of blocks
+	/// The availability period, in blocks, for allychains. This is the amount of blocks
 	/// after inclusion that validators have to make the block available and signal its availability to
 	/// the chain. Must be at least 1.
 	pub chain_availability_period: BlockNumber,
@@ -36,7 +36,7 @@ struct HostConfiguration {
 	pub scheduling_lookahead: u32,
 	/// The maximum number of validators to have per core. `None` means no maximum.
 	pub max_validators_per_core: Option<u32>,
-	/// The maximum number of validators to use for parachains, in total. `None` means no maximum.
+	/// The maximum number of validators to use for allychains, in total. `None` means no maximum.
 	pub max_validators: Option<u32>,
 	/// The amount of sessions to keep for disputes.
 	pub dispute_period: SessionIndex,
@@ -59,9 +59,9 @@ struct HostConfiguration {
 	pub needed_approvals: u32,
 	/// The number of samples to do of the RelayVRFModulo approval assignment criterion.
 	pub relay_vrf_modulo_samples: u32,
-	/// Total number of individual messages allowed in the parachain -> relay-chain message queue.
+	/// Total number of individual messages allowed in the allychain -> relay-chain message queue.
 	pub max_upward_queue_count: u32,
-	/// Total size of messages allowed in the parachain -> relay-chain message queue before which
+	/// Total size of messages allowed in the allychain -> relay-chain message queue before which
 	/// no further messages may be added to it. If it exceeds this then the queue may contain only
 	/// a single message.
 	pub max_upward_queue_size: u32,
@@ -81,7 +81,7 @@ struct HostConfiguration {
 	/// The maximum size of a message that can be put in a downward message queue.
 	///
 	/// Since we require receiving at least one DMP message the obvious upper bound of the size is
-	/// the PoV size. Of course, there is a lot of other different things that a parachain may
+	/// the PoV size. Of course, there is a lot of other different things that a allychain may
 	/// decide to do with its PoV so this value in practice will be picked as a fraction of the PoV
 	/// size.
 	pub max_downward_message_size: u32,
@@ -93,7 +93,7 @@ struct HostConfiguration {
 	pub hrmp_channel_max_capacity: u32,
 	/// The maximum total size of messages in bytes allowed in an HRMP channel at once.
 	pub hrmp_channel_max_total_size: u32,
-	/// The maximum number of inbound HRMP channels a parachain is allowed to accept.
+	/// The maximum number of inbound HRMP channels a allychain is allowed to accept.
 	pub hrmp_max_parachain_inbound_channels: u32,
 	/// The maximum number of inbound HRMP channels a parathread is allowed to accept.
 	pub hrmp_max_parathread_inbound_channels: u32,
@@ -101,7 +101,7 @@ struct HostConfiguration {
 	///
 	/// This parameter affects the upper bound of size of `CandidateCommitments`.
 	pub hrmp_channel_max_message_size: u32,
-	/// The maximum number of outbound HRMP channels a parachain is allowed to open.
+	/// The maximum number of outbound HRMP channels a allychain is allowed to open.
 	pub hrmp_max_parachain_outbound_channels: u32,
 	/// The maximum number of outbound HRMP channels a parathread is allowed to open.
 	pub hrmp_max_parathread_outbound_channels: u32,
@@ -114,7 +114,7 @@ struct HostConfiguration {
 
 ## ParaInherentData
 
-Inherent data passed to a runtime entry-point for the advancement of parachain consensus.
+Inherent data passed to a runtime entry-point for the advancement of allychain consensus.
 
 This contains 3 pieces of data:
 1. [`Bitfields`](availability.md#signed-availability-bitfield)

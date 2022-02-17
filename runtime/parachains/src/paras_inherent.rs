@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Provides glue code over the scheduler and inclusion modules, and accepting
 //! one inherent per block that can include new para candidates and bitfields.
@@ -120,7 +120,7 @@ pub mod pallet {
 			T::DisputesHandler::filter_multi_dispute_data(&mut inherent_data.disputes);
 
 			// Sanity check: session changes can invalidate an inherent, and we _really_ don't want that to happen.
-			// See github.com/paritytech/polkadot/issues/1327
+			// See github.com/paritytech/axia/issues/1327
 			let inherent_data =
 				match Self::enter(frame_system::RawOrigin::None.into(), inherent_data.clone()) {
 					Ok(_) => inherent_data,
@@ -188,7 +188,7 @@ pub mod pallet {
 
 				let _ = T::DisputesHandler::provide_multi_dispute_data(disputes.clone())?;
 				if T::DisputesHandler::is_frozen() {
-					// The relay chain we are currently on is invalid. Proceed no further on parachains.
+					// The relay chain we are currently on is invalid. Proceed no further on allychains.
 					Included::<T>::set(Some(()));
 					return Ok(Some(MINIMAL_INCLUSION_INHERENT_WEIGHT).into())
 				}

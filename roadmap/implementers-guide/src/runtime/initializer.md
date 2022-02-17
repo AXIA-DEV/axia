@@ -17,7 +17,7 @@ BufferedSessionChanges: Vec<(BlockNumber, ValidatorSet, ValidatorSet)>;
 
 Before initializing modules, remove all changes from the `BufferedSessionChanges` with number less than or equal to the current block number, and apply the last one. The session change is applied to all modules in the same order as initialization.
 
-The other parachains modules are initialized in this order:
+The other allychains modules are initialized in this order:
 
 1. Configuration
 1. Shared

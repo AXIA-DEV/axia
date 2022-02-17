@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Wococo-to-Rococo messages sync entrypoint.
+//! Wococo-to-Betanet messages sync entrypoint.
 
 use crate::messages_lane::{
 	select_delivery_transaction_limits, MessagesRelayParams, AxlibMessageLane, AxlibMessageLaneToAxlib,
@@ -27,15 +27,15 @@ use bp_runtime::{ROCOCO_CHAIN_ID, WOCOCO_CHAIN_ID};
 use bridge_runtime_common::messages::target::FromBridgedChainMessagesProof;
 use codec::Encode;
 use messages_relay::message_lane::MessageLane;
-use relay_rococo_client::{HeaderId as RococoHeaderId, Rococo, SigningParams as RococoSigningParams};
+use relay_rococo_client::{HeaderId as RococoHeaderId, Betanet, SigningParams as RococoSigningParams};
 use relay_axlib_client::{metrics::StorageProofOverheadMetric, Chain, TransactionSignScheme};
 use relay_wococo_client::{HeaderId as WococoHeaderId, SigningParams as WococoSigningParams, Wococo};
 use sp_core::{Bytes, Pair};
 use std::{ops::RangeInclusive, time::Duration};
 
-/// Wococo-to-Rococo message lane.
+/// Wococo-to-Betanet message lane.
 pub type WococoMessagesToRococo =
-	AxlibMessageLaneToAxlib<Wococo, WococoSigningParams, Rococo, RococoSigningParams>;
+	AxlibMessageLaneToAxlib<Wococo, WococoSigningParams, Betanet, RococoSigningParams>;
 
 impl AxlibMessageLane for WococoMessagesToRococo {
 	const OUTBOUND_LANE_MESSAGE_DETAILS_METHOD: &'static str = bp_rococo::TO_ROCOCO_MESSAGE_DETAILS_METHOD;
@@ -52,7 +52,7 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 	const BEST_FINALIZED_TARGET_HEADER_ID_AT_SOURCE: &'static str = bp_rococo::BEST_FINALIZED_ROCOCO_HEADER_METHOD;
 
 	type SourceChain = Wococo;
-	type TargetChain = Rococo;
+	type TargetChain = Betanet;
 
 	fn source_transactions_author(&self) -> bp_wococo::AccountId {
 		(*self.source_sign.public().as_array_ref()).into()
@@ -75,7 +75,7 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 		let transaction = Wococo::sign_transaction(genesis_hash, &self.source_sign, transaction_nonce, call);
 		log::trace!(
 			target: "bridge",
-			"Prepared Rococo -> Wococo confirmation transaction. Weight: <unknown>/{}, size: {}/{}",
+			"Prepared Betanet -> Wococo confirmation transaction. Weight: <unknown>/{}, size: {}/{}",
 			bp_wococo::max_extrinsic_weight(),
 			transaction.encode().len(),
 			bp_wococo::max_extrinsic_size(),
@@ -89,7 +89,7 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 
 	fn make_messages_delivery_transaction(
 		&self,
-		transaction_nonce: <Rococo as Chain>::Index,
+		transaction_nonce: <Betanet as Chain>::Index,
 		_generated_at_header: WococoHeaderId,
 		_nonces: RangeInclusive<MessageNonce>,
 		proof: <Self as MessageLane>::MessagesProof,
@@ -111,10 +111,10 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 			),
 		);
 		let genesis_hash = *self.target_client.genesis_hash();
-		let transaction = Rococo::sign_transaction(genesis_hash, &self.target_sign, transaction_nonce, call);
+		let transaction = Betanet::sign_transaction(genesis_hash, &self.target_sign, transaction_nonce, call);
 		log::trace!(
 			target: "bridge",
-			"Prepared Wococo -> Rococo delivery transaction. Weight: <unknown>/{}, size: {}/{}",
+			"Prepared Wococo -> Betanet delivery transaction. Weight: <unknown>/{}, size: {}/{}",
 			bp_rococo::max_extrinsic_weight(),
 			transaction.encode().len(),
 			bp_rococo::max_extrinsic_size(),
@@ -127,13 +127,13 @@ impl AxlibMessageLane for WococoMessagesToRococo {
 type WococoSourceClient =
 	AxlibMessagesSource<Wococo, WococoMessagesToRococo, relay_wococo_client::runtime::WithRococoMessagesInstance>;
 
-/// Rococo node as messages target.
+/// Betanet node as messages target.
 type RococoTargetClient =
-	AxlibMessagesTarget<Rococo, WococoMessagesToRococo, relay_rococo_client::runtime::WithWococoMessagesInstance>;
+	AxlibMessagesTarget<Betanet, WococoMessagesToRococo, relay_rococo_client::runtime::WithWococoMessagesInstance>;
 
-/// Run Wococo-to-Rococo messages sync.
+/// Run Wococo-to-Betanet messages sync.
 pub async fn run(
-	params: MessagesRelayParams<Wococo, WococoSigningParams, Rococo, RococoSigningParams>,
+	params: MessagesRelayParams<Wococo, WococoSigningParams, Betanet, RococoSigningParams>,
 ) -> Result<(), String> {
 	let stall_timeout = Duration::from_secs(5 * 60);
 	let relayer_id_at_wococo = (*params.source_sign.public().as_array_ref()).into();
@@ -150,7 +150,7 @@ pub async fn run(
 
 	// 2/3 is reserved for proofs and tx overhead
 	let max_messages_size_in_single_batch = bp_rococo::max_extrinsic_size() / 3;
-	// we don't know exact weights of the Rococo runtime. So to guess weights we'll be using
+	// we don't know exact weights of the Betanet runtime. So to guess weights we'll be using
 	// weights from Rialto and then simply dividing it by x2.
 	let (max_messages_in_single_batch, max_messages_weight_in_single_batch) =
 		select_delivery_transaction_limits::<pallet_bridge_messages::weights::RialtoWeight<rialto_runtime::Runtime>>(
@@ -164,7 +164,7 @@ pub async fn run(
 
 	log::info!(
 		target: "bridge",
-		"Starting Wococo -> Rococo messages relay.\n\t\
+		"Starting Wococo -> Betanet messages relay.\n\t\
 			Wococo relayer account id: {:?}\n\t\
 			Max messages in single transaction: {}\n\t\
 			Max messages size in single transaction: {}\n\t\
@@ -179,7 +179,7 @@ pub async fn run(
 		messages_relay::message_lane_loop::Params {
 			lane: lane_id,
 			source_tick: Wococo::AVERAGE_BLOCK_INTERVAL,
-			target_tick: Rococo::AVERAGE_BLOCK_INTERVAL,
+			target_tick: Betanet::AVERAGE_BLOCK_INTERVAL,
 			reconnect_delay: relay_utils::relay_loop::RECONNECT_DELAY,
 			stall_timeout,
 			delivery_params: messages_relay::message_lane_loop::MessageDeliveryParams {

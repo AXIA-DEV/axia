@@ -1,24 +1,24 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-mod parachain;
+mod allychain;
 mod relay_chain;
 
 use codec::DecodeLimit;
-use polkadot_parachain::primitives::Id as ParaId;
+use axia_parachain::primitives::Id as ParaId;
 use sp_runtime::traits::AccountIdConversion;
 use xcm_simulator::{decl_test_network, decl_test_parachain, decl_test_relay_chain, TestExt};
 
@@ -30,18 +30,18 @@ pub const INITIAL_BALANCE: u128 = 1_000_000_000;
 
 decl_test_parachain! {
 	pub struct ParaA {
-		Runtime = parachain::Runtime,
-		XcmpMessageHandler = parachain::MsgQueue,
-		DmpMessageHandler = parachain::MsgQueue,
+		Runtime = allychain::Runtime,
+		XcmpMessageHandler = allychain::MsgQueue,
+		DmpMessageHandler = allychain::MsgQueue,
 		new_ext = para_ext(1),
 	}
 }
 
 decl_test_parachain! {
 	pub struct ParaB {
-		Runtime = parachain::Runtime,
-		XcmpMessageHandler = parachain::MsgQueue,
-		DmpMessageHandler = parachain::MsgQueue,
+		Runtime = allychain::Runtime,
+		XcmpMessageHandler = allychain::MsgQueue,
+		DmpMessageHandler = allychain::MsgQueue,
 		new_ext = para_ext(2),
 	}
 }
@@ -57,7 +57,7 @@ decl_test_relay_chain! {
 decl_test_network! {
 	pub struct MockNet {
 		relay_chain = Relay,
-		parachains = vec![
+		allychains = vec![
 			(1, ParaA),
 			(2, ParaB),
 		],
@@ -69,7 +69,7 @@ pub fn para_account_id(id: u32) -> relay_chain::AccountId {
 }
 
 pub fn para_ext(para_id: u32) -> sp_io::TestExternalities {
-	use parachain::{MsgQueue, Runtime, System};
+	use allychain::{MsgQueue, Runtime, System};
 
 	let mut t = frame_system::GenesisConfig::default().build_storage::<Runtime>().unwrap();
 
@@ -102,7 +102,7 @@ pub fn relay_ext() -> sp_io::TestExternalities {
 }
 
 pub type RelayChainPalletXcm = pallet_xcm::Pallet<relay_chain::Runtime>;
-pub type ParachainPalletXcm = pallet_xcm::Pallet<parachain::Runtime>;
+pub type ParachainPalletXcm = pallet_xcm::Pallet<allychain::Runtime>;
 
 fn run_one_input(data: &[u8]) {
 	MockNet::reset();

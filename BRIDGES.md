@@ -5,19 +5,19 @@ In `./bridges` sub-directory you can find a `git subtree` imported version of:
 
 # How to fix broken Bridges code?
 
-To fix Bridges code simply create a commit in current (`polkadot`) repo. Best if
+To fix Bridges code simply create a commit in current (`axia`) repo. Best if
 the commit is isolated to changes in `./bridges` sub-directory, because it makes
 it easier to import that change back to upstream repo.
 
 # How to pull latest Bridges code or contribute back?
 
 Note that it's totally fine to ping the Bridges Team to do that for you. The point
-of adding the code as `git subtree` is to **reduce maintenance cost** for Polkadot
+of adding the code as `git subtree` is to **reduce maintenance cost** for Axia
 developers.
 
 If you still would like to either update the code to match latest code from the repo
 or create an upstream PR read below. The following commands should be run in the 
-current (`polkadot`) repo.
+current (`axia`) repo.
 
 1. Add Bridges repo as a local remote:
 ```

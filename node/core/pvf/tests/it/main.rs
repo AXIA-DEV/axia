@@ -1,25 +1,25 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use async_std::sync::Mutex;
 use parity_scale_codec::Encode as _;
-use polkadot_node_core_pvf::{
+use axia_node_core_pvf::{
 	start, Config, InvalidCandidate, Metrics, Pvf, ValidationError, ValidationHost,
 };
-use polkadot_parachain::primitives::{BlockData, ValidationParams, ValidationResult};
+use axia_parachain::primitives::{BlockData, ValidationParams, ValidationResult};
 use std::time::Duration;
 
 mod adder;
@@ -68,7 +68,7 @@ impl TestHost {
 				Pvf::from_code(code.into()),
 				TEST_EXECUTION_TIMEOUT,
 				params.encode(),
-				polkadot_node_core_pvf::Priority::Normal,
+				axia_node_core_pvf::Priority::Normal,
 				result_tx,
 			)
 			.await

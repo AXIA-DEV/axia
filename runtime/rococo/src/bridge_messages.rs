@@ -1,20 +1,20 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Over-bridge messaging support for Rococo <> Wococo bridge.
+//! Over-bridge messaging support for Betanet <> Wococo bridge.
 
 pub use self::{at_rococo::*, at_wococo::*};
 
@@ -42,40 +42,40 @@ use sp_std::{convert::TryFrom, marker::PhantomData, ops::RangeInclusive};
 /// Maximal number of pending outbound messages.
 const MAXIMAL_PENDING_MESSAGES_AT_OUTBOUND_LANE: MessageNonce =
 	bp_rococo::MAX_UNCONFIRMED_MESSAGES_AT_INBOUND_LANE;
-/// Maximal weight of single message delivery confirmation transaction on Rococo/Wococo chain.
+/// Maximal weight of single message delivery confirmation transaction on Betanet/Wococo chain.
 ///
 /// This value is a result of `pallet_bridge_messages::Pallet::receive_messages_delivery_proof` weight formula
 /// computation for the case when single message is confirmed. The result then must be rounded up to account
 /// possible future runtime upgrades.
 const MAX_SINGLE_MESSAGE_DELIVERY_CONFIRMATION_TX_WEIGHT: Weight = 2_000_000_000;
-/// Increase of delivery transaction weight on Rococo/Wococo chain with every additional message byte.
+/// Increase of delivery transaction weight on Betanet/Wococo chain with every additional message byte.
 ///
 /// This value is a result of `pallet_bridge_messages::WeightInfoExt::storage_proof_size_overhead(1)` call. The
 /// result then must be rounded up to account possible future runtime upgrades.
 const ADDITIONAL_MESSAGE_BYTE_DELIVERY_WEIGHT: Weight = 25_000;
-/// Weight of single regular message delivery transaction on Rococo/Wococo chain.
+/// Weight of single regular message delivery transaction on Betanet/Wococo chain.
 ///
 /// This value is a result of `pallet_bridge_messages::Pallet::receive_messages_proof_weight()` call
 /// for the case when single message of `pallet_bridge_messages::EXPECTED_DEFAULT_MESSAGE_LENGTH` bytes is delivered.
 /// The message must have dispatch weight set to zero. The result then must be rounded up to account
 /// possible future runtime upgrades.
 const DEFAULT_MESSAGE_DELIVERY_TX_WEIGHT: Weight = 1_500_000_000;
-/// Weight of pay-dispatch-fee operation for inbound messages at Rococo/Wococo chain.
+/// Weight of pay-dispatch-fee operation for inbound messages at Betanet/Wococo chain.
 ///
 /// This value corresponds to the result of `pallet_bridge_messages::WeightInfoExt::pay_inbound_dispatch_fee_overhead()`
 /// call for your chain. Don't put too much reserve there, because it is used to **decrease**
 /// `DEFAULT_MESSAGE_DELIVERY_TX_WEIGHT` cost. So putting large reserve would make delivery transactions cheaper.
 const PAY_INBOUND_DISPATCH_FEE_WEIGHT: Weight = 600_000_000;
-/// Number of bytes, included in the signed Rococo/Wococo transaction apart from the encoded call itself.
+/// Number of bytes, included in the signed Betanet/Wococo transaction apart from the encoded call itself.
 ///
 /// Can be computed by subtracting encoded call size from raw transaction size.
 const TX_EXTRA_BYTES: u32 = 130;
 
-/// Rococo chain as it is seen at Rococo.
+/// Betanet chain as it is seen at Betanet.
 pub type RococoAtRococo =
 	RococoLikeChain<AtRococoWithWococoMessageBridge, crate::RococoGrandpaInstance>;
 
-/// Rococo chain as it is seen at Wococo.
+/// Betanet chain as it is seen at Wococo.
 pub type RococoAtWococo =
 	RococoLikeChain<AtWococoWithRococoMessageBridge, crate::RococoGrandpaInstance>;
 
@@ -83,11 +83,11 @@ pub type RococoAtWococo =
 pub type WococoAtWococo =
 	RococoLikeChain<AtWococoWithRococoMessageBridge, crate::WococoGrandpaInstance>;
 
-/// Wococo chain as it is seen at Rococo.
+/// Wococo chain as it is seen at Betanet.
 pub type WococoAtRococo =
 	RococoLikeChain<AtRococoWithWococoMessageBridge, crate::WococoGrandpaInstance>;
 
-/// Rococo/Wococo chain from message lane point of view.
+/// Betanet/Wococo chain from message lane point of view.
 #[derive(RuntimeDebug, Clone, Copy)]
 pub struct RococoLikeChain<B, GI> {
 	_bridge_definition: PhantomData<B>,
@@ -154,7 +154,7 @@ impl<B, GI> BridgedChainWithMessages for RococoLikeChain<B, GI> {
 		let upper_limit =
 			messages_target::maximal_incoming_message_dispatch_weight(max_extrinsic_weight());
 
-		// we're charging for payload bytes in `With(Wococo | Rococo)MessageBridge::transaction_payment` function
+		// we're charging for payload bytes in `With(Wococo | Betanet)MessageBridge::transaction_payment` function
 		//
 		// this bridge may be used to deliver all kind of messages, so we're not making any assumptions about
 		// minimal dispatch weight here
@@ -255,11 +255,11 @@ impl Get<crate::Balance> for GetDeliveryConfirmationTransactionFee {
 	}
 }
 
-/// This module contains definitions that are used by the messages pallet instance, "deployed" at Rococo.
+/// This module contains definitions that are used by the messages pallet instance, "deployed" at Betanet.
 mod at_rococo {
 	use super::*;
 
-	/// Message bridge that is "deployed" at Rococo chain and connecting it to Wococo chain.
+	/// Message bridge that is "deployed" at Betanet chain and connecting it to Wococo chain.
 	#[derive(RuntimeDebug, Clone, Copy)]
 	pub struct AtRococoWithWococoMessageBridge;
 
@@ -279,23 +279,23 @@ mod at_rococo {
 		}
 	}
 
-	/// Message payload for Rococo -> Wococo messages as it is seen at the Rococo.
+	/// Message payload for Betanet -> Wococo messages as it is seen at the Betanet.
 	pub type ToWococoMessagePayload =
 		messages_source::FromThisChainMessagePayload<AtRococoWithWococoMessageBridge>;
 
-	/// Message verifier for Rococo -> Wococo messages at Rococo.
+	/// Message verifier for Betanet -> Wococo messages at Betanet.
 	pub type ToWococoMessageVerifier =
 		messages_source::FromThisChainMessageVerifier<AtRococoWithWococoMessageBridge>;
 
-	/// Message payload for Wococo -> Rococo messages as it is seen at Rococo.
+	/// Message payload for Wococo -> Betanet messages as it is seen at Betanet.
 	pub type FromWococoMessagePayload =
 		messages_target::FromBridgedChainMessagePayload<AtRococoWithWococoMessageBridge>;
 
-	/// Encoded Rococo Call as it comes from Wococo.
+	/// Encoded Betanet Call as it comes from Wococo.
 	pub type FromWococoEncodedCall =
 		messages_target::FromBridgedChainEncodedMessageCall<crate::Call>;
 
-	/// Call-dispatch based message dispatch for Wococo -> Rococo messages.
+	/// Call-dispatch based message dispatch for Wococo -> Betanet messages.
 	pub type FromWococoMessageDispatch = messages_target::FromBridgedChainMessageDispatch<
 		AtRococoWithWococoMessageBridge,
 		crate::Runtime,
@@ -308,7 +308,7 @@ mod at_rococo {
 mod at_wococo {
 	use super::*;
 
-	/// Message bridge that is "deployed" at Wococo chain and connecting it to Rococo chain.
+	/// Message bridge that is "deployed" at Wococo chain and connecting it to Betanet chain.
 	#[derive(RuntimeDebug, Clone, Copy)]
 	pub struct AtWococoWithRococoMessageBridge;
 
@@ -328,23 +328,23 @@ mod at_wococo {
 		}
 	}
 
-	/// Message payload for Wococo -> Rococo messages as it is seen at the Wococo.
+	/// Message payload for Wococo -> Betanet messages as it is seen at the Wococo.
 	pub type ToRococoMessagePayload =
 		messages_source::FromThisChainMessagePayload<AtWococoWithRococoMessageBridge>;
 
-	/// Message verifier for Wococo -> Rococo messages at Wococo.
+	/// Message verifier for Wococo -> Betanet messages at Wococo.
 	pub type ToRococoMessageVerifier =
 		messages_source::FromThisChainMessageVerifier<AtWococoWithRococoMessageBridge>;
 
-	/// Message payload for Rococo -> Wococo messages as it is seen at Wococo.
+	/// Message payload for Betanet -> Wococo messages as it is seen at Wococo.
 	pub type FromRococoMessagePayload =
 		messages_target::FromBridgedChainMessagePayload<AtWococoWithRococoMessageBridge>;
 
-	/// Encoded Wococo Call as it comes from Rococo.
+	/// Encoded Wococo Call as it comes from Betanet.
 	pub type FromRococoEncodedCall =
 		messages_target::FromBridgedChainEncodedMessageCall<crate::Call>;
 
-	/// Call-dispatch based message dispatch for Rococo -> Wococo messages.
+	/// Call-dispatch based message dispatch for Betanet -> Wococo messages.
 	pub type FromRococoMessageDispatch = messages_target::FromBridgedChainMessageDispatch<
 		AtWococoWithRococoMessageBridge,
 		crate::Runtime,
@@ -362,13 +362,13 @@ mod tests {
 	#[test]
 	fn ensure_rococo_messages_weights_are_correct() {
 		// **NOTE**: the main purpose of this test is to be sure that any message that is sumbitted
-		// to (any) inbound lane in Rococo<>Wococo bridge can be delivered to the bridged chain.
+		// to (any) inbound lane in Betanet<>Wococo bridge can be delivered to the bridged chain.
 		// Since we deal with testnets here, in case of failure + urgency:
 		//
 		// 1) ping bridges team about this failure (see the CODEOWNERS file if you're unsure who to ping);
 		// 2) comment/#[ignore] the test.
 
-		// we don't have any knowledge of messages-at-Rococo weights, so we'll be using
+		// we don't have any knowledge of messages-at-Betanet weights, so we'll be using
 		// weights of one of our testnets, which should be accurate enough
 		type Weights = pallet_bridge_messages::weights::RialtoWeight<crate::Runtime>;
 
@@ -410,7 +410,7 @@ mod tests {
 	#[test]
 	fn ensure_rococo_tx_extra_bytes_constant_is_correct() {
 		// **NOTE**: this test checks that we're computing transaction fee (for bridged chain, which, in
-		// case of Rococo<>Wococo, means any chain) on-chain properly. If this assert fails:
+		// case of Betanet<>Wococo, means any chain) on-chain properly. If this assert fails:
 		//
 		// 1) just fix the `TX_EXTRA_BYTES` constant to actual (or sightly rounded up) value;
 		// 2) (only if it has changed significantly (> x2 times)) ping the bridges team (see the CODEOWNERS
@@ -435,7 +435,7 @@ mod tests {
 			signed_extra.encoded_size();
 		assert!(
 			TX_EXTRA_BYTES as usize >= extra_bytes_in_transaction,
-			"Hardcoded number of extra bytes in Rococo transaction {} is lower than actual value: {}",
+			"Hardcoded number of extra bytes in Betanet transaction {} is lower than actual value: {}",
 			TX_EXTRA_BYTES,
 			extra_bytes_in_transaction,
 		);

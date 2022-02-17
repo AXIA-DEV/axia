@@ -1,5 +1,5 @@
 [package]
-name = "westend-runtime"
+name = "alphanet-runtime"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -79,10 +79,10 @@ pallet-offences-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend
 pallet-session-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false, optional = true , branch = "master" }
 hex-literal = { version = "0.3.3", optional = true }
 
-runtime-common = { package = "polkadot-runtime-common", path = "../common", default-features = false }
-primitives = { package = "polkadot-primitives", path = "../../primitives", default-features = false }
-polkadot-parachain = { path = "../../parachain", default-features = false }
-runtime-parachains = { package = "polkadot-runtime-parachains", path = "../parachains", default-features = false }
+runtime-common = { package = "axia-runtime-common", path = "../common", default-features = false }
+primitives = { package = "axia-primitives", path = "../../primitives", default-features = false }
+axia-allychain = { path = "../../allychain", default-features = false }
+runtime-allychains = { package = "axia-runtime-allychains", path = "../allychains", default-features = false }
 
 xcm = { package = "xcm", path = "../../xcm", default-features = false }
 xcm-executor = { package = "xcm-executor", path = "../../xcm/xcm-executor", default-features = false }
@@ -111,7 +111,7 @@ std = [
 	"scale-info/std",
 	"inherents/std",
 	"sp-core/std",
-	"polkadot-parachain/std",
+	"axia-allychain/std",
 	"sp-api/std",
 	"tx-pool-api/std",
 	"block-builder-api/std",
@@ -164,7 +164,7 @@ std = [
 	"babe-primitives/std",
 	"sp-session/std",
 	"runtime-common/std",
-	"runtime-parachains/std",
+	"runtime-allychains/std",
 	"frame-try-runtime/std",
 	"sp-npos-elections/std",
 	"xcm/std",

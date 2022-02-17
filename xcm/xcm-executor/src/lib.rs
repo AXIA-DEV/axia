@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
@@ -298,7 +298,7 @@ impl<Config: config::Config> XcmExecutor<Config> {
 				Ok(())
 			},
 			Transact { origin_type, require_weight_at_most, mut call } => {
-				// We assume that the Relay-chain is allowed to use transact on this parachain.
+				// We assume that the Relay-chain is allowed to use transact on this allychain.
 				let origin = self.origin.clone().ok_or(XcmError::BadOrigin)?;
 
 				// TODO: #2841 #TRANSACTFILTER allow the trait to issue filters for the relay-chain
@@ -310,7 +310,7 @@ impl<Config: config::Config> XcmExecutor<Config> {
 				let actual_weight = match message_call.dispatch(dispatch_origin) {
 					Ok(post_info) => post_info.actual_weight,
 					Err(error_and_info) => {
-						// Not much to do with the result as it is. It's up to the parachain to ensure that the
+						// Not much to do with the result as it is. It's up to the allychain to ensure that the
 						// message makes sense.
 						error_and_info.post_info.actual_weight
 					},

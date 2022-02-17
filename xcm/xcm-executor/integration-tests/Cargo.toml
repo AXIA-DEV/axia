@@ -10,9 +10,9 @@ frame-support = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-feat
 frame-system = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 futures = "0.3.17"
 pallet-xcm = { path = "../../pallet-xcm" }
-polkadot-test-client = { path = "../../../node/test/client" }
-polkadot-test-runtime = { path = "../../../runtime/test-runtime" }
-polkadot-test-service = { path = "../../../node/test/service" }
+axia-test-client = { path = "../../../node/test/client" }
+axia-test-runtime = { path = "../../../runtime/test-runtime" }
+axia-test-service = { path = "../../../node/test/service" }
 sp-consensus = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-keyring = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }

@@ -25,17 +25,17 @@ use bp_runtime::Chain;
 use sp_std::prelude::*;
 use sp_version::RuntimeVersion;
 
-pub use bp_polkadot_core::*;
+pub use bp_axia_core::*;
 
-/// Westend Chain
-pub type Westend = PolkadotLike;
+/// Alphanet Chain
+pub type Alphanet = AxiaLike;
 
-pub type UncheckedExtrinsic = bp_polkadot_core::UncheckedExtrinsic<Call>;
+pub type UncheckedExtrinsic = bp_axia_core::UncheckedExtrinsic<Call>;
 
-// NOTE: This needs to be kept up to date with the Westend runtime found in the Polkadot repo.
+// NOTE: This needs to be kept up to date with the Alphanet runtime found in the Axia repo.
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: sp_version::create_runtime_str!("westend"),
-	impl_name: sp_version::create_runtime_str!("parity-westend"),
+	spec_name: sp_version::create_runtime_str!("alphanet"),
+	impl_name: sp_version::create_runtime_str!("parity-alphanet"),
 	authoring_version: 2,
 	spec_version: 51,
 	impl_version: 0,
@@ -43,19 +43,19 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	transaction_version: 5,
 };
 
-/// Westend Runtime `Call` enum.
+/// Alphanet Runtime `Call` enum.
 ///
-/// The enum represents a subset of possible `Call`s we can send to Westend chain.
+/// The enum represents a subset of possible `Call`s we can send to Alphanet chain.
 /// Ideally this code would be auto-generated from Metadata, because we want to
 /// avoid depending directly on the ENTIRE runtime just to get the encoding of `Dispatchable`s.
 ///
-/// All entries here (like pretty much in the entire file) must be kept in sync with Westend
+/// All entries here (like pretty much in the entire file) must be kept in sync with Alphanet
 /// `construct_runtime`, so that we maintain SCALE-compatibility.
 ///
-/// See: https://github.com/paritytech/polkadot/blob/master/runtime/westend/src/lib.rs
+/// See: https://github.com/paritytech/axia/blob/master/runtime/alphanet/src/lib.rs
 #[derive(parity_scale_codec::Encode, parity_scale_codec::Decode, Debug, PartialEq, Eq, Clone)]
 pub enum Call {
-	/// Rococo bridge pallet.
+	/// Betanet bridge pallet.
 	#[codec(index = 40)]
 	BridgeGrandpaRococo(BridgeGrandpaRococoCall),
 }
@@ -65,11 +65,11 @@ pub enum Call {
 pub enum BridgeGrandpaRococoCall {
 	#[codec(index = 0)]
 	submit_finality_proof(
-		<PolkadotLike as Chain>::Header,
-		bp_header_chain::justification::GrandpaJustification<<PolkadotLike as Chain>::Header>,
+		<AxiaLike as Chain>::Header,
+		bp_header_chain::justification::GrandpaJustification<<AxiaLike as Chain>::Header>,
 	),
 	#[codec(index = 1)]
-	initialize(bp_header_chain::InitializationData<<PolkadotLike as Chain>::Header>),
+	initialize(bp_header_chain::InitializationData<<AxiaLike as Chain>::Header>),
 }
 
 impl sp_runtime::traits::Dispatchable for Call {
@@ -83,7 +83,7 @@ impl sp_runtime::traits::Dispatchable for Call {
 	}
 }
 
-// We use this to get the account on Westend (target) which is derived from Rococo's (source)
+// We use this to get the account on Alphanet (target) which is derived from Betanet's (source)
 // account.
 pub fn derive_account_from_rococo_id(id: bp_runtime::SourceAccount<AccountId>) -> AccountId {
 	let encoded_id = bp_runtime::derive_account_id(bp_runtime::ROCOCO_CHAIN_ID, id);
@@ -112,7 +112,7 @@ pub const FROM_WESTEND_LATEST_CONFIRMED_NONCE_METHOD: &str = "FromWestendInbound
 /// Name of the `FromWestendInboundLaneApi::unrewarded_relayers_state` runtime method.
 pub const FROM_WESTEND_UNREWARDED_RELAYERS_STATE: &str = "FromWestendInboundLaneApi_unrewarded_relayers_state";
 
-/// The target length of a session (how often authorities change) on Westend measured in of number of
+/// The target length of a session (how often authorities change) on Alphanet measured in of number of
 /// blocks.
 ///
 /// Note that since this is a target sessions may change before/after this time depending on network
@@ -120,10 +120,10 @@ pub const FROM_WESTEND_UNREWARDED_RELAYERS_STATE: &str = "FromWestendInboundLane
 pub const SESSION_LENGTH: BlockNumber = 10 * time_units::MINUTES;
 
 sp_api::decl_runtime_apis! {
-	/// API for querying information about the finalized Westend headers.
+	/// API for querying information about the finalized Alphanet headers.
 	///
-	/// This API is implemented by runtimes that are bridging with the Westend chain, not the
-	/// Westend runtime itself.
+	/// This API is implemented by runtimes that are bridging with the Alphanet chain, not the
+	/// Alphanet runtime itself.
 	pub trait WestendFinalityApi {
 		/// Returns number and hash of the best finalized header known to the bridge module.
 		fn best_finalized() -> (BlockNumber, Hash);
@@ -131,15 +131,15 @@ sp_api::decl_runtime_apis! {
 		fn is_known_header(hash: Hash) -> bool;
 	}
 
-	/// Outbound message lane API for messages that are sent to Westend chain.
+	/// Outbound message lane API for messages that are sent to Alphanet chain.
 	///
-	/// This API is implemented by runtimes that are sending messages to Westend chain, not the
-	/// Westend runtime itself.
+	/// This API is implemented by runtimes that are sending messages to Alphanet chain, not the
+	/// Alphanet runtime itself.
 	pub trait ToWestendOutboundLaneApi<OutboundMessageFee: Parameter, OutboundPayload: Parameter> {
 		/// Estimate message delivery and dispatch fee that needs to be paid by the sender on
 		/// this chain.
 		///
-		/// Returns `None` if message is too expensive to be sent to Westend from this chain.
+		/// Returns `None` if message is too expensive to be sent to Alphanet from this chain.
 		///
 		/// Please keep in mind that this method returns the lowest message fee required for message
 		/// to be accepted to the lane. It may be good idea to pay a bit over this price to account
@@ -165,10 +165,10 @@ sp_api::decl_runtime_apis! {
 		fn latest_generated_nonce(lane: LaneId) -> MessageNonce;
 	}
 
-	/// Inbound message lane API for messages sent by Westend chain.
+	/// Inbound message lane API for messages sent by Alphanet chain.
 	///
-	/// This API is implemented by runtimes that are receiving messages from Westend chain, not the
-	/// Westend runtime itself.
+	/// This API is implemented by runtimes that are receiving messages from Alphanet chain, not the
+	/// Alphanet runtime itself.
 	pub trait FromWestendInboundLaneApi {
 		/// Returns nonce of the latest message, received by given lane.
 		fn latest_received_nonce(lane: LaneId) -> MessageNonce;

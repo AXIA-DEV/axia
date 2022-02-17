@@ -1,23 +1,23 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! `V1` database for the dispute coordinator.
 
-use polkadot_node_subsystem::{SubsystemError, SubsystemResult};
-use polkadot_primitives::v1::{
+use axia_node_subsystem::{SubsystemError, SubsystemResult};
+use axia_primitives::v1::{
 	CandidateHash, CandidateReceipt, Hash, InvalidDisputeStatementKind, SessionIndex,
 	ValidDisputeStatementKind, ValidatorIndex, ValidatorSignature,
 };
@@ -131,9 +131,9 @@ pub struct CandidateVotes {
 	pub invalid: Vec<(InvalidDisputeStatementKind, ValidatorIndex, ValidatorSignature)>,
 }
 
-impl From<CandidateVotes> for polkadot_node_primitives::CandidateVotes {
-	fn from(db_votes: CandidateVotes) -> polkadot_node_primitives::CandidateVotes {
-		polkadot_node_primitives::CandidateVotes {
+impl From<CandidateVotes> for axia_node_primitives::CandidateVotes {
+	fn from(db_votes: CandidateVotes) -> axia_node_primitives::CandidateVotes {
+		axia_node_primitives::CandidateVotes {
 			candidate_receipt: db_votes.candidate_receipt,
 			valid: db_votes.valid,
 			invalid: db_votes.invalid,
@@ -141,8 +141,8 @@ impl From<CandidateVotes> for polkadot_node_primitives::CandidateVotes {
 	}
 }
 
-impl From<polkadot_node_primitives::CandidateVotes> for CandidateVotes {
-	fn from(primitive_votes: polkadot_node_primitives::CandidateVotes) -> CandidateVotes {
+impl From<axia_node_primitives::CandidateVotes> for CandidateVotes {
+	fn from(primitive_votes: axia_node_primitives::CandidateVotes) -> CandidateVotes {
 		CandidateVotes {
 			candidate_receipt: primitive_votes.candidate_receipt,
 			valid: primitive_votes.valid,
@@ -253,7 +253,7 @@ pub(crate) fn note_current_session(
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use polkadot_primitives::v1::{Hash, Id as ParaId};
+	use axia_primitives::v1::{Hash, Id as ParaId};
 
 	fn make_db() -> DbBackend {
 		let store = Arc::new(kvdb_memorydb::create(1));

@@ -68,14 +68,14 @@ macro_rules! select_bridge {
 				$generic
 			}
 			RelayHeadersBridge::WestendToMillau => {
-				type Source = relay_westend_client::Westend;
+				type Source = relay_westend_client::Alphanet;
 				type Target = relay_millau_client::Millau;
 				type Finality = crate::chains::westend_headers_to_millau::WestendFinalityToMillau;
 
 				$generic
 			}
 			RelayHeadersBridge::RococoToWococo => {
-				type Source = relay_rococo_client::Rococo;
+				type Source = relay_rococo_client::Betanet;
 				type Target = relay_wococo_client::Wococo;
 				type Finality = crate::chains::rococo_headers_to_wococo::RococoFinalityToWococo;
 
@@ -83,7 +83,7 @@ macro_rules! select_bridge {
 			}
 			RelayHeadersBridge::WococoToRococo => {
 				type Source = relay_wococo_client::Wococo;
-				type Target = relay_rococo_client::Rococo;
+				type Target = relay_rococo_client::Betanet;
 				type Finality = crate::chains::wococo_headers_to_rococo::WococoFinalityToRococo;
 
 				$generic

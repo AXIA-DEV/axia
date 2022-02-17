@@ -1,23 +1,23 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use always_assert::always;
 use async_std::path::{Path, PathBuf};
 use parity_scale_codec::{Decode, Encode};
-use polkadot_parachain::primitives::ValidationCodeHash;
+use axia_parachain::primitives::ValidationCodeHash;
 use std::{
 	collections::HashMap,
 	time::{Duration, SystemTime},
@@ -68,7 +68,7 @@ impl ArtifactId {
 	/// Tries to recover the artifact id from the given file name.
 	#[cfg(test)]
 	pub fn from_file_name(file_name: &str) -> Option<Self> {
-		use polkadot_core_primitives::Hash;
+		use axia_core_primitives::Hash;
 		use std::str::FromStr as _;
 
 		let file_name = file_name.strip_prefix(Self::PREFIX)?;

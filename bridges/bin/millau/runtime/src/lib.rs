@@ -201,7 +201,7 @@ impl frame_system::Config for Runtime {
 	type DbWeight = DbWeight;
 	/// The designated `SS58` prefix of this chain.
 	type SS58Prefix = SS58Prefix;
-	/// The set code logic, just the default since we're not a parachain.
+	/// The set code logic, just the default since we're not a allychain.
 	type OnSetCode = ();
 }
 
@@ -337,7 +337,7 @@ impl pallet_bridge_grandpa::Config for Runtime {
 
 pub type WestendGrandpaInstance = pallet_bridge_grandpa::Instance1;
 impl pallet_bridge_grandpa::Config<WestendGrandpaInstance> for Runtime {
-	type BridgedChain = bp_westend::Westend;
+	type BridgedChain = bp_westend::Alphanet;
 	type MaxRequests = MaxRequests;
 	type HeadersToKeep = HeadersToKeep;
 

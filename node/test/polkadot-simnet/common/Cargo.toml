@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-simnet"
+name = "axia-simnet"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -26,11 +26,11 @@ sp-consensus-babe = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch =
 sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-keyring = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-polkadot-primitives = { path = "../../../../primitives" }
-polkadot-cli = { path = "../../../../cli", features = ["cli"] }
-polkadot-service = { path = "../../../../node/service" }
-polkadot-runtime = { path = "../../../../runtime/polkadot" }
-polkadot-runtime-common = { path = "../../../../runtime/common" }
+axia-primitives = { path = "../../../../primitives" }
+axia-cli = { path = "../../../../cli", features = ["cli"] }
+axia-service = { path = "../../../../node/service" }
+axia-runtime = { path = "../../../../runtime/axia" }
+axia-runtime-common = { path = "../../../../runtime/common" }
 
 codec = { package = "parity-scale-codec", version = "2.0.0" }
 structopt = "0.3.23"

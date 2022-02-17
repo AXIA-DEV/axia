@@ -1,6 +1,6 @@
 # Candidate Backing
 
-The Candidate Backing subsystem ensures every parablock considered for relay block inclusion has been seconded by at least one validator, and approved by a quorum. Parablocks for which no validator will assert correctness are discarded. If the block later proves invalid, the initial backers are slashable; this gives polkadot a rational threat model during subsequent stages.
+The Candidate Backing subsystem ensures every parablock considered for relay block inclusion has been seconded by at least one validator, and approved by a quorum. Parablocks for which no validator will assert correctness are discarded. If the block later proves invalid, the initial backers are slashable; this gives axia a rational threat model during subsequent stages.
 
 Its role is to produce backable candidates for inclusion in new relay-chain blocks. It does so by issuing signed [`Statement`s][Statement] and tracking received statements signed by other validators. Once enough statements are received, they can be combined into backing for specific candidates.
 
@@ -47,9 +47,9 @@ If the seconding node did not provide us with the `PoV` we will retry fetching f
 
 > big TODO: "contextual execution"
 >
-> * At the moment we only allow inclusion of _new_ parachain candidates validated by _current_ validators.
-> * Allow inclusion of _old_ parachain candidates validated by _current_ validators.
-> * Allow inclusion of _old_ parachain candidates validated by _old_ validators.
+> * At the moment we only allow inclusion of _new_ allychain candidates validated by _current_ validators.
+> * Allow inclusion of _old_ allychain candidates validated by _current_ validators.
+> * Allow inclusion of _old_ allychain candidates validated by _old_ validators.
 >
 > This will probably blur the lines between jobs, will probably require inter-job communication and a short-term memory of recently backable, but not backed candidates.
 
@@ -57,13 +57,13 @@ If the seconding node did not provide us with the `PoV` we will retry fetching f
 
 The Candidate Backing Job represents the work a node does for backing candidates with respect to a particular relay-parent.
 
-The goal of a Candidate Backing Job is to produce as many backable candidates as possible. This is done via signed [`Statement`s][STMT] by validators. If a candidate receives a majority of supporting Statements from the Parachain Validators currently assigned, then that candidate is considered backable.
+The goal of a Candidate Backing Job is to produce as many backable candidates as possible. This is done via signed [`Statement`s][STMT] by validators. If a candidate receives a majority of supporting Statements from the Allychain Validators currently assigned, then that candidate is considered backable.
 
 ### On Startup
 
-* Fetch current validator set, validator -> parachain assignments from [`Runtime API`][RA] subsystem using [`RuntimeApiRequest::Validators`][RAM] and [`RuntimeApiRequest::ValidatorGroups`][RAM]
+* Fetch current validator set, validator -> allychain assignments from [`Runtime API`][RA] subsystem using [`RuntimeApiRequest::Validators`][RAM] and [`RuntimeApiRequest::ValidatorGroups`][RAM]
 * Determine if the node controls a key in the current validator set. Call this the local key if so.
-* If the local key exists, extract the parachain head and validation function from the [`Runtime API`][RA] for the parachain the local key is assigned to by issuing a [`RuntimeApiRequest::Validators`][RAM]
+* If the local key exists, extract the allychain head and validation function from the [`Runtime API`][RA] for the allychain the local key is assigned to by issuing a [`RuntimeApiRequest::Validators`][RAM]
 * Issue a [`RuntimeApiRequest::SigningContext`][RAM] message to get a context that will later be used upon signing.
 
 ### On Receiving New Candidate Backing Message
@@ -75,7 +75,7 @@ match msg {
   }
   CandidateBackingMessage::Second(hash, candidate) => {
     if candidate is unknown and in local assignment {
-      if spawn_validation_work(candidate, parachain head, validation function).await == Valid {
+      if spawn_validation_work(candidate, allychain head, validation function).await == Valid {
         send(DistributePoV(pov))
       }
     }
@@ -84,7 +84,7 @@ match msg {
     // count to the votes on this candidate
     if let Statement::Seconded(candidate) = statement {
       if candidate.parachain_id == our_assignment {
-        spawn_validation_work(candidate, parachain head, validation function)
+        spawn_validation_work(candidate, allychain head, validation function)
       }
     }
   }
@@ -99,7 +99,7 @@ On each incoming statement, [`DisputeCoordinatorMessage::ImportStatement`][DCM] 
 ### Validating Candidates.
 
 ```rust
-fn spawn_validation_work(candidate, parachain head, validation function) {
+fn spawn_validation_work(candidate, allychain head, validation function) {
   asynchronously {
     let pov = (fetch pov block).await
 

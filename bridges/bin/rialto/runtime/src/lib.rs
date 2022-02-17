@@ -209,7 +209,7 @@ impl frame_system::Config for Runtime {
 	type DbWeight = DbWeight;
 	/// The designated `SS58` prefix of this chain.
 	type SS58Prefix = SS58Prefix;
-	/// The set code logic, just the default since we're not a parachain.
+	/// The set code logic, just the default since we're not a allychain.
 	type OnSetCode = ();
 }
 

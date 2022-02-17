@@ -1,24 +1,24 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Various implementations for `ConvertOrigin`.
 
 use frame_support::traits::{EnsureOrigin, Get, GetBacking, OriginTrait};
 use frame_system::RawOrigin as SystemRawOrigin;
-use polkadot_parachain::primitives::IsSystem;
+use axia_parachain::primitives::IsSystem;
 use sp_std::{convert::TryInto, marker::PhantomData};
 use xcm::latest::{BodyId, BodyPart, Junction, Junctions::*, MultiLocation, NetworkId, OriginKind};
 use xcm_executor::traits::{Convert, ConvertOrigin};
@@ -72,7 +72,7 @@ impl<ParaId: IsSystem + From<u32>, Origin: OriginTrait> ConvertOrigin<Origin>
 		match (kind, origin.into()) {
 			(
 				OriginKind::Superuser,
-				MultiLocation { parents: 0, interior: X1(Junction::Parachain(id)) },
+				MultiLocation { parents: 0, interior: X1(Junction::Allychain(id)) },
 			) if ParaId::from(id).is_system() => Ok(Origin::root()),
 			(_, origin) => Err(origin),
 		}
@@ -90,7 +90,7 @@ impl<ParaId: IsSystem + From<u32>, Origin: OriginTrait> ConvertOrigin<Origin>
 		match (kind, origin.into()) {
 			(
 				OriginKind::Superuser,
-				MultiLocation { parents: 1, interior: X1(Junction::Parachain(id)) },
+				MultiLocation { parents: 1, interior: X1(Junction::Allychain(id)) },
 			) if ParaId::from(id).is_system() => Ok(Origin::root()),
 			(_, origin) => Err(origin),
 		}
@@ -108,7 +108,7 @@ impl<ParachainOrigin: From<u32>, Origin: From<ParachainOrigin>> ConvertOrigin<Or
 		match (kind, origin.into()) {
 			(
 				OriginKind::Native,
-				MultiLocation { parents: 0, interior: X1(Junction::Parachain(id)) },
+				MultiLocation { parents: 0, interior: X1(Junction::Allychain(id)) },
 			) => Ok(Origin::from(ParachainOrigin::from(id))),
 			(_, origin) => Err(origin),
 		}
@@ -128,7 +128,7 @@ impl<ParachainOrigin: From<u32>, Origin: From<ParachainOrigin>> ConvertOrigin<Or
 		match (kind, origin.into()) {
 			(
 				OriginKind::Native,
-				MultiLocation { parents: 1, interior: X1(Junction::Parachain(id)) },
+				MultiLocation { parents: 1, interior: X1(Junction::Allychain(id)) },
 			) => Ok(Origin::from(ParachainOrigin::from(id))),
 			(_, origin) => Err(origin),
 		}

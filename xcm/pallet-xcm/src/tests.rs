@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::{
 	mock::*, AssetTraps, CurrentMigration, Error, LatestVersionedMultiLocation, Queries,
@@ -22,7 +22,7 @@ use frame_support::{
 	assert_noop, assert_ok,
 	traits::{Currency, Hooks},
 };
-use polkadot_parachain::primitives::{AccountIdConversion, Id as ParaId};
+use axia_parachain::primitives::{AccountIdConversion, Id as ParaId};
 use sp_runtime::traits::{BlakeTwo256, Hash};
 use std::convert::TryInto;
 use xcm::prelude::*;
@@ -50,7 +50,7 @@ fn report_outcome_notify_works() {
 	};
 	let notify = Call::TestNotifier(call);
 	new_test_ext_with_balances(balances).execute_with(|| {
-		XcmPallet::report_outcome_notify(&mut message, Parachain(PARA_ID).into(), notify, 100)
+		XcmPallet::report_outcome_notify(&mut message, Allychain(PARA_ID).into(), notify, 100)
 			.unwrap();
 		assert_eq!(
 			message,
@@ -64,14 +64,14 @@ fn report_outcome_notify_works() {
 			])
 		);
 		let status = QueryStatus::Pending {
-			responder: MultiLocation::from(Parachain(PARA_ID)).into(),
+			responder: MultiLocation::from(Allychain(PARA_ID)).into(),
 			maybe_notify: Some((4, 2)),
 			timeout: 100,
 		};
 		assert_eq!(crate::Queries::<Test>::iter().collect::<Vec<_>>(), vec![(0, status)]);
 
 		let r = XcmExecutor::<XcmConfig>::execute_xcm(
-			Parachain(PARA_ID).into(),
+			Allychain(PARA_ID).into(),
 			Xcm(vec![QueryResponse {
 				query_id: 0,
 				response: Response::ExecutionResult(None),
@@ -84,7 +84,7 @@ fn report_outcome_notify_works() {
 			last_events(2),
 			vec![
 				Event::TestNotifier(pallet_test_notifier::Event::ResponseReceived(
-					Parachain(PARA_ID).into(),
+					Allychain(PARA_ID).into(),
 					0,
 					Response::ExecutionResult(None),
 				)),
@@ -105,7 +105,7 @@ fn report_outcome_works() {
 		beneficiary: sender.clone(),
 	}]);
 	new_test_ext_with_balances(balances).execute_with(|| {
-		XcmPallet::report_outcome(&mut message, Parachain(PARA_ID).into(), 100).unwrap();
+		XcmPallet::report_outcome(&mut message, Allychain(PARA_ID).into(), 100).unwrap();
 		assert_eq!(
 			message,
 			Xcm(vec![
@@ -118,14 +118,14 @@ fn report_outcome_works() {
 			])
 		);
 		let status = QueryStatus::Pending {
-			responder: MultiLocation::from(Parachain(PARA_ID)).into(),
+			responder: MultiLocation::from(Allychain(PARA_ID)).into(),
 			maybe_notify: None,
 			timeout: 100,
 		};
 		assert_eq!(crate::Queries::<Test>::iter().collect::<Vec<_>>(), vec![(0, status)]);
 
 		let r = XcmExecutor::<XcmConfig>::execute_xcm(
-			Parachain(PARA_ID).into(),
+			Allychain(PARA_ID).into(),
 			Xcm(vec![QueryResponse {
 				query_id: 0,
 				response: Response::ExecutionResult(None),
@@ -345,20 +345,20 @@ fn reserve_transfer_assets_works() {
 		assert_eq!(Balances::total_balance(&ALICE), INITIAL_BALANCE);
 		assert_ok!(XcmPallet::reserve_transfer_assets(
 			Origin::signed(ALICE),
-			Box::new(Parachain(PARA_ID).into().into()),
+			Box::new(Allychain(PARA_ID).into().into()),
 			Box::new(dest.clone().into()),
 			Box::new((Here, SEND_AMOUNT).into()),
 			0,
 		));
 		// Alice spent amount
 		assert_eq!(Balances::free_balance(ALICE), INITIAL_BALANCE - SEND_AMOUNT);
-		// Destination account (parachain account) has amount
+		// Destination account (allychain account) has amount
 		let para_acc: AccountId = ParaId::from(PARA_ID).into_account();
 		assert_eq!(Balances::free_balance(para_acc), INITIAL_BALANCE + SEND_AMOUNT);
 		assert_eq!(
 			sent_xcm(),
 			vec![(
-				Parachain(PARA_ID).into(),
+				Allychain(PARA_ID).into(),
 				Xcm(vec![
 					ReserveAssetDeposited((Parent, SEND_AMOUNT).into()),
 					ClearOrigin,
@@ -391,7 +391,7 @@ fn limited_reserve_transfer_assets_works() {
 		assert_eq!(Balances::total_balance(&ALICE), INITIAL_BALANCE);
 		assert_ok!(XcmPallet::limited_reserve_transfer_assets(
 			Origin::signed(ALICE),
-			Box::new(Parachain(PARA_ID).into().into()),
+			Box::new(Allychain(PARA_ID).into().into()),
 			Box::new(dest.clone().into()),
 			Box::new((Here, SEND_AMOUNT).into()),
 			0,
@@ -399,13 +399,13 @@ fn limited_reserve_transfer_assets_works() {
 		));
 		// Alice spent amount
 		assert_eq!(Balances::free_balance(ALICE), INITIAL_BALANCE - SEND_AMOUNT);
-		// Destination account (parachain account) has amount
+		// Destination account (allychain account) has amount
 		let para_acc: AccountId = ParaId::from(PARA_ID).into_account();
 		assert_eq!(Balances::free_balance(para_acc), INITIAL_BALANCE + SEND_AMOUNT);
 		assert_eq!(
 			sent_xcm(),
 			vec![(
-				Parachain(PARA_ID).into(),
+				Allychain(PARA_ID).into(),
 				Xcm(vec![
 					ReserveAssetDeposited((Parent, SEND_AMOUNT).into()),
 					ClearOrigin,
@@ -438,7 +438,7 @@ fn unlimited_reserve_transfer_assets_works() {
 		assert_eq!(Balances::total_balance(&ALICE), INITIAL_BALANCE);
 		assert_ok!(XcmPallet::limited_reserve_transfer_assets(
 			Origin::signed(ALICE),
-			Box::new(Parachain(PARA_ID).into().into()),
+			Box::new(Allychain(PARA_ID).into().into()),
 			Box::new(dest.clone().into()),
 			Box::new((Here, SEND_AMOUNT).into()),
 			0,
@@ -446,13 +446,13 @@ fn unlimited_reserve_transfer_assets_works() {
 		));
 		// Alice spent amount
 		assert_eq!(Balances::free_balance(ALICE), INITIAL_BALANCE - SEND_AMOUNT);
-		// Destination account (parachain account) has amount
+		// Destination account (allychain account) has amount
 		let para_acc: AccountId = ParaId::from(PARA_ID).into_account();
 		assert_eq!(Balances::free_balance(para_acc), INITIAL_BALANCE + SEND_AMOUNT);
 		assert_eq!(
 			sent_xcm(),
 			vec![(
-				Parachain(PARA_ID).into(),
+				Allychain(PARA_ID).into(),
 				Xcm(vec![
 					ReserveAssetDeposited((Parent, SEND_AMOUNT).into()),
 					ClearOrigin,
@@ -580,7 +580,7 @@ fn trapped_assets_can_be_claimed() {
 #[test]
 fn fake_latest_versioned_multilocation_works() {
 	use codec::Encode;
-	let remote = Parachain(1000).into();
+	let remote = Allychain(1000).into();
 	let versioned_remote = LatestVersionedMultiLocation(&remote);
 	assert_eq!(versioned_remote.encode(), VersionedMultiLocation::from(remote.clone()).encode());
 }
@@ -588,7 +588,7 @@ fn fake_latest_versioned_multilocation_works() {
 #[test]
 fn basic_subscription_works() {
 	new_test_ext_with_balances(vec![]).execute_with(|| {
-		let remote = Parachain(1000).into();
+		let remote = Allychain(1000).into();
 		assert_ok!(XcmPallet::force_subscribe_version_notify(
 			Origin::root(),
 			Box::new(remote.clone().into()),
@@ -631,13 +631,13 @@ fn basic_subscription_works() {
 #[test]
 fn subscriptions_increment_id() {
 	new_test_ext_with_balances(vec![]).execute_with(|| {
-		let remote = Parachain(1000).into();
+		let remote = Allychain(1000).into();
 		assert_ok!(XcmPallet::force_subscribe_version_notify(
 			Origin::root(),
 			Box::new(remote.clone().into()),
 		));
 
-		let remote2 = Parachain(1001).into();
+		let remote2 = Allychain(1001).into();
 		assert_ok!(XcmPallet::force_subscribe_version_notify(
 			Origin::root(),
 			Box::new(remote2.clone().into()),
@@ -662,7 +662,7 @@ fn subscriptions_increment_id() {
 #[test]
 fn double_subscription_fails() {
 	new_test_ext_with_balances(vec![]).execute_with(|| {
-		let remote = Parachain(1000).into();
+		let remote = Allychain(1000).into();
 		assert_ok!(XcmPallet::force_subscribe_version_notify(
 			Origin::root(),
 			Box::new(remote.clone().into()),
@@ -680,7 +680,7 @@ fn double_subscription_fails() {
 #[test]
 fn unsubscribe_works() {
 	new_test_ext_with_balances(vec![]).execute_with(|| {
-		let remote = Parachain(1000).into();
+		let remote = Allychain(1000).into();
 		assert_ok!(XcmPallet::force_subscribe_version_notify(
 			Origin::root(),
 			Box::new(remote.clone().into()),
@@ -710,13 +710,13 @@ fn unsubscribe_works() {
 	});
 }
 
-/// Parachain 1000 is asking us for a version subscription.
+/// Allychain 1000 is asking us for a version subscription.
 #[test]
 fn subscription_side_works() {
 	new_test_ext_with_balances(vec![]).execute_with(|| {
 		AdvertisedXcmVersion::set(1);
 
-		let remote = Parachain(1000).into();
+		let remote = Allychain(1000).into();
 		let weight = BaseXcmWeight::get();
 		let message = Xcm(vec![SubscribeVersion { query_id: 0, max_response_weight: 0 }]);
 		let r = XcmExecutor::<XcmConfig>::execute_xcm(remote.clone(), message, weight);
@@ -747,12 +747,12 @@ fn subscription_side_upgrades_work_with_notify() {
 		AdvertisedXcmVersion::set(1);
 
 		// An entry from a previous runtime with v0 XCM.
-		let v0_location = xcm::v0::MultiLocation::X1(xcm::v0::Junction::Parachain(1000));
+		let v0_location = xcm::v0::MultiLocation::X1(xcm::v0::Junction::Allychain(1000));
 		let v0_location = VersionedMultiLocation::from(v0_location);
 		VersionNotifyTargets::<Test>::insert(0, v0_location, (69, 0, 1));
-		let v1_location = Parachain(1001).into().versioned();
+		let v1_location = Allychain(1001).into().versioned();
 		VersionNotifyTargets::<Test>::insert(1, v1_location, (70, 0, 1));
-		let v2_location = Parachain(1002).into().versioned();
+		let v2_location = Allychain(1002).into().versioned();
 		VersionNotifyTargets::<Test>::insert(2, v2_location, (71, 0, 1));
 
 		// New version.
@@ -773,9 +773,9 @@ fn subscription_side_upgrades_work_with_notify() {
 		assert_eq!(
 			sent,
 			vec![
-				(Parachain(1000).into(), Xcm(vec![instr0])),
-				(Parachain(1001).into(), Xcm(vec![instr1])),
-				(Parachain(1002).into(), Xcm(vec![instr2])),
+				(Allychain(1000).into(), Xcm(vec![instr0])),
+				(Allychain(1001).into(), Xcm(vec![instr1])),
+				(Allychain(1002).into(), Xcm(vec![instr2])),
 			]
 		);
 
@@ -784,9 +784,9 @@ fn subscription_side_upgrades_work_with_notify() {
 		assert_eq!(
 			contents,
 			vec![
-				(2, Parachain(1000).into().versioned(), (69, 0, 2)),
-				(2, Parachain(1001).into().versioned(), (70, 0, 2)),
-				(2, Parachain(1002).into().versioned(), (71, 0, 2)),
+				(2, Allychain(1000).into().versioned(), (69, 0, 2)),
+				(2, Allychain(1001).into().versioned(), (70, 0, 2)),
+				(2, Allychain(1002).into().versioned(), (71, 0, 2)),
 			]
 		);
 	});
@@ -796,12 +796,12 @@ fn subscription_side_upgrades_work_with_notify() {
 fn subscription_side_upgrades_work_without_notify() {
 	new_test_ext_with_balances(vec![]).execute_with(|| {
 		// An entry from a previous runtime with v0 XCM.
-		let v0_location = xcm::v0::MultiLocation::X1(xcm::v0::Junction::Parachain(1000));
+		let v0_location = xcm::v0::MultiLocation::X1(xcm::v0::Junction::Allychain(1000));
 		let v0_location = VersionedMultiLocation::from(v0_location);
 		VersionNotifyTargets::<Test>::insert(0, v0_location, (69, 0, 2));
-		let v1_location = Parachain(1001).into().versioned();
+		let v1_location = Allychain(1001).into().versioned();
 		VersionNotifyTargets::<Test>::insert(1, v1_location, (70, 0, 2));
-		let v2_location = Parachain(1002).into().versioned();
+		let v2_location = Allychain(1002).into().versioned();
 		VersionNotifyTargets::<Test>::insert(2, v2_location, (71, 0, 2));
 
 		// A runtime upgrade which alters the version does send notifications.
@@ -813,9 +813,9 @@ fn subscription_side_upgrades_work_without_notify() {
 		assert_eq!(
 			contents,
 			vec![
-				(2, Parachain(1000).into().versioned(), (69, 0, 2)),
-				(2, Parachain(1001).into().versioned(), (70, 0, 2)),
-				(2, Parachain(1002).into().versioned(), (71, 0, 2)),
+				(2, Allychain(1000).into().versioned(), (69, 0, 2)),
+				(2, Allychain(1001).into().versioned(), (70, 0, 2)),
+				(2, Allychain(1002).into().versioned(), (71, 0, 2)),
 			]
 		);
 	});
@@ -824,7 +824,7 @@ fn subscription_side_upgrades_work_without_notify() {
 #[test]
 fn subscriber_side_subscription_works() {
 	new_test_ext_with_balances(vec![]).execute_with(|| {
-		let remote = Parachain(1000).into();
+		let remote = Allychain(1000).into();
 		assert_ok!(XcmPallet::force_subscribe_version_notify(
 			Origin::root(),
 			Box::new(remote.clone().into()),
@@ -865,8 +865,8 @@ fn subscriber_side_subscription_works() {
 #[test]
 fn auto_subscription_works() {
 	new_test_ext_with_balances(vec![]).execute_with(|| {
-		let remote0 = Parachain(1000).into();
-		let remote1 = Parachain(1001).into();
+		let remote0 = Allychain(1000).into();
+		let remote1 = Allychain(1001).into();
 
 		assert_ok!(XcmPallet::force_default_xcm_version(Origin::root(), Some(1)));
 
@@ -945,12 +945,12 @@ fn subscription_side_upgrades_work_with_multistage_notify() {
 		AdvertisedXcmVersion::set(1);
 
 		// An entry from a previous runtime with v0 XCM.
-		let v0_location = xcm::v0::MultiLocation::X1(xcm::v0::Junction::Parachain(1000));
+		let v0_location = xcm::v0::MultiLocation::X1(xcm::v0::Junction::Allychain(1000));
 		let v0_location = VersionedMultiLocation::from(v0_location);
 		VersionNotifyTargets::<Test>::insert(0, v0_location, (69, 0, 1));
-		let v1_location = Parachain(1001).into().versioned();
+		let v1_location = Allychain(1001).into().versioned();
 		VersionNotifyTargets::<Test>::insert(1, v1_location, (70, 0, 1));
-		let v2_location = Parachain(1002).into().versioned();
+		let v2_location = Allychain(1002).into().versioned();
 		VersionNotifyTargets::<Test>::insert(2, v2_location, (71, 0, 1));
 
 		// New version.
@@ -978,9 +978,9 @@ fn subscription_side_upgrades_work_with_multistage_notify() {
 		assert_eq!(
 			sent,
 			vec![
-				(Parachain(1000).into(), Xcm(vec![instr0])),
-				(Parachain(1001).into(), Xcm(vec![instr1])),
-				(Parachain(1002).into(), Xcm(vec![instr2])),
+				(Allychain(1000).into(), Xcm(vec![instr0])),
+				(Allychain(1001).into(), Xcm(vec![instr1])),
+				(Allychain(1002).into(), Xcm(vec![instr2])),
 			]
 		);
 
@@ -989,9 +989,9 @@ fn subscription_side_upgrades_work_with_multistage_notify() {
 		assert_eq!(
 			contents,
 			vec![
-				(2, Parachain(1000).into().versioned(), (69, 0, 2)),
-				(2, Parachain(1001).into().versioned(), (70, 0, 2)),
-				(2, Parachain(1002).into().versioned(), (71, 0, 2)),
+				(2, Allychain(1000).into().versioned(), (69, 0, 2)),
+				(2, Allychain(1001).into().versioned(), (70, 0, 2)),
+				(2, Allychain(1002).into().versioned(), (71, 0, 2)),
 			]
 		);
 	});

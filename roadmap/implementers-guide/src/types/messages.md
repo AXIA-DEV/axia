@@ -1,21 +1,21 @@
 # Message types
 
-Types of messages that are passed between parachains and the relay chain: UMP, DMP, XCMP.
+Types of messages that are passed between allychains and the relay chain: UMP, DMP, XCMP.
 
 There is also HRMP (Horizontally Relay-routed Message Passing) which provides the same functionality
 although with smaller scalability potential.
 
 ## Vertical Message Passing
 
-Types required for message passing between the relay-chain and a parachain.
+Types required for message passing between the relay-chain and a allychain.
 
 Actual contents of the messages is specified by the XCM standard.
 
 ```rust,ignore
-/// A message sent from a parachain to the relay-chain.
+/// A message sent from a allychain to the relay-chain.
 type UpwardMessage = Vec<u8>;
 
-/// A message sent from the relay-chain down to a parachain.
+/// A message sent from the relay-chain down to a allychain.
 ///
 /// The size of the message is limited by the `config.max_downward_message_size`
 /// parameter.
@@ -51,7 +51,7 @@ struct HrmpChannelId {
 
 ## Horizontal Message
 
-This is a message sent from a parachain to another parachain that travels through the relay chain.
+This is a message sent from a allychain to another allychain that travels through the relay chain.
 This message ends up in the recipient's mailbox. A size of a horizontal message is defined by its
 `data` payload.
 

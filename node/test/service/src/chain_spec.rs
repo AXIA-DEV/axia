@@ -1,27 +1,27 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Chain specifications for the test runtime.
 
 use babe_primitives::AuthorityId as BabeId;
 use grandpa::AuthorityId as GrandpaId;
 use pallet_staking::Forcing;
-use polkadot_primitives::v1::{AccountId, AssignmentId, ValidatorId, MAX_CODE_SIZE, MAX_POV_SIZE};
-use polkadot_service::chain_spec::{get_account_id_from_seed, get_from_seed, Extensions};
-use polkadot_test_runtime::{constants::currency::DOTS, BABE_GENESIS_EPOCH_CONFIG};
+use axia_primitives::v1::{AccountId, AssignmentId, ValidatorId, MAX_CODE_SIZE, MAX_POV_SIZE};
+use axia_service::chain_spec::{get_account_id_from_seed, get_from_seed, Extensions};
+use axia_test_runtime::{constants::currency::DOTS, BABE_GENESIS_EPOCH_CONFIG};
 use sc_chain_spec::{ChainSpec, ChainType};
 use sp_authority_discovery::AuthorityId as AuthorityDiscoveryId;
 use sp_core::sr25519;
@@ -29,17 +29,17 @@ use sp_runtime::Perbill;
 
 const DEFAULT_PROTOCOL_ID: &str = "dot";
 
-/// The `ChainSpec` parameterized for polkadot test runtime.
-pub type PolkadotChainSpec =
-	service::GenericChainSpec<polkadot_test_runtime::GenesisConfig, Extensions>;
+/// The `ChainSpec` parameterized for axia test runtime.
+pub type AxiaChainSpec =
+	service::GenericChainSpec<axia_test_runtime::GenesisConfig, Extensions>;
 
 /// Local testnet config (multivalidator Alice + Bob)
-pub fn polkadot_local_testnet_config() -> PolkadotChainSpec {
-	PolkadotChainSpec::from_genesis(
+pub fn axia_local_testnet_config() -> AxiaChainSpec {
+	AxiaChainSpec::from_genesis(
 		"Local Testnet",
 		"local_testnet",
 		ChainType::Local,
-		|| polkadot_local_testnet_genesis(),
+		|| axia_local_testnet_genesis(),
 		vec![],
 		None,
 		Some(DEFAULT_PROTOCOL_ID),
@@ -49,8 +49,8 @@ pub fn polkadot_local_testnet_config() -> PolkadotChainSpec {
 }
 
 /// Local testnet genesis config (multivalidator Alice + Bob)
-pub fn polkadot_local_testnet_genesis() -> polkadot_test_runtime::GenesisConfig {
-	polkadot_testnet_genesis(
+pub fn axia_local_testnet_genesis() -> axia_test_runtime::GenesisConfig {
+	axia_testnet_genesis(
 		vec![get_authority_keys_from_seed("Alice"), get_authority_keys_from_seed("Bob")],
 		get_account_id_from_seed::<sr25519::Public>("Alice"),
 		None,
@@ -89,8 +89,8 @@ fn testnet_accounts() -> Vec<AccountId> {
 	]
 }
 
-/// Helper function to create polkadot `GenesisConfig` for testing
-fn polkadot_testnet_genesis(
+/// Helper function to create axia `GenesisConfig` for testing
+fn axia_testnet_genesis(
 	initial_authorities: Vec<(
 		AccountId,
 		AccountId,
@@ -102,8 +102,8 @@ fn polkadot_testnet_genesis(
 	)>,
 	root_key: AccountId,
 	endowed_accounts: Option<Vec<AccountId>>,
-) -> polkadot_test_runtime::GenesisConfig {
-	use polkadot_test_runtime as runtime;
+) -> axia_test_runtime::GenesisConfig {
+	use axia_test_runtime as runtime;
 
 	let endowed_accounts: Vec<AccountId> = endowed_accounts.unwrap_or_else(testnet_accounts);
 
@@ -159,7 +159,7 @@ fn polkadot_testnet_genesis(
 		vesting: runtime::VestingConfig { vesting: vec![] },
 		sudo: runtime::SudoConfig { key: root_key },
 		configuration: runtime::ConfigurationConfig {
-			config: polkadot_runtime_parachains::configuration::HostConfiguration {
+			config: axia_runtime_parachains::configuration::HostConfiguration {
 				validation_upgrade_frequency: 10u32,
 				validation_upgrade_delay: 5,
 				code_retention_period: 1200,

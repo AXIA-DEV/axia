@@ -34,7 +34,7 @@ crypto/MS
 customizable/B
 Debian/M
 decodable/MS
-DOT/S
+AXC/S
 doesn
 dispatchables
 ed25519
@@ -66,7 +66,7 @@ io
 js
 keccak256/M
 keypair/MS
-KSM/S
+AXCT/S
 Lane1
 Lane2
 Lane3
@@ -99,11 +99,11 @@ oneshot/MS
 others'
 OutboundMessages
 parablock/MS
-parachain/MS
+allychain/MS
 parameterize/D
 pallet_message_lane
 plancks
-polkadot/MS
+axia/MS
 pov-block/MS
 PoA
 PoV/MS

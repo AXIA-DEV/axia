@@ -1,29 +1,29 @@
 // Copyright 2020-2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::*;
 use assert_matches::assert_matches;
 use bitvec::bitvec;
 use futures::executor;
 use maplit::hashmap;
-use polkadot_node_network_protocol::{our_view, view, ObservedRole};
-use polkadot_node_subsystem_test_helpers::make_subsystem_context;
-use polkadot_node_subsystem_util::TimeoutExt;
-use polkadot_primitives::v1::{AvailabilityBitfield, Signed, ValidatorIndex};
-use polkadot_subsystem::jaeger;
+use axia_node_network_protocol::{our_view, view, ObservedRole};
+use axia_node_subsystem_test_helpers::make_subsystem_context;
+use axia_node_subsystem_util::TimeoutExt;
+use axia_primitives::v1::{AvailabilityBitfield, Signed, ValidatorIndex};
+use axia_subsystem::jaeger;
 use sp_application_crypto::AppKey;
 use sp_keystore::{testing::KeyStore, SyncCryptoStore, SyncCryptoStorePtr};
 use std::{iter::FromIterator as _, sync::Arc, time::Duration};

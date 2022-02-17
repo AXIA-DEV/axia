@@ -1,28 +1,28 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Collator for the adder test parachain.
+//! Collator for the adder test allychain.
 
 use futures::channel::oneshot;
 use futures_timer::Delay;
 use parity_scale_codec::{Decode, Encode};
-use polkadot_node_primitives::{
+use axia_node_primitives::{
 	Collation, CollationResult, CollationSecondedSignal, CollatorFn, PoV, Statement,
 };
-use polkadot_primitives::v1::{CollatorId, CollatorPair};
+use axia_primitives::v1::{CollatorId, CollatorPair};
 use sp_core::{traits::SpawnNamed, Pair};
 use std::{
 	collections::HashMap,
@@ -55,7 +55,7 @@ fn calculate_head_and_state_for_number(number: u64) -> (HeadData, u64) {
 	(head, state)
 }
 
-/// The state of the adder parachain.
+/// The state of the adder allychain.
 struct State {
 	head_to_state: HashMap<Arc<HeadData>, u64>,
 	number_to_head: HashMap<u64, Arc<HeadData>>,
@@ -101,7 +101,7 @@ impl State {
 	}
 }
 
-/// The collator of the adder parachain.
+/// The collator of the adder allychain.
 pub struct Collator {
 	state: Arc<Mutex<State>>,
 	key: CollatorPair,
@@ -118,7 +118,7 @@ impl Collator {
 		}
 	}
 
-	/// Get the SCALE encoded genesis head of the adder parachain.
+	/// Get the SCALE encoded genesis head of the adder allychain.
 	pub fn genesis_head(&self) -> Vec<u8> {
 		self.state
 			.lock()
@@ -129,7 +129,7 @@ impl Collator {
 			.encode()
 	}
 
-	/// Get the validation code of the adder parachain.
+	/// Get the validation code of the adder allychain.
 	pub fn validation_code(&self) -> &[u8] {
 		test_parachain_adder::wasm_binary_unwrap()
 	}
@@ -146,7 +146,7 @@ impl Collator {
 
 	/// Create the collation function.
 	///
-	/// This collation function can be plugged into the overseer to generate collations for the adder parachain.
+	/// This collation function can be plugged into the overseer to generate collations for the adder allychain.
 	pub fn create_collation_function(
 		&self,
 		spawner: impl SpawnNamed + Clone + 'static,
@@ -180,7 +180,7 @@ impl Collator {
 				hrmp_watermark: validation_data.relay_parent_number,
 			};
 
-			let compressed_pov = polkadot_node_primitives::maybe_compress_pov(pov);
+			let compressed_pov = axia_node_primitives::maybe_compress_pov(pov);
 
 			let (result_sender, recv) = oneshot::channel::<CollationSecondedSignal>();
 			let seconded_collations = seconded_collations.clone();
@@ -224,7 +224,7 @@ impl Collator {
 		}
 	}
 
-	/// Wait until `seconded` collations of this collator are seconded by a parachain validator.
+	/// Wait until `seconded` collations of this collator are seconded by a allychain validator.
 	///
 	/// The internal counter isn't de-duplicating the collations when counting the number of seconded collations. This
 	/// means when one collation is seconded by X validators, we record X seconded messages.
@@ -245,8 +245,8 @@ mod tests {
 	use super::*;
 
 	use futures::executor::block_on;
-	use polkadot_parachain::primitives::{ValidationParams, ValidationResult};
-	use polkadot_primitives::v1::PersistedValidationData;
+	use axia_parachain::primitives::{ValidationParams, ValidationResult};
+	use axia_primitives::v1::PersistedValidationData;
 
 	#[test]
 	fn collator_works() {
@@ -270,7 +270,7 @@ mod tests {
 	}
 
 	fn validate_collation(collator: &Collator, parent_head: HeadData, collation: Collation) {
-		use polkadot_node_core_pvf::testing::validate_candidate;
+		use axia_node_core_pvf::testing::validate_candidate;
 
 		let ret_buf = validate_candidate(
 			collator.validation_code(),

@@ -1,24 +1,24 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Message types for the overseer and subsystems.
 //!
 //! These messages are intended to define the protocol by which different subsystems communicate with each
 //! other and signals that they receive from an overseer to coordinate their work.
-//! This is intended for use with the `polkadot-overseer` crate.
+//! This is intended for use with the `axia-overseer` crate.
 //!
 //! Subsystems' APIs are defined separately from their implementation, leading to easier mocking.
 
@@ -28,17 +28,17 @@ use thiserror::Error;
 
 pub use sc_network::IfDisconnected;
 
-use polkadot_node_network_protocol::{
+use axia_node_network_protocol::{
 	peer_set::PeerSet, request_response::Requests, v1 as protocol_v1, PeerId,
 	UnifiedReputationChange,
 };
-use polkadot_node_primitives::{
+use axia_node_primitives::{
 	approval::{BlockApprovalMeta, IndirectAssignmentCert, IndirectSignedApprovalVote},
 	AvailableData, BabeEpoch, BlockWeight, CandidateVotes, CollationGenerationConfig,
 	CollationSecondedSignal, DisputeMessage, ErasureChunk, PoV, SignedDisputeStatement,
 	SignedFullStatement, ValidationResult,
 };
-use polkadot_primitives::v1::{
+use axia_primitives::v1::{
 	AuthorityDiscoveryId, BackedCandidate, BlockNumber, CandidateDescriptor, CandidateEvent,
 	CandidateHash, CandidateIndex, CandidateReceipt, CollatorId, CommittedCandidateReceipt,
 	CoreState, GroupIndex, GroupRotationInfo, Hash, Header as BlockHeader, Id as ParaId,
@@ -47,7 +47,7 @@ use polkadot_primitives::v1::{
 	SignedAvailabilityBitfields, ValidationCode, ValidationCodeHash, ValidatorId, ValidatorIndex,
 	ValidatorSignature,
 };
-use polkadot_statement_table::v1::Misbehavior;
+use axia_statement_table::v1::Misbehavior;
 use std::{
 	collections::{BTreeMap, HashSet},
 	sync::Arc,
@@ -161,7 +161,7 @@ pub enum CollatorProtocolMessage {
 	CollateOn(ParaId),
 	/// Provide a collation to distribute to validators with an optional result sender.
 	///
-	/// The result sender should be informed when at least one parachain validator seconded the collation. It is also
+	/// The result sender should be informed when at least one allychain validator seconded the collation. It is also
 	/// completely okay to just drop the sender.
 	DistributeCollation(CandidateReceipt, PoV, Option<oneshot::Sender<CollationSecondedSignal>>),
 	/// Report a collator as having provided an invalid collation. This should lead to disconnect
@@ -614,7 +614,7 @@ pub enum RuntimeApiRequest {
 	/// Sends back `true` if the validation outputs pass all acceptance criteria checks.
 	CheckValidationOutputs(
 		ParaId,
-		polkadot_primitives::v1::CandidateCommitments,
+		axia_primitives::v1::CandidateCommitments,
 		RuntimeApiSender<bool>,
 	),
 	/// Get the session index that a child of the block will have.
@@ -626,7 +626,7 @@ pub enum RuntimeApiRequest {
 	/// Get validation code by its hash, either past, current or future code can be returned, as long as state is still
 	/// available.
 	ValidationCodeByHash(ValidationCodeHash, RuntimeApiSender<Option<ValidationCode>>),
-	/// Get a the candidate pending availability for a particular parachain by parachain / core index
+	/// Get a the candidate pending availability for a particular allychain by allychain / core index
 	CandidatePendingAvailability(ParaId, RuntimeApiSender<Option<CommittedCandidateReceipt>>),
 	/// Get all events concerning candidates (backing, inclusion, time-out) in the parent of
 	/// the block in whose state this request is executed.
@@ -644,7 +644,7 @@ pub enum RuntimeApiRequest {
 	/// Get information about the BABE epoch the block was included in.
 	CurrentBabeEpoch(RuntimeApiSender<BabeEpoch>),
 	/// Get all disputes in relation to a relay parent.
-	FetchOnChainVotes(RuntimeApiSender<Option<polkadot_primitives::v1::ScrapedOnChainVotes>>),
+	FetchOnChainVotes(RuntimeApiSender<Option<axia_primitives::v1::ScrapedOnChainVotes>>),
 }
 
 /// A message to the Runtime API subsystem.

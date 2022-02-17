@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::*;
 use futures::{channel::oneshot, executor, stream::BoxStream};
@@ -28,13 +28,13 @@ use std::{
 
 use sc_network::{Event as NetworkEvent, IfDisconnected};
 
-use polkadot_node_network_protocol::{request_response::outgoing::Requests, view, ObservedRole};
-use polkadot_node_subsystem_test_helpers::{
+use axia_node_network_protocol::{request_response::outgoing::Requests, view, ObservedRole};
+use axia_node_subsystem_test_helpers::{
 	SingleItemSink, SingleItemStream, TestSubsystemContextHandle,
 };
-use polkadot_node_subsystem_util::metered;
-use polkadot_primitives::v1::AuthorityDiscoveryId;
-use polkadot_subsystem::{
+use axia_node_subsystem_util::metered;
+use axia_primitives::v1::AuthorityDiscoveryId;
+use axia_subsystem::{
 	jaeger,
 	messages::{
 		ApprovalDistributionMessage, BitfieldDistributionMessage, GossipSupportMessage,
@@ -75,7 +75,7 @@ struct TestNetworkHandle {
 }
 
 fn new_test_network() -> (TestNetwork, TestNetworkHandle, TestAuthorityDiscovery) {
-	let (net_tx, net_rx) = polkadot_node_subsystem_test_helpers::single_item_sink();
+	let (net_tx, net_rx) = axia_node_subsystem_test_helpers::single_item_sink();
 	let (action_tx, action_rx) = metered::unbounded();
 
 	(
@@ -278,7 +278,7 @@ fn test_harness<T: Future<Output = VirtualOverseer>>(
 	let pool = sp_core::testing::TaskExecutor::new();
 	let (mut network, network_handle, discovery) = new_test_network();
 	let (context, virtual_overseer) =
-		polkadot_node_subsystem_test_helpers::make_subsystem_context(pool);
+		axia_node_subsystem_test_helpers::make_subsystem_context(pool);
 	let network_stream = network.event_stream();
 
 	let bridge = NetworkBridge {

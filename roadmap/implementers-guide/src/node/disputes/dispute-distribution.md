@@ -30,7 +30,7 @@ This design should result in a protocol that is:
 
 #### Disputes
 
-Protocol: `"/polkadot/send_dispute/1"`
+Protocol: `"/axia/send_dispute/1"`
 
 Request:
 
@@ -86,7 +86,7 @@ enum DisputeResponse {
 
 #### Vote Recovery
 
-Protocol: `"/polkadot/req_votes/1"`
+Protocol: `"/axia/req_votes/1"`
 
 ```rust
 struct IHaveVotesRequest {
@@ -151,15 +151,15 @@ Note, that we rely on the coordinator to check availability for spam protection
 
 Starting and participating in a dispute are pretty similar from the perspective
 of dispute distribution. Once we receive a `SendDispute` message we try to make
-sure to get the data out. We keep track of all the parachain validators that
-should see the message, which are all the parachain validators of the session
+sure to get the data out. We keep track of all the allychain validators that
+should see the message, which are all the allychain validators of the session
 where the dispute happened as they will want to participate in the dispute.  In
 addition we also need to get the votes out to all authorities of the current
 session (which might be the same or not and may change during the dispute).
 Those authorities will not participate in the dispute, but need to see the
 statements so they can include them in blocks.
 
-We keep track of connected parachain validators and authorities and will issue
+We keep track of connected allychain validators and authorities and will issue
 warnings in the logs if connected nodes are less than two thirds of the
 corresponding sets. We also only consider a message transmitted, once we
 received a confirmation message. If not, we will keep retrying getting that

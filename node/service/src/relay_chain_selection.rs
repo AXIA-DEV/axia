@@ -1,22 +1,22 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! A [`SelectChain`] implementation designed for relay chains.
 //!
-//! This uses information about parachains to inform GRANDPA and BABE
+//! This uses information about allychains to inform GRANDPA and BABE
 //! about blocks which are safe to build on and blocks which are safe to
 //! finalize.
 //!
@@ -31,19 +31,19 @@
 //! leaf returned from the chain selection subsystem by calling into other
 //! subsystems which yield information about approvals and disputes.
 //!
-//! [chain-selection-guide]: https://w3f.github.io/parachain-implementers-guide/protocol-chain-selection.html
+//! [chain-selection-guide]: https://w3f.github.io/allychain-implementers-guide/protocol-chain-selection.html
 
 #![cfg(feature = "full-node")]
 
 use super::{HeaderProvider, HeaderProviderProvider};
 use consensus_common::{Error as ConsensusError, SelectChain};
 use futures::channel::oneshot;
-use polkadot_node_subsystem_util::metrics::{self, prometheus};
-use polkadot_overseer::{AllMessages, Handle};
-use polkadot_primitives::v1::{
-	Block as PolkadotBlock, BlockNumber, Hash, Header as PolkadotHeader,
+use axia_node_subsystem_util::metrics::{self, prometheus};
+use axia_overseer::{AllMessages, Handle};
+use axia_primitives::v1::{
+	Block as AxiaBlock, BlockNumber, Hash, Header as AxiaHeader,
 };
-use polkadot_subsystem::messages::{
+use axia_subsystem::messages::{
 	ApprovalVotingMessage, ChainSelectionMessage, DisputeCoordinatorMessage,
 	HighestApprovedAncestorBlock,
 };
@@ -53,9 +53,9 @@ use std::sync::Arc;
 /// or disputes.
 ///
 /// This is a safety net that should be removed at some point in the future.
-const MAX_FINALITY_LAG: polkadot_primitives::v1::BlockNumber = 50;
+const MAX_FINALITY_LAG: axia_primitives::v1::BlockNumber = 50;
 
-const LOG_TARGET: &str = "parachain::chain-selection";
+const LOG_TARGET: &str = "allychain::chain-selection";
 
 /// Prometheus metrics for chain-selection.
 #[derive(Debug, Default, Clone)]
@@ -109,15 +109,15 @@ impl Metrics {
 }
 
 /// A chain-selection implementation which provides safety for relay chains.
-pub struct SelectRelayChain<B: sc_client_api::Backend<PolkadotBlock>> {
+pub struct SelectRelayChain<B: sc_client_api::Backend<AxiaBlock>> {
 	is_relay_chain: bool,
-	longest_chain: sc_consensus::LongestChain<B, PolkadotBlock>,
+	longest_chain: sc_consensus::LongestChain<B, AxiaBlock>,
 	selection: SelectRelayChainInner<B, Handle>,
 }
 
 impl<B> Clone for SelectRelayChain<B>
 where
-	B: sc_client_api::Backend<PolkadotBlock>,
+	B: sc_client_api::Backend<AxiaBlock>,
 	SelectRelayChainInner<B, Handle>: Clone,
 {
 	fn clone(&self) -> Self {
@@ -131,7 +131,7 @@ where
 
 impl<B> SelectRelayChain<B>
 where
-	B: sc_client_api::Backend<PolkadotBlock> + 'static,
+	B: sc_client_api::Backend<AxiaBlock> + 'static,
 {
 	/// Create a new [`SelectRelayChain`] wrapping the given chain backend
 	/// and a handle to the overseer.
@@ -149,15 +149,15 @@ where
 	}
 
 	/// Allow access to the inner chain, for usage during the node setup.
-	pub fn as_longest_chain(&self) -> &sc_consensus::LongestChain<B, PolkadotBlock> {
+	pub fn as_longest_chain(&self) -> &sc_consensus::LongestChain<B, AxiaBlock> {
 		&self.longest_chain
 	}
 }
 
 #[async_trait::async_trait]
-impl<B> SelectChain<PolkadotBlock> for SelectRelayChain<B>
+impl<B> SelectChain<AxiaBlock> for SelectRelayChain<B>
 where
-	B: sc_client_api::Backend<PolkadotBlock> + 'static,
+	B: sc_client_api::Backend<AxiaBlock> + 'static,
 {
 	async fn leaves(&self) -> Result<Vec<Hash>, ConsensusError> {
 		if !self.is_relay_chain {
@@ -167,7 +167,7 @@ where
 		self.selection.leaves().await
 	}
 
-	async fn best_chain(&self) -> Result<PolkadotHeader, ConsensusError> {
+	async fn best_chain(&self) -> Result<AxiaHeader, ConsensusError> {
 		if !self.is_relay_chain {
 			return self.longest_chain.best_chain().await
 		}
@@ -201,7 +201,7 @@ pub struct SelectRelayChainInner<B, OH> {
 
 impl<B, OH> SelectRelayChainInner<B, OH>
 where
-	B: HeaderProviderProvider<PolkadotBlock>,
+	B: HeaderProviderProvider<AxiaBlock>,
 	OH: OverseerHandleT,
 {
 	/// Create a new [`SelectRelayChainInner`] wrapping the given chain backend
@@ -210,7 +210,7 @@ where
 		SelectRelayChainInner { backend, overseer, metrics }
 	}
 
-	fn block_header(&self, hash: Hash) -> Result<PolkadotHeader, ConsensusError> {
+	fn block_header(&self, hash: Hash) -> Result<AxiaHeader, ConsensusError> {
 		match HeaderProvider::header(self.backend.header_provider(), hash) {
 			Ok(Some(header)) => Ok(header),
 			Ok(None) =>
@@ -237,7 +237,7 @@ where
 
 impl<B, OH> Clone for SelectRelayChainInner<B, OH>
 where
-	B: HeaderProviderProvider<PolkadotBlock> + Send + Sync,
+	B: HeaderProviderProvider<AxiaBlock> + Send + Sync,
 	OH: OverseerHandleT,
 {
 	fn clone(&self) -> Self {
@@ -276,7 +276,7 @@ impl OverseerHandleT for Handle {
 
 impl<B, OH> SelectRelayChainInner<B, OH>
 where
-	B: HeaderProviderProvider<PolkadotBlock>,
+	B: HeaderProviderProvider<AxiaBlock>,
 	OH: OverseerHandleT,
 {
 	/// Get all leaves of the chain, i.e. block hashes that are suitable to
@@ -300,7 +300,7 @@ where
 	}
 
 	/// Among all leaves, pick the one which is the best chain to build upon.
-	async fn best_chain(&self) -> Result<PolkadotHeader, ConsensusError> {
+	async fn best_chain(&self) -> Result<AxiaHeader, ConsensusError> {
 		// The Chain Selection subsystem is supposed to treat the finalized
 		// block as the best leaf in the case that there are no viable
 		// leaves, so this should not happen in practice.

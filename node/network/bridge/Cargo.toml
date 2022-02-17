@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-network-bridge"
+name = "axia-network-bridge"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -8,19 +8,19 @@ edition = "2018"
 async-trait = "0.1.51"
 futures = "0.3.17"
 tracing = "0.1.29"
-polkadot-primitives = { path = "../../../primitives" }
+axia-primitives = { path = "../../../primitives" }
 parity-scale-codec = { version = "2.3.1", default-features = false, features = ["derive"] }
 sc-network = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-consensus = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
-polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../../subsystem" }
-polkadot-overseer = { path = "../../overseer" }
-polkadot-node-network-protocol = { path = "../protocol" }
-polkadot-node-subsystem-util = { path = "../../subsystem-util"}
+axia-subsystem = { package = "axia-node-subsystem", path = "../../subsystem" }
+axia-overseer = { path = "../../overseer" }
+axia-node-network-protocol = { path = "../protocol" }
+axia-node-subsystem-util = { path = "../../subsystem-util"}
 parking_lot = "0.11.1"
 
 [dev-dependencies]
 assert_matches = "1.4.0"
-polkadot-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
+axia-node-subsystem-test-helpers = { path = "../../subsystem-test-helpers" }
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-keyring = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 futures-timer = "3"

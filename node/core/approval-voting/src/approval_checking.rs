@@ -1,24 +1,24 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Utilities for checking whether a candidate has been approved under a given block.
 
 use bitvec::{order::Lsb0 as BitOrderLsb0, slice::BitSlice};
-use polkadot_node_primitives::approval::DelayTranche;
-use polkadot_primitives::v1::ValidatorIndex;
+use axia_node_primitives::approval::DelayTranche;
+use axia_primitives::v1::ValidatorIndex;
 
 use crate::{
 	persisted_entries::{ApprovalEntry, CandidateEntry, TrancheEntry},
@@ -459,7 +459,7 @@ mod tests {
 	use super::*;
 
 	use bitvec::{bitvec, order::Lsb0 as BitOrderLsb0};
-	use polkadot_primitives::v1::GroupIndex;
+	use axia_primitives::v1::GroupIndex;
 
 	use crate::approval_db;
 

@@ -1,5 +1,5 @@
 [package]
-name = "relay-polkadot-client"
+name = "relay-axia-client"
 version = "0.1.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -13,7 +13,7 @@ relay-utils = { path = "../utils" }
 
 # Bridge dependencies
 
-bp-polkadot = { path = "../../primitives/chain-polkadot" }
+bp-axia = { path = "../../primitives/chain-axia" }
 
 # Axlib Dependencies
 

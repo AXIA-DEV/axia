@@ -1,20 +1,20 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! The Rococo runtime for v1 parachains.
+//! The Betanet runtime for v1 allychains.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.
@@ -78,7 +78,7 @@ use runtime_parachains::{
 
 pub use pallet_balances::Call as BalancesCall;
 
-use polkadot_parachain::primitives::Id as ParaId;
+use axia_parachain::primitives::Id as ParaId;
 
 use constants::{currency::*, fee::*, time::*};
 use frame_support::traits::InstanceFilter;
@@ -101,10 +101,10 @@ mod weights;
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
-/// Runtime version (Rococo).
+/// Runtime version (Betanet).
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("rococo"),
-	impl_name: create_runtime_str!("parity-rococo-v1.8"),
+	spec_name: create_runtime_str!("betanet"),
+	impl_name: create_runtime_str!("parity-betanet-v1.8"),
 	authoring_version: 0,
 	spec_version: 9106,
 	impl_version: 0,
@@ -200,7 +200,7 @@ construct_runtime! {
 		ImOnline: pallet_im_online::{Pallet, Call, Storage, Event<T>, ValidateUnsigned, Config<T>},
 		AuthorityDiscovery: pallet_authority_discovery::{Pallet, Config},
 
-		// Parachains modules.
+		// Allychains modules.
 		ParachainsOrigin: parachains_origin::{Pallet, Origin},
 		Configuration: parachains_configuration::{Pallet, Call, Storage, Config<T>},
 		ParasShared: parachains_shared::{Pallet, Call, Storage},
@@ -215,7 +215,7 @@ construct_runtime! {
 		ParaSessionInfo: parachains_session_info::{Pallet, Storage},
 		ParasDisputes: parachains_disputes::{Pallet, Call, Storage, Event<T>},
 
-		// Parachain Onboarding Pallets
+		// Allychain Onboarding Pallets
 		Registrar: paras_registrar::{Pallet, Call, Storage, Event<T>, Config},
 		Auctions: auctions::{Pallet, Call, Storage, Event<T>},
 		Crowdloan: crowdloan::{Pallet, Call, Storage, Event<T>},
@@ -231,7 +231,7 @@ construct_runtime! {
 		MmrLeaf: pallet_beefy_mmr::{Pallet, Storage},
 
 		// It might seem strange that we add both sides of the bridge to the same runtime. We do this because this
-		// runtime as shared by both the Rococo and Wococo chains. When running as Rococo we only use
+		// runtime as shared by both the Betanet and Wococo chains. When running as Betanet we only use
 		// `BridgeWococoGrandpa`, and vice versa.
 		// BridgeRococoGrandpa: pallet_bridge_grandpa::{Pallet, Call, Storage, Config<T>} = 40,
 		// BridgeWococoGrandpa: pallet_bridge_grandpa::<Instance1>::{Pallet, Call, Storage, Config<T>} = 41,
@@ -240,7 +240,7 @@ construct_runtime! {
 		ValidatorManager: validator_manager::{Pallet, Call, Storage, Event<T>},
 
 		// Bridge messages support. The same story as with the bridge grandpa pallet above ^^^ - when we're
-		// running as Rococo we only use `BridgeWococoMessages`/`BridgeWococoMessagesDispatch`, and vice versa.
+		// running as Betanet we only use `BridgeWococoMessages`/`BridgeWococoMessagesDispatch`, and vice versa.
 		// BridgeRococoMessages: pallet_bridge_messages::{Pallet, Call, Storage, Event<T>, Config<T>} = 43,
 		// BridgeWococoMessages: pallet_bridge_messages::<Instance1>::{Pallet, Call, Storage, Event<T>, Config<T>} = 44,
 		// BridgeRococoMessagesDispatch: pallet_bridge_dispatch::{Pallet, Event<T>} = 45,
@@ -600,7 +600,7 @@ impl parachains_paras::Config for Runtime {
 
 parameter_types! {
 	pub const RocLocation: MultiLocation = Here.into();
-	pub const RococoNetwork: NetworkId = NetworkId::Polkadot;
+	pub const RococoNetwork: NetworkId = NetworkId::Axia;
 	pub const Ancestry: MultiLocation = Here.into();
 	pub CheckAccount: AccountId = XcmPallet::check_account();
 }
@@ -635,17 +635,17 @@ parameter_types! {
 /// The XCM router. When we want to send an XCM message, we use this type. It amalgamates all of our
 /// individual routers.
 pub type XcmRouter = (
-	// Only one router so far - use DMP to communicate with child parachains.
+	// Only one router so far - use DMP to communicate with child allychains.
 	xcm_sender::ChildParachainRouter<Runtime, XcmPallet>,
 );
 
 parameter_types! {
-	pub const Rococo: MultiAssetFilter = Wild(AllOf { fun: WildFungible, id: Concrete(RocLocation::get()) });
-	pub const RococoForTick: (MultiAssetFilter, MultiLocation) = (Rococo::get(), Parachain(100).into());
-	pub const RococoForTrick: (MultiAssetFilter, MultiLocation) = (Rococo::get(), Parachain(110).into());
-	pub const RococoForTrack: (MultiAssetFilter, MultiLocation) = (Rococo::get(), Parachain(120).into());
-	pub const RococoForStatemint: (MultiAssetFilter, MultiLocation) = (Rococo::get(), Parachain(1001).into());
-	pub const RococoForCanvas: (MultiAssetFilter, MultiLocation) = (Rococo::get(), Parachain(1002).into());
+	pub const Betanet: MultiAssetFilter = Wild(AllOf { fun: WildFungible, id: Concrete(RocLocation::get()) });
+	pub const RococoForTick: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(100).into());
+	pub const RococoForTrick: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(110).into());
+	pub const RococoForTrack: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(120).into());
+	pub const RococoForStatemint: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(1001).into());
+	pub const RococoForCanvas: (MultiAssetFilter, MultiLocation) = (Betanet::get(), Allychain(1002).into());
 	pub const MaxInstructions: u32 = 100;
 }
 pub type TrustedTeleporters = (
@@ -659,11 +659,11 @@ pub type TrustedTeleporters = (
 parameter_types! {
 	pub AllowUnpaidFrom: Vec<MultiLocation> =
 		vec![
-			Parachain(100).into(),
-			Parachain(110).into(),
-			Parachain(120).into(),
-			Parachain(1001).into(),
-			Parachain(1002).into(),
+			Allychain(100).into(),
+			Allychain(110).into(),
+			Allychain(120).into(),
+			Allychain(1001).into(),
+			Allychain(1002).into(),
 		];
 }
 
@@ -671,7 +671,7 @@ use xcm_builder::{AllowTopLevelPaidExecutionFrom, AllowUnpaidExecutionFrom, Take
 pub type Barrier = (
 	TakeWeightCredit,
 	AllowTopLevelPaidExecutionFrom<Everything>,
-	AllowUnpaidExecutionFrom<IsInVec<AllowUnpaidFrom>>, // <- Trusted parachains get free execution
+	AllowUnpaidExecutionFrom<IsInVec<AllowUnpaidFrom>>, // <- Trusted allychains get free execution
 	// Expected responses are OK.
 	AllowKnownQueryResponses<XcmPallet>,
 	// Subscriptions for version tracking are OK.
@@ -798,7 +798,7 @@ impl pallet_mmr::Config for Runtime {
 pub struct ParasProvider;
 impl pallet_beefy_mmr::ParachainHeadsProvider for ParasProvider {
 	fn parachain_heads() -> Vec<(u32, Vec<u8>)> {
-		Paras::parachains()
+		Paras::allychains()
 			.into_iter()
 			.filter_map(|id| Paras::para_head(&id).map(|head| (id.into(), head.0)))
 			.collect()
@@ -844,7 +844,7 @@ impl pallet_beefy_mmr::Config for Runtime {
 
 // pub type RococoGrandpaInstance = ();
 // impl pallet_bridge_grandpa::Config for Runtime {
-// 	type BridgedChain = bp_rococo::Rococo;
+// 	type BridgedChain = bp_rococo::Betanet;
 // 	type MaxRequests = MaxRequests;
 // 	type HeadersToKeep = HeadersToKeep;
 
@@ -860,7 +860,7 @@ impl pallet_beefy_mmr::Config for Runtime {
 // 	type WeightInfo = pallet_bridge_grandpa::weights::RialtoWeight<Runtime>;
 // }
 
-// // Instance that is "deployed" at Wococo chain. Responsible for dispatching Rococo -> Wococo messages.
+// // Instance that is "deployed" at Wococo chain. Responsible for dispatching Betanet -> Wococo messages.
 // pub type AtWococoFromRococoMessagesDispatch = pallet_bridge_dispatch::DefaultInstance;
 // impl pallet_bridge_dispatch::Config<AtWococoFromRococoMessagesDispatch> for Runtime {
 // 	type Event = Event;
@@ -874,7 +874,7 @@ impl pallet_beefy_mmr::Config for Runtime {
 // 	type AccountIdConverter = bp_rococo::AccountIdConverter;
 // }
 
-// // Instance that is "deployed" at Rococo chain. Responsible for dispatching Wococo -> Rococo messages.
+// // Instance that is "deployed" at Betanet chain. Responsible for dispatching Wococo -> Betanet messages.
 // pub type AtRococoFromWococoMessagesDispatch = pallet_bridge_dispatch::Instance1;
 // impl pallet_bridge_dispatch::Config<AtRococoFromWococoMessagesDispatch> for Runtime {
 // 	type Event = Event;
@@ -897,8 +897,8 @@ impl pallet_beefy_mmr::Config for Runtime {
 // 	pub const RootAccountForPayments: Option<AccountId> = None;
 // }
 
-// // Instance that is "deployed" at Wococo chain. Responsible for sending Wococo -> Rococo messages
-// // and receiving Rococo -> Wococo messages.
+// // Instance that is "deployed" at Wococo chain. Responsible for sending Wococo -> Betanet messages
+// // and receiving Betanet -> Wococo messages.
 // pub type AtWococoWithRococoMessagesInstance = pallet_bridge_messages::DefaultInstance;
 // impl pallet_bridge_messages::Config<AtWococoWithRococoMessagesInstance> for Runtime {
 // 	type Event = Event;
@@ -932,8 +932,8 @@ impl pallet_beefy_mmr::Config for Runtime {
 // 	type MessageDispatch = crate::bridge_messages::FromRococoMessageDispatch;
 // }
 
-// // Instance that is "deployed" at Rococo chain. Responsible for sending Rococo -> Wococo messages
-// // and receiving Wococo -> Rococo messages.
+// // Instance that is "deployed" at Betanet chain. Responsible for sending Betanet -> Wococo messages
+// // and receiving Wococo -> Betanet messages.
 // pub type AtRococoWithWococoMessagesInstance = pallet_bridge_messages::Instance1;
 // impl pallet_bridge_messages::Config<AtRococoWithWococoMessagesInstance> for Runtime {
 // 	type Event = Event;
@@ -1338,7 +1338,7 @@ sp_api::impl_runtime_apis! {
 			// probability of a slot being empty), is done in accordance to the
 			// slot duration and expected target block time, for safely
 			// resisting network delays of maximum two seconds.
-			// <https://research.web3.foundation/en/latest/polkadot/BABE/Babe/#6-practical-results>
+			// <https://research.web3.foundation/en/latest/axia/BABE/Babe/#6-practical-results>
 			babe_primitives::BabeGenesisConfiguration {
 				slot_duration: Babe::slot_duration(),
 				epoch_length: EpochDurationInBlocks::get().into(),

@@ -1,22 +1,22 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! The paras pallet is responsible for storing data on parachains and parathreads.
+//! The paras pallet is responsible for storing data on allychains and parathreads.
 //!
-//! It tracks which paras are parachains, what their current head data is in
+//! It tracks which paras are allychains, what their current head data is in
 //! this fork of the relay chain, what their validation code is, and what their past and upcoming
 //! validation code is.
 //!
@@ -60,7 +60,7 @@ pub struct ReplacementTimes<N> {
 	activated_at: N,
 }
 
-/// Metadata used to track previous parachain validation code that we keep in
+/// Metadata used to track previous allychain validation code that we keep in
 /// the state.
 #[derive(Default, Encode, Decode, TypeInfo)]
 #[cfg_attr(test, derive(Debug, Clone, PartialEq))]
@@ -88,48 +88,48 @@ enum UseCodeAt<N> {
 
 /// The possible states of a para, to take into account delayed lifecycle changes.
 ///
-/// If the para is in a "transition state", it is expected that the parachain is
+/// If the para is in a "transition state", it is expected that the allychain is
 /// queued in the `ActionsQueue` to transition it into a stable state. Its lifecycle
 /// state will be used to determine the state transition to apply to the para.
 #[derive(PartialEq, Eq, Clone, Encode, Decode, RuntimeDebug, TypeInfo)]
 pub enum ParaLifecycle {
-	/// Para is new and is onboarding as a Parathread or Parachain.
+	/// Para is new and is onboarding as a Parathread or Allychain.
 	Onboarding,
 	/// Para is a Parathread.
 	Parathread,
-	/// Para is a Parachain.
-	Parachain,
-	/// Para is a Parathread which is upgrading to a Parachain.
+	/// Para is a Allychain.
+	Allychain,
+	/// Para is a Parathread which is upgrading to a Allychain.
 	UpgradingParathread,
-	/// Para is a Parachain which is downgrading to a Parathread.
+	/// Para is a Allychain which is downgrading to a Parathread.
 	DowngradingParachain,
 	/// Parathread is queued to be offboarded.
 	OffboardingParathread,
-	/// Parachain is queued to be offboarded.
+	/// Allychain is queued to be offboarded.
 	OffboardingParachain,
 }
 
 impl ParaLifecycle {
-	/// Returns true if parachain is currently onboarding. To learn if the
-	/// parachain is onboarding as a parachain or parathread, look at the
+	/// Returns true if allychain is currently onboarding. To learn if the
+	/// allychain is onboarding as a allychain or parathread, look at the
 	/// `UpcomingGenesis` storage item.
 	pub fn is_onboarding(&self) -> bool {
 		matches!(self, ParaLifecycle::Onboarding)
 	}
 
 	/// Returns true if para is in a stable state, i.e. it is currently
-	/// a parachain or parathread, and not in any transition state.
+	/// a allychain or parathread, and not in any transition state.
 	pub fn is_stable(&self) -> bool {
-		matches!(self, ParaLifecycle::Parathread | ParaLifecycle::Parachain)
+		matches!(self, ParaLifecycle::Parathread | ParaLifecycle::Allychain)
 	}
 
-	/// Returns true if para is currently treated as a parachain.
+	/// Returns true if para is currently treated as a allychain.
 	/// This also includes transitioning states, so you may want to combine
-	/// this check with `is_stable` if you specifically want `Paralifecycle::Parachain`.
+	/// this check with `is_stable` if you specifically want `Paralifecycle::Allychain`.
 	pub fn is_parachain(&self) -> bool {
 		matches!(
 			self,
-			ParaLifecycle::Parachain |
+			ParaLifecycle::Allychain |
 				ParaLifecycle::DowngradingParachain |
 				ParaLifecycle::OffboardingParachain
 		)
@@ -266,8 +266,8 @@ pub struct ParaGenesisArgs {
 	pub genesis_head: HeadData,
 	/// The initial validation code to use.
 	pub validation_code: ValidationCode,
-	/// True if parachain, false if parathread.
-	pub parachain: bool,
+	/// True if allychain, false if parathread.
+	pub allychain: bool,
 }
 
 pub trait WeightInfo {
@@ -341,16 +341,16 @@ pub mod pallet {
 		CannotOnboard,
 		/// Para cannot be offboarded at this time.
 		CannotOffboard,
-		/// Para cannot be upgraded to a parachain.
+		/// Para cannot be upgraded to a allychain.
 		CannotUpgrade,
 		/// Para cannot be downgraded to a parathread.
 		CannotDowngrade,
 	}
 
-	/// All parachains. Ordered ascending by `ParaId`. Parathreads are not included.
+	/// All allychains. Ordered ascending by `ParaId`. Parathreads are not included.
 	#[pallet::storage]
-	#[pallet::getter(fn parachains)]
-	pub(super) type Parachains<T: Config> = StorageValue<_, Vec<ParaId>, ValueQuery>;
+	#[pallet::getter(fn allychains)]
+	pub(super) type Allychains<T: Config> = StorageValue<_, Vec<ParaId>, ValueQuery>;
 
 	/// The current lifecycle of a all known Para IDs.
 	#[pallet::storage]
@@ -376,7 +376,7 @@ pub mod pallet {
 	pub(super) type PastCodeHash<T: Config> =
 		StorageMap<_, Twox64Concat, (ParaId, T::BlockNumber), ValidationCodeHash>;
 
-	/// Past code of parachains. The parachains themselves may not be registered anymore,
+	/// Past code of allychains. The allychains themselves may not be registered anymore,
 	/// but we also keep their code on-chain for the same amount of time as outdated code
 	/// to keep it available for secondary checkers.
 	#[pallet::storage]
@@ -388,7 +388,7 @@ pub mod pallet {
 	/// Note that this is the actual height of the included block, not the expected height at which the
 	/// code upgrade would be applied, although they may be equal.
 	/// This is to ensure the entire acceptance period is covered, not an offset acceptance period starting
-	/// from the time at which the parachain perceives a code upgrade as having occurred.
+	/// from the time at which the allychain perceives a code upgrade as having occurred.
 	/// Multiple entries for a single para are permitted. Ordered ascending by block number.
 	#[pallet::storage]
 	pub(super) type PastCodePruning<T: Config> =
@@ -409,33 +409,33 @@ pub mod pallet {
 	pub(super) type FutureCodeHash<T: Config> =
 		StorageMap<_, Twox64Concat, ParaId, ValidationCodeHash>;
 
-	/// This is used by the relay-chain to communicate to a parachain a go-ahead with in the upgrade procedure.
+	/// This is used by the relay-chain to communicate to a allychain a go-ahead with in the upgrade procedure.
 	///
 	/// This value is absent when there are no upgrades scheduled or during the time the relay chain
-	/// performs the checks. It is set at the first relay-chain block when the corresponding parachain
-	/// can switch its upgrade function. As soon as the parachain's block is included, the value
+	/// performs the checks. It is set at the first relay-chain block when the corresponding allychain
+	/// can switch its upgrade function. As soon as the allychain's block is included, the value
 	/// gets reset to `None`.
 	///
-	/// NOTE that this field is used by parachains via merkle storage proofs, therefore changing
-	/// the format will require migration of parachains.
+	/// NOTE that this field is used by allychains via merkle storage proofs, therefore changing
+	/// the format will require migration of allychains.
 	#[pallet::storage]
 	pub(super) type UpgradeGoAheadSignal<T: Config> =
 		StorageMap<_, Twox64Concat, ParaId, UpgradeGoAhead>;
 
 	/// This is used by the relay-chain to communicate that there are restrictions for performing
-	/// an upgrade for this parachain.
+	/// an upgrade for this allychain.
 	///
-	/// This may be a because the parachain waits for the upgrade cooldown to expire. Another
+	/// This may be a because the allychain waits for the upgrade cooldown to expire. Another
 	/// potential use case is when we want to perform some maintenance (such as storage migration)
 	/// we could restrict upgrades to make the process simpler.
 	///
-	/// NOTE that this field is used by parachains via merkle storage proofs, therefore changing
-	/// the format will require migration of parachains.
+	/// NOTE that this field is used by allychains via merkle storage proofs, therefore changing
+	/// the format will require migration of allychains.
 	#[pallet::storage]
 	pub(super) type UpgradeRestrictionSignal<T: Config> =
 		StorageMap<_, Twox64Concat, ParaId, UpgradeRestriction>;
 
-	/// The list of parachains that are awaiting for their upgrade restriction to cooldown.
+	/// The list of allychains that are awaiting for their upgrade restriction to cooldown.
 	///
 	/// Ordered ascending by block number.
 	#[pallet::storage]
@@ -490,26 +490,26 @@ pub mod pallet {
 	#[pallet::genesis_build]
 	impl<T: Config> GenesisBuild<T> for GenesisConfig {
 		fn build(&self) {
-			let mut parachains: Vec<_> = self
+			let mut allychains: Vec<_> = self
 				.paras
 				.iter()
-				.filter(|(_, args)| args.parachain)
+				.filter(|(_, args)| args.allychain)
 				.map(|&(ref id, _)| id)
 				.cloned()
 				.collect();
 
-			parachains.sort();
-			parachains.dedup();
+			allychains.sort();
+			allychains.dedup();
 
-			Parachains::<T>::put(&parachains);
+			Allychains::<T>::put(&allychains);
 
 			for (id, genesis_args) in &self.paras {
 				let code_hash = genesis_args.validation_code.hash();
 				<Pallet<T>>::increase_code_ref(&code_hash, &genesis_args.validation_code);
 				<Pallet<T> as Store>::CurrentCodeHash::insert(&id, &code_hash);
 				<Pallet<T> as Store>::Heads::insert(&id, &genesis_args.genesis_head);
-				if genesis_args.parachain {
-					ParaLifecycles::<T>::insert(&id, ParaLifecycle::Parachain);
+				if genesis_args.allychain {
+					ParaLifecycles::<T>::insert(&id, ParaLifecycle::Allychain);
 				} else {
 					ParaLifecycles::<T>::insert(&id, ParaLifecycle::Parathread);
 				}
@@ -522,7 +522,7 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Set the storage for the parachain validation code immediately.
+		/// Set the storage for the allychain validation code immediately.
 		#[pallet::weight(<T as Config>::WeightInfo::force_set_current_code(new_code.0.len() as u32))]
 		pub fn force_set_current_code(
 			origin: OriginFor<T>,
@@ -541,7 +541,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Set the storage for the current parachain head data immediately.
+		/// Set the storage for the current allychain head data immediately.
 		#[pallet::weight(<T as Config>::WeightInfo::force_set_current_head(new_head.0.len() as u32))]
 		pub fn force_set_current_head(
 			origin: OriginFor<T>,
@@ -583,7 +583,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Put a parachain directly into the next session's action queue.
+		/// Put a allychain directly into the next session's action queue.
 		/// We can't queue it any sooner than this without going into the
 		/// initializer...
 		#[pallet::weight(<T as Config>::WeightInfo::force_queue_action())]
@@ -641,28 +641,28 @@ impl<T: Config> Pallet<T> {
 	// The actions to take are based on the lifecycle of of the paras.
 	//
 	// The final state of any para after the actions queue should be as a
-	// parachain, parathread, or not registered. (stable states)
+	// allychain, parathread, or not registered. (stable states)
 	//
 	// Returns the list of outgoing paras from the actions queue.
 	fn apply_actions_queue(session: SessionIndex) -> Vec<ParaId> {
 		let actions = ActionsQueue::<T>::take(session);
-		let mut parachains = <Self as Store>::Parachains::get();
+		let mut allychains = <Self as Store>::Allychains::get();
 		let now = <frame_system::Pallet<T>>::block_number();
 		let mut outgoing = Vec::new();
 
 		for para in actions {
 			let lifecycle = ParaLifecycles::<T>::get(&para);
 			match lifecycle {
-				None | Some(ParaLifecycle::Parathread) | Some(ParaLifecycle::Parachain) => { /* Nothing to do... */
+				None | Some(ParaLifecycle::Parathread) | Some(ParaLifecycle::Allychain) => { /* Nothing to do... */
 				},
-				// Onboard a new parathread or parachain.
+				// Onboard a new parathread or allychain.
 				Some(ParaLifecycle::Onboarding) => {
 					if let Some(genesis_data) = <Self as Store>::UpcomingParasGenesis::take(&para) {
-						if genesis_data.parachain {
-							if let Err(i) = parachains.binary_search(&para) {
-								parachains.insert(i, para);
+						if genesis_data.allychain {
+							if let Err(i) = allychains.binary_search(&para) {
+								allychains.insert(i, para);
 							}
-							ParaLifecycles::<T>::insert(&para, ParaLifecycle::Parachain);
+							ParaLifecycles::<T>::insert(&para, ParaLifecycle::Allychain);
 						} else {
 							ParaLifecycles::<T>::insert(&para, ParaLifecycle::Parathread);
 						}
@@ -673,25 +673,25 @@ impl<T: Config> Pallet<T> {
 						<Self as Store>::CurrentCodeHash::insert(&para, code_hash);
 					}
 				},
-				// Upgrade a parathread to a parachain
+				// Upgrade a parathread to a allychain
 				Some(ParaLifecycle::UpgradingParathread) => {
-					if let Err(i) = parachains.binary_search(&para) {
-						parachains.insert(i, para);
+					if let Err(i) = allychains.binary_search(&para) {
+						allychains.insert(i, para);
 					}
-					ParaLifecycles::<T>::insert(&para, ParaLifecycle::Parachain);
+					ParaLifecycles::<T>::insert(&para, ParaLifecycle::Allychain);
 				},
-				// Downgrade a parachain to a parathread
+				// Downgrade a allychain to a parathread
 				Some(ParaLifecycle::DowngradingParachain) => {
-					if let Ok(i) = parachains.binary_search(&para) {
-						parachains.remove(i);
+					if let Ok(i) = allychains.binary_search(&para) {
+						allychains.remove(i);
 					}
 					ParaLifecycles::<T>::insert(&para, ParaLifecycle::Parathread);
 				},
-				// Offboard a parathread or parachain from the system
+				// Offboard a parathread or allychain from the system
 				Some(ParaLifecycle::OffboardingParachain) |
 				Some(ParaLifecycle::OffboardingParathread) => {
-					if let Ok(i) = parachains.binary_search(&para) {
-						parachains.remove(i);
+					if let Ok(i) = allychains.binary_search(&para) {
+						allychains.remove(i);
 					}
 
 					<Self as Store>::Heads::remove(&para);
@@ -715,7 +715,7 @@ impl<T: Config> Pallet<T> {
 		}
 
 		if !outgoing.is_empty() {
-			// Filter offboarded parachains from the upcoming upgrades and upgrade cooldowns list.
+			// Filter offboarded allychains from the upcoming upgrades and upgrade cooldowns list.
 			//
 			// We do it after the offboarding to get away with only a single read/write per list.
 			//
@@ -735,8 +735,8 @@ impl<T: Config> Pallet<T> {
 			});
 		}
 
-		// Place the new parachains set in storage.
-		<Self as Store>::Parachains::set(parachains);
+		// Place the new allychains set in storage.
+		<Self as Store>::Allychains::set(allychains);
 
 		return outgoing
 	}
@@ -812,7 +812,7 @@ impl<T: Config> Pallet<T> {
 						meta.most_recent_change().is_none() && Self::para_head(&para_id).is_none()
 					});
 
-					// This parachain has been removed and now the vestigial code
+					// This allychain has been removed and now the vestigial code
 					// has been removed from the state. clean up meta as well.
 					if full_deactivate {
 						<Self as Store>::PastCodeMeta::remove(&para_id);
@@ -869,7 +869,7 @@ impl<T: Config> Pallet<T> {
 	pub(crate) fn schedule_para_initialize(id: ParaId, genesis: ParaGenesisArgs) -> DispatchResult {
 		let scheduled_session = Self::scheduled_session();
 
-		// Make sure parachain isn't already in our system.
+		// Make sure allychain isn't already in our system.
 		ensure!(Self::can_schedule_para_initialize(&id, &genesis), Error::<T>::CannotOnboard);
 
 		ParaLifecycles::<T>::insert(&id, ParaLifecycle::Onboarding);
@@ -885,7 +885,7 @@ impl<T: Config> Pallet<T> {
 
 	/// Schedule a para to be cleaned up at the start of the next session.
 	///
-	/// Will return error if para is not a stable parachain or parathread.
+	/// Will return error if para is not a stable allychain or parathread.
 	///
 	/// No-op if para is not registered at all.
 	pub(crate) fn schedule_para_cleanup(id: ParaId) -> DispatchResult {
@@ -896,7 +896,7 @@ impl<T: Config> Pallet<T> {
 			Some(ParaLifecycle::Parathread) => {
 				ParaLifecycles::<T>::insert(&id, ParaLifecycle::OffboardingParathread);
 			},
-			Some(ParaLifecycle::Parachain) => {
+			Some(ParaLifecycle::Allychain) => {
 				ParaLifecycles::<T>::insert(&id, ParaLifecycle::OffboardingParachain);
 			},
 			_ => return Err(Error::<T>::CannotOffboard)?,
@@ -912,7 +912,7 @@ impl<T: Config> Pallet<T> {
 		Ok(())
 	}
 
-	/// Schedule a parathread to be upgraded to a parachain.
+	/// Schedule a parathread to be upgraded to a allychain.
 	///
 	/// Will return error if `ParaLifecycle` is not `Parathread`.
 	pub(crate) fn schedule_parathread_upgrade(id: ParaId) -> DispatchResult {
@@ -931,14 +931,14 @@ impl<T: Config> Pallet<T> {
 		Ok(())
 	}
 
-	/// Schedule a parachain to be downgraded to a parathread.
+	/// Schedule a allychain to be downgraded to a parathread.
 	///
-	/// Noop if `ParaLifecycle` is not `Parachain`.
+	/// Noop if `ParaLifecycle` is not `Allychain`.
 	pub(crate) fn schedule_parachain_downgrade(id: ParaId) -> DispatchResult {
 		let scheduled_session = Self::scheduled_session();
 		let lifecycle = ParaLifecycles::<T>::get(&id).ok_or(Error::<T>::NotRegistered)?;
 
-		ensure!(lifecycle == ParaLifecycle::Parachain, Error::<T>::CannotDowngrade);
+		ensure!(lifecycle == ParaLifecycle::Allychain, Error::<T>::CannotDowngrade);
 
 		ParaLifecycles::<T>::insert(&id, ParaLifecycle::DowngradingParachain);
 		ActionsQueue::<T>::mutate(scheduled_session, |v| {
@@ -950,8 +950,8 @@ impl<T: Config> Pallet<T> {
 		Ok(())
 	}
 
-	/// Schedule a future code upgrade of the given parachain, to be applied after inclusion
-	/// of a block of the same parachain executed in the context of a relay-chain block
+	/// Schedule a future code upgrade of the given allychain, to be applied after inclusion
+	/// of a block of the same allychain executed in the context of a relay-chain block
 	/// with number >= `expected_at`
 	///
 	/// If there is already a scheduled code upgrade for the para, this is a no-op.
@@ -979,7 +979,7 @@ impl<T: Config> Pallet<T> {
 				});
 
 				// From the moment of signalling of the upgrade until the cooldown expires, the
-				// parachain is disallowed to make further upgrades. Therefore set the upgrade
+				// allychain is disallowed to make further upgrades. Therefore set the upgrade
 				// permission signal to disallowed and activate the cooldown timer.
 				<Self as Store>::UpgradeRestrictionSignal::insert(&id, UpgradeRestriction::Present);
 				<Self as Store>::UpgradeCooldowns::mutate(|upgrade_cooldowns| {
@@ -1092,9 +1092,9 @@ impl<T: Config> Pallet<T> {
 		}
 	}
 
-	/// Whether a para ID corresponds to any live parachain.
+	/// Whether a para ID corresponds to any live allychain.
 	///
-	/// Includes parachains which will downgrade to a parathread in the future.
+	/// Includes allychains which will downgrade to a parathread in the future.
 	pub fn is_parachain(id: ParaId) -> bool {
 		if let Some(state) = ParaLifecycles::<T>::get(&id) {
 			state.is_parachain()
@@ -1105,7 +1105,7 @@ impl<T: Config> Pallet<T> {
 
 	/// Whether a para ID corresponds to any live parathread.
 	///
-	/// Includes parathreads which will upgrade to parachains in the future.
+	/// Includes parathreads which will upgrade to allychains in the future.
 	pub fn is_parathread(id: ParaId) -> bool {
 		if let Some(state) = ParaLifecycles::<T>::get(&id) {
 			state.is_parathread()
@@ -1336,7 +1336,7 @@ mod tests {
 			(
 				0u32.into(),
 				ParaGenesisArgs {
-					parachain: true,
+					allychain: true,
 					genesis_head: Default::default(),
 					validation_code: Default::default(),
 				},
@@ -1344,7 +1344,7 @@ mod tests {
 			(
 				1u32.into(),
 				ParaGenesisArgs {
-					parachain: false,
+					allychain: false,
 					genesis_head: Default::default(),
 					validation_code: Default::default(),
 				},
@@ -1404,7 +1404,7 @@ mod tests {
 		let paras = vec![(
 			0u32.into(),
 			ParaGenesisArgs {
-				parachain: true,
+				allychain: true,
 				genesis_head: Default::default(),
 				validation_code: Default::default(),
 			},
@@ -1437,7 +1437,7 @@ mod tests {
 			(
 				0u32.into(),
 				ParaGenesisArgs {
-					parachain: true,
+					allychain: true,
 					genesis_head: Default::default(),
 					validation_code: Default::default(),
 				},
@@ -1445,7 +1445,7 @@ mod tests {
 			(
 				1u32.into(),
 				ParaGenesisArgs {
-					parachain: false,
+					allychain: false,
 					genesis_head: Default::default(),
 					validation_code: Default::default(),
 				},
@@ -1490,7 +1490,7 @@ mod tests {
 		let paras = vec![(
 			0u32.into(),
 			ParaGenesisArgs {
-				parachain: true,
+				allychain: true,
 				genesis_head: Default::default(),
 				validation_code: original_code.clone(),
 			},
@@ -1597,7 +1597,7 @@ mod tests {
 		let paras = vec![(
 			0u32.into(),
 			ParaGenesisArgs {
-				parachain: true,
+				allychain: true,
 				genesis_head: Default::default(),
 				validation_code: original_code.clone(),
 			},
@@ -1706,7 +1706,7 @@ mod tests {
 		let paras = vec![(
 			0u32.into(),
 			ParaGenesisArgs {
-				parachain: true,
+				allychain: true,
 				genesis_head: Default::default(),
 				validation_code: vec![1, 2, 3].into(),
 			},
@@ -1761,7 +1761,7 @@ mod tests {
 		let paras = vec![(
 			0u32.into(),
 			ParaGenesisArgs {
-				parachain: true,
+				allychain: true,
 				genesis_head: Default::default(),
 				validation_code: original_code.clone(),
 			},
@@ -1819,7 +1819,7 @@ mod tests {
 					<Paras as Store>::ActionsQueue::get(Paras::scheduled_session()),
 					vec![para_id],
 				);
-				assert_eq!(Paras::parachains(), vec![para_id]);
+				assert_eq!(Paras::allychains(), vec![para_id]);
 
 				assert!(Paras::past_code_meta(&para_id).most_recent_change().is_none());
 				assert_eq!(<Paras as Store>::FutureCodeUpgrades::get(&para_id), Some(expected_at));
@@ -1834,7 +1834,7 @@ mod tests {
 			// run to block #4, with a 2 session changes at the end of the block 2 & 3.
 			run_to_block(4, Some(vec![3, 4]));
 
-			// cleaning up the parachain should place the current parachain code
+			// cleaning up the allychain should place the current allychain code
 			// into the past code buffer & schedule cleanup.
 			assert_eq!(Paras::past_code_meta(&para_id).most_recent_change(), Some(3));
 			assert_eq!(
@@ -1875,7 +1875,7 @@ mod tests {
 			assert_ok!(Paras::schedule_para_initialize(
 				b,
 				ParaGenesisArgs {
-					parachain: true,
+					allychain: true,
 					genesis_head: vec![1].into(),
 					validation_code: vec![1].into(),
 				},
@@ -1884,7 +1884,7 @@ mod tests {
 			assert_ok!(Paras::schedule_para_initialize(
 				a,
 				ParaGenesisArgs {
-					parachain: false,
+					allychain: false,
 					genesis_head: vec![2].into(),
 					validation_code: vec![2].into(),
 				},
@@ -1893,7 +1893,7 @@ mod tests {
 			assert_ok!(Paras::schedule_para_initialize(
 				c,
 				ParaGenesisArgs {
-					parachain: true,
+					allychain: true,
 					genesis_head: vec![3].into(),
 					validation_code: vec![3].into(),
 				},
@@ -1912,7 +1912,7 @@ mod tests {
 			// run to block without session change.
 			run_to_block(2, None);
 
-			assert_eq!(Paras::parachains(), Vec::new());
+			assert_eq!(Paras::allychains(), Vec::new());
 			assert_eq!(
 				<Paras as Store>::ActionsQueue::get(Paras::scheduled_session()),
 				vec![c, b, a],
@@ -1926,13 +1926,13 @@ mod tests {
 			// Two sessions pass, so action queue is triggered
 			run_to_block(4, Some(vec![3, 4]));
 
-			assert_eq!(Paras::parachains(), vec![c, b]);
+			assert_eq!(Paras::allychains(), vec![c, b]);
 			assert_eq!(<Paras as Store>::ActionsQueue::get(Paras::scheduled_session()), Vec::new());
 
 			// Lifecycle is tracked correctly
 			assert_eq!(<Paras as Store>::ParaLifecycles::get(&a), Some(ParaLifecycle::Parathread));
-			assert_eq!(<Paras as Store>::ParaLifecycles::get(&b), Some(ParaLifecycle::Parachain));
-			assert_eq!(<Paras as Store>::ParaLifecycles::get(&c), Some(ParaLifecycle::Parachain));
+			assert_eq!(<Paras as Store>::ParaLifecycles::get(&b), Some(ParaLifecycle::Allychain));
+			assert_eq!(<Paras as Store>::ParaLifecycles::get(&c), Some(ParaLifecycle::Allychain));
 
 			assert_eq!(Paras::current_code(&a), Some(vec![2].into()));
 			assert_eq!(Paras::current_code(&b), Some(vec![1].into()));
@@ -1948,7 +1948,7 @@ mod tests {
 		let paras = vec![(
 			0u32.into(),
 			ParaGenesisArgs {
-				parachain: true,
+				allychain: true,
 				genesis_head: Default::default(),
 				validation_code: vec![1, 2, 3].into(),
 			},
@@ -2006,7 +2006,7 @@ mod tests {
 		let paras = vec![(
 			0u32.into(),
 			ParaGenesisArgs {
-				parachain: true,
+				allychain: true,
 				genesis_head: Default::default(),
 				validation_code: vec![1, 2, 3].into(),
 			},

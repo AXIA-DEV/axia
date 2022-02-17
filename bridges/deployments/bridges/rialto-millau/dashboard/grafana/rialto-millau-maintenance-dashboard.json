@@ -169,9 +169,9 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "Westend_to_Millau_Sync_axctest_to_base_conversion_rate / Westend_to_Millau_Sync_polkadot_to_base_conversion_rate",
+          "expr": "Westend_to_Millau_Sync_axctest_to_base_conversion_rate / Westend_to_Millau_Sync_axia_to_base_conversion_rate",
           "interval": "",
-          "legendFormat": "Outside of runtime (actually Polkadot -> AxiaTest)",
+          "legendFormat": "Outside of runtime (actually Axia -> AxiaTest)",
           "refId": "A"
         },
         {
@@ -377,9 +377,9 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "Westend_to_Millau_Sync_polkadot_to_base_conversion_rate / Westend_to_Millau_Sync_axctest_to_base_conversion_rate",
+          "expr": "Westend_to_Millau_Sync_axia_to_base_conversion_rate / Westend_to_Millau_Sync_axctest_to_base_conversion_rate",
           "interval": "",
-          "legendFormat": "Outside of runtime (actually AxiaTest -> Polkadot)",
+          "legendFormat": "Outside of runtime (actually AxiaTest -> Axia)",
           "refId": "A"
         },
         {

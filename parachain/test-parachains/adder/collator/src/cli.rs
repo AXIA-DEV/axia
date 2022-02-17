@@ -1,20 +1,20 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Polkadot CLI library.
+//! Axia CLI library.
 
 use sc_cli::{RuntimeVersion, AxlibCli};
 use structopt::StructOpt;
@@ -22,16 +22,16 @@ use structopt::StructOpt;
 /// Sub-commands supported by the collator.
 #[derive(Debug, StructOpt)]
 pub enum Subcommand {
-	/// Export the genesis state of the parachain.
+	/// Export the genesis state of the allychain.
 	#[structopt(name = "export-genesis-state")]
 	ExportGenesisState(ExportGenesisStateCommand),
 
-	/// Export the genesis wasm of the parachain.
+	/// Export the genesis wasm of the allychain.
 	#[structopt(name = "export-genesis-wasm")]
 	ExportGenesisWasm(ExportGenesisWasmCommand),
 }
 
-/// Command for exporting the genesis state of the parachain
+/// Command for exporting the genesis state of the allychain
 #[derive(Debug, StructOpt)]
 pub struct ExportGenesisStateCommand {}
 
@@ -46,7 +46,7 @@ pub struct RunCmd {
 	#[structopt(flatten)]
 	pub base: sc_cli::RunCmd,
 
-	/// Id of the parachain this collator collates for.
+	/// Id of the allychain this collator collates for.
 	#[structopt(long)]
 	pub parachain_id: Option<u32>,
 }
@@ -63,7 +63,7 @@ pub struct Cli {
 
 impl AxlibCli for Cli {
 	fn impl_name() -> String {
-		"Parity Polkadot".into()
+		"Parity Axia".into()
 	}
 
 	fn impl_version() -> String {
@@ -79,7 +79,7 @@ impl AxlibCli for Cli {
 	}
 
 	fn support_url() -> String {
-		"https://github.com/paritytech/polkadot/issues/new".into()
+		"https://github.com/paritytech/axia/issues/new".into()
 	}
 
 	fn copyright_start_year() -> i32 {
@@ -87,27 +87,27 @@ impl AxlibCli for Cli {
 	}
 
 	fn executable_name() -> String {
-		"polkadot".into()
+		"axia".into()
 	}
 
 	fn load_spec(&self, id: &str) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
-		let id = if id.is_empty() { "rococo" } else { id };
+		let id = if id.is_empty() { "betanet" } else { id };
 		Ok(match id {
-			"rococo-staging" =>
-				Box::new(polkadot_service::chain_spec::rococo_staging_testnet_config()?),
-			"rococo-local" =>
-				Box::new(polkadot_service::chain_spec::rococo_local_testnet_config()?),
-			"rococo" => Box::new(polkadot_service::chain_spec::rococo_config()?),
+			"betanet-staging" =>
+				Box::new(axia_service::chain_spec::rococo_staging_testnet_config()?),
+			"betanet-local" =>
+				Box::new(axia_service::chain_spec::rococo_local_testnet_config()?),
+			"betanet" => Box::new(axia_service::chain_spec::rococo_config()?),
 			path => {
 				let path = std::path::PathBuf::from(path);
-				Box::new(polkadot_service::RococoChainSpec::from_json_file(path)?)
+				Box::new(axia_service::RococoChainSpec::from_json_file(path)?)
 			},
 		})
 	}
 
 	fn native_runtime_version(
-		_spec: &Box<dyn polkadot_service::ChainSpec>,
+		_spec: &Box<dyn axia_service::ChainSpec>,
 	) -> &'static RuntimeVersion {
-		&polkadot_service::rococo_runtime::VERSION
+		&axia_service::rococo_runtime::VERSION
 	}
 }

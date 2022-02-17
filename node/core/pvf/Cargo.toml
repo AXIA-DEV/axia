@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-node-core-pvf"
+name = "axia-node-core-pvf"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -21,9 +21,9 @@ tracing = "0.1.29"
 pin-project = "1.0.8"
 rand = "0.8.3"
 parity-scale-codec = { version = "2.3.1", default-features = false, features = ["derive"] }
-polkadot-parachain = { path = "../../../parachain" }
-polkadot-core-primitives = { path = "../../../core-primitives" }
-polkadot-node-subsystem-util = { path = "../../subsystem-util"}
+axia-allychain = { path = "../../../allychain" }
+axia-core-primitives = { path = "../../../core-primitives" }
+axia-node-subsystem-util = { path = "../../subsystem-util"}
 sc-executor = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sc-executor-wasmtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sc-executor-common = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
@@ -35,7 +35,7 @@ sp-maybe-compressed-blob = { git = "https://github.com/AXIA-DEV/axlib-axtend", b
 sp-tracing = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [dev-dependencies]
-adder = { package = "test-parachain-adder", path = "../../../parachain/test-parachains/adder" }
-halt = { package = "test-parachain-halt", path = "../../../parachain/test-parachains/halt" }
+adder = { package = "test-allychain-adder", path = "../../../allychain/test-allychains/adder" }
+halt = { package = "test-allychain-halt", path = "../../../allychain/test-allychains/halt" }
 hex-literal = "0.3.3"
 tempfile = "3.2.0"

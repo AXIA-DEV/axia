@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Convenient interface to runtime information.
 
@@ -25,8 +25,8 @@ use sp_application_crypto::AppKey;
 use sp_core::crypto::Public;
 use sp_keystore::{CryptoStore, SyncCryptoStorePtr};
 
-use polkadot_node_subsystem::{SubsystemContext, SubsystemSender};
-use polkadot_primitives::v1::{
+use axia_node_subsystem::{SubsystemContext, SubsystemSender};
+use axia_primitives::v1::{
 	CoreState, EncodeAs, GroupIndex, GroupRotationInfo, Hash, OccupiedCore, SessionIndex,
 	SessionInfo, Signed, SigningContext, UncheckedSigned, ValidatorId, ValidatorIndex,
 };
@@ -199,7 +199,7 @@ impl RuntimeInfo {
 	/// Build `ValidatorInfo` for the current session.
 	///
 	///
-	/// Returns: `None` if not a parachain validator.
+	/// Returns: `None` if not a allychain validator.
 	async fn get_validator_info(&self, session_info: &SessionInfo) -> Result<ValidatorInfo> {
 		if let Some(our_index) = self.get_our_index(&session_info.validators).await {
 			// Get our group index:

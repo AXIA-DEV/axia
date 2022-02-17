@@ -7,7 +7,7 @@ A module responsible for Upward Message Passing (UMP). See [Messaging Overview](
 Storage related to UMP
 
 ```rust
-/// The messages waiting to be handled by the relay-chain originating from a certain parachain.
+/// The messages waiting to be handled by the relay-chain originating from a certain allychain.
 ///
 /// Note that some upward messages might have been already processed by the inclusion logic. E.g.
 /// channel management messages.

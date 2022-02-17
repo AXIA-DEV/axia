@@ -15,7 +15,7 @@ services:
       <<: *poa-node
 
   # We provide an override for this particular node since this is a public facing
-  # node which we use to connect from things like Polkadot JS Apps.
+  # node which we use to connect from things like Axia JS Apps.
   rialto-node-charlie:
     environment:
       VIRTUAL_HOST: rialto.bridges.test-installations.parity.io,wss.rialto.brucke.link

@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-test-runtime"
+name = "axia-test-runtime"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -54,11 +54,11 @@ pallet-timestamp = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-f
 pallet-sudo = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 pallet-vesting = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 
-runtime-common = { package = "polkadot-runtime-common", path = "../common", default-features = false }
-primitives = { package = "polkadot-primitives", path = "../../primitives", default-features = false }
+runtime-common = { package = "axia-runtime-common", path = "../common", default-features = false }
+primitives = { package = "axia-primitives", path = "../../primitives", default-features = false }
 pallet-xcm = { path = "../../xcm/pallet-xcm", default-features = false }
-polkadot-parachain = { path = "../../parachain", default-features = false }
-polkadot-runtime-parachains = { path = "../parachains", default-features = false }
+axia-allychain = { path = "../../allychain", default-features = false }
+axia-runtime-allychains = { path = "../allychains", default-features = false }
 xcm-builder = { path = "../../xcm/xcm-builder", default-features = false }
 xcm-executor = { path = "../../xcm/xcm-executor", default-features = false }
 xcm = { path = "../../xcm", default-features = false }
@@ -87,7 +87,7 @@ std = [
 	"scale-info/std",
 	"inherents/std",
 	"sp-core/std",
-	"polkadot-parachain/std",
+	"axia-allychain/std",
 	"pallet-xcm/std",
 	"xcm-builder/std",
 	"xcm-executor/std",

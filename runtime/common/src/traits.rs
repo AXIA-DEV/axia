@@ -1,20 +1,20 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Traits used across pallets for Polkadot.
+//! Traits used across pallets for Axia.
 
 use frame_support::{
 	dispatch::DispatchResult,
@@ -23,20 +23,20 @@ use frame_support::{
 use primitives::v1::{HeadData, Id as ParaId, ValidationCode};
 use sp_std::vec::*;
 
-/// Parachain registration API.
+/// Allychain registration API.
 pub trait Registrar {
-	/// The account ID type that encodes a parachain manager ID.
+	/// The account ID type that encodes a allychain manager ID.
 	type AccountId;
 
-	/// Report the manager (permissioned owner) of a parachain, if there is one.
+	/// Report the manager (permissioned owner) of a allychain, if there is one.
 	fn manager_of(id: ParaId) -> Option<Self::AccountId>;
 
-	/// All parachains. Ordered ascending by `ParaId`. Parathreads are not included.
-	fn parachains() -> Vec<ParaId>;
+	/// All allychains. Ordered ascending by `ParaId`. Parathreads are not included.
+	fn allychains() -> Vec<ParaId>;
 
-	/// Return if a `ParaId` is a Parachain.
+	/// Return if a `ParaId` is a Allychain.
 	fn is_parachain(id: ParaId) -> bool {
-		Self::parachains().binary_search(&id).is_ok()
+		Self::allychains().binary_search(&id).is_ok()
 	}
 
 	/// Return if a `ParaId` is a Parathread.
@@ -67,10 +67,10 @@ pub trait Registrar {
 	/// Deregister a Para ID, free any data, and return any deposits.
 	fn deregister(id: ParaId) -> DispatchResult;
 
-	/// Elevate a para to parachain status.
+	/// Elevate a para to allychain status.
 	fn make_parachain(id: ParaId) -> DispatchResult;
 
-	/// Lower a para back to normal from parachain status.
+	/// Lower a para back to normal from allychain status.
 	fn make_parathread(id: ParaId) -> DispatchResult;
 
 	#[cfg(any(feature = "runtime-benchmarks", test))]
@@ -80,7 +80,7 @@ pub trait Registrar {
 	fn worst_validation_code() -> ValidationCode;
 
 	/// Execute any pending state transitions for paras.
-	/// For example onboarding to parathread, or parathread to parachain.
+	/// For example onboarding to parathread, or parathread to allychain.
 	#[cfg(any(feature = "runtime-benchmarks", test))]
 	fn execute_pending_transitions();
 }
@@ -98,7 +98,7 @@ pub enum LeaseError {
 	NoLeasePeriod,
 }
 
-/// Lease manager. Used by the auction module to handle parachain slot leases.
+/// Lease manager. Used by the auction module to handle allychain slot leases.
 pub trait Leaser<BlockNumber> {
 	/// An account identifier for a leaser.
 	type AccountId;
@@ -109,7 +109,7 @@ pub trait Leaser<BlockNumber> {
 	/// The currency type in which the lease is taken.
 	type Currency: ReservableCurrency<Self::AccountId>;
 
-	/// Lease a new parachain slot for `para`.
+	/// Lease a new allychain slot for `para`.
 	///
 	/// `leaser` shall have a total of `amount` balance reserved by the implementer of this trait.
 	///
@@ -146,7 +146,7 @@ pub trait Leaser<BlockNumber> {
 	/// is placed.
 	fn lease_period_index(block: BlockNumber) -> Option<(Self::LeasePeriod, bool)>;
 
-	/// Returns true if the parachain already has a lease in any of lease periods in the inclusive
+	/// Returns true if the allychain already has a lease in any of lease periods in the inclusive
 	/// range `[first_period, last_period]`, intersected with the unbounded range [`current_lease_period`..] .
 	fn already_leased(
 		para_id: ParaId,
@@ -250,11 +250,11 @@ pub trait Auctioneer<BlockNumber> {
 	fn has_won_an_auction(para: ParaId, bidder: &Self::AccountId) -> bool;
 }
 
-/// Runtime hook for when we swap a parachain and parathread.
+/// Runtime hook for when we swap a allychain and parathread.
 #[impl_trait_for_tuples::impl_for_tuples(30)]
 pub trait OnSwap {
-	/// Updates any needed state/references to enact a logical swap of two parachains. Identity,
-	/// code and `head_data` remain equivalent for all parachains/threads, however other properties
+	/// Updates any needed state/references to enact a logical swap of two allychains. Identity,
+	/// code and `head_data` remain equivalent for all allychains/threads, however other properties
 	/// such as leases, deposits held and thread/chain nature are swapped.
 	fn on_swap(one: ParaId, other: ParaId);
 }

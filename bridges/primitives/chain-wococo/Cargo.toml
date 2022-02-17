@@ -11,8 +11,8 @@ parity-scale-codec = { version = "2.0.0", default-features = false, features = [
 
 # Bridge Dependencies
 bp-messages = { path = "../messages", default-features = false }
-bp-polkadot-core = { path = "../polkadot-core", default-features = false }
-bp-rococo = { path = "../chain-rococo", default-features = false }
+bp-axia-core = { path = "../axia-core", default-features = false }
+bp-betanet = { path = "../chain-betanet", default-features = false }
 bp-runtime = { path = "../runtime", default-features = false }
 
 # Axlib Based Dependencies
@@ -24,9 +24,9 @@ sp-std = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = 
 default = ["std"]
 std = [
 	"bp-messages/std",
-	"bp-polkadot-core/std",
+	"bp-axia-core/std",
 	"bp-runtime/std",
-	"bp-rococo/std",
+	"bp-betanet/std",
 	"parity-scale-codec/std",
 	"sp-api/std",
 	"sp-runtime/std",

@@ -1,6 +1,6 @@
 use super::*;
 use bitvec::bitvec;
-use polkadot_primitives::v1::{OccupiedCore, ScheduledCore};
+use axia_primitives::v1::{OccupiedCore, ScheduledCore};
 
 pub fn occupied_core(para_id: u32) -> CoreState {
 	CoreState::Occupied(OccupiedCore {
@@ -40,7 +40,7 @@ pub fn scheduled_core(id: u32) -> ScheduledCore {
 mod select_availability_bitfields {
 	use super::{super::*, default_bitvec, occupied_core};
 	use futures::executor::block_on;
-	use polkadot_primitives::v1::{SigningContext, ValidatorId, ValidatorIndex};
+	use axia_primitives::v1::{SigningContext, ValidatorId, ValidatorIndex};
 	use sp_application_crypto::AppKey;
 	use sp_keystore::{testing::KeyStore, CryptoStore, SyncCryptoStorePtr};
 	use std::sync::Arc;
@@ -189,14 +189,14 @@ mod select_availability_bitfields {
 
 mod select_candidates {
 	use super::{super::*, build_occupied_core, default_bitvec, occupied_core, scheduled_core};
-	use polkadot_node_subsystem::messages::{
+	use axia_node_subsystem::messages::{
 		AllMessages, RuntimeApiMessage,
 		RuntimeApiRequest::{
 			AvailabilityCores, PersistedValidationData as PersistedValidationDataReq,
 		},
 	};
-	use polkadot_node_subsystem_test_helpers::TestSubsystemSender;
-	use polkadot_primitives::v1::{
+	use axia_node_subsystem_test_helpers::TestSubsystemSender;
+	use axia_primitives::v1::{
 		BlockNumber, CandidateCommitments, CandidateDescriptor, CommittedCandidateReceipt,
 		PersistedValidationData,
 	};
@@ -212,7 +212,7 @@ mod select_candidates {
 		TestFactory: FnOnce(TestSubsystemSender) -> Test,
 		Test: Future<Output = ()>,
 	{
-		let (tx, rx) = polkadot_node_subsystem_test_helpers::sender_receiver();
+		let (tx, rx) = axia_node_subsystem_test_helpers::sender_receiver();
 		let overseer = overseer_factory(rx);
 		let test = test_factory(tx);
 

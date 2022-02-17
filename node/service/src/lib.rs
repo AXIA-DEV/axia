@@ -1,20 +1,20 @@
 // Copyright 2017-2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Polkadot service. Specialized wrapper over axlib service.
+//! Axia service. Specialized wrapper over axlib service.
 
 #![deny(unused_results)]
 
@@ -35,15 +35,15 @@ mod tests;
 #[cfg(feature = "full-node")]
 use {
 	grandpa::{self, FinalityProofProvider as GrandpaFinalityProofProvider},
-	polkadot_node_core_approval_voting::Config as ApprovalVotingConfig,
-	polkadot_node_core_av_store::Config as AvailabilityConfig,
-	polkadot_node_core_av_store::Error as AvailabilityError,
-	polkadot_node_core_candidate_validation::Config as CandidateValidationConfig,
-	polkadot_node_core_chain_selection::{
+	axia_node_core_approval_voting::Config as ApprovalVotingConfig,
+	axia_node_core_av_store::Config as AvailabilityConfig,
+	axia_node_core_av_store::Error as AvailabilityError,
+	axia_node_core_candidate_validation::Config as CandidateValidationConfig,
+	axia_node_core_chain_selection::{
 		self as chain_selection_subsystem, Config as ChainSelectionConfig,
 	},
-	polkadot_node_core_dispute_coordinator::Config as DisputeCoordinatorConfig,
-	polkadot_overseer::BlockInfo,
+	axia_node_core_dispute_coordinator::Config as DisputeCoordinatorConfig,
+	axia_overseer::BlockInfo,
 	sc_client_api::ExecutorProvider,
 	sp_trie::PrefixedMemoryDB,
 	tracing::info,
@@ -52,8 +52,8 @@ use {
 pub use sp_core::traits::SpawnNamed;
 #[cfg(feature = "full-node")]
 pub use {
-	polkadot_overseer::{Handle, Overseer, OverseerConnector, OverseerHandle},
-	polkadot_primitives::v1::ParachainHost,
+	axia_overseer::{Handle, Overseer, OverseerConnector, OverseerHandle},
+	axia_primitives::v1::ParachainHost,
 	relay_chain_selection::SelectRelayChain,
 	sc_client_api::AuxStore,
 	sp_authority_discovery::AuthorityDiscoveryApi,
@@ -62,7 +62,7 @@ pub use {
 };
 
 #[cfg(feature = "full-node")]
-use polkadot_subsystem::jaeger;
+use axia_subsystem::jaeger;
 
 use std::{sync::Arc, time::Duration};
 
@@ -74,26 +74,26 @@ use telemetry::TelemetryWorker;
 #[cfg(feature = "full-node")]
 use telemetry::{Telemetry, TelemetryWorkerHandle};
 
-#[cfg(feature = "rococo-native")]
-pub use polkadot_client::RococoExecutorDispatch;
+#[cfg(feature = "betanet-native")]
+pub use axia_client::RococoExecutorDispatch;
 
-#[cfg(feature = "westend-native")]
-pub use polkadot_client::WestendExecutorDispatch;
+#[cfg(feature = "alphanet-native")]
+pub use axia_client::WestendExecutorDispatch;
 
 #[cfg(feature = "axctest-native")]
-pub use polkadot_client::AxiaTestExecutorDispatch;
+pub use axia_client::AxiaTestExecutorDispatch;
 
-#[cfg(feature = "polkadot-native")]
-pub use polkadot_client::PolkadotExecutorDispatch;
+#[cfg(feature = "axia-native")]
+pub use axia_client::AxiaExecutorDispatch;
 
-pub use chain_spec::{AxiaTestChainSpec, PolkadotChainSpec, RococoChainSpec, WestendChainSpec};
+pub use chain_spec::{AxiaTestChainSpec, AxiaChainSpec, RococoChainSpec, WestendChainSpec};
 pub use consensus_common::{block_validation::Chain, Proposal, SelectChain};
 #[cfg(feature = "full-node")]
-pub use polkadot_client::{
+pub use axia_client::{
 	AbstractClient, Client, ClientHandle, ExecuteWithClient, FullBackend, FullClient,
 	RuntimeApiCollection,
 };
-pub use polkadot_primitives::v1::{Block, BlockId, CollatorPair, Hash, Id as ParaId};
+pub use axia_primitives::v1::{Block, BlockId, CollatorPair, Hash, Id as ParaId};
 pub use sc_client_api::{Backend, CallExecutor, ExecutionStrategy};
 pub use sc_consensus::{BlockImport, LongestChain};
 use sc_executor::NativeElseWasmExecutor;
@@ -115,11 +115,11 @@ pub use sp_runtime::{
 
 #[cfg(feature = "axctest-native")]
 pub use axctest_runtime;
-#[cfg(feature = "polkadot-native")]
-pub use polkadot_runtime;
-#[cfg(feature = "rococo-native")]
+#[cfg(feature = "axia-native")]
+pub use axia_runtime;
+#[cfg(feature = "betanet-native")]
 pub use rococo_runtime;
-#[cfg(feature = "westend-native")]
+#[cfg(feature = "alphanet-native")]
 pub use westend_runtime;
 
 /// The maximum number of active leaves we forward to the [`Overseer`] on startup.
@@ -211,7 +211,7 @@ pub enum Error {
 	Consensus(#[from] consensus_common::Error),
 
 	#[error("Failed to create an overseer")]
-	Overseer(#[from] polkadot_overseer::SubsystemError),
+	Overseer(#[from] axia_overseer::SubsystemError),
 
 	#[error(transparent)]
 	Prometheus(#[from] prometheus_endpoint::PrometheusError),
@@ -220,7 +220,7 @@ pub enum Error {
 	Telemetry(#[from] telemetry::Error),
 
 	#[error(transparent)]
-	Jaeger(#[from] polkadot_subsystem::jaeger::JaegerError),
+	Jaeger(#[from] axia_subsystem::jaeger::JaegerError),
 
 	#[cfg(feature = "full-node")]
 	#[error(transparent)]
@@ -234,7 +234,7 @@ pub enum Error {
 	DatabasePathRequired,
 
 	#[cfg(feature = "full-node")]
-	#[error("Expected at least one of polkadot, axctest, westend or rococo runtime feature")]
+	#[error("Expected at least one of axia, axctest, alphanet or betanet runtime feature")]
 	NoRuntime,
 }
 
@@ -243,10 +243,10 @@ pub trait IdentifyVariant {
 	/// Returns if this is a configuration for the `AxiaTest` network.
 	fn is_axctest(&self) -> bool;
 
-	/// Returns if this is a configuration for the `Westend` network.
+	/// Returns if this is a configuration for the `Alphanet` network.
 	fn is_westend(&self) -> bool;
 
-	/// Returns if this is a configuration for the `Rococo` network.
+	/// Returns if this is a configuration for the `Betanet` network.
 	fn is_rococo(&self) -> bool;
 
 	/// Returns if this is a configuration for the `Wococo` test network.
@@ -258,13 +258,13 @@ pub trait IdentifyVariant {
 
 impl IdentifyVariant for Box<dyn ChainSpec> {
 	fn is_axctest(&self) -> bool {
-		self.id().starts_with("axctest") || self.id().starts_with("ksm")
+		self.id().starts_with("axctest") || self.id().starts_with("axct")
 	}
 	fn is_westend(&self) -> bool {
-		self.id().starts_with("westend") || self.id().starts_with("wnd")
+		self.id().starts_with("alphanet") || self.id().starts_with("wnd")
 	}
 	fn is_rococo(&self) -> bool {
-		self.id().starts_with("rococo") || self.id().starts_with("rco")
+		self.id().starts_with("betanet") || self.id().starts_with("rco")
 	}
 	fn is_wococo(&self) -> bool {
 		self.id().starts_with("wococo") || self.id().starts_with("wco")
@@ -274,10 +274,10 @@ impl IdentifyVariant for Box<dyn ChainSpec> {
 	}
 }
 
-// If we're using prometheus, use a registry with a prefix of `polkadot`.
+// If we're using prometheus, use a registry with a prefix of `axia`.
 fn set_prometheus_registry(config: &mut Configuration) -> Result<(), Error> {
 	if let Some(PrometheusConfig { registry, .. }) = config.prometheus_config.as_mut() {
-		*registry = Registry::new_custom(Some("polkadot".into()), None)?;
+		*registry = Registry::new_custom(Some("axia".into()), None)?;
 	}
 
 	Ok(())
@@ -519,33 +519,33 @@ where
 		let chain_spec = config.chain_spec.cloned_box();
 
 		move |deny_unsafe,
-		      subscription_executor: polkadot_rpc::SubscriptionTaskExecutor|
-		      -> Result<polkadot_rpc::RpcExtension, service::Error> {
-			let deps = polkadot_rpc::FullDeps {
+		      subscription_executor: axia_rpc::SubscriptionTaskExecutor|
+		      -> Result<axia_rpc::RpcExtension, service::Error> {
+			let deps = axia_rpc::FullDeps {
 				client: client.clone(),
 				pool: transaction_pool.clone(),
 				select_chain: select_chain.clone(),
 				chain_spec: chain_spec.cloned_box(),
 				deny_unsafe,
-				babe: polkadot_rpc::BabeDeps {
+				babe: axia_rpc::BabeDeps {
 					babe_config: babe_config.clone(),
 					shared_epoch_changes: shared_epoch_changes.clone(),
 					keystore: keystore.clone(),
 				},
-				grandpa: polkadot_rpc::GrandpaDeps {
+				grandpa: axia_rpc::GrandpaDeps {
 					shared_voter_state: shared_voter_state.clone(),
 					shared_authority_set: shared_authority_set.clone(),
 					justification_stream: justification_stream.clone(),
 					subscription_executor: subscription_executor.clone(),
 					finality_provider: finality_proof_provider.clone(),
 				},
-				beefy: polkadot_rpc::BeefyDeps {
+				beefy: axia_rpc::BeefyDeps {
 					beefy_commitment_stream: beefy_commitment_stream.clone(),
 					subscription_executor,
 				},
 			};
 
-			polkadot_rpc::create_full(deps).map_err(Into::into)
+			axia_rpc::create_full(deps).map_err(Into::into)
 		}
 	};
 
@@ -690,7 +690,7 @@ where
 	ExecutorDispatch: NativeExecutionDispatch + 'static,
 	OverseerGenerator: OverseerGen,
 {
-	use polkadot_node_network_protocol::request_response::IncomingRequest;
+	use axia_node_network_protocol::request_response::IncomingRequest;
 
 	let role = config.role.clone();
 	let force_authoring = config.force_authoring;
@@ -731,7 +731,7 @@ where
 		basics.backend.clone(),
 		overseer_handle.clone(),
 		requires_overseer_for_chain_sel,
-		polkadot_node_subsystem_util::metrics::Metrics::register(prometheus_registry.as_ref())?,
+		axia_node_subsystem_util::metrics::Metrics::register(prometheus_registry.as_ref())?,
 	);
 
 	let service::PartialComponents::<_, _, SelectRelayChain<_>, _, _, _> {
@@ -752,7 +752,7 @@ where
 	let shared_voter_state = rpc_setup;
 	let auth_disc_publish_non_global_ips = config.network.allow_non_globals_in_dht;
 
-	// Note: GrandPa is pushed before the Polkadot-specific protocols. This doesn't change
+	// Note: GrandPa is pushed before the Axia-specific protocols. This doesn't change
 	// anything in terms of behaviour, but makes the logs more consistent with the other
 	// Axlib nodes.
 	config.network.extra_sets.push(grandpa::grandpa_peers_set_config());
@@ -762,7 +762,7 @@ where
 	}
 
 	{
-		use polkadot_network_bridge::{peer_sets_info, IsAuthority};
+		use axia_network_bridge::{peer_sets_info, IsAuthority};
 		let is_authority = if role.is_authority() { IsAuthority::Yes } else { IsAuthority::No };
 		config.network.extra_sets.extend(peer_sets_info(is_authority));
 	}
@@ -951,7 +951,7 @@ where
 				Box::pin(async move {
 					use futures::{pin_mut, select, FutureExt};
 
-					let forward = polkadot_overseer::forward_events(overseer_client, handle);
+					let forward = axia_overseer::forward_events(overseer_client, handle);
 
 					let forward = forward.fuse();
 					let overseer_fut = overseer.run().fuse();
@@ -1004,7 +1004,7 @@ where
 				let client_clone = client_clone.clone();
 				let overseer_handle = overseer_handle.clone();
 				async move {
-					let parachain = polkadot_node_core_parachains_inherent::ParachainsInherentDataProvider::create(
+					let allychain = axia_node_core_parachains_inherent::ParachainsInherentDataProvider::create(
 						&*client_clone,
 						overseer_handle,
 						parent,
@@ -1023,7 +1023,7 @@ where
 							slot_duration,
 						);
 
-					Ok((timestamp, slot, uncles, parachain))
+					Ok((timestamp, slot, uncles, allychain))
 				}
 			},
 			force_authoring,
@@ -1044,7 +1044,7 @@ where
 	let keystore_opt =
 		if role.is_authority() { Some(keystore_container.sync_keystore()) } else { None };
 
-	// We currently only run the BEEFY gadget on the Rococo and Wococo testnets.
+	// We currently only run the BEEFY gadget on the Betanet and Wococo testnets.
 	if !disable_beefy && (chain_spec.is_rococo() || chain_spec.is_wococo()) {
 		let beefy_params = beefy_gadget::BeefyParams {
 			client: client.clone(),
@@ -1260,14 +1260,14 @@ where
 		);
 	}
 
-	let light_deps = polkadot_rpc::LightDeps {
+	let light_deps = axia_rpc::LightDeps {
 		remote_blockchain: backend.remote_blockchain(),
 		fetcher: on_demand.clone(),
 		client: client.clone(),
 		pool: transaction_pool.clone(),
 	};
 
-	let rpc_extensions = polkadot_rpc::create_light(light_deps);
+	let rpc_extensions = axia_rpc::create_light(light_deps);
 
 	let rpc_handlers = service::spawn_tasks(service::SpawnTasksParams {
 		on_demand: Some(on_demand),
@@ -1333,9 +1333,9 @@ pub fn new_chain_ops(
 
 	let telemetry_worker_handle = None;
 
-	#[cfg(feature = "rococo-native")]
+	#[cfg(feature = "betanet-native")]
 	if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
-		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; rococo_runtime, RococoExecutorDispatch, Rococo)
+		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; rococo_runtime, RococoExecutorDispatch, Betanet)
 	}
 
 	#[cfg(feature = "axctest-native")]
@@ -1343,23 +1343,23 @@ pub fn new_chain_ops(
 		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; axctest_runtime, AxiaTestExecutorDispatch, AxiaTest)
 	}
 
-	#[cfg(feature = "westend-native")]
+	#[cfg(feature = "alphanet-native")]
 	if config.chain_spec.is_westend() {
-		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; westend_runtime, WestendExecutorDispatch, Westend)
+		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; westend_runtime, WestendExecutorDispatch, Alphanet)
 	}
 
-	#[cfg(feature = "polkadot-native")]
+	#[cfg(feature = "axia-native")]
 	{
-		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; polkadot_runtime, PolkadotExecutorDispatch, Polkadot)
+		return chain_ops!(config, jaeger_agent, telemetry_worker_handle; axia_runtime, AxiaExecutorDispatch, Axia)
 	}
-	#[cfg(not(feature = "polkadot-native"))]
+	#[cfg(not(feature = "axia-native"))]
 	Err(Error::NoRuntime)
 }
 
 /// Build a new light node.
 #[cfg(feature = "light-node")]
 pub fn build_light(config: Configuration) -> Result<(TaskManager, RpcHandlers), Error> {
-	#[cfg(feature = "rococo-native")]
+	#[cfg(feature = "betanet-native")]
 	if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
 		return new_light::<rococo_runtime::RuntimeApi, RococoExecutorDispatch>(config)
 	}
@@ -1369,17 +1369,17 @@ pub fn build_light(config: Configuration) -> Result<(TaskManager, RpcHandlers), 
 		return new_light::<axctest_runtime::RuntimeApi, AxiaTestExecutorDispatch>(config)
 	}
 
-	#[cfg(feature = "westend-native")]
+	#[cfg(feature = "alphanet-native")]
 	if config.chain_spec.is_westend() {
 		return new_light::<westend_runtime::RuntimeApi, WestendExecutorDispatch>(config)
 	}
 
-	#[cfg(feature = "polkadot-native")]
+	#[cfg(feature = "axia-native")]
 	{
-		return new_light::<polkadot_runtime::RuntimeApi, PolkadotExecutorDispatch>(config)
+		return new_light::<axia_runtime::RuntimeApi, AxiaExecutorDispatch>(config)
 	}
 
-	#[cfg(not(feature = "polkadot-native"))]
+	#[cfg(not(feature = "axia-native"))]
 	Err(Error::NoRuntime)
 }
 
@@ -1393,7 +1393,7 @@ pub fn build_full(
 	telemetry_worker_handle: Option<TelemetryWorkerHandle>,
 	overseer_gen: impl OverseerGen,
 ) -> Result<NewFull<Client>, Error> {
-	#[cfg(feature = "rococo-native")]
+	#[cfg(feature = "betanet-native")]
 	if config.chain_spec.is_rococo() || config.chain_spec.is_wococo() {
 		return new_full::<rococo_runtime::RuntimeApi, RococoExecutorDispatch, _>(
 			config,
@@ -1405,7 +1405,7 @@ pub fn build_full(
 			None,
 			overseer_gen,
 		)
-		.map(|full| full.with_client(Client::Rococo))
+		.map(|full| full.with_client(Client::Betanet))
 	}
 
 	#[cfg(feature = "axctest-native")]
@@ -1423,7 +1423,7 @@ pub fn build_full(
 		.map(|full| full.with_client(Client::AxiaTest))
 	}
 
-	#[cfg(feature = "westend-native")]
+	#[cfg(feature = "alphanet-native")]
 	if config.chain_spec.is_westend() {
 		return new_full::<westend_runtime::RuntimeApi, WestendExecutorDispatch, _>(
 			config,
@@ -1435,12 +1435,12 @@ pub fn build_full(
 			None,
 			overseer_gen,
 		)
-		.map(|full| full.with_client(Client::Westend))
+		.map(|full| full.with_client(Client::Alphanet))
 	}
 
-	#[cfg(feature = "polkadot-native")]
+	#[cfg(feature = "axia-native")]
 	{
-		return new_full::<polkadot_runtime::RuntimeApi, PolkadotExecutorDispatch, _>(
+		return new_full::<axia_runtime::RuntimeApi, AxiaExecutorDispatch, _>(
 			config,
 			is_collator,
 			grandpa_pause,
@@ -1450,9 +1450,9 @@ pub fn build_full(
 			None,
 			overseer_gen,
 		)
-		.map(|full| full.with_client(Client::Polkadot))
+		.map(|full| full.with_client(Client::Axia))
 	}
 
-	#[cfg(not(feature = "polkadot-native"))]
+	#[cfg(not(feature = "axia-native"))]
 	Err(Error::NoRuntime)
 }

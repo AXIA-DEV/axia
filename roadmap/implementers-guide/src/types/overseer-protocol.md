@@ -385,7 +385,7 @@ enum CollatorProtocolMessage {
     CollateOn(ParaId),
     /// Provide a collation to distribute to validators with an optional result sender.
     ///
-    /// The result sender should be informed when at least one parachain validator seconded the collation. It is also
+    /// The result sender should be informed when at least one allychain validator seconded the collation. It is also
     /// completely okay to just drop the sender.
     DistributeCollation(CandidateReceipt, PoV, Option<oneshot::Sender<CollationSecondedSignal>>),
     /// Fetch a collation under the given relay-parent for the given ParaId.
@@ -535,7 +535,7 @@ to the low-level networking code.
 enum PeerSet {
     /// The collation peer-set is used to distribute collations from collators to validators.
     Collation,
-    /// The validation peer-set is used to distribute information relevant to parachain
+    /// The validation peer-set is used to distribute information relevant to allychain
     /// validation among validators. This may include nodes which are not validators,
     /// as some protocols on this peer-set are expected to be gossip.
     Validation,
@@ -684,7 +684,7 @@ enum ProvisionableData {
 /// In all cases, the Hash is that of the relay parent.
 enum ProvisionerMessage {
   /// This message allows external subsystems to request current inherent data that could be used for
-  /// advancing the state of parachain consensus in a block building upon the given hash.
+  /// advancing the state of allychain consensus in a block building upon the given hash.
   ///
   /// If called at different points in time, this may give different results.
   RequestInherentData(Hash, oneshot::Sender<ParaInherentData>),

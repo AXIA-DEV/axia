@@ -1,23 +1,23 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::*;
 use futures::{executor::block_on, pin_mut};
-use polkadot_node_subsystem::messages::AllMessages;
-use polkadot_primitives::v1::{CandidateHash, OccupiedCore};
+use axia_node_subsystem::messages::AllMessages;
+use axia_primitives::v1::{CandidateHash, OccupiedCore};
 
 fn occupied_core(para_id: u32, candidate_hash: CandidateHash) -> CoreState {
 	CoreState::Occupied(OccupiedCore {
@@ -38,7 +38,7 @@ fn construct_availability_bitfield_works() {
 		let relay_parent = Hash::default();
 		let validator_index = ValidatorIndex(1u32);
 
-		let (mut sender, mut receiver) = polkadot_node_subsystem_test_helpers::sender_receiver();
+		let (mut sender, mut receiver) = axia_node_subsystem_test_helpers::sender_receiver();
 		let future = construct_availability_bitfield(
 			relay_parent,
 			&jaeger::Span::Disabled,

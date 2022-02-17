@@ -1,5 +1,5 @@
 [package]
-name = "relay-westend-client"
+name = "relay-alphanet-client"
 version = "0.1.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -13,7 +13,7 @@ relay-utils = { path = "../utils" }
 
 # Bridge dependencies
 
-bp-westend = { path = "../../primitives/chain-westend" }
+bp-alphanet = { path = "../../primitives/chain-alphanet" }
 
 # Axlib Dependencies
 

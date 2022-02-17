@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 //! Mock data and utility functions for unit tests in this subsystem.
@@ -22,14 +22,14 @@ use std::{collections::HashMap, sync::Arc};
 use async_trait::async_trait;
 use lazy_static::lazy_static;
 
-use polkadot_node_network_protocol::{authority_discovery::AuthorityDiscovery, PeerId};
+use axia_node_network_protocol::{authority_discovery::AuthorityDiscovery, PeerId};
 use sc_keystore::LocalKeystore;
 use sp_application_crypto::AppKey;
 use sp_keyring::Sr25519Keyring;
 use sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
 
-use polkadot_node_primitives::{DisputeMessage, SignedDisputeStatement};
-use polkadot_primitives::v1::{
+use axia_node_primitives::{DisputeMessage, SignedDisputeStatement};
+use axia_primitives::v1::{
 	AuthorityDiscoveryId, CandidateDescriptor, CandidateHash, CandidateReceipt, Hash, SessionIndex,
 	SessionInfo, ValidatorId, ValidatorIndex,
 };
@@ -170,15 +170,15 @@ impl MockAuthorityDiscovery {
 impl AuthorityDiscovery for MockAuthorityDiscovery {
 	async fn get_addresses_by_authority_id(
 		&mut self,
-		_authority: polkadot_primitives::v1::AuthorityDiscoveryId,
+		_authority: axia_primitives::v1::AuthorityDiscoveryId,
 	) -> Option<Vec<sc_network::Multiaddr>> {
 		panic!("Not implemented");
 	}
 
 	async fn get_authority_id_by_peer_id(
 		&mut self,
-		peer_id: polkadot_node_network_protocol::PeerId,
-	) -> Option<polkadot_primitives::v1::AuthorityDiscoveryId> {
+		peer_id: axia_node_network_protocol::PeerId,
+	) -> Option<axia_primitives::v1::AuthorityDiscoveryId> {
 		for (a, p) in self.peer_ids.iter() {
 			if p == &peer_id {
 				return Some(MOCK_VALIDATORS_DISCOVERY_KEYS.get(&a).unwrap().clone())

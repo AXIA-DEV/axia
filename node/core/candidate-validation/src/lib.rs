@@ -1,18 +1,18 @@
 // Copyright 2020-2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! The Candidate Validation subsystem.
 //!
@@ -23,13 +23,13 @@
 #![deny(unused_crate_dependencies, unused_results)]
 #![warn(missing_docs)]
 
-use polkadot_node_core_pvf::{
+use axia_node_core_pvf::{
 	InvalidCandidate as WasmInvalidCandidate, Pvf, ValidationError, ValidationHost,
 };
-use polkadot_node_primitives::{
+use axia_node_primitives::{
 	BlockData, InvalidCandidate, PoV, ValidationResult, POV_BOMB_LIMIT, VALIDATION_CODE_BOMB_LIMIT,
 };
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	errors::RuntimeApiError,
 	messages::{
 		CandidateValidationMessage, RuntimeApiMessage, RuntimeApiRequest, ValidationFailed,
@@ -37,9 +37,9 @@ use polkadot_node_subsystem::{
 	overseer, FromOverseer, OverseerSignal, SpawnedSubsystem, SubsystemContext, SubsystemError,
 	SubsystemResult, SubsystemSender,
 };
-use polkadot_node_subsystem_util::metrics::{self, prometheus};
-use polkadot_parachain::primitives::{ValidationParams, ValidationResult as WasmValidationResult};
-use polkadot_primitives::v1::{
+use axia_node_subsystem_util::metrics::{self, prometheus};
+use axia_parachain::primitives::{ValidationParams, ValidationResult as WasmValidationResult};
+use axia_primitives::v1::{
 	CandidateCommitments, CandidateDescriptor, Hash, OccupiedCoreAssumption,
 	PersistedValidationData, ValidationCode, ValidationCodeHash,
 };
@@ -55,7 +55,7 @@ use async_trait::async_trait;
 #[cfg(test)]
 mod tests;
 
-const LOG_TARGET: &'static str = "parachain::candidate-validation";
+const LOG_TARGET: &'static str = "allychain::candidate-validation";
 
 /// Configuration for the candidate validation subsystem
 #[derive(Clone)]
@@ -72,7 +72,7 @@ pub struct CandidateValidationSubsystem {
 	#[allow(missing_docs)]
 	pub metrics: Metrics,
 	#[allow(missing_docs)]
-	pub pvf_metrics: polkadot_node_core_pvf::Metrics,
+	pub pvf_metrics: axia_node_core_pvf::Metrics,
 	config: Config,
 }
 
@@ -84,7 +84,7 @@ impl CandidateValidationSubsystem {
 	pub fn with_config(
 		config: Config,
 		metrics: Metrics,
-		pvf_metrics: polkadot_node_core_pvf::Metrics,
+		pvf_metrics: axia_node_core_pvf::Metrics,
 	) -> Self {
 		CandidateValidationSubsystem { config, metrics, pvf_metrics }
 	}
@@ -112,7 +112,7 @@ where
 async fn run<Context>(
 	mut ctx: Context,
 	metrics: Metrics,
-	pvf_metrics: polkadot_node_core_pvf::Metrics,
+	pvf_metrics: axia_node_core_pvf::Metrics,
 	cache_path: PathBuf,
 	program_path: PathBuf,
 ) -> SubsystemResult<()>
@@ -120,8 +120,8 @@ where
 	Context: SubsystemContext<Message = CandidateValidationMessage>,
 	Context: overseer::SubsystemContext<Message = CandidateValidationMessage>,
 {
-	let (validation_host, task) = polkadot_node_core_pvf::start(
-		polkadot_node_core_pvf::Config::new(cache_path, program_path),
+	let (validation_host, task) = axia_node_core_pvf::start(
+		axia_node_core_pvf::Config::new(cache_path, program_path),
 		pvf_metrics,
 	);
 	ctx.spawn_blocking("pvf-validation-host", task.boxed())?;
@@ -501,7 +501,7 @@ impl ValidationBackend for ValidationHost {
 				Pvf::from_code(raw_validation_code),
 				timeout,
 				params.encode(),
-				polkadot_node_core_pvf::Priority::Normal,
+				axia_node_core_pvf::Priority::Normal,
 				tx,
 			)
 			.await

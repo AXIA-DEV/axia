@@ -1,22 +1,22 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! # Polkadot Staking Miner.
+//! # Axia Staking Miner.
 //!
-//! Simple bot capable of monitoring a polkadot (and cousins) chain and submitting solutions to the
+//! Simple bot capable of monitoring a axia (and cousins) chain and submitting solutions to the
 //! `pallet-election-provider-multi-phase`. See `--help` for more details.
 //!
 //! # Implementation Notes:
@@ -47,12 +47,12 @@ use sp_runtime::traits::Block as BlockT;
 use structopt::StructOpt;
 
 pub(crate) enum AnyRuntime {
-	Polkadot,
+	Axia,
 	AxiaTest,
-	Westend,
+	Alphanet,
 }
 
-pub(crate) static mut RUNTIME: AnyRuntime = AnyRuntime::Polkadot;
+pub(crate) static mut RUNTIME: AnyRuntime = AnyRuntime::Axia;
 
 macro_rules! construct_runtime_prelude {
 	($runtime:ident) => { paste::paste! {
@@ -108,12 +108,12 @@ macro_rules! construct_runtime_prelude {
 }
 
 // NOTE: we might be able to use some code from the bridges repo here.
-fn signed_ext_builder_polkadot(
+fn signed_ext_builder_axia(
 	nonce: Index,
 	tip: Balance,
 	era: sp_runtime::generic::Era,
-) -> polkadot_runtime_exports::SignedExtra {
-	use polkadot_runtime_exports::Runtime;
+) -> axia_runtime_exports::SignedExtra {
+	use axia_runtime_exports::Runtime;
 	(
 		frame_system::CheckSpecVersion::<Runtime>::new(),
 		frame_system::CheckTxVersion::<Runtime>::new(),
@@ -160,9 +160,9 @@ fn signed_ext_builder_westend(
 	)
 }
 
-construct_runtime_prelude!(polkadot);
+construct_runtime_prelude!(axia);
 construct_runtime_prelude!(axctest);
-construct_runtime_prelude!(westend);
+construct_runtime_prelude!(alphanet);
 
 // NOTE: this is no longer used extensively, most of the per-runtime stuff us delegated to
 // `construct_runtime_prelude` and macro's the import directly from it. A part of the code is also
@@ -175,9 +175,9 @@ macro_rules! any_runtime {
 	($($code:tt)*) => {
 		unsafe {
 			match $crate::RUNTIME {
-				$crate::AnyRuntime::Polkadot => {
+				$crate::AnyRuntime::Axia => {
 					#[allow(unused)]
-					use $crate::polkadot_runtime_exports::*;
+					use $crate::axia_runtime_exports::*;
 					$($code)*
 				},
 				$crate::AnyRuntime::AxiaTest => {
@@ -185,7 +185,7 @@ macro_rules! any_runtime {
 					use $crate::axctest_runtime_exports::*;
 					$($code)*
 				},
-				$crate::AnyRuntime::Westend => {
+				$crate::AnyRuntime::Alphanet => {
 					#[allow(unused)]
 					use $crate::westend_runtime_exports::*;
 					$($code)*
@@ -202,9 +202,9 @@ macro_rules! any_runtime_unit {
 	($($code:tt)*) => {
 		unsafe {
 			match $crate::RUNTIME {
-				$crate::AnyRuntime::Polkadot => {
+				$crate::AnyRuntime::Axia => {
 					#[allow(unused)]
-					use $crate::polkadot_runtime_exports::*;
+					use $crate::axia_runtime_exports::*;
 					let _ = $($code)*;
 				},
 				$crate::AnyRuntime::AxiaTest => {
@@ -212,7 +212,7 @@ macro_rules! any_runtime_unit {
 					use $crate::axctest_runtime_exports::*;
 					let _ = $($code)*;
 				},
-				$crate::AnyRuntime::Westend => {
+				$crate::AnyRuntime::Alphanet => {
 					#[allow(unused)]
 					use $crate::westend_runtime_exports::*;
 					let _ = $($code)*;
@@ -547,23 +547,23 @@ async fn main() {
 		.await
 		.expect("system_chain infallible; qed.");
 	match chain.to_lowercase().as_str() {
-		"polkadot" | "development" => {
+		"axia" | "development" => {
 			sp_core::crypto::set_default_ss58_version(
-				sp_core::crypto::Ss58AddressFormatRegistry::PolkadotAccount.into(),
+				sp_core::crypto::Ss58AddressFormatRegistry::AxiaAccount.into(),
 			);
-			sub_tokens::dynamic::set_name("DOT");
+			sub_tokens::dynamic::set_name("AXC");
 			sub_tokens::dynamic::set_decimal_points(10_000_000_000);
 			// safety: this program will always be single threaded, thus accessing global static is
 			// safe.
 			unsafe {
-				RUNTIME = AnyRuntime::Polkadot;
+				RUNTIME = AnyRuntime::Axia;
 			}
 		},
 		"axctest" | "axctest-dev" => {
 			sp_core::crypto::set_default_ss58_version(
 				sp_core::crypto::Ss58AddressFormatRegistry::AxiaTestAccount.into(),
 			);
-			sub_tokens::dynamic::set_name("KSM");
+			sub_tokens::dynamic::set_name("AXCT");
 			sub_tokens::dynamic::set_decimal_points(1_000_000_000_000);
 			// safety: this program will always be single threaded, thus accessing global static is
 			// safe.
@@ -571,16 +571,16 @@ async fn main() {
 				RUNTIME = AnyRuntime::AxiaTest;
 			}
 		},
-		"westend" => {
+		"alphanet" => {
 			sp_core::crypto::set_default_ss58_version(
-				sp_core::crypto::Ss58AddressFormatRegistry::PolkadotAccount.into(),
+				sp_core::crypto::Ss58AddressFormatRegistry::AxiaAccount.into(),
 			);
 			sub_tokens::dynamic::set_name("WND");
 			sub_tokens::dynamic::set_decimal_points(1_000_000_000_000);
 			// safety: this program will always be single threaded, thus accessing global static is
 			// safe.
 			unsafe {
-				RUNTIME = AnyRuntime::Westend;
+				RUNTIME = AnyRuntime::Alphanet;
 			}
 		},
 		_ => {
@@ -630,16 +630,16 @@ mod tests {
 	#[test]
 	fn any_runtime_works() {
 		unsafe {
-			RUNTIME = AnyRuntime::Polkadot;
+			RUNTIME = AnyRuntime::Axia;
 		}
-		let polkadot_version = any_runtime! { get_version::<Runtime>() };
+		let axia_version = any_runtime! { get_version::<Runtime>() };
 
 		unsafe {
 			RUNTIME = AnyRuntime::AxiaTest;
 		}
 		let axctest_version = any_runtime! { get_version::<Runtime>() };
 
-		assert_eq!(polkadot_version.spec_name, "polkadot".into());
+		assert_eq!(axia_version.spec_name, "axia".into());
 		assert_eq!(axctest_version.spec_name, "axctest".into());
 	}
 }

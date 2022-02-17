@@ -1,23 +1,23 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! # Overseer
 //!
 //! `overseer` implements the Overseer architecture described in the
-//! [implementers-guide](https://w3f.github.io/parachain-implementers-guide/node/index.html).
+//! [implementers-guide](https://w3f.github.io/allychain-implementers-guide/node/index.html).
 //! For the motivations behind implementing the overseer itself you should
 //! check out that guide, documentation in this crate will be mostly discussing
 //! technical stuff.
@@ -60,12 +60,12 @@
 #![deny(missing_docs)]
 #![deny(unused_crate_dependencies)]
 
-pub use polkadot_overseer_gen_proc_macro::overlord;
+pub use axia_overseer_gen_proc_macro::overlord;
 
 #[doc(hidden)]
 pub use metered;
 #[doc(hidden)]
-pub use polkadot_node_primitives::SpawnNamed;
+pub use axia_node_primitives::SpawnNamed;
 #[doc(hidden)]
 pub use tracing;
 
@@ -94,7 +94,7 @@ pub use std::time::Duration;
 #[doc(hidden)]
 pub use futures_timer::Delay;
 
-pub use polkadot_node_network_protocol::WrongVariant;
+pub use axia_node_network_protocol::WrongVariant;
 
 use std::fmt;
 

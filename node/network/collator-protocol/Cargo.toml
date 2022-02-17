@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-collator-protocol"
+name = "axia-collator-protocol"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -16,11 +16,11 @@ sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" 
 sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-polkadot-primitives = { path = "../../../primitives" }
-polkadot-node-network-protocol = { path = "../../network/protocol" }
-polkadot-node-primitives = { path = "../../primitives" }
-polkadot-node-subsystem-util = { path = "../../subsystem-util" }
-polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../../subsystem" }
+axia-primitives = { path = "../../../primitives" }
+axia-node-network-protocol = { path = "../../network/protocol" }
+axia-node-primitives = { path = "../../primitives" }
+axia-node-subsystem-util = { path = "../../subsystem-util" }
+axia-subsystem = { package = "axia-node-subsystem", path = "../../subsystem" }
 
 [dev-dependencies]
 log = "0.4.13"
@@ -32,4 +32,4 @@ sp-keyring = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "maste
 sc-network = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 parity-scale-codec = { version = "2.3.1", features = ["std"]  }
 
-polkadot-subsystem-testhelpers = { package = "polkadot-node-subsystem-test-helpers", path = "../../subsystem-test-helpers" }
+axia-subsystem-testhelpers = { package = "axia-node-subsystem-test-helpers", path = "../../subsystem-test-helpers" }

@@ -90,7 +90,7 @@ For each leaf in the leaves update:
   * Update `"earliest-session"` to be equal to `state.highest_session - DISPUTE_WINDOW`.
 * For each new block, explicitly or implicitly, under the new leaf, scan for a dispute digest which indicates a rollback. If a rollback is detected, use the `ChainApi` subsystem to blacklist the chain.
 * For each new block, use the `RuntimeApi` to obtain a `ScrapedOnChainVotes` and handle them as if they were provided by means of a incoming `DisputeCoordinatorMessage::ImportStatement` message.
-  * In the case of a concluded dispute, there are some cases that do not guarantee the presence of a `CandidateReceipt`, where handling has to be defered <https://github.com/paritytech/polkadot/issues/4011>.
+  * In the case of a concluded dispute, there are some cases that do not guarantee the presence of a `CandidateReceipt`, where handling has to be defered <https://github.com/paritytech/axia/issues/4011>.
 
 ### On `OverseerSignal::Conclude`
 
@@ -153,7 +153,7 @@ Do nothing.
 
 * Deconstruct into parts `{ session_index, candidate_hash, candidate_receipt, is_valid }`.
 * Construct a [`DisputeStatement`][DisputeStatement] based on `Valid` or `Invalid`, depending on the parameterization of this routine.
-* Sign the statement with each key in the `SessionInfo`'s list of parachain validation keys which is present in the keystore, except those whose indices appear in `voted_indices`. This will typically just be one key, but this does provide some future-proofing for situations where the same node may run on behalf multiple validators. At the time of writing, this is not a use-case we support as other subsystems do not invariably provide this guarantee.
+* Sign the statement with each key in the `SessionInfo`'s list of allychain validation keys which is present in the keystore, except those whose indices appear in `voted_indices`. This will typically just be one key, but this does provide some future-proofing for situations where the same node may run on behalf multiple validators. At the time of writing, this is not a use-case we support as other subsystems do not invariably provide this guarantee.
 * Write statement to DB.
 * Send a `DisputeDistributionMessage::SendDispute` message to get the vote
   distributed to other validators.

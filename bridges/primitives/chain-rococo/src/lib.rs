@@ -25,22 +25,22 @@ use frame_support::weights::{WeightToFeeCoefficient, WeightToFeeCoefficients, We
 use sp_std::prelude::*;
 use sp_version::RuntimeVersion;
 
-pub use bp_polkadot_core::*;
+pub use bp_axia_core::*;
 
-/// Rococo Chain
-pub type Rococo = PolkadotLike;
+/// Betanet Chain
+pub type Betanet = AxiaLike;
 
-/// The target length of a session (how often authorities change) on Westend measured in of number of
+/// The target length of a session (how often authorities change) on Alphanet measured in of number of
 /// blocks.
 ///
 /// Note that since this is a target sessions may change before/after this time depending on network
 /// conditions.
 pub const SESSION_LENGTH: BlockNumber = 10 * time_units::MINUTES;
 
-// NOTE: This needs to be kept up to date with the Rococo runtime found in the Polkadot repo.
+// NOTE: This needs to be kept up to date with the Betanet runtime found in the Axia repo.
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: sp_version::create_runtime_str!("rococo"),
-	impl_name: sp_version::create_runtime_str!("parity-rococo-v1.6"),
+	spec_name: sp_version::create_runtime_str!("betanet"),
+	impl_name: sp_version::create_runtime_str!("parity-betanet-v1.6"),
 	authoring_version: 0,
 	spec_version: 9100,
 	impl_version: 0,
@@ -48,7 +48,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	transaction_version: 0,
 };
 
-// NOTE: This needs to be kept up to date with the Rococo runtime found in the Polkadot repo.
+// NOTE: This needs to be kept up to date with the Betanet runtime found in the Axia repo.
 pub struct WeightToFee;
 impl WeightToFeePolynomial for WeightToFee {
 	type Balance = Balance;
@@ -65,7 +65,7 @@ impl WeightToFeePolynomial for WeightToFee {
 	}
 }
 
-// We use this to get the account on Rococo (target) which is derived from Wococo's (source)
+// We use this to get the account on Betanet (target) which is derived from Wococo's (source)
 // account.
 pub fn derive_account_from_wococo_id(id: bp_runtime::SourceAccount<AccountId>) -> AccountId {
 	let encoded_id = bp_runtime::derive_account_id(bp_runtime::WOCOCO_CHAIN_ID, id);
@@ -95,10 +95,10 @@ pub const FROM_ROCOCO_LATEST_CONFIRMED_NONCE_METHOD: &str = "FromRococoInboundLa
 pub const FROM_ROCOCO_UNREWARDED_RELAYERS_STATE: &str = "FromRococoInboundLaneApi_unrewarded_relayers_state";
 
 sp_api::decl_runtime_apis! {
-	/// API for querying information about the finalized Rococo headers.
+	/// API for querying information about the finalized Betanet headers.
 	///
-	/// This API is implemented by runtimes that are bridging with the Rococo chain, not the
-	/// Rococo runtime itself.
+	/// This API is implemented by runtimes that are bridging with the Betanet chain, not the
+	/// Betanet runtime itself.
 	pub trait RococoFinalityApi {
 		/// Returns number and hash of the best finalized header known to the bridge module.
 		fn best_finalized() -> (BlockNumber, Hash);
@@ -106,15 +106,15 @@ sp_api::decl_runtime_apis! {
 		fn is_known_header(hash: Hash) -> bool;
 	}
 
-	/// Outbound message lane API for messages that are sent to Rococo chain.
+	/// Outbound message lane API for messages that are sent to Betanet chain.
 	///
-	/// This API is implemented by runtimes that are sending messages to Rococo chain, not the
-	/// Rococo runtime itself.
+	/// This API is implemented by runtimes that are sending messages to Betanet chain, not the
+	/// Betanet runtime itself.
 	pub trait ToRococoOutboundLaneApi<OutboundMessageFee: Parameter, OutboundPayload: Parameter> {
 		/// Estimate message delivery and dispatch fee that needs to be paid by the sender on
 		/// this chain.
 		///
-		/// Returns `None` if message is too expensive to be sent to Rococo from this chain.
+		/// Returns `None` if message is too expensive to be sent to Betanet from this chain.
 		///
 		/// Please keep in mind that this method returns the lowest message fee required for message
 		/// to be accepted to the lane. It may be good idea to pay a bit over this price to account
@@ -140,10 +140,10 @@ sp_api::decl_runtime_apis! {
 		fn latest_generated_nonce(lane: LaneId) -> MessageNonce;
 	}
 
-	/// Inbound message lane API for messages sent by Rococo chain.
+	/// Inbound message lane API for messages sent by Betanet chain.
 	///
-	/// This API is implemented by runtimes that are receiving messages from Rococo chain, not the
-	/// Rococo runtime itself.
+	/// This API is implemented by runtimes that are receiving messages from Betanet chain, not the
+	/// Betanet runtime itself.
 	pub trait FromRococoInboundLaneApi {
 		/// Returns nonce of the latest message, received by given lane.
 		fn latest_received_nonce(lane: LaneId) -> MessageNonce;

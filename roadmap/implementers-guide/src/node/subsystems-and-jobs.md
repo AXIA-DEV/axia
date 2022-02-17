@@ -4,7 +4,7 @@ In this section we define the notions of Subsystems and Jobs. These are guidelin
 
 Subsystems are long-lived worker tasks that are in charge of performing some particular kind of work. All subsystems can communicate with each other via a well-defined protocol. Subsystems can't generally communicate directly, but must coordinate communication through an [Overseer](overseer.md), which is responsible for relaying messages, handling subsystem failures, and dispatching work signals.
 
-Most work that happens on the Node-side is related to building on top of a specific relay-chain block, which is contextually known as the "relay parent". We call it the relay parent to explicitly denote that it is a block in the relay chain and not on a parachain. We refer to the parent because when we are in the process of building a new block, we don't know what that new block is going to be. The parent block is our only stable point of reference, even though it is usually only useful when it is not yet a parent but in fact a leaf of the block-DAG expected to soon become a parent (because validators are authoring on top of it). Furthermore, we are assuming a forkful blockchain-extension protocol, which means that there may be multiple possible children of the relay-parent. Even if the relay parent has multiple children blocks, the parent of those children is the same, and the context in which those children is authored should be the same. The parent block is the best and most stable reference to use for defining the scope of work items and messages, and is typically referred to by its cryptographic hash.
+Most work that happens on the Node-side is related to building on top of a specific relay-chain block, which is contextually known as the "relay parent". We call it the relay parent to explicitly denote that it is a block in the relay chain and not on a allychain. We refer to the parent because when we are in the process of building a new block, we don't know what that new block is going to be. The parent block is our only stable point of reference, even though it is usually only useful when it is not yet a parent but in fact a leaf of the block-DAG expected to soon become a parent (because validators are authoring on top of it). Furthermore, we are assuming a forkful blockchain-extension protocol, which means that there may be multiple possible children of the relay-parent. Even if the relay parent has multiple children blocks, the parent of those children is the same, and the context in which those children is authored should be the same. The parent block is the best and most stable reference to use for defining the scope of work items and messages, and is typically referred to by its cryptographic hash.
 
 Since this goal of determining when to start and conclude work relative to a specific relay-parent is common to most, if not all subsystems, it is logically the job of the Overseer to distribute those signals as opposed to each subsystem duplicating that effort, potentially being out of synchronization with each other. Subsystem A should be able to expect that subsystem B is working on the same relay-parents as it is. One of the Overseer's tasks is to provide this heartbeat, or synchronized rhythm, to the system.
 
@@ -125,9 +125,9 @@ digraph {
 
 ## The Path to Inclusion (Node Side)
 
-Let's contextualize that diagram a bit by following a parachain block from its creation through finalization.
-Parachains can use completely arbitrary processes to generate blocks. The relay chain doesn't know or care about
-the details; each parachain just needs to provide a [collator](collators/collation-generation.md).
+Let's contextualize that diagram a bit by following a allychain block from its creation through finalization.
+Allychains can use completely arbitrary processes to generate blocks. The relay chain doesn't know or care about
+the details; each allychain just needs to provide a [collator](collators/collation-generation.md).
 
 **Note**: Inter-subsystem communications are relayed via the overseer, but that step is omitted here for brevity.
 

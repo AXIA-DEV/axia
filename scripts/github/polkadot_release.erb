@@ -2,19 +2,19 @@
 
 Native runtimes:
 
-- Polkadot: **<%= polkadot_runtime %>**
+- Axia: **<%= axia_runtime %>**
 - AxiaTest: **<%= axctest_runtime %>**
-- Westend: **<%= westend_runtime %>**
+- Alphanet: **<%= westend_runtime %>**
 
 This release was tested against the following versions of `rustc`. Other versions may work.
 
 - <%= rustc_stable %>
 - <%= rustc_nightly %>
 
-WASM runtimes built with [<%= polkadot_json['info']['generator']['name'] %> v<%= polkadot_json['info']['generator']['version'] %>](https://github.com/paritytech/srtool) using `<%= polkadot_json['rustc'] %>`.
+WASM runtimes built with [<%= axia_json['info']['generator']['name'] %> v<%= axia_json['info']['generator']['version'] %>](https://github.com/paritytech/srtool) using `<%= axia_json['rustc'] %>`.
 
 Proposal hashes:
-* `polkadot_runtime-v<%= polkadot_runtime %>.compact.compressed.wasm`: `<%= polkadot_json['runtimes']['compressed']['prop'] %>`
+* `axia_runtime-v<%= axia_runtime %>.compact.compressed.wasm`: `<%= axia_json['runtimes']['compressed']['prop'] %>`
 * `axctest_runtime-v<%= axctest_runtime %>.compact.compressed.wasm`: `<%= axctest_json['runtimes']['compressed']['prop'] %>`
 
 <% unless misc_changes.empty? %>

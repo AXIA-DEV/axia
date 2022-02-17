@@ -1,30 +1,30 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Implements the Runtime API Subsystem
 //!
-//! This provides a clean, ownerless wrapper around the parachain-related runtime APIs. This crate
+//! This provides a clean, ownerless wrapper around the allychain-related runtime APIs. This crate
 //! can also be used to cache responses from heavy runtime APIs.
 
 #![deny(unused_crate_dependencies)]
 #![warn(missing_docs)]
 
-use polkadot_node_subsystem_util::metrics::{self, prometheus};
-use polkadot_primitives::v1::{Block, BlockId, Hash, ParachainHost};
-use polkadot_subsystem::{
+use axia_node_subsystem_util::metrics::{self, prometheus};
+use axia_primitives::v1::{Block, BlockId, Hash, ParachainHost};
+use axia_subsystem::{
 	errors::RuntimeApiError,
 	messages::{RuntimeApiMessage, RuntimeApiRequest as Request},
 	overseer, FromOverseer, OverseerSignal, SpawnedSubsystem, SubsystemContext, SubsystemError,
@@ -45,13 +45,13 @@ mod cache;
 #[cfg(test)]
 mod tests;
 
-const LOG_TARGET: &str = "parachain::runtime-api";
+const LOG_TARGET: &str = "allychain::runtime-api";
 
 /// The number of maximum runtime API requests can be executed in parallel. Further requests will be buffered.
 const MAX_PARALLEL_REQUESTS: usize = 4;
 
 /// The name of the blocking task that executes a runtime API request.
-const API_REQUEST_TASK_NAME: &str = "polkadot-runtime-api-request";
+const API_REQUEST_TASK_NAME: &str = "axia-runtime-api-request";
 
 /// The `RuntimeApiSubsystem`. See module docs for more details.
 pub struct RuntimeApiSubsystem<Client> {

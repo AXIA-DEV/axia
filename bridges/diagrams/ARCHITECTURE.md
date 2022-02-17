@@ -10,4 +10,4 @@
 
 ## Usage
 ![Cross Chain Fund Transfer](cross-chain-fund-transfer.svg)
-![Parachain](parachain.svg)
+![Allychain](allychain.svg)

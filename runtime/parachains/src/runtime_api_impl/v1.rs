@@ -1,12 +1,12 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -50,7 +50,7 @@ pub fn validator_groups<T: initializer::Config>(
 /// Implementation for the `availability_cores` function of the runtime API.
 pub fn availability_cores<T: initializer::Config>() -> Vec<CoreState<T::Hash, T::BlockNumber>> {
 	let cores = <scheduler::Pallet<T>>::availability_cores();
-	let parachains = <paras::Pallet<T>>::parachains();
+	let allychains = <paras::Pallet<T>>::allychains();
 	let config = <configuration::Pallet<T>>::config();
 
 	let now = <frame_system::Pallet<T>>::block_number() + One::one();
@@ -87,7 +87,7 @@ pub fn availability_cores<T: initializer::Config>() -> Vec<CoreState<T::Hash, T:
 			Some(g) => g,
 			None => {
 				log::warn!(
-					target: "runtime::polkadot-api::v1",
+					target: "runtime::axia-api::v1",
 					"Could not determine the group responsible for core extracted \
 					from list of cores for some prior block in same session",
 				);
@@ -101,8 +101,8 @@ pub fn availability_cores<T: initializer::Config>() -> Vec<CoreState<T::Hash, T:
 		.enumerate()
 		.map(|(i, core)| match core {
 			Some(occupied) => CoreState::Occupied(match occupied {
-				CoreOccupied::Parachain => {
-					let para_id = parachains[i];
+				CoreOccupied::Allychain => {
+					let para_id = allychains[i];
 					let pending_availability =
 						<inclusion::Pallet<T>>::pending_availability(para_id)
 							.expect("Occupied core always has pending availability; qed");
@@ -245,7 +245,7 @@ pub fn relevant_authority_ids<T: initializer::Config + pallet_authority_discover
 	let earliest_stored_session = <session_info::Pallet<T>>::earliest_stored_session();
 
 	// Due to `max_validators`, the `SessionInfo` stores only the validators who are actively
-	// selected to participate in parachain consensus. We'd like all authorities for the current
+	// selected to participate in allychain consensus. We'd like all authorities for the current
 	// and next sessions to be used in authority-discovery. The two sets likely have large overlap.
 	let mut authority_ids = <pallet_authority_discovery::Pallet<T>>::current_authorities().to_vec();
 	authority_ids.extend(<pallet_authority_discovery::Pallet<T>>::next_authorities().to_vec());

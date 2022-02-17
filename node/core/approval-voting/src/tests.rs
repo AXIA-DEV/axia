@@ -1,31 +1,31 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::*;
-use polkadot_node_primitives::approval::{
+use axia_node_primitives::approval::{
 	AssignmentCert, AssignmentCertKind, DelayTranche, VRFOutput, VRFProof, RELAY_VRF_MODULO_CONTEXT,
 };
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	messages::{AllMessages, ApprovalVotingMessage, AssignmentCheckResult},
 	ActivatedLeaf, ActiveLeavesUpdate, LeafStatus,
 };
-use polkadot_node_subsystem_test_helpers as test_helpers;
-use polkadot_node_subsystem_util::TimeoutExt;
-use polkadot_overseer::HeadSupportsParachains;
-use polkadot_primitives::v1::{
+use axia_node_subsystem_test_helpers as test_helpers;
+use axia_node_subsystem_util::TimeoutExt;
+use axia_overseer::HeadSupportsParachains;
+use axia_primitives::v1::{
 	CandidateEvent, CoreIndex, GroupIndex, Header, Id as ParaId, ValidatorSignature,
 };
 use std::time::Duration;
@@ -211,39 +211,39 @@ struct MockAssignmentCriteria<Compute, Check>(Compute, Check);
 
 impl<Compute, Check> AssignmentCriteria for MockAssignmentCriteria<Compute, Check>
 where
-	Compute: Fn() -> HashMap<polkadot_primitives::v1::CoreIndex, criteria::OurAssignment>,
+	Compute: Fn() -> HashMap<axia_primitives::v1::CoreIndex, criteria::OurAssignment>,
 	Check: Fn(ValidatorIndex) -> Result<DelayTranche, criteria::InvalidAssignment>,
 {
 	fn compute_assignments(
 		&self,
 		_keystore: &LocalKeystore,
-		_relay_vrf_story: polkadot_node_primitives::approval::RelayVRFStory,
+		_relay_vrf_story: axia_node_primitives::approval::RelayVRFStory,
 		_config: &criteria::Config,
 		_leaving_cores: Vec<(
 			CandidateHash,
-			polkadot_primitives::v1::CoreIndex,
-			polkadot_primitives::v1::GroupIndex,
+			axia_primitives::v1::CoreIndex,
+			axia_primitives::v1::GroupIndex,
 		)>,
-	) -> HashMap<polkadot_primitives::v1::CoreIndex, criteria::OurAssignment> {
+	) -> HashMap<axia_primitives::v1::CoreIndex, criteria::OurAssignment> {
 		self.0()
 	}
 
 	fn check_assignment_cert(
 		&self,
-		_claimed_core_index: polkadot_primitives::v1::CoreIndex,
+		_claimed_core_index: axia_primitives::v1::CoreIndex,
 		validator_index: ValidatorIndex,
 		_config: &criteria::Config,
-		_relay_vrf_story: polkadot_node_primitives::approval::RelayVRFStory,
-		_assignment: &polkadot_node_primitives::approval::AssignmentCert,
-		_backing_group: polkadot_primitives::v1::GroupIndex,
-	) -> Result<polkadot_node_primitives::approval::DelayTranche, criteria::InvalidAssignment> {
+		_relay_vrf_story: axia_node_primitives::approval::RelayVRFStory,
+		_assignment: &axia_node_primitives::approval::AssignmentCert,
+		_backing_group: axia_primitives::v1::GroupIndex,
+	) -> Result<axia_node_primitives::approval::DelayTranche, criteria::InvalidAssignment> {
 		self.1(validator_index)
 	}
 }
 
 impl<F>
 	MockAssignmentCriteria<
-		fn() -> HashMap<polkadot_primitives::v1::CoreIndex, criteria::OurAssignment>,
+		fn() -> HashMap<axia_primitives::v1::CoreIndex, criteria::OurAssignment>,
 		F,
 	>
 {
@@ -461,7 +461,7 @@ fn test_harness<T: Future<Output = VirtualOverseer>>(
 
 	let keystore = LocalKeystore::in_memory();
 	let _ = keystore.sr25519_generate_new(
-		polkadot_primitives::v1::PARACHAIN_KEY_TYPE_ID,
+		axia_primitives::v1::PARACHAIN_KEY_TYPE_ID,
 		Some(&Sr25519Keyring::Alice.to_seed()),
 	);
 

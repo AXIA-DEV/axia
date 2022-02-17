@@ -1,18 +1,18 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! `V1` Primitives.
 
@@ -30,19 +30,19 @@ use sp_arithmetic::traits::{BaseArithmetic, Saturating};
 pub use runtime_primitives::traits::{BlakeTwo256, Hash as HashT};
 
 // Export some core primitives.
-pub use polkadot_core_primitives::v1::{
+pub use axia_core_primitives::v1::{
 	AccountId, AccountIndex, AccountPublic, Balance, Block, BlockId, BlockNumber, CandidateHash,
 	ChainId, DownwardMessage, Hash, Header, InboundDownwardMessage, InboundHrmpMessage, Moment,
 	Nonce, OutboundHrmpMessage, Remark, Signature, UncheckedExtrinsic,
 };
 
-// Export some polkadot-parachain primitives
-pub use polkadot_parachain::primitives::{
+// Export some axia-allychain primitives
+pub use axia_parachain::primitives::{
 	HeadData, HrmpChannelId, Id, UpwardMessage, ValidationCode, ValidationCodeHash,
 	LOWEST_PUBLIC_ID, LOWEST_USER_ID,
 };
 
-// Export some basic parachain primitives from v0.
+// Export some basic allychain primitives from v0.
 pub use crate::v0::{
 	CollatorId, CollatorSignature, CompactStatement, SigningContext, ValidatorId, ValidatorIndex,
 	ValidatorSignature, ValidityAttestation, PARACHAIN_KEY_TYPE_ID,
@@ -168,7 +168,7 @@ pub mod well_known_keys {
 
 	/// The MQC head for the downward message queue of the given para. See more in the `Dmp` module.
 	///
-	/// The storage entry stores a `Hash`. This is polkadot hash which is at the moment
+	/// The storage entry stores a `Hash`. This is axia hash which is at the moment
 	/// `blake2b-256`.
 	pub fn dmq_mqc_head(para_id: Id) -> Vec<u8> {
 		let prefix = hex!["63f78c98723ddc9073523ef3beefda0c4d7fefc408aac59dbfe80a72ac8e3ce5"];
@@ -184,7 +184,7 @@ pub mod well_known_keys {
 		})
 	}
 
-	/// The signal that indicates whether the parachain should go-ahead with the proposed validation
+	/// The signal that indicates whether the allychain should go-ahead with the proposed validation
 	/// code upgrade.
 	///
 	/// The storage entry stores a value of `UpgradeGoAhead` type.
@@ -202,7 +202,7 @@ pub mod well_known_keys {
 		})
 	}
 
-	/// The signal that indicates whether the parachain is disallowed to signal an upgrade at this
+	/// The signal that indicates whether the allychain is disallowed to signal an upgrade at this
 	/// relay-parent.
 	///
 	/// The storage entry stores a value of `UpgradeRestriction` type.
@@ -221,10 +221,10 @@ pub mod well_known_keys {
 	}
 }
 
-/// Unique identifier for the Parachains Inherent
+/// Unique identifier for the Allychains Inherent
 pub const PARACHAINS_INHERENT_IDENTIFIER: InherentIdentifier = *b"parachn0";
 
-/// The key type ID for parachain assignment key.
+/// The key type ID for allychain assignment key.
 pub const ASSIGNMENT_KEY_TYPE_ID: KeyTypeId = KeyTypeId(*b"asgn");
 
 /// Maximum compressed code size we support right now.
@@ -232,7 +232,7 @@ pub const ASSIGNMENT_KEY_TYPE_ID: KeyTypeId = KeyTypeId(*b"asgn");
 /// to have bigger values, we should fix that first.
 ///
 /// Used for:
-/// * initial genesis for the Parachains configuration
+/// * initial genesis for the Allychains configuration
 /// * checking updates to this stored runtime configuration do not exceed this limit
 /// * when detecting a code decompression bomb in the client
 pub const MAX_CODE_SIZE: u32 = 3 * 1024 * 1024;
@@ -240,32 +240,32 @@ pub const MAX_CODE_SIZE: u32 = 3 * 1024 * 1024;
 /// Maximum head data size we support right now.
 ///
 /// Used for:
-/// * initial genesis for the Parachains configuration
+/// * initial genesis for the Allychains configuration
 /// * checking updates to this stored runtime configuration do not exceed this limit
 pub const MAX_HEAD_DATA_SIZE: u32 = 1 * 1024 * 1024;
 
 /// Maximum PoV size we support right now.
 ///
 /// Used for:
-/// * initial genesis for the Parachains configuration
+/// * initial genesis for the Allychains configuration
 /// * checking updates to this stored runtime configuration do not exceed this limit
 /// * when detecting a PoV decompression bomb in the client
 pub const MAX_POV_SIZE: u32 = 5 * 1024 * 1024;
 
 // The public key of a keypair used by a validator for determining assignments
-/// to approve included parachain candidates.
+/// to approve included allychain candidates.
 mod assignment_app {
 	use application_crypto::{app_crypto, sr25519};
 	app_crypto!(sr25519, super::ASSIGNMENT_KEY_TYPE_ID);
 }
 
 /// The public key of a keypair used by a validator for determining assignments
-/// to approve included parachain candidates.
+/// to approve included allychain candidates.
 pub type AssignmentId = assignment_app::Public;
 
 application_crypto::with_pair! {
 	/// The full keypair used by a validator for determining assignments to approve included
-	/// parachain candidates.
+	/// allychain candidates.
 	pub type AssignmentPair = assignment_app::Pair;
 }
 
@@ -345,7 +345,7 @@ pub struct CandidateDescriptor<H = Hash> {
 	/// The root of a block's erasure encoding Merkle tree.
 	pub erasure_root: Hash,
 	/// Signature on blake2-256 of components of this receipt:
-	/// The parachain index, the relay parent, the validation data hash, and the `pov_hash`.
+	/// The allychain index, the relay parent, the validation data hash, and the `pov_hash`.
 	pub signature: CollatorSignature,
 	/// Hash of the para header that is being generated by this candidate.
 	pub para_head: Hash,
@@ -461,7 +461,7 @@ impl PartialOrd for CommittedCandidateReceipt {
 impl Ord for CommittedCandidateReceipt {
 	fn cmp(&self, other: &Self) -> sp_std::cmp::Ordering {
 		// TODO: compare signatures or something more sane
-		// https://github.com/paritytech/polkadot/issues/222
+		// https://github.com/paritytech/axia/issues/222
 		self.descriptor()
 			.para_id
 			.cmp(&other.descriptor().para_id)
@@ -514,7 +514,7 @@ impl<H: Encode, N: Encode> PersistedValidationData<H, N> {
 pub struct CandidateCommitments<N = BlockNumber> {
 	/// Messages destined to be interpreted by the Relay chain itself.
 	pub upward_messages: Vec<UpwardMessage>,
-	/// Horizontal messages sent by the parachain.
+	/// Horizontal messages sent by the allychain.
 	pub horizontal_messages: Vec<OutboundHrmpMessage<Id>>,
 	/// New validation code.
 	pub new_validation_code: Option<ValidationCode>,
@@ -687,8 +687,8 @@ pub struct ParathreadEntry {
 pub enum CoreOccupied {
 	/// A parathread.
 	Parathread(ParathreadEntry),
-	/// A parachain.
-	Parachain,
+	/// A allychain.
+	Allychain,
 }
 
 /// A helper data-type for tracking validator-group rotations.
@@ -840,7 +840,7 @@ pub enum CoreState<H = Hash, N = BlockNumber> {
 	#[codec(index = 1)]
 	Scheduled(ScheduledCore),
 	/// The core is currently free and there is nothing scheduled. This can be the case for parathread
-	/// cores when there are no parathread blocks queued. Parachain cores will never be left idle.
+	/// cores when there are no parathread blocks queued. Allychain cores will never be left idle.
 	#[codec(index = 2)]
 	Free,
 }
@@ -902,8 +902,8 @@ pub struct SessionInfo {
 	/// Validators in canonical ordering.
 	///
 	/// NOTE: There might be more authorities in the current session, than `validators` participating
-	/// in parachain consensus. See
-	/// [`max_validators`](https://github.com/paritytech/polkadot/blob/a52dca2be7840b23c19c153cf7e110b1e3e475f8/runtime/parachains/src/configuration.rs#L148).
+	/// in allychain consensus. See
+	/// [`max_validators`](https://github.com/paritytech/axia/blob/a52dca2be7840b23c19c153cf7e110b1e3e475f8/runtime/allychains/src/configuration.rs#L148).
 	///
 	/// `SessionInfo::validators` will be limited to to `max_validators` when set.
 	pub validators: Vec<ValidatorId>,
@@ -911,15 +911,15 @@ pub struct SessionInfo {
 	///
 	/// NOTE: The first `validators.len()` entries will match the corresponding validators in
 	/// `validators`, afterwards any remaining authorities can be found. This is any authorities not
-	/// participating in parachain consensus - see
-	/// [`max_validators`](https://github.com/paritytech/polkadot/blob/a52dca2be7840b23c19c153cf7e110b1e3e475f8/runtime/parachains/src/configuration.rs#L148)
+	/// participating in allychain consensus - see
+	/// [`max_validators`](https://github.com/paritytech/axia/blob/a52dca2be7840b23c19c153cf7e110b1e3e475f8/runtime/allychains/src/configuration.rs#L148)
 	#[cfg_attr(feature = "std", ignore_malloc_size_of = "outside type")]
 	pub discovery_keys: Vec<AuthorityDiscoveryId>,
 	/// The assignment keys for validators.
 	///
 	/// NOTE: There might be more authorities in the current session, than validators participating
-	/// in parachain consensus. See
-	/// [`max_validators`](https://github.com/paritytech/polkadot/blob/a52dca2be7840b23c19c153cf7e110b1e3e475f8/runtime/parachains/src/configuration.rs#L148).
+	/// in allychain consensus. See
+	/// [`max_validators`](https://github.com/paritytech/axia/blob/a52dca2be7840b23c19c153cf7e110b1e3e475f8/runtime/allychains/src/configuration.rs#L148).
 	///
 	/// Therefore:
 	/// ```ignore
@@ -975,7 +975,7 @@ impl ApprovalVote {
 }
 
 sp_api::decl_runtime_apis! {
-	/// The API for querying the state of parachains on-chain.
+	/// The API for querying the state of allychains on-chain.
 	pub trait ParachainHost<H: Encode + Decode = Hash, N: Encode + Decode = BlockNumber> {
 		/// Get the current validators.
 		fn validators() -> Vec<ValidatorId>;
@@ -1039,7 +1039,7 @@ sp_api::decl_runtime_apis! {
 	}
 }
 
-/// Custom validity errors used in Polkadot while validating transactions.
+/// Custom validity errors used in Axia while validating transactions.
 #[repr(u8)]
 pub enum ValidityError {
 	/// The Ethereum signature is invalid.
@@ -1058,8 +1058,8 @@ impl From<ValidityError> for u8 {
 	}
 }
 
-/// Abridged version of `HostConfiguration` (from the `Configuration` parachains host runtime module)
-/// meant to be used by a parachain or PDK such as cumulus.
+/// Abridged version of `HostConfiguration` (from the `Configuration` allychains host runtime module)
+/// meant to be used by a allychain or PDK such as cumulus.
 #[derive(Clone, Encode, Decode, RuntimeDebug, TypeInfo)]
 #[cfg_attr(feature = "std", derive(PartialEq))]
 pub struct AbridgedHostConfiguration {
@@ -1067,9 +1067,9 @@ pub struct AbridgedHostConfiguration {
 	pub max_code_size: u32,
 	/// The maximum head-data size, in bytes.
 	pub max_head_data_size: u32,
-	/// Total number of individual messages allowed in the parachain -> relay-chain message queue.
+	/// Total number of individual messages allowed in the allychain -> relay-chain message queue.
 	pub max_upward_queue_count: u32,
-	/// Total size of messages allowed in the parachain -> relay-chain message queue before which
+	/// Total size of messages allowed in the allychain -> relay-chain message queue before which
 	/// no further messages may be added to it. If it exceeds this then the queue may contain only
 	/// a single message.
 	pub max_upward_queue_size: u32,
@@ -1085,14 +1085,14 @@ pub struct AbridgedHostConfiguration {
 	///
 	/// This parameter affects the upper bound of size of `CandidateCommitments`.
 	pub hrmp_max_message_num_per_candidate: u32,
-	/// The minimum frequency at which parachains can update their validation code.
+	/// The minimum frequency at which allychains can update their validation code.
 	pub validation_upgrade_frequency: BlockNumber,
 	/// The delay, in blocks, before a validation upgrade is applied.
 	pub validation_upgrade_delay: BlockNumber,
 }
 
-/// Abridged version of `HrmpChannel` (from the `Hrmp` parachains host runtime module) meant to be
-/// used by a parachain or PDK such as cumulus.
+/// Abridged version of `HrmpChannel` (from the `Hrmp` allychains host runtime module) meant to be
+/// used by a allychain or PDK such as cumulus.
 #[derive(Clone, Encode, Decode, RuntimeDebug, TypeInfo)]
 #[cfg_attr(feature = "std", derive(PartialEq))]
 pub struct AbridgedHrmpChannel {
@@ -1118,7 +1118,7 @@ pub struct AbridgedHrmpChannel {
 	pub mqc_head: Option<Hash>,
 }
 
-/// A possible upgrade restriction that prevents a parachain from performing an upgrade.
+/// A possible upgrade restriction that prevents a allychain from performing an upgrade.
 #[derive(Encode, Decode, PartialEq, RuntimeDebug, TypeInfo)]
 pub enum UpgradeRestriction {
 	/// There is an upgrade restriction and there are no details about its specifics nor how long
@@ -1127,39 +1127,39 @@ pub enum UpgradeRestriction {
 	Present,
 }
 
-/// A struct that the relay-chain communicates to a parachain indicating what course of action the
-/// parachain should take in the coordinated parachain validation code upgrade process.
+/// A struct that the relay-chain communicates to a allychain indicating what course of action the
+/// allychain should take in the coordinated allychain validation code upgrade process.
 ///
-/// This data type appears in the last step of the upgrade process. After the parachain observes it
+/// This data type appears in the last step of the upgrade process. After the allychain observes it
 /// and reacts to it the upgrade process concludes.
 #[derive(Encode, Decode, PartialEq, RuntimeDebug, TypeInfo)]
 pub enum UpgradeGoAhead {
 	/// Abort the upgrade process. There is something wrong with the validation code previously
-	/// submitted by the parachain. This variant can also be used to prevent upgrades by the governance
+	/// submitted by the allychain. This variant can also be used to prevent upgrades by the governance
 	/// should an emergency emerge.
 	///
-	/// The expected reaction on this variant is that the parachain will admit this message and
+	/// The expected reaction on this variant is that the allychain will admit this message and
 	/// remove all the data about the pending upgrade. Depending on the nature of the problem (to
 	/// be examined offchain for now), it can try to send another validation code or just retry later.
 	#[codec(index = 0)]
 	Abort,
 	/// Apply the pending code change. The parablock that is built on a relay-parent that is descendant
-	/// of the relay-parent where the parachain observed this signal must use the upgraded validation
+	/// of the relay-parent where the allychain observed this signal must use the upgraded validation
 	/// code.
 	#[codec(index = 1)]
 	GoAhead,
 }
 
-/// Consensus engine id for polkadot v1 consensus engine.
-pub const POLKADOT_ENGINE_ID: runtime_primitives::ConsensusEngineId = *b"POL1";
+/// Consensus engine id for axia v1 consensus engine.
+pub const AXIA_ENGINE_ID: runtime_primitives::ConsensusEngineId = *b"POL1";
 
-/// A consensus log item for polkadot validation. To be used with [`POLKADOT_ENGINE_ID`].
+/// A consensus log item for axia validation. To be used with [`AXIA_ENGINE_ID`].
 #[derive(Decode, Encode, Clone, PartialEq, Eq)]
 pub enum ConsensusLog {
-	/// A parachain or parathread upgraded its code.
+	/// A allychain or parathread upgraded its code.
 	#[codec(index = 1)]
 	ParaUpgradeCode(Id, ValidationCodeHash),
-	/// A parachain or parathread scheduled a code upgrade.
+	/// A allychain or parathread scheduled a code upgrade.
 	#[codec(index = 2)]
 	ParaScheduleUpgradeCode(Id, ValidationCodeHash, BlockNumber),
 	/// Governance requests to auto-approve every candidate included up to the given block
@@ -1173,7 +1173,7 @@ pub enum ConsensusLog {
 	/// its own number or a higher number.
 	///
 	/// In practice, these are issued when on-chain logic has detected an
-	/// invalid parachain block within its own chain, due to a dispute.
+	/// invalid allychain block within its own chain, due to a dispute.
 	#[codec(index = 4)]
 	Revert(BlockNumber),
 }
@@ -1184,7 +1184,7 @@ impl ConsensusLog {
 		digest_item: &runtime_primitives::DigestItem<H>,
 	) -> Result<Option<Self>, parity_scale_codec::Error> {
 		match digest_item {
-			runtime_primitives::DigestItem::Consensus(id, encoded) if id == &POLKADOT_ENGINE_ID =>
+			runtime_primitives::DigestItem::Consensus(id, encoded) if id == &AXIA_ENGINE_ID =>
 				Ok(Some(Self::decode(&mut &encoded[..])?)),
 			_ => Ok(None),
 		}
@@ -1193,7 +1193,7 @@ impl ConsensusLog {
 
 impl<H> From<ConsensusLog> for runtime_primitives::DigestItem<H> {
 	fn from(c: ConsensusLog) -> runtime_primitives::DigestItem<H> {
-		Self::Consensus(POLKADOT_ENGINE_ID, c.encode())
+		Self::Consensus(AXIA_ENGINE_ID, c.encode())
 	}
 }
 
@@ -1344,7 +1344,7 @@ pub struct DisputeState<N = BlockNumber> {
 	pub concluded_at: Option<N>,
 }
 
-/// Parachains inherent-data passed into the runtime by a block author
+/// Allychains inherent-data passed into the runtime by a block author
 #[derive(Encode, Decode, Clone, PartialEq, RuntimeDebug, TypeInfo)]
 pub struct InherentData<HDR: HeaderT = Header> {
 	/// Signed bitfields by validators about availability.

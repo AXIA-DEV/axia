@@ -1,28 +1,28 @@
 // Copyright 2020-2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::*;
 use assert_matches::assert_matches;
 use futures::{future, Future};
-use polkadot_node_primitives::{BlockData, InvalidCandidate};
-use polkadot_node_subsystem_test_helpers as test_helpers;
-use polkadot_primitives::v1::{
+use axia_node_primitives::{BlockData, InvalidCandidate};
+use axia_node_subsystem_test_helpers as test_helpers;
+use axia_primitives::v1::{
 	GroupRotationInfo, HeadData, PersistedValidationData, ScheduledCore,
 };
-use polkadot_subsystem::{
+use axia_subsystem::{
 	messages::{CollatorProtocolMessage, RuntimeApiMessage, RuntimeApiRequest},
 	ActivatedLeaf, ActiveLeavesUpdate, FromOverseer, LeafStatus, OverseerSignal,
 };
@@ -82,7 +82,7 @@ impl Default for TestState {
 		];
 
 		let keystore = Arc::new(sc_keystore::LocalKeystore::in_memory());
-		// Make sure `Alice` key is in the keystore, so this mocked node will be a parachain validator.
+		// Make sure `Alice` key is in the keystore, so this mocked node will be a allychain validator.
 		SyncCryptoStore::sr25519_generate_new(
 			&*keystore,
 			ValidatorId::ID,

@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-statement-table"
+name = "axia-statement-table"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -7,4 +7,4 @@ edition = "2018"
 [dependencies]
 parity-scale-codec = { version = "2.3.1", default-features = false, features = ["derive"] }
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
-primitives = { package = "polkadot-primitives", path = "../primitives" }
+primitives = { package = "axia-primitives", path = "../primitives" }

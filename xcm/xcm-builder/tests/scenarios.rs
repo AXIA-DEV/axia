@@ -1,25 +1,25 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 mod mock;
 
 use mock::{
 	axctest_like_with_balances, AccountId, Balance, Balances, BaseXcmWeight, XcmConfig, CENTS,
 };
-use polkadot_parachain::primitives::Id as ParaId;
+use axia_parachain::primitives::Id as ParaId;
 use sp_runtime::traits::AccountIdConversion;
 use xcm::latest::prelude::*;
 use xcm_executor::XcmExecutor;
@@ -35,9 +35,9 @@ fn buy_execution<C>() -> Instruction<C> {
 }
 
 /// Scenario:
-/// A parachain transfers funds on the relaychain to another parachain's account.
+/// A allychain transfers funds on the relaychain to another allychain's account.
 ///
-/// Asserts that the parachain accounts are updated as expected.
+/// Asserts that the allychain accounts are updated as expected.
 #[test]
 fn withdraw_and_deposit_works() {
 	let para_acc: AccountId = ParaId::from(PARA_ID).into_account();
@@ -47,14 +47,14 @@ fn withdraw_and_deposit_works() {
 		let amount = REGISTER_AMOUNT;
 		let weight = 3 * BaseXcmWeight::get();
 		let r = XcmExecutor::<XcmConfig>::execute_xcm(
-			Parachain(PARA_ID).into(),
+			Allychain(PARA_ID).into(),
 			Xcm(vec![
 				WithdrawAsset((Here, amount).into()),
 				buy_execution(),
 				DepositAsset {
 					assets: All.into(),
 					max_assets: 1,
-					beneficiary: Parachain(other_para_id).into(),
+					beneficiary: Allychain(other_para_id).into(),
 				},
 			]),
 			weight,
@@ -67,7 +67,7 @@ fn withdraw_and_deposit_works() {
 }
 
 /// Scenario:
-/// A parachain wants to be notified that a transfer worked correctly.
+/// A allychain wants to be notified that a transfer worked correctly.
 /// It includes a `QueryHolding` order after the deposit to get notified on success.
 /// This somewhat abuses `QueryHolding` as an indication of execution success. It works because
 /// order execution halts on error (so no `QueryResponse` will be sent if the previous order failed).
@@ -86,7 +86,7 @@ fn query_holding_works() {
 		let weight = 4 * BaseXcmWeight::get();
 		let max_response_weight = 1_000_000_000;
 		let r = XcmExecutor::<XcmConfig>::execute_xcm(
-			Parachain(PARA_ID).into(),
+			Allychain(PARA_ID).into(),
 			Xcm(vec![
 				WithdrawAsset((Here, amount).into()),
 				buy_execution(),
@@ -98,7 +98,7 @@ fn query_holding_works() {
 				// is not triggered becasue the deposit fails
 				QueryHolding {
 					query_id,
-					dest: Parachain(PARA_ID).into(),
+					dest: Allychain(PARA_ID).into(),
 					assets: All.into(),
 					max_response_weight,
 				},
@@ -118,19 +118,19 @@ fn query_holding_works() {
 
 		// now do a successful transfer
 		let r = XcmExecutor::<XcmConfig>::execute_xcm(
-			Parachain(PARA_ID).into(),
+			Allychain(PARA_ID).into(),
 			Xcm(vec![
 				WithdrawAsset((Here, amount).into()),
 				buy_execution(),
 				DepositAsset {
 					assets: All.into(),
 					max_assets: 1,
-					beneficiary: Parachain(other_para_id).into(),
+					beneficiary: Allychain(other_para_id).into(),
 				},
 				// used to get a notification in case of success
 				QueryHolding {
 					query_id,
-					dest: Parachain(PARA_ID).into(),
+					dest: Allychain(PARA_ID).into(),
 					assets: All.into(),
 					max_response_weight: 1_000_000_000,
 				},
@@ -144,7 +144,7 @@ fn query_holding_works() {
 		assert_eq!(
 			mock::sent_xcm(),
 			vec![(
-				Parachain(PARA_ID).into(),
+				Allychain(PARA_ID).into(),
 				Xcm(vec![QueryResponse {
 					query_id,
 					response: Response::Assets(vec![].into()),
@@ -156,11 +156,11 @@ fn query_holding_works() {
 }
 
 /// Scenario:
-/// A parachain wants to move KSM from AxiaTest to Statemine.
-/// The parachain sends an XCM to withdraw funds combined with a teleport to the destination.
+/// A allychain wants to move AXCT from AxiaTest to Statemine.
+/// The allychain sends an XCM to withdraw funds combined with a teleport to the destination.
 ///
-/// This way of moving funds from a relay to a parachain will only work for trusted chains.
-/// Reserve based transfer should be used to move KSM to a community parachain.
+/// This way of moving funds from a relay to a allychain will only work for trusted chains.
+/// Reserve based transfer should be used to move AXCT to a community allychain.
 ///
 /// Asserts that the balances are updated accordingly and the correct XCM is sent.
 #[test]
@@ -177,20 +177,20 @@ fn teleport_to_statemine_works() {
 			DepositAsset {
 				assets: All.into(),
 				max_assets: 1,
-				beneficiary: (1, Parachain(PARA_ID)).into(),
+				beneficiary: (1, Allychain(PARA_ID)).into(),
 			},
 		];
 		let weight = 3 * BaseXcmWeight::get();
 
 		// teleports are allowed to community chains, even in the absence of trust from their side.
 		let r = XcmExecutor::<XcmConfig>::execute_xcm(
-			Parachain(PARA_ID).into(),
+			Allychain(PARA_ID).into(),
 			Xcm(vec![
 				WithdrawAsset((Here, amount).into()),
 				buy_execution(),
 				InitiateTeleport {
 					assets: All.into(),
-					dest: Parachain(other_para_id).into(),
+					dest: Allychain(other_para_id).into(),
 					xcm: Xcm(teleport_effects.clone()),
 				},
 			]),
@@ -200,7 +200,7 @@ fn teleport_to_statemine_works() {
 		assert_eq!(
 			mock::sent_xcm(),
 			vec![(
-				Parachain(other_para_id).into(),
+				Allychain(other_para_id).into(),
 				Xcm(vec![ReceiveTeleportedAsset((Parent, amount).into()), ClearOrigin,]
 					.into_iter()
 					.chain(teleport_effects.clone().into_iter())
@@ -210,13 +210,13 @@ fn teleport_to_statemine_works() {
 
 		// teleports are allowed from statemine to axctest.
 		let r = XcmExecutor::<XcmConfig>::execute_xcm(
-			Parachain(PARA_ID).into(),
+			Allychain(PARA_ID).into(),
 			Xcm(vec![
 				WithdrawAsset((Here, amount).into()),
 				buy_execution(),
 				InitiateTeleport {
 					assets: All.into(),
-					dest: Parachain(statemine_id).into(),
+					dest: Allychain(statemine_id).into(),
 					xcm: Xcm(teleport_effects.clone()),
 				},
 			]),
@@ -229,14 +229,14 @@ fn teleport_to_statemine_works() {
 			mock::sent_xcm(),
 			vec![
 				(
-					Parachain(other_para_id).into(),
+					Allychain(other_para_id).into(),
 					Xcm(vec![ReceiveTeleportedAsset((Parent, amount).into()), ClearOrigin,]
 						.into_iter()
 						.chain(teleport_effects.clone().into_iter())
 						.collect()),
 				),
 				(
-					Parachain(statemine_id).into(),
+					Allychain(statemine_id).into(),
 					Xcm(vec![ReceiveTeleportedAsset((Parent, amount).into()), ClearOrigin,]
 						.into_iter()
 						.chain(teleport_effects.clone().into_iter())
@@ -248,7 +248,7 @@ fn teleport_to_statemine_works() {
 }
 
 /// Scenario:
-/// A parachain wants to move KSM from AxiaTest to the parachain.
+/// A allychain wants to move AXCT from AxiaTest to the allychain.
 /// It withdraws funds and then deposits them into the reserve account of the destination chain.
 /// to the destination.
 ///
@@ -266,19 +266,19 @@ fn reserve_based_transfer_works() {
 			DepositAsset {
 				assets: All.into(),
 				max_assets: 1,
-				beneficiary: (1, Parachain(PARA_ID)).into(),
+				beneficiary: (1, Allychain(PARA_ID)).into(),
 			},
 		];
 		let weight = 3 * BaseXcmWeight::get();
 		let r = XcmExecutor::<XcmConfig>::execute_xcm(
-			Parachain(PARA_ID).into(),
+			Allychain(PARA_ID).into(),
 			Xcm(vec![
 				WithdrawAsset((Here, amount).into()),
 				buy_execution(),
 				DepositReserveAsset {
 					assets: All.into(),
 					max_assets: 1,
-					dest: Parachain(other_para_id).into(),
+					dest: Allychain(other_para_id).into(),
 					xcm: Xcm(transfer_effects.clone()),
 				},
 			]),
@@ -289,7 +289,7 @@ fn reserve_based_transfer_works() {
 		assert_eq!(
 			mock::sent_xcm(),
 			vec![(
-				Parachain(other_para_id).into(),
+				Allychain(other_para_id).into(),
 				Xcm(vec![ReserveAssetDeposited((Parent, amount).into()), ClearOrigin,]
 					.into_iter()
 					.chain(transfer_effects.into_iter())

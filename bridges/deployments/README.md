@@ -123,9 +123,9 @@ Following accounts are used when `rialto-millau` bridge is running:
 - Millau's `Ferdie` signs relay transactions with messages (lane 00000001) from Rialto to Millau;
 - Rialto's `Ferdie` signs relay transactions with message delivery confirmations (lane 00000001) from Millau to Rialto.
 
-Following accounts are used when `westend-millau` bridge is running:
+Following accounts are used when `alphanet-millau` bridge is running:
 
-- Millau's `George` signs relay transactions with new Westend headers.
+- Millau's `George` signs relay transactions with new Alphanet headers.
 
 ### Docker Usage
 When the network is running you can query logs from individual nodes using:
@@ -240,10 +240,10 @@ UI_EXPECTED_ETHEREUM_NETWORK_ID=105
 
 ### UI
 
-Use [wss://rialto.bridges.test-installations.parity.io/](https://polkadot.js.org/apps/)
-as a custom endpoint for [https://polkadot.js.org/apps/](https://polkadot.js.org/apps/).
+Use [wss://rialto.bridges.test-installations.parity.io/](https://axia.js.org/apps/)
+as a custom endpoint for [https://axia.js.org/apps/](https://axia.js.org/apps/).
 
-### Polkadot.js UI
+### Axia.js UI
 
 To teach the UI decode our custom types used in the pallet, go to: `Settings -> Developer`
 and import the [`./types.json`](./types.json)

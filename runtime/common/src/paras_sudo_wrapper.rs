@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! A simple wrapper allowing `Sudo` to call into `paras` routines.
 
@@ -45,9 +45,9 @@ pub mod pallet {
 
 	#[pallet::error]
 	pub enum Error<T> {
-		/// The specified parachain or parathread is not registered.
+		/// The specified allychain or parathread is not registered.
 		ParaDoesntExist,
-		/// The specified parachain or parathread is already registered.
+		/// The specified allychain or parathread is already registered.
 		ParaAlreadyExists,
 		/// A DMP message couldn't be sent because it exceeds the maximum size allowed for a downward
 		/// message.
@@ -56,11 +56,11 @@ pub mod pallet {
 		CouldntCleanup,
 		/// Not a parathread.
 		NotParathread,
-		/// Not a parachain.
+		/// Not a allychain.
 		NotParachain,
 		/// Cannot upgrade parathread.
 		CannotUpgrade,
-		/// Cannot downgrade parachain.
+		/// Cannot downgrade allychain.
 		CannotDowngrade,
 	}
 
@@ -91,7 +91,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Upgrade a parathread to a parachain
+		/// Upgrade a parathread to a allychain
 		#[pallet::weight((1_000, DispatchClass::Operational))]
 		pub fn sudo_schedule_parathread_upgrade(
 			origin: OriginFor<T>,
@@ -108,16 +108,16 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Downgrade a parachain to a parathread
+		/// Downgrade a allychain to a parathread
 		#[pallet::weight((1_000, DispatchClass::Operational))]
 		pub fn sudo_schedule_parachain_downgrade(
 			origin: OriginFor<T>,
 			id: ParaId,
 		) -> DispatchResult {
 			ensure_root(origin)?;
-			// Para backend should think this is a parachain...
+			// Para backend should think this is a allychain...
 			ensure!(
-				paras::Pallet::<T>::lifecycle(id) == Some(ParaLifecycle::Parachain),
+				paras::Pallet::<T>::lifecycle(id) == Some(ParaLifecycle::Allychain),
 				Error::<T>::NotParachain,
 			);
 			runtime_parachains::schedule_parachain_downgrade::<T>(id)
@@ -127,7 +127,7 @@ pub mod pallet {
 
 		/// Send a downward XCM to the given para.
 		///
-		/// The given parachain should exist and the payload should not exceed the preconfigured size
+		/// The given allychain should exist and the payload should not exceed the preconfigured size
 		/// `config.max_downward_message_size`.
 		#[pallet::weight((1_000, DispatchClass::Operational))]
 		pub fn sudo_queue_downward_xcm(

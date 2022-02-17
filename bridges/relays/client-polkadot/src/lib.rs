@@ -14,35 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Types used to connect to the Polkadot chain.
+//! Types used to connect to the Axia chain.
 
 use relay_axlib_client::{Chain, ChainBase};
 use std::time::Duration;
 
-/// Polkadot header id.
-pub type HeaderId = relay_utils::HeaderId<bp_polkadot::Hash, bp_polkadot::BlockNumber>;
+/// Axia header id.
+pub type HeaderId = relay_utils::HeaderId<bp_axia::Hash, bp_axia::BlockNumber>;
 
-/// Polkadot chain definition
+/// Axia chain definition
 #[derive(Debug, Clone, Copy)]
-pub struct Polkadot;
+pub struct Axia;
 
-impl ChainBase for Polkadot {
-	type BlockNumber = bp_polkadot::BlockNumber;
-	type Hash = bp_polkadot::Hash;
-	type Hasher = bp_polkadot::Hasher;
-	type Header = bp_polkadot::Header;
+impl ChainBase for Axia {
+	type BlockNumber = bp_axia::BlockNumber;
+	type Hash = bp_axia::Hash;
+	type Hasher = bp_axia::Hasher;
+	type Header = bp_axia::Header;
 }
 
-impl Chain for Polkadot {
-	const NAME: &'static str = "Polkadot";
+impl Chain for Axia {
+	const NAME: &'static str = "Axia";
 	const AVERAGE_BLOCK_INTERVAL: Duration = Duration::from_secs(6);
 
-	type AccountId = bp_polkadot::AccountId;
-	type Index = bp_polkadot::Nonce;
-	type SignedBlock = bp_polkadot::SignedBlock;
+	type AccountId = bp_axia::AccountId;
+	type Index = bp_axia::Nonce;
+	type SignedBlock = bp_axia::SignedBlock;
 	type Call = ();
-	type Balance = bp_polkadot::Balance;
+	type Balance = bp_axia::Balance;
 }
 
-/// Polkadot header type used in headers sync.
-pub type SyncHeader = relay_axlib_client::SyncHeader<bp_polkadot::Header>;
+/// Axia header type used in headers sync.
+pub type SyncHeader = relay_axlib_client::SyncHeader<bp_axia::Header>;

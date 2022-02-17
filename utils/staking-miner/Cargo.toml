@@ -34,12 +34,12 @@ pallet-staking = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "m
 pallet-balances = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 pallet-transaction-payment = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-core-primitives = { package = "polkadot-core-primitives", path = "../../core-primitives" }
+core-primitives = { package = "axia-core-primitives", path = "../../core-primitives" }
 
-runtime-common = { package = "polkadot-runtime-common", path = "../../runtime/common" }
-polkadot-runtime = { path = "../../runtime/polkadot" }
+runtime-common = { package = "axia-runtime-common", path = "../../runtime/common" }
+axia-runtime = { path = "../../runtime/axia" }
 axctest-runtime = { path = "../../runtime/axctest" }
-westend-runtime = { path = "../../runtime/westend" }
+alphanet-runtime = { path = "../../runtime/alphanet" }
 
 sub-tokens = { git = "https://github.com/paritytech/substrate-debug-kit", branch = "master" }
 

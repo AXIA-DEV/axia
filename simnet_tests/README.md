@@ -15,7 +15,7 @@ Behavior-Driven Development test files that describe tests in plain English.
 Under the hood there are assertions that specific metrics should have specific
 values.
 
-At the moment we have only one test for parachains: `/parachains.features`
+At the moment we have only one test for allychains: `/allychains.features`
 This test uses a JS script that we added to Simnet image and it's launched
 by this step in the cucumber file:
 `Then launch 'node' with parameters '--unhandled-rejections=strict /usr/local/bin/simnet_scripts test_parachain ./configs/adder.json ws://localhost:11222 100 10'`

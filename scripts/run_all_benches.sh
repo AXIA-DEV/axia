@@ -5,9 +5,9 @@
 # current reference machine: https://github.com/paritytech/axlib/pull/5848
 
 runtimes=(
-  polkadot
+  axia
   axctest
-  westend
+  alphanet
 )
 
 for runtime in "${runtimes[@]}"; do

@@ -1,12 +1,12 @@
 [package]
-name = "polkadot-rpc"
+name = "axia-rpc"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
 
 [dependencies]
 jsonrpc-core = "18.0.0"
-polkadot-primitives = { path = "../primitives" }
+axia-primitives = { path = "../primitives" }
 sc-client-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-blockchain = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

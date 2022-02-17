@@ -2,7 +2,7 @@
 
 The Approval Process is the mechanism by which the relay-chain ensures that only valid parablocks are finalized and that backing validators are held accountable for managing to get bad blocks included into the relay chain.
 
-Having a parachain include a bad block into a fork of the relay-chain is not catastrophic as long as the block isn't finalized by the relay-chain's finality gadget, GRANDPA. If the block isn't finalized, that means that the fork of the relay-chain can be reverted in favor of another by means of a dynamic fork-choice rule which leads honest validators to ignore any forks containing that parablock.
+Having a allychain include a bad block into a fork of the relay-chain is not catastrophic as long as the block isn't finalized by the relay-chain's finality gadget, GRANDPA. If the block isn't finalized, that means that the fork of the relay-chain can be reverted in favor of another by means of a dynamic fork-choice rule which leads honest validators to ignore any forks containing that parablock.
 
 Dealing with a bad parablock proceeds in these stages:
 1. Detection
@@ -11,7 +11,7 @@ Dealing with a bad parablock proceeds in these stages:
 
 First, the bad block must be detected by an honest party. Second, the honest party must escalate the bad block to be checked by all validators. And last, the correct consequences of a bad block must occur. The first consequence, as mentioned above, is to revert the chain so what full nodes perceive to be best no longer contains the bad parablock. The second consequence is to slash all malicious validators. Note that, if the chain containing the bad block is reverted, that the result of the dispute needs to be transplanted or at least transplantable to all other forks of the chain so that malicious validators are slashed in all possible histories. Phrased alternatively, there needs to be no possible relay-chain in which malicious validators get away cost-free.
 
-Accepting a parablock is the end result of having passed through the detection stage without dispute, or having passed through the escalation/dispute stage with a positive outcome. For this to work, we need the detection procedure to have the properties that enough honest validators are always selected to check the parablock and that they cannot be interfered with by an adversary. This needs to be balanced with the scaling concern of parachains in general: the easiest way to get the first property is to have everyone check everything, but that is clearly too heavy. So we also have a desired constraint on the other property that we have as few validators as possible check any particular parablock. Our assignment function is the method by which we select validators to do approval checks on parablocks.
+Accepting a parablock is the end result of having passed through the detection stage without dispute, or having passed through the escalation/dispute stage with a positive outcome. For this to work, we need the detection procedure to have the properties that enough honest validators are always selected to check the parablock and that they cannot be interfered with by an adversary. This needs to be balanced with the scaling concern of allychains in general: the easiest way to get the first property is to have everyone check everything, but that is clearly too heavy. So we also have a desired constraint on the other property that we have as few validators as possible check any particular parablock. Our assignment function is the method by which we select validators to do approval checks on parablocks.
 
 It often makes more sense to think of relay-chain blocks as having been approved or not as opposed to thinking about whether parablocks have been approved. A relay-chain block containing a single bad parablock needs to be reverted, and a relay-chain block that contains only approved parablocks can be called approved, as long as its parent relay-chain block is also approved. It is important that the validity of any particular relay-chain block depend on the validity of its ancestry, so we do not finalize a block which has a bad block in its ancestry.
 
@@ -38,7 +38,7 @@ We need two separate keys for the approval subsystem:
 
 - **Approval assignment keys** are sr25519/schnorrkel keys used only for the assignment criteria VRFs.  We implicitly sign assignment notices with approval assignment keys by including their relay chain context and additional data in the VRF's extra message, but exclude these from its VRF input.
 
-- **Approval vote keys** would only sign off on candidate parablock validity and has no natural key type restrictions. There's no need for this to actually embody a new session key type. We just want to make a distinction between assignments and approvals, although distant future node configurations might favor separate roles. We re-use the same keys as are used for parachain backing in practice.
+- **Approval vote keys** would only sign off on candidate parablock validity and has no natural key type restrictions. There's no need for this to actually embody a new session key type. We just want to make a distinction between assignments and approvals, although distant future node configurations might favor separate roles. We re-use the same keys as are used for allychain backing in practice.
 
 Approval vote keys could relatively easily be handled by some hardened signer tooling, perhaps even HSMs assuming we select ed25519 for approval vote keys.  Approval assignment keys might or might not support hardened signer tooling, but doing so sounds far more complex.  In fact, assignment keys determine only VRF outputs that determine approval checker assignments, for which they can only act or not act, so they cannot equivocate, lie, etc. and represent little if any slashing risk for validator operators.
 
@@ -46,7 +46,7 @@ In future, we shall determine which among the several hardening techniques best 
 
 ## Assignments
 
-Approval assignment determines on which candidate parachain blocks each validator performs approval checks.  An approval session considers only one relay chain block and assigns only those candidates that relay chain block declares available.
+Approval assignment determines on which candidate allychain blocks each validator performs approval checks.  An approval session considers only one relay chain block and assigns only those candidates that relay chain block declares available.
 
 Assignment balances several concerns:
 
@@ -102,7 +102,7 @@ Assignment criteria come in three flavors, `RelayVRFModulo`, `RelayVRFDelay` and
 
 Among these, we have two distinct VRF output computations:
 
-`RelayVRFModulo` runs several distinct samples whose VRF input is the `RelayVRFStory` and the sample number.  It computes the VRF output with `schnorrkel::vrf::VRFInOut::make_bytes` using the context "A&V Core", reduces this number modulo the number of availability cores, and outputs the candidate just declared available by, and included by aka leaving, that availability core.  We drop any samples that return no candidate because no candidate was leaving the sampled availability core in this relay chain block.  We choose three samples initially, but we could make polkadot more secure and efficient by increasing this to four or five, and reducing the backing checks accordingly.  All successful `RelayVRFModulo` samples are assigned delay tranche zero.
+`RelayVRFModulo` runs several distinct samples whose VRF input is the `RelayVRFStory` and the sample number.  It computes the VRF output with `schnorrkel::vrf::VRFInOut::make_bytes` using the context "A&V Core", reduces this number modulo the number of availability cores, and outputs the candidate just declared available by, and included by aka leaving, that availability core.  We drop any samples that return no candidate because no candidate was leaving the sampled availability core in this relay chain block.  We choose three samples initially, but we could make axia more secure and efficient by increasing this to four or five, and reducing the backing checks accordingly.  All successful `RelayVRFModulo` samples are assigned delay tranche zero.
 
 There is no sampling process for `RelayVRFDelay` and `RelayEquivocation`.  We instead run them on specific candidates and they compute a delay from their VRF output.  `RelayVRFDelay` runs for all candidates included under, aka declared available by, a relay chain block, and inputs the associated VRF output via `RelayVRFStory`.  `RelayEquivocation` runs only on candidate block equivocations, and inputs their block hashes via the `RelayEquivocation` story.
 
@@ -154,7 +154,7 @@ TODO: When?  Is this optimal for the network?  etc.
 
 We should verify approval on-chain to reward approval checkers. We therefore require the "no show" timeout to be longer than a relay chain slot so that we can witness "no shows" on-chain, which helps with this goal. The major challenge with an on-chain record of the off-chain process is adversarial block producers who may either censor votes or publish votes to the chain which cause other votes to be ignored and unrewarded (reward stealing).
 
-In principle, all validators have some "tranche" at which they're assigned to the parachain candidate, which ensures we reach enough validators eventually.  As noted above, we often retract "no shows" when the slow validator eventually shows up, so witnessing their initially being a "no show" helps manage rewards.
+In principle, all validators have some "tranche" at which they're assigned to the allychain candidate, which ensures we reach enough validators eventually.  As noted above, we often retract "no shows" when the slow validator eventually shows up, so witnessing their initially being a "no show" helps manage rewards.
 
 We expect on-chain verification should work in two phases:  We first record assignments notices and approval votes on-chain in relay chain block, doing the VRF or regular signature verification again in block verification, and inserting chain authenticated unsigned notes into the relay chain state that contain the checker, tranche, paraid, and relay block height for each assignment notice.  We then later have another relay chain block that runs some "approved" intrinsic, which extract all these notes from the state and feeds them into our approval code.
 
@@ -178,7 +178,7 @@ We do assignments with VRFs to give "enough" checkers some meaning beyond merely
 
 We could specify a protocol that used only system randomness, which works because our strongest defense is the expected number of honest checkers who assign themselves.  In this, adversaries could trivially flood their own blocks with their own checkers, so this strong defense becomes our only defense, and delay tranches become useless, so some blocks actually have zero approval checkers and possibly only one checker overall.
 
-VRFs though require adversaries wait far longer between such attacks, which also helps against adversaries with little at stake because they compromised validators.  VRFs raise user confidence that no such "drive by" attacks occurred because the delay tranche system ensure at least some minimum number of approval checkers.  In this vein, VRFs permit reducing backing checks and increasing approval checks, which makes polkadot more efficient.
+VRFs though require adversaries wait far longer between such attacks, which also helps against adversaries with little at stake because they compromised validators.  VRFs raise user confidence that no such "drive by" attacks occurred because the delay tranche system ensure at least some minimum number of approval checkers.  In this vein, VRFs permit reducing backing checks and increasing approval checks, which makes axia more efficient.
 
 ## Gossip
 
@@ -190,7 +190,7 @@ Assignment notices being gossiped too early might create a denial of service vec
 
 The relay-chain requires validators to participate in GRANDPA. In GRANDPA, validators submit off-chain votes on what they believe to be the best block of the chain, and GRANDPA determines the common block contained by a supermajority of sub-chains. There are also additional constraints on what can be submitted based on results of previous rounds of voting.
 
-In order to avoid finalizing anything which has not received enough approval votes or is disputed, we will pair the approval protocol with an alteration to the GRANDPA voting strategy for honest nodes which causes them to vote only on chains where every parachain candidate within has been approved.  Furthermore, the voting rule prevents voting for chains where there is any live dispute or any dispute has resolved to a candidate being invalid.
+In order to avoid finalizing anything which has not received enough approval votes or is disputed, we will pair the approval protocol with an alteration to the GRANDPA voting strategy for honest nodes which causes them to vote only on chains where every allychain candidate within has been approved.  Furthermore, the voting rule prevents voting for chains where there is any live dispute or any dispute has resolved to a candidate being invalid.
 
 Thus, the finalized relay-chain should contain only relay-chain blocks where a majority believe that every block within has been sufficiently approved.
 

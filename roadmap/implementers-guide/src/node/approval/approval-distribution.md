@@ -10,7 +10,7 @@ The [Approval Voting](approval-voting.md) subsystem handles all the issuing and 
 
 The inclusion pipeline of candidates concludes after availability, and only after inclusion do candidates actually get pushed into the approval checking pipeline. As such, this protocol deals with the candidates _made available by_ particular blocks, as opposed to the candidates which actually appear within those blocks, which are the candidates _backed by_ those blocks. Unless stated otherwise, whenever we reference a candidate partially by block hash, we are referring to the set of candidates _made available by_ those blocks.
 
-We implement this protocol as a gossip protocol, and like other parachain-related gossip protocols our primary concerns are about ensuring fast message propagation while maintaining an upper bound on the number of messages any given node must store at any time.
+We implement this protocol as a gossip protocol, and like other allychain-related gossip protocols our primary concerns are about ensuring fast message propagation while maintaining an upper bound on the number of messages any given node must store at any time.
 
 Approval messages should always follow assignments, so we need to be able to discern two pieces of information based on our [View](../../types/network.md#universal-types):
   1. Is a particular assignment relevant under a given `View`?

@@ -1,17 +1,17 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-//! Migration code for the parachain's DB.
+//! Migration code for the allychain's DB.
 
 #![cfg(feature = "full-node")]
 
@@ -48,7 +48,7 @@ impl From<Error> for io::Error {
 	}
 }
 
-/// Try upgrading parachain's database to the current version.
+/// Try upgrading allychain's database to the current version.
 pub fn try_upgrade_db(db_path: &Path) -> Result<(), Error> {
 	let is_empty = db_path.read_dir().map_or(true, |mut d| d.next().is_none());
 	if !is_empty {

@@ -1,12 +1,12 @@
 version: '3'
 services:
-  polkadot:
+  axia:
     ports:
       - "127.0.0.1:30333:30333/tcp"
       - "127.0.0.1:9933:9933/tcp"
-    image: parity/polkadot:latest
+    image: parity/axia:latest
     volumes:
-      - "polkadot-data:/data"
+      - "axia-data:/data"
     command: |
       --unsafe-rpc-external
       --unsafe-ws-external
@@ -20,4 +20,4 @@ services:
       - "9615:9615"
 
 volumes:
-  polkadot-data:
+  axia-data:

@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-availability-distribution"
+name = "axia-availability-distribution"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -8,12 +8,12 @@ edition = "2018"
 futures = "0.3.17"
 tracing = "0.1.29"
 parity-scale-codec = { version = "2.3.1", features = ["std"] }
-polkadot-primitives = { path = "../../../primitives" }
-polkadot-erasure-coding = { path = "../../../erasure-coding" }
-polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../../subsystem" }
-polkadot-node-network-protocol = { path = "../../network/protocol" }
-polkadot-node-subsystem-util = { path = "../../subsystem-util" }
-polkadot-node-primitives = { path = "../../primitives" }
+axia-primitives = { path = "../../../primitives" }
+axia-erasure-coding = { path = "../../../erasure-coding" }
+axia-subsystem = { package = "axia-node-subsystem", path = "../../subsystem" }
+axia-node-network-protocol = { path = "../../network/protocol" }
+axia-node-subsystem-util = { path = "../../subsystem-util" }
+axia-node-primitives = { path = "../../primitives" }
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", features = ["std"] , branch = "master" }
 sp-keystore = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 thiserror = "1.0.30"
@@ -22,7 +22,7 @@ derive_more = "0.99.11"
 lru = "0.7.0"
 
 [dev-dependencies]
-polkadot-subsystem-testhelpers = { package = "polkadot-node-subsystem-test-helpers", path = "../../subsystem-test-helpers" }
+axia-subsystem-testhelpers = { package = "axia-node-subsystem-test-helpers", path = "../../subsystem-test-helpers" }
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", features = ["std"] , branch = "master" }
 sp-keyring = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-tracing = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

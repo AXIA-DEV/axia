@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! This subsystem is responsible for keeping track of session changes
 //! and issuing a connection request to the relevant validators
@@ -39,11 +39,11 @@ use sc_network::Multiaddr;
 use sp_application_crypto::{AppKey, Public};
 use sp_keystore::{CryptoStore, SyncCryptoStorePtr};
 
-use polkadot_node_network_protocol::{
+use axia_node_network_protocol::{
 	authority_discovery::AuthorityDiscovery, peer_set::PeerSet, v1::GossipSuppportNetworkMessage,
 	PeerId,
 };
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	messages::{
 		GossipSupportMessage, NetworkBridgeEvent, NetworkBridgeMessage, RuntimeApiMessage,
 		RuntimeApiRequest,
@@ -51,13 +51,13 @@ use polkadot_node_subsystem::{
 	overseer, ActiveLeavesUpdate, FromOverseer, OverseerSignal, SpawnedSubsystem, SubsystemContext,
 	SubsystemError,
 };
-use polkadot_node_subsystem_util as util;
-use polkadot_primitives::v1::{AuthorityDiscoveryId, Hash, SessionIndex};
+use axia_node_subsystem_util as util;
+use axia_primitives::v1::{AuthorityDiscoveryId, Hash, SessionIndex};
 
 #[cfg(test)]
 mod tests;
 
-const LOG_TARGET: &str = "parachain::gossip-support";
+const LOG_TARGET: &str = "allychain::gossip-support";
 // How much time should we wait to reissue a connection request
 // since the last authority discovery resolution failure.
 const BACKOFF_DURATION: Duration = Duration::from_secs(5);
@@ -330,7 +330,7 @@ where
 			.filter(|(a, _)| !self.connected_authorities.contains_key(a));
 		// TODO: Make that warning once connectivity issues are fixed (no point in warning, if
 		// we already know it is broken.
-		// https://github.com/paritytech/polkadot/issues/3921
+		// https://github.com/paritytech/axia/issues/3921
 		if connected_ratio <= LOW_CONNECTIVITY_WARN_THRESHOLD {
 			tracing::debug!(
 				target: LOG_TARGET,
@@ -382,12 +382,12 @@ async fn ensure_i_am_an_authority(
 
 /// We partition the list of all sorted `authorities` into `sqrt(len)` groups of `sqrt(len)` size
 /// and form a matrix where each validator is connected to all validators in its row and column.
-/// This is similar to `[web3]` research proposed topology, except for the groups are not parachain
-/// groups (because not all validators are parachain validators and the group size is small),
+/// This is similar to `[web3]` research proposed topology, except for the groups are not allychain
+/// groups (because not all validators are allychain validators and the group size is small),
 /// but formed randomly via BABE randomness from two epochs ago.
 /// This limits the amount of gossip peers to 2 * `sqrt(len)` and ensures the diameter of 2.
 ///
-/// [web3]: https://research.web3.foundation/en/latest/polkadot/networking/3-avail-valid.html#topology
+/// [web3]: https://research.web3.foundation/en/latest/axia/networking/3-avail-valid.html#topology
 async fn update_gossip_topology<Context>(
 	ctx: &mut Context,
 	our_index: usize,

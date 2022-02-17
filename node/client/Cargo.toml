@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-client"
+name = "axia-client"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -31,17 +31,17 @@ pallet-mmr-primitives = { git = "https://github.com/AXIA-DEV/axlib-axtend", bran
 
 beefy-primitives = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-# Polkadot Runtimes
-polkadot-runtime = { path = "../../runtime/polkadot", optional = true }
+# Axia Runtimes
+axia-runtime = { path = "../../runtime/axia", optional = true }
 axctest-runtime = { path = "../../runtime/axctest", optional = true }
-westend-runtime = { path = "../../runtime/westend", optional = true }
-rococo-runtime = { path = "../../runtime/rococo", optional = true }
+alphanet-runtime = { path = "../../runtime/alphanet", optional = true }
+betanet-runtime = { path = "../../runtime/betanet", optional = true }
 
-polkadot-primitives = { path = "../../primitives" }
+axia-primitives = { path = "../../primitives" }
 
 [features]
-default = ["polkadot"]
-polkadot = ["polkadot-runtime"]
+default = ["axia"]
+axia = ["axia-runtime"]
 axctest = ["axctest-runtime"]
-rococo = ["rococo-runtime"]
-westend = ["westend-runtime"]
+betanet = ["betanet-runtime"]
+alphanet = ["alphanet-runtime"]

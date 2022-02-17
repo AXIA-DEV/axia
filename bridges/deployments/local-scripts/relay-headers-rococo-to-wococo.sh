@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Run an instance of the Rococo -> Wococo header sync.
+# Run an instance of the Betanet -> Wococo header sync.
 #
-# Right now this relies on local Wococo and Rococo networks
+# Right now this relies on local Wococo and Betanet networks
 # running (which include `pallet-bridge-grandpa` in their
 # runtimes), but in the future it could use use public RPC nodes.
 

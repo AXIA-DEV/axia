@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Version 0 of the Cross-Consensus Message format data structures.
 
@@ -62,7 +62,7 @@ pub mod prelude {
 #[derive(Copy, Clone, Eq, PartialEq, Encode, Decode, Debug, TypeInfo)]
 pub enum OriginKind {
 	/// Origin should just be the native dispatch origin representation for the sender in the
-	/// local runtime framework. For Cumulus/Frame chains this is the `Parachain` or `Relay` origin
+	/// local runtime framework. For Cumulus/Frame chains this is the `Allychain` or `Relay` origin
 	/// if coming from a chain, though there may be others if the `MultiLocation` XCM origin has a
 	/// primary/native dispatch origin form.
 	Native,

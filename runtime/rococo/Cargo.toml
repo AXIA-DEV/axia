@@ -1,5 +1,5 @@
 [package]
-name = "rococo-runtime"
+name = "betanet-runtime"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -59,10 +59,10 @@ authority-discovery-primitives = { package = "sp-authority-discovery", git = "ht
 frame-system = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 frame-system-rpc-runtime-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 
-runtime-common = { package = "polkadot-runtime-common", path = "../common", default-features = false }
-primitives = { package = "polkadot-primitives", path = "../../primitives", default-features = false }
-polkadot-parachain = { path = "../../parachain", default-features = false }
-runtime-parachains = { package = "polkadot-runtime-parachains", path = "../parachains", default-features = false }
+runtime-common = { package = "axia-runtime-common", path = "../common", default-features = false }
+primitives = { package = "axia-primitives", path = "../../primitives", default-features = false }
+axia-allychain = { path = "../../allychain", default-features = false }
+runtime-allychains = { package = "axia-runtime-allychains", path = "../allychains", default-features = false }
 
 xcm = { package = "xcm", path = "../../xcm", default-features = false }
 xcm-executor = { package = "xcm-executor", path = "../../xcm/xcm-executor", default-features = false }
@@ -71,7 +71,7 @@ pallet-xcm = { path = "../../xcm/pallet-xcm", default-features = false }
 
 # Bridge Dependencies
 bp-messages = { path = "../../bridges/primitives/messages", default-features = false }
-bp-rococo = { path = "../../bridges/primitives/chain-rococo", default-features = false }
+bp-betanet = { path = "../../bridges/primitives/chain-betanet", default-features = false }
 bp-runtime = { path = "../../bridges/primitives/runtime", default-features = false }
 bp-wococo = { path = "../../bridges/primitives/chain-wococo", default-features = false }
 bridge-runtime-common = { path = "../../bridges/bin/runtime-common", default-features = false }
@@ -93,7 +93,7 @@ std = [
 	"authority-discovery-primitives/std",
 	"babe-primitives/std",
 	"bp-messages/std",
-	"bp-rococo/std",
+	"bp-betanet/std",
 	"bp-runtime/std",
 	"bp-wococo/std",
 	"bridge-runtime-common/std",
@@ -127,10 +127,10 @@ std = [
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"inherents/std",
 	"frame-support/std",
-	"polkadot-parachain/std",
+	"axia-allychain/std",
 	"primitives/std",
 	"runtime-common/std",
-	"runtime-parachains/std",
+	"runtime-allychains/std",
 	"sp-api/std",
 	"sp-core/std",
 	"sp-io/std",

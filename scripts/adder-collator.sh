@@ -4,12 +4,12 @@
 
 set -e
 
-chainspec="rococo-local"
+chainspec="betanet-local"
 
-# disabled until we can actually successfully register the chain with polkadot-js-api
-# if ! command -v polkadot-js-api > /dev/null; then
-#   echo "polkadot-js-api required; try"
-#   echo "  sudo yarn global add @polkadot/api-cli"
+# disabled until we can actually successfully register the chain with axia-js-api
+# if ! command -v axia-js-api > /dev/null; then
+#   echo "axia-js-api required; try"
+#   echo "  sudo yarn global add @axia/api-cli"
 #   exit 1
 # fi
 
@@ -26,16 +26,16 @@ last_modified_rust_file=$(
   cut -d' ' -f2-
 )
 
-polkadot="target/release/polkadot"
+axia="target/release/axia"
 adder_collator="target/release/adder-collator"
 
-# ensure the polkadot binary exists and is up to date
-if [ ! -x "$polkadot" ] || [ "$polkadot" -ot "$last_modified_rust_file" ]; then
+# ensure the axia binary exists and is up to date
+if [ ! -x "$axia" ] || [ "$axia" -ot "$last_modified_rust_file" ]; then
   cargo build --release
 fi
 # likewise for the adder collator
 if [ ! -x "$adder_collator" ] || [ "$adder_collator" -ot "$last_modified_rust_file" ]; then
-  cargo build --release -p test-parachain-adder-collator
+  cargo build --release -p test-allychain-adder-collator
 fi
 
 genesis="$(mktemp --directory)"
@@ -67,7 +67,7 @@ function flagify() {
 # start a node and label its output
 #
 # This function takes a single argument, the node name.
-# The name must be one of those which can be passed to the polkadot binary, in un-flagged form,
+# The name must be one of those which can be passed to the axia binary, in un-flagged form,
 # one of:
 #   alice, bob, charlie, dave, eve, ferdie, one, two
 function run_node() {
@@ -90,7 +90,7 @@ function run_node() {
   node_offset=$((node_offset+1))
 
   # start the node
-  "$polkadot" \
+  "$axia" \
     --chain "$chainspec" \
     --tmp \
     --port "$port" \
@@ -173,8 +173,8 @@ run_node Bob
 run_adder_collator AdderCollator
 
 # register the adder collator
-# doesn't work yet due to https://github.com/polkadot-js/tools/issues/185
-# polkadot-js-api \
+# doesn't work yet due to https://github.com/axia-js/tools/issues/185
+# axia-js-api \
 #   --ws ws://localhost:9944 \
 #   --sudo \
 #   --seed "//Alice" \

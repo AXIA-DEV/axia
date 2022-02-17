@@ -1,25 +1,25 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Polkadot Client
+//! Axia Client
 //!
 //! Provides the [`AbstractClient`] trait that is a super trait that combines all the traits the client implements.
 //! There is also the [`Client`] enum that combines all the different clients into one common structure.
 
-use polkadot_primitives::v1::{
+use axia_primitives::v1::{
 	AccountId, Balance, Block, BlockNumber, Hash, Header, Nonce, ParachainHost,
 };
 use sc_client_api::{AuxStore, Backend as BackendT, BlockchainEvents, KeyIterator, UsageProvider};
@@ -41,27 +41,27 @@ pub type FullClient<RuntimeApi, ExecutorDispatch> =
 	sc_service::TFullClient<Block, RuntimeApi, NativeElseWasmExecutor<ExecutorDispatch>>;
 
 #[cfg(not(any(
-	feature = "rococo",
+	feature = "betanet",
 	feature = "axctest",
-	feature = "westend",
-	feature = "polkadot"
+	feature = "alphanet",
+	feature = "axia"
 )))]
 compile_error!("at least one runtime feature must be enabled");
 
-/// The native executor instance for Polkadot.
-#[cfg(feature = "polkadot")]
-pub struct PolkadotExecutorDispatch;
+/// The native executor instance for Axia.
+#[cfg(feature = "axia")]
+pub struct AxiaExecutorDispatch;
 
-#[cfg(feature = "polkadot")]
-impl sc_executor::NativeExecutionDispatch for PolkadotExecutorDispatch {
+#[cfg(feature = "axia")]
+impl sc_executor::NativeExecutionDispatch for AxiaExecutorDispatch {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
 	fn dispatch(method: &str, data: &[u8]) -> Option<Vec<u8>> {
-		polkadot_runtime::api::dispatch(method, data)
+		axia_runtime::api::dispatch(method, data)
 	}
 
 	fn native_version() -> sc_executor::NativeVersion {
-		polkadot_runtime::native_version()
+		axia_runtime::native_version()
 	}
 }
 
@@ -82,11 +82,11 @@ impl sc_executor::NativeExecutionDispatch for AxiaTestExecutorDispatch {
 	}
 }
 
-#[cfg(feature = "westend")]
-/// The native executor instance for Westend.
+#[cfg(feature = "alphanet")]
+/// The native executor instance for Alphanet.
 pub struct WestendExecutorDispatch;
 
-#[cfg(feature = "westend")]
+#[cfg(feature = "alphanet")]
 impl sc_executor::NativeExecutionDispatch for WestendExecutorDispatch {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
@@ -99,11 +99,11 @@ impl sc_executor::NativeExecutionDispatch for WestendExecutorDispatch {
 	}
 }
 
-#[cfg(feature = "rococo")]
-/// The native executor instance for Rococo.
+#[cfg(feature = "betanet")]
+/// The native executor instance for Betanet.
 pub struct RococoExecutorDispatch;
 
-#[cfg(feature = "rococo")]
+#[cfg(feature = "betanet")]
 impl sc_executor::NativeExecutionDispatch for RococoExecutorDispatch {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
@@ -116,7 +116,7 @@ impl sc_executor::NativeExecutionDispatch for RococoExecutorDispatch {
 	}
 }
 
-/// A set of APIs that polkadot-like runtimes must implement.
+/// A set of APIs that axia-like runtimes must implement.
 pub trait RuntimeApiCollection:
 	sp_transaction_pool::runtime_api::TaggedTransactionQueue<Block>
 	+ sp_api::ApiExt<Block>
@@ -198,7 +198,7 @@ where
 
 /// Execute something with the client instance.
 ///
-/// As there exist multiple chains inside Polkadot, like Polkadot itself, AxiaTest, Westend etc,
+/// As there exist multiple chains inside Axia, like Axia itself, AxiaTest, Alphanet etc,
 /// there can exist different kinds of client types. As these client types differ in the generics
 /// that are being used, we can not easily return them from a function. For returning them from a
 /// function there exists [`Client`]. However, the problem on how to use this client instance still
@@ -221,9 +221,9 @@ pub trait ExecuteWithClient {
 		Client: AbstractClient<Block, Backend, Api = Api> + 'static;
 }
 
-/// A handle to a Polkadot client instance.
+/// A handle to a Axia client instance.
 ///
-/// The Polkadot service supports multiple different runtimes (Westend, Polkadot itself, etc). As each runtime has a
+/// The Axia service supports multiple different runtimes (Alphanet, Axia itself, etc). As each runtime has a
 /// specialized client, we need to hide them behind a trait. This is this trait.
 ///
 /// When wanting to work with the inner client, you need to use `execute_with`.
@@ -243,31 +243,31 @@ macro_rules! with_client {
 		}
 	} => {
 		match $self {
-			#[cfg(feature = "polkadot")]
-			Self::Polkadot($client) => { $( $code )* },
-			#[cfg(feature = "westend")]
-			Self::Westend($client) => { $( $code )* },
+			#[cfg(feature = "axia")]
+			Self::Axia($client) => { $( $code )* },
+			#[cfg(feature = "alphanet")]
+			Self::Alphanet($client) => { $( $code )* },
 			#[cfg(feature = "axctest")]
 			Self::AxiaTest($client) => { $( $code )* },
-			#[cfg(feature = "rococo")]
-			Self::Rococo($client) => { $( $code )* },
+			#[cfg(feature = "betanet")]
+			Self::Betanet($client) => { $( $code )* },
 		}
 	}
 }
 
-/// A client instance of Polkadot.
+/// A client instance of Axia.
 ///
 /// See [`ExecuteWithClient`] for more information.
 #[derive(Clone)]
 pub enum Client {
-	#[cfg(feature = "polkadot")]
-	Polkadot(Arc<FullClient<polkadot_runtime::RuntimeApi, PolkadotExecutorDispatch>>),
-	#[cfg(feature = "westend")]
-	Westend(Arc<FullClient<westend_runtime::RuntimeApi, WestendExecutorDispatch>>),
+	#[cfg(feature = "axia")]
+	Axia(Arc<FullClient<axia_runtime::RuntimeApi, AxiaExecutorDispatch>>),
+	#[cfg(feature = "alphanet")]
+	Alphanet(Arc<FullClient<westend_runtime::RuntimeApi, WestendExecutorDispatch>>),
 	#[cfg(feature = "axctest")]
 	AxiaTest(Arc<FullClient<axctest_runtime::RuntimeApi, AxiaTestExecutorDispatch>>),
-	#[cfg(feature = "rococo")]
-	Rococo(Arc<FullClient<rococo_runtime::RuntimeApi, RococoExecutorDispatch>>),
+	#[cfg(feature = "betanet")]
+	Betanet(Arc<FullClient<rococo_runtime::RuntimeApi, RococoExecutorDispatch>>),
 }
 
 impl ClientHandle for Client {

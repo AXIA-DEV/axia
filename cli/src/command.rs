@@ -1,18 +1,18 @@
 // Copyright 2017-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::cli::{Cli, Subcommand};
 use futures::future::TryFutureExt;
@@ -24,7 +24,7 @@ use sp_core::crypto::Ss58AddressFormatRegistry;
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
 	#[error(transparent)]
-	PolkadotService(#[from] service::Error),
+	AxiaService(#[from] service::Error),
 
 	#[error(transparent)]
 	AxlibCli(#[from] sc_cli::Error),
@@ -53,7 +53,7 @@ fn get_exec_name() -> Option<String> {
 
 impl AxlibCli for Cli {
 	fn impl_name() -> String {
-		"Parity Polkadot".into()
+		"Parity Axia".into()
 	}
 
 	fn impl_version() -> String {
@@ -69,7 +69,7 @@ impl AxlibCli for Cli {
 	}
 
 	fn support_url() -> String {
-		"https://github.com/paritytech/polkadot/issues/new".into()
+		"https://github.com/paritytech/axia/issues/new".into()
 	}
 
 	fn copyright_start_year() -> i32 {
@@ -77,17 +77,17 @@ impl AxlibCli for Cli {
 	}
 
 	fn executable_name() -> String {
-		"polkadot".into()
+		"axia".into()
 	}
 
 	fn load_spec(&self, id: &str) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
 		let id = if id == "" {
 			let n = get_exec_name().unwrap_or_default();
-			["polkadot", "axctest", "westend", "rococo"]
+			["axia", "axctest", "alphanet", "betanet"]
 				.iter()
 				.cloned()
 				.find(|&chain| n.starts_with(chain))
-				.unwrap_or("polkadot")
+				.unwrap_or("axia")
 		} else {
 			id
 		};
@@ -102,45 +102,45 @@ impl AxlibCli for Cli {
 			#[cfg(not(feature = "axctest-native"))]
 			name if name.starts_with("axctest-") && !name.ends_with(".json") =>
 				Err(format!("`{}` only supported with `axctest-native` feature enabled.", name))?,
-			"polkadot" => Box::new(service::chain_spec::polkadot_config()?),
-			#[cfg(feature = "polkadot-native")]
-			"polkadot-dev" | "dev" => Box::new(service::chain_spec::polkadot_development_config()?),
-			#[cfg(feature = "polkadot-native")]
-			"polkadot-local" => Box::new(service::chain_spec::polkadot_local_testnet_config()?),
-			#[cfg(feature = "polkadot-native")]
-			"polkadot-staging" => Box::new(service::chain_spec::polkadot_staging_testnet_config()?),
-			"rococo" => Box::new(service::chain_spec::rococo_config()?),
-			#[cfg(feature = "rococo-native")]
-			"rococo-dev" => Box::new(service::chain_spec::rococo_development_config()?),
-			#[cfg(feature = "rococo-native")]
-			"rococo-local" => Box::new(service::chain_spec::rococo_local_testnet_config()?),
-			#[cfg(feature = "rococo-native")]
-			"rococo-staging" => Box::new(service::chain_spec::rococo_staging_testnet_config()?),
-			#[cfg(not(feature = "rococo-native"))]
-			name if name.starts_with("rococo-") && !name.ends_with(".json") =>
-				Err(format!("`{}` only supported with `rococo-native` feature enabled.", name))?,
-			"westend" => Box::new(service::chain_spec::westend_config()?),
-			#[cfg(feature = "westend-native")]
-			"westend-dev" => Box::new(service::chain_spec::westend_development_config()?),
-			#[cfg(feature = "westend-native")]
-			"westend-local" => Box::new(service::chain_spec::westend_local_testnet_config()?),
-			#[cfg(feature = "westend-native")]
-			"westend-staging" => Box::new(service::chain_spec::westend_staging_testnet_config()?),
-			#[cfg(not(feature = "westend-native"))]
-			name if name.starts_with("westend-") && !name.ends_with(".json") =>
-				Err(format!("`{}` only supported with `westend-native` feature enabled.", name))?,
+			"axia" => Box::new(service::chain_spec::axia_config()?),
+			#[cfg(feature = "axia-native")]
+			"axia-dev" | "dev" => Box::new(service::chain_spec::axia_development_config()?),
+			#[cfg(feature = "axia-native")]
+			"axia-local" => Box::new(service::chain_spec::axia_local_testnet_config()?),
+			#[cfg(feature = "axia-native")]
+			"axia-staging" => Box::new(service::chain_spec::axia_staging_testnet_config()?),
+			"betanet" => Box::new(service::chain_spec::rococo_config()?),
+			#[cfg(feature = "betanet-native")]
+			"betanet-dev" => Box::new(service::chain_spec::rococo_development_config()?),
+			#[cfg(feature = "betanet-native")]
+			"betanet-local" => Box::new(service::chain_spec::rococo_local_testnet_config()?),
+			#[cfg(feature = "betanet-native")]
+			"betanet-staging" => Box::new(service::chain_spec::rococo_staging_testnet_config()?),
+			#[cfg(not(feature = "betanet-native"))]
+			name if name.starts_with("betanet-") && !name.ends_with(".json") =>
+				Err(format!("`{}` only supported with `betanet-native` feature enabled.", name))?,
+			"alphanet" => Box::new(service::chain_spec::westend_config()?),
+			#[cfg(feature = "alphanet-native")]
+			"alphanet-dev" => Box::new(service::chain_spec::westend_development_config()?),
+			#[cfg(feature = "alphanet-native")]
+			"alphanet-local" => Box::new(service::chain_spec::westend_local_testnet_config()?),
+			#[cfg(feature = "alphanet-native")]
+			"alphanet-staging" => Box::new(service::chain_spec::westend_staging_testnet_config()?),
+			#[cfg(not(feature = "alphanet-native"))]
+			name if name.starts_with("alphanet-") && !name.ends_with(".json") =>
+				Err(format!("`{}` only supported with `alphanet-native` feature enabled.", name))?,
 			"wococo" => Box::new(service::chain_spec::wococo_config()?),
-			#[cfg(feature = "rococo-native")]
+			#[cfg(feature = "betanet-native")]
 			"wococo-dev" => Box::new(service::chain_spec::wococo_development_config()?),
-			#[cfg(feature = "rococo-native")]
+			#[cfg(feature = "betanet-native")]
 			"wococo-local" => Box::new(service::chain_spec::wococo_local_testnet_config()?),
-			#[cfg(not(feature = "rococo-native"))]
+			#[cfg(not(feature = "betanet-native"))]
 			name if name.starts_with("wococo-") =>
-				Err(format!("`{}` only supported with `rococo-native` feature enabled.", name))?,
+				Err(format!("`{}` only supported with `betanet-native` feature enabled.", name))?,
 			path => {
 				let path = std::path::PathBuf::from(path);
 
-				let chain_spec = Box::new(service::PolkadotChainSpec::from_json_file(path.clone())?)
+				let chain_spec = Box::new(service::AxiaChainSpec::from_json_file(path.clone())?)
 					as Box<dyn service::ChainSpec>;
 
 				// When `force_*` is given or the file name starts with the name of one of the known chains,
@@ -164,30 +164,30 @@ impl AxlibCli for Cli {
 			return &service::axctest_runtime::VERSION
 		}
 
-		#[cfg(feature = "westend-native")]
+		#[cfg(feature = "alphanet-native")]
 		if spec.is_westend() {
 			return &service::westend_runtime::VERSION
 		}
 
-		#[cfg(feature = "rococo-native")]
+		#[cfg(feature = "betanet-native")]
 		if spec.is_rococo() || spec.is_wococo() {
 			return &service::rococo_runtime::VERSION
 		}
 
 		#[cfg(not(all(
-			feature = "rococo-native",
-			feature = "westend-native",
+			feature = "betanet-native",
+			feature = "alphanet-native",
 			feature = "axctest-native"
 		)))]
 		let _ = spec;
 
-		#[cfg(feature = "polkadot-native")]
+		#[cfg(feature = "axia-native")]
 		{
-			return &service::polkadot_runtime::VERSION
+			return &service::axia_runtime::VERSION
 		}
 
-		#[cfg(not(feature = "polkadot-native"))]
-		panic!("No runtime feature (polkadot, axctest, westend, rococo) is enabled")
+		#[cfg(not(feature = "axia-native"))]
+		panic!("No runtime feature (axia, axctest, alphanet, betanet) is enabled")
 	}
 }
 
@@ -197,7 +197,7 @@ fn set_default_ss58_version(spec: &Box<dyn service::ChainSpec>) {
 	} else if spec.is_westend() {
 		Ss58AddressFormatRegistry::AxlibAccount
 	} else {
-		Ss58AddressFormatRegistry::PolkadotAccount
+		Ss58AddressFormatRegistry::AxiaAccount
 	}
 	.into();
 
@@ -205,7 +205,7 @@ fn set_default_ss58_version(spec: &Box<dyn service::ChainSpec>) {
 }
 
 const DEV_ONLY_ERROR_PATTERN: &'static str =
-	"can only use subcommand with --chain [polkadot-dev, axctest-dev, westend-dev, rococo-dev, wococo-dev], got ";
+	"can only use subcommand with --chain [axia-dev, axctest-dev, alphanet-dev, betanet-dev, wococo-dev], got ";
 
 fn ensure_dev(spec: &Box<dyn service::ChainSpec>) -> std::result::Result<(), String> {
 	if spec.is_dev() {
@@ -265,7 +265,7 @@ fn run_node_inner(cli: Cli, overseer_gen: impl service::OverseerGen) -> Result<(
 	})
 }
 
-/// Parses polkadot specific CLI arguments and run the service.
+/// Parses axia specific CLI arguments and run the service.
 pub fn run() -> Result<()> {
 	let cli = Cli::from_args();
 
@@ -295,7 +295,7 @@ pub fn run() -> Result<()> {
 
 			Ok(runner.async_run(|mut config| {
 				let (client, _, _, task_manager) =
-					service::new_chain_ops(&mut config, None).map_err(Error::PolkadotService)?;
+					service::new_chain_ops(&mut config, None).map_err(Error::AxiaService)?;
 				Ok((cmd.run(client, config.database).map_err(Error::AxlibCli), task_manager))
 			})?)
 		},
@@ -352,7 +352,7 @@ pub fn run() -> Result<()> {
 
 			#[cfg(not(target_os = "android"))]
 			{
-				polkadot_node_core_pvf::prepare_worker_entrypoint(&cmd.socket_path);
+				axia_node_core_pvf::prepare_worker_entrypoint(&cmd.socket_path);
 				Ok(())
 			}
 		},
@@ -371,7 +371,7 @@ pub fn run() -> Result<()> {
 
 			#[cfg(not(target_os = "android"))]
 			{
-				polkadot_node_core_pvf::execute_worker_entrypoint(&cmd.socket_path);
+				axia_node_core_pvf::execute_worker_entrypoint(&cmd.socket_path);
 				Ok(())
 			}
 		},
@@ -392,7 +392,7 @@ pub fn run() -> Result<()> {
 				})?)
 			}
 
-			#[cfg(feature = "westend-native")]
+			#[cfg(feature = "alphanet-native")]
 			if chain_spec.is_westend() {
 				return Ok(runner.sync_run(|config| {
 					cmd.run::<service::westend_runtime::Block, service::WestendExecutorDispatch>(
@@ -402,18 +402,18 @@ pub fn run() -> Result<()> {
 				})?)
 			}
 
-			// else we assume it is polkadot.
-			#[cfg(feature = "polkadot-native")]
+			// else we assume it is axia.
+			#[cfg(feature = "axia-native")]
 			{
 				return Ok(runner.sync_run(|config| {
-					cmd.run::<service::polkadot_runtime::Block, service::PolkadotExecutorDispatch>(
+					cmd.run::<service::axia_runtime::Block, service::AxiaExecutorDispatch>(
 						config,
 					)
 					.map_err(|e| Error::AxlibCli(e))
 				})?)
 			}
-			#[cfg(not(feature = "polkadot-native"))]
-			panic!("No runtime feature (polkadot, axctest, westend, rococo) is enabled")
+			#[cfg(not(feature = "axia-native"))]
+			panic!("No runtime feature (axia, axctest, alphanet, betanet) is enabled")
 		},
 		Some(Subcommand::Key(cmd)) => Ok(cmd.run(&cli)?),
 		#[cfg(feature = "try-runtime")]
@@ -442,7 +442,7 @@ pub fn run() -> Result<()> {
 				})
 			}
 
-			#[cfg(feature = "westend-native")]
+			#[cfg(feature = "alphanet-native")]
 			if chain_spec.is_westend() {
 				return runner.async_run(|config| {
 					Ok((
@@ -454,12 +454,12 @@ pub fn run() -> Result<()> {
 					))
 				})
 			}
-			// else we assume it is polkadot.
-			#[cfg(feature = "polkadot-native")]
+			// else we assume it is axia.
+			#[cfg(feature = "axia-native")]
 			{
 				return runner.async_run(|config| {
 					Ok((
-						cmd.run::<service::polkadot_runtime::Block, service::PolkadotExecutorDispatch>(
+						cmd.run::<service::axia_runtime::Block, service::AxiaExecutorDispatch>(
 							config,
 						)
 						.map_err(Error::AxlibCli),
@@ -467,8 +467,8 @@ pub fn run() -> Result<()> {
 					))
 				})
 			}
-			#[cfg(not(feature = "polkadot-native"))]
-			panic!("No runtime feature (polkadot, axctest, westend, rococo) is enabled")
+			#[cfg(not(feature = "axia-native"))]
+			panic!("No runtime feature (axia, axctest, alphanet, betanet) is enabled")
 		},
 		#[cfg(not(feature = "try-runtime"))]
 		Some(Subcommand::TryRuntime) => Err(Error::Other(

@@ -18,12 +18,12 @@ We account for these requirements by having the disputes module handle two kinds
 1. Remote disputes: a dispute that has partially or fully resolved on another fork which is transplanted to the local fork for completion and eventual slashing.
 
 When a local dispute concludes negatively, the chain needs to be abandoned and reverted back to a block where the state does not contain the bad parablock. We expect that due to the [Approval Checking Protocol](../protocol-approval.md), the current executing block should not be finalized. So we do two things when a local dispute concludes negatively:
-1. Freeze the state of parachains so nothing further is backed or included.
+1. Freeze the state of allychains so nothing further is backed or included.
 1. Issue a digest in the header of the block that signals to nodes that this branch of the chain is to be abandoned.
 
 If, as is expected, the chain is unfinalized, the freeze will have no effect as no honest validator will attempt to build on the frozen chain. However, if the approval checking protocol has failed and the bad parablock is finalized, the freeze serves to put the chain into a governance-only mode.
 
-The storage of this module is designed around tracking [`DisputeState`s](../types/disputes.md#disputestate), updating them with votes, and tracking blocks included by this branch of the relay chain. It also contains a `Frozen` parameter designed to freeze the state of all parachains.
+The storage of this module is designed around tracking [`DisputeState`s](../types/disputes.md#disputestate), updating them with votes, and tracking blocks included by this branch of the relay chain. It also contains a `Frozen` parameter designed to freeze the state of all allychains.
 
 ## Storage
 
@@ -44,7 +44,7 @@ Included: double_map (SessionIndex, CandidateHash) -> Option<BlockNumber>,
 // The i'th entry of the vector corresponds to the i'th validator in the session.
 SpamSlots: map SessionIndex -> Option<Vec<u32>>,
 // Whether the chain is frozen or not. Starts as `None`. When this is `Some`,
-// the chain will not accept any new parachain blocks for backing or inclusion,
+// the chain will not accept any new allychain blocks for backing or inclusion,
 // and its value indicates the last valid block number in the chain.
 // It can only be set back to `None` by governance intervention.
 Frozen: Option<BlockNumber>,

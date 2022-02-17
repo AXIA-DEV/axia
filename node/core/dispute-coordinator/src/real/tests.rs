@@ -1,18 +1,18 @@
 // Copyright 2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 use std::collections::HashMap;
 
@@ -24,13 +24,13 @@ use futures::{
 };
 use overseer::TimeoutExt;
 use parity_scale_codec::Encode;
-use polkadot_node_subsystem::{
+use axia_node_subsystem::{
 	jaeger,
 	messages::{AllMessages, BlockDescription, RuntimeApiMessage, RuntimeApiRequest},
 	ActivatedLeaf, ActiveLeavesUpdate, LeafStatus,
 };
-use polkadot_node_subsystem_test_helpers::{make_subsystem_context, TestSubsystemContextHandle};
-use polkadot_primitives::v1::{BlakeTwo256, HashT, Header, SessionInfo, ValidatorId};
+use axia_node_subsystem_test_helpers::{make_subsystem_context, TestSubsystemContextHandle};
+use axia_primitives::v1::{BlakeTwo256, HashT, Header, SessionInfo, ValidatorId};
 use sp_core::testing::TaskExecutor;
 use sp_keyring::Sr25519Keyring;
 use sp_keystore::{SyncCryptoStore, SyncCryptoStorePtr};
@@ -48,7 +48,7 @@ fn make_keystore(accounts: &[Sr25519Keyring]) -> LocalKeystore {
 
 	for s in accounts.iter().copied().map(|k| k.to_seed()) {
 		store
-			.sr25519_generate_new(polkadot_primitives::v1::PARACHAIN_KEY_TYPE_ID, Some(s.as_str()))
+			.sr25519_generate_new(axia_primitives::v1::PARACHAIN_KEY_TYPE_ID, Some(s.as_str()))
 			.unwrap();
 	}
 
@@ -711,7 +711,7 @@ fn supermajority_valid_dispute_may_be_finalized() {
 			test_state.activate_leaf_at_session(&mut virtual_overseer, session, 1).await;
 
 			let supermajority_threshold =
-				polkadot_primitives::v1::supermajority_threshold(test_state.validators.len());
+				axia_primitives::v1::supermajority_threshold(test_state.validators.len());
 
 			let valid_vote =
 				test_state.issue_statement_with_index(2, candidate_hash, session, true).await;
@@ -844,7 +844,7 @@ fn concluded_supermajority_for_non_active_after_time() {
 			test_state.activate_leaf_at_session(&mut virtual_overseer, session, 1).await;
 
 			let supermajority_threshold =
-				polkadot_primitives::v1::supermajority_threshold(test_state.validators.len());
+				axia_primitives::v1::supermajority_threshold(test_state.validators.len());
 
 			let valid_vote =
 				test_state.issue_statement_with_index(2, candidate_hash, session, true).await;
@@ -947,7 +947,7 @@ fn concluded_supermajority_against_non_active_after_time() {
 			test_state.activate_leaf_at_session(&mut virtual_overseer, session, 1).await;
 
 			let supermajority_threshold =
-				polkadot_primitives::v1::supermajority_threshold(test_state.validators.len());
+				axia_primitives::v1::supermajority_threshold(test_state.validators.len());
 
 			let valid_vote =
 				test_state.issue_statement_with_index(2, candidate_hash, session, true).await;

@@ -1,13 +1,13 @@
 //! A dummy to be used with cargo expand
 
-use polkadot_node_network_protocol::WrongVariant;
-use polkadot_overseer_gen::*;
+use axia_node_network_protocol::WrongVariant;
+use axia_overseer_gen::*;
 
 /// Concrete subsystem implementation for `MsgStrukt` msg type.
 #[derive(Default)]
 pub struct AwesomeSubSys;
 
-impl ::polkadot_overseer_gen::Subsystem<XxxSubsystemContext<MsgStrukt>, Yikes> for AwesomeSubSys {
+impl ::axia_overseer_gen::Subsystem<XxxSubsystemContext<MsgStrukt>, Yikes> for AwesomeSubSys {
 	fn start(self, _ctx: XxxSubsystemContext<MsgStrukt>) -> SpawnedSubsystem<Yikes> {
 		unimplemented!("starting yay!")
 	}
@@ -16,7 +16,7 @@ impl ::polkadot_overseer_gen::Subsystem<XxxSubsystemContext<MsgStrukt>, Yikes> f
 #[derive(Default)]
 pub struct GoblinTower;
 
-impl ::polkadot_overseer_gen::Subsystem<XxxSubsystemContext<Plinko>, Yikes> for GoblinTower {
+impl ::axia_overseer_gen::Subsystem<XxxSubsystemContext<Plinko>, Yikes> for GoblinTower {
 	fn start(self, _ctx: XxxSubsystemContext<Plinko>) -> SpawnedSubsystem<Yikes> {
 		unimplemented!("welcum")
 	}
@@ -47,14 +47,14 @@ impl std::fmt::Display for Yikes {
 
 impl std::error::Error for Yikes {}
 
-impl From<polkadot_overseer_gen::OverseerError> for Yikes {
-	fn from(_: polkadot_overseer_gen::OverseerError) -> Yikes {
+impl From<axia_overseer_gen::OverseerError> for Yikes {
+	fn from(_: axia_overseer_gen::OverseerError) -> Yikes {
 		Yikes
 	}
 }
 
-impl From<polkadot_overseer_gen::mpsc::SendError> for Yikes {
-	fn from(_: polkadot_overseer_gen::mpsc::SendError) -> Yikes {
+impl From<axia_overseer_gen::mpsc::SendError> for Yikes {
+	fn from(_: axia_overseer_gen::mpsc::SendError) -> Yikes {
 		Yikes
 	}
 }

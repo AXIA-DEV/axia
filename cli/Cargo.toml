@@ -1,8 +1,8 @@
 [package]
-name = "polkadot-cli"
+name = "axia-cli"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
-description = "Polkadot Relay-chain Client Node"
+description = "Axia Relay-chain Client Node"
 edition = "2018"
 
 [package.metadata.wasm-pack.profile.release]
@@ -19,8 +19,8 @@ thiserror = "1.0.30"
 structopt = { version = "0.3.23", optional = true }
 futures = "0.3.17"
 
-service = { package = "polkadot-service", path = "../node/service", default-features = false, optional = true }
-polkadot-node-core-pvf = { path = "../node/core/pvf", optional = true }
+service = { package = "axia-service", path = "../node/service", default-features = false, optional = true }
+axia-node-core-pvf = { path = "../node/core/pvf", optional = true }
 
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 frame-benchmarking-cli = { git = "https://github.com/AXIA-DEV/axlib-axtend", optional = true , branch = "master" }
@@ -36,7 +36,7 @@ sp-trie = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features =
 axlib-build-script-utils = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [features]
-default = [ "wasmtime", "db", "cli", "full-node", "trie-memory-tracker", "polkadot-native" ]
+default = [ "wasmtime", "db", "cli", "full-node", "trie-memory-tracker", "axia-native" ]
 wasmtime = [ "sc-cli/wasmtime" ]
 db = [ "service/db" ]
 cli = [
@@ -45,20 +45,20 @@ cli = [
 	"sc-service",
 	"frame-benchmarking-cli",
 	"try-runtime-cli",
-	"polkadot-node-core-pvf",
+	"axia-node-core-pvf",
 ]
 runtime-benchmarks = [ "service/runtime-benchmarks" ]
 trie-memory-tracker = [ "sp-trie/memory-tracker" ]
 full-node = [ "service/full-node" ]
 try-runtime = [ "service/try-runtime" ]
 
-# Configure the native runtimes to use. Polkadot is enabled by default.
+# Configure the native runtimes to use. Axia is enabled by default.
 #
 # Validators require the native runtime currently
-polkadot-native = [ "service/polkadot-native" ]
+axia-native = [ "service/axia-native" ]
 axctest-native = [ "service/axctest-native" ]
-westend-native = [ "service/westend-native" ]
-rococo-native = [ "service/rococo-native" ]
+alphanet-native = [ "service/alphanet-native" ]
+betanet-native = [ "service/betanet-native" ]
 
 malus = [ "full-node", "service/malus" ]
 disputes = [ "service/disputes" ]

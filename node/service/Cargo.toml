@@ -1,5 +1,5 @@
 [package]
-name = "polkadot-service"
+name = "axia-service"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -70,109 +70,109 @@ kvdb-rocksdb = { version = "0.14.0", optional = true }
 async-trait = "0.1.51"
 lru = "0.7"
 
-# Polkadot
-polkadot-node-core-parachains-inherent = { path = "../core/parachains-inherent" }
-polkadot-overseer = { path = "../overseer" }
-polkadot-client = { path = "../client", default-features = false, optional = true }
-polkadot-parachain = { path = "../../parachain" }
-polkadot-primitives = { path = "../../primitives" }
-polkadot-node-primitives = { path = "../primitives" }
-polkadot-rpc = { path = "../../rpc" }
-polkadot-subsystem = { package = "polkadot-node-subsystem", path = "../subsystem" }
-polkadot-node-subsystem-util = { path = "../subsystem-util" }
-polkadot-runtime-parachains = { path = "../../runtime/parachains" }
-polkadot-node-network-protocol = { path = "../network/protocol" }
+# Axia
+axia-node-core-allychains-inherent = { path = "../core/allychains-inherent" }
+axia-overseer = { path = "../overseer" }
+axia-client = { path = "../client", default-features = false, optional = true }
+axia-allychain = { path = "../../allychain" }
+axia-primitives = { path = "../../primitives" }
+axia-node-primitives = { path = "../primitives" }
+axia-rpc = { path = "../../rpc" }
+axia-subsystem = { package = "axia-node-subsystem", path = "../subsystem" }
+axia-node-subsystem-util = { path = "../subsystem-util" }
+axia-runtime-allychains = { path = "../../runtime/allychains" }
+axia-node-network-protocol = { path = "../network/protocol" }
 
-# Polkadot Runtimes
-polkadot-runtime = { path = "../../runtime/polkadot", optional = true }
+# Axia Runtimes
+axia-runtime = { path = "../../runtime/axia", optional = true }
 axctest-runtime = { path = "../../runtime/axctest", optional = true }
-westend-runtime = { path = "../../runtime/westend", optional = true }
-rococo-runtime = { path = "../../runtime/rococo", optional = true }
+alphanet-runtime = { path = "../../runtime/alphanet", optional = true }
+betanet-runtime = { path = "../../runtime/betanet", optional = true }
 
-# Polkadot Subsystems
-polkadot-approval-distribution = { path = "../network/approval-distribution", optional = true }
-polkadot-availability-bitfield-distribution = { path = "../network/bitfield-distribution", optional = true }
-polkadot-availability-distribution = { path = "../network/availability-distribution", optional = true }
-polkadot-availability-recovery = { path = "../network/availability-recovery", optional = true }
-polkadot-collator-protocol = { path = "../network/collator-protocol", optional = true }
-polkadot-dispute-distribution = { path = "../network/dispute-distribution", optional = true }
-polkadot-gossip-support = { path = "../network/gossip-support", optional = true }
-polkadot-network-bridge = { path = "../network/bridge", optional = true }
-polkadot-node-collation-generation = { path = "../collation-generation", optional = true }
-polkadot-node-core-approval-voting = { path = "../core/approval-voting", optional = true }
-polkadot-node-core-av-store = { path = "../core/av-store", optional = true }
-polkadot-node-core-backing = { path = "../core/backing", optional = true }
-polkadot-node-core-bitfield-signing = { path = "../core/bitfield-signing", optional = true }
-polkadot-node-core-candidate-validation = { path = "../core/candidate-validation", optional = true }
-polkadot-node-core-chain-api = { path = "../core/chain-api", optional = true }
-polkadot-node-core-chain-selection = { path = "../core/chain-selection", optional = true }
-polkadot-node-core-dispute-coordinator = { path = "../core/dispute-coordinator", optional = true }
-polkadot-node-core-dispute-participation = { path = "../core/dispute-participation", optional = true }
-polkadot-node-core-provisioner = { path = "../core/provisioner", optional = true }
-polkadot-node-core-runtime-api = { path = "../core/runtime-api", optional = true }
-polkadot-statement-distribution = { path = "../network/statement-distribution", optional = true }
+# Axia Subsystems
+axia-approval-distribution = { path = "../network/approval-distribution", optional = true }
+axia-availability-bitfield-distribution = { path = "../network/bitfield-distribution", optional = true }
+axia-availability-distribution = { path = "../network/availability-distribution", optional = true }
+axia-availability-recovery = { path = "../network/availability-recovery", optional = true }
+axia-collator-protocol = { path = "../network/collator-protocol", optional = true }
+axia-dispute-distribution = { path = "../network/dispute-distribution", optional = true }
+axia-gossip-support = { path = "../network/gossip-support", optional = true }
+axia-network-bridge = { path = "../network/bridge", optional = true }
+axia-node-collation-generation = { path = "../collation-generation", optional = true }
+axia-node-core-approval-voting = { path = "../core/approval-voting", optional = true }
+axia-node-core-av-store = { path = "../core/av-store", optional = true }
+axia-node-core-backing = { path = "../core/backing", optional = true }
+axia-node-core-bitfield-signing = { path = "../core/bitfield-signing", optional = true }
+axia-node-core-candidate-validation = { path = "../core/candidate-validation", optional = true }
+axia-node-core-chain-api = { path = "../core/chain-api", optional = true }
+axia-node-core-chain-selection = { path = "../core/chain-selection", optional = true }
+axia-node-core-dispute-coordinator = { path = "../core/dispute-coordinator", optional = true }
+axia-node-core-dispute-participation = { path = "../core/dispute-participation", optional = true }
+axia-node-core-provisioner = { path = "../core/provisioner", optional = true }
+axia-node-core-runtime-api = { path = "../core/runtime-api", optional = true }
+axia-statement-distribution = { path = "../network/statement-distribution", optional = true }
 
 [dev-dependencies]
-polkadot-test-client = { path = "../test/client" }
-polkadot-node-subsystem-test-helpers = { path = "../subsystem-test-helpers" }
+axia-test-client = { path = "../test/client" }
+axia-node-subsystem-test-helpers = { path = "../subsystem-test-helpers" }
 env_logger = "0.9.0"
 log = "0.4.14"
 assert_matches = "1.5.0"
 
 [features]
-default = ["db", "full-node", "polkadot-native"]
+default = ["db", "full-node", "axia-native"]
 
 db = [
 	"service/db"
 ]
 
 full-node = [
-	"polkadot-node-core-av-store",
-	"polkadot-node-core-approval-voting",
-	"polkadot-availability-bitfield-distribution",
-	"polkadot-availability-distribution",
-	"polkadot-availability-recovery",
-	"polkadot-client",
-	"polkadot-collator-protocol",
-	"polkadot-dispute-distribution",
-	"polkadot-gossip-support",
-	"polkadot-network-bridge",
-	"polkadot-node-collation-generation",
-	"polkadot-node-core-backing",
-	"polkadot-node-core-bitfield-signing",
-	"polkadot-node-core-candidate-validation",
-	"polkadot-node-core-chain-api",
-	"polkadot-node-core-chain-selection",
-	"polkadot-node-core-dispute-coordinator",
-	"polkadot-node-core-dispute-participation",
-	"polkadot-node-core-provisioner",
-	"polkadot-node-core-runtime-api",
-	"polkadot-statement-distribution",
-	"polkadot-approval-distribution",
+	"axia-node-core-av-store",
+	"axia-node-core-approval-voting",
+	"axia-availability-bitfield-distribution",
+	"axia-availability-distribution",
+	"axia-availability-recovery",
+	"axia-client",
+	"axia-collator-protocol",
+	"axia-dispute-distribution",
+	"axia-gossip-support",
+	"axia-network-bridge",
+	"axia-node-collation-generation",
+	"axia-node-core-backing",
+	"axia-node-core-bitfield-signing",
+	"axia-node-core-candidate-validation",
+	"axia-node-core-chain-api",
+	"axia-node-core-chain-selection",
+	"axia-node-core-dispute-coordinator",
+	"axia-node-core-dispute-participation",
+	"axia-node-core-provisioner",
+	"axia-node-core-runtime-api",
+	"axia-statement-distribution",
+	"axia-approval-distribution",
 	"kvdb-rocksdb"
 ]
 
 light-node = []
 
-# Configure the native runtimes to use. Polkadot is enabled by default.
+# Configure the native runtimes to use. Axia is enabled by default.
 #
 # Validators require the native runtime currently
-polkadot-native = [ "polkadot-runtime", "polkadot-client/polkadot" ]
-axctest-native = [ "axctest-runtime", "polkadot-client/axctest" ]
-westend-native = [ "westend-runtime", "polkadot-client/westend" ]
-rococo-native = [ "rococo-runtime", "polkadot-client/rococo" ]
+axia-native = [ "axia-runtime", "axia-client/axia" ]
+axctest-native = [ "axctest-runtime", "axia-client/axctest" ]
+alphanet-native = [ "alphanet-runtime", "axia-client/alphanet" ]
+betanet-native = [ "betanet-runtime", "axia-client/betanet" ]
 
 runtime-benchmarks = [
-	"polkadot-runtime/runtime-benchmarks",
+	"axia-runtime/runtime-benchmarks",
 	"axctest-runtime/runtime-benchmarks",
-	"westend-runtime/runtime-benchmarks",
-	"rococo-runtime/runtime-benchmarks"
+	"alphanet-runtime/runtime-benchmarks",
+	"betanet-runtime/runtime-benchmarks"
 ]
 try-runtime = [
-	"polkadot-runtime/try-runtime",
+	"axia-runtime/try-runtime",
 	"axctest-runtime/try-runtime",
-	"westend-runtime/try-runtime",
-	"rococo-runtime/try-runtime",
+	"alphanet-runtime/try-runtime",
+	"betanet-runtime/try-runtime",
 ]
 malus = ["full-node"]
-disputes = ["polkadot-node-core-dispute-coordinator/disputes"]
+disputes = ["axia-node-core-dispute-coordinator/disputes"]

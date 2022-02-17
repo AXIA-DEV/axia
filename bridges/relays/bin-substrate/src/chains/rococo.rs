@@ -16,7 +16,7 @@
 
 use codec::Decode;
 use frame_support::weights::{DispatchClass, DispatchInfo, Pays, Weight};
-use relay_rococo_client::Rococo;
+use relay_rococo_client::Betanet;
 use sp_version::RuntimeVersion;
 
 use crate::cli::{
@@ -25,13 +25,13 @@ use crate::cli::{
 	encode_message, CliChain,
 };
 
-/// Weight of the `system::remark` call at Rococo.
+/// Weight of the `system::remark` call at Betanet.
 ///
 /// This weight is larger (x2) than actual weight at current Rooco runtime to avoid unsuccessful
 /// calls in the future. But since it is used only in tests (and on test chains), this is ok.
 pub(crate) const SYSTEM_REMARK_CALL_WEIGHT: Weight = 2 * 1_345_000;
 
-impl CliEncodeCall for Rococo {
+impl CliEncodeCall for Betanet {
 	fn max_extrinsic_size() -> u32 {
 		bp_rococo::max_extrinsic_size()
 	}
@@ -73,12 +73,12 @@ impl CliEncodeCall for Rococo {
 					pays_fee: Pays::Yes,
 				})
 			}
-			_ => anyhow::bail!("Unsupported Rococo call: {:?}", call),
+			_ => anyhow::bail!("Unsupported Betanet call: {:?}", call),
 		}
 	}
 }
 
-impl CliChain for Rococo {
+impl CliChain for Betanet {
 	const RUNTIME_VERSION: RuntimeVersion = bp_rococo::VERSION;
 
 	type KeyPair = sp_core::sr25519::Pair;
@@ -93,6 +93,6 @@ impl CliChain for Rococo {
 	}
 
 	fn encode_message(_message: encode_message::MessagePayload) -> Result<Self::MessagePayload, String> {
-		Err("Sending messages from Rococo is not yet supported.".into())
+		Err("Sending messages from Betanet is not yet supported.".into())
 	}
 }

@@ -1,8 +1,8 @@
 [package]
-name = "polkadot-simnet-node"
+name = "axia-simnet-node"
 version = "0.9.12"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
 
 [dependencies]
-polkadot-simnet = { path = "../common" }
+axia-simnet = { path = "../common" }

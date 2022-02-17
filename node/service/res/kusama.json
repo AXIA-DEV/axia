@@ -1,6 +1,6 @@
 {
   "name": "AxiaTest",
-  "id": "ksmcc3",
+  "id": "axctcc3",
   "bootNodes": [
     "/dns/p2p.0.axctest.network/tcp/30333/p2p/12D3KooWJDohybWd7FvRmyeGjgi56yy36mRWLHmgRprFdUadUt6b",
     "/dns/p2p.1.axctest.network/tcp/30333/p2p/12D3KooWC7dnTvDY97afoLrvQSBrh7dDFEkWniTwyxAsBjfpaZk6",
@@ -14,15 +14,15 @@
   ],
   "telemetryEndpoints": [
     [
-      "wss://telemetry.polkadot.io/submit/",
+      "wss://telemetry.axia.io/submit/",
       0
     ]
   ],
-  "protocolId": "ksmcc3",
+  "protocolId": "axctcc3",
   "properties": {
     "ss58Format": 2,
     "tokenDecimals": 12,
-    "tokenSymbol": "KSM"
+    "tokenSymbol": "AXCT"
   },
   "consensusEngine": null,
   "forkBlocks": null,

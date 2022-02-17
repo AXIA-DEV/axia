@@ -1,13 +1,13 @@
 ---
 name: Release issue template
 about: Tracking issue for new releases
-title: Polkadot {{ env.VERSION }} Release checklist
+title: Axia {{ env.VERSION }} Release checklist
 ---
 # Release Checklist
 
-This is the release checklist for Polkadot {{ env.VERSION }}. **All** following
+This is the release checklist for Axia {{ env.VERSION }}. **All** following
 checks should be completed before publishing a new release of the
-Polkadot/AxiaTest/Westend runtime or client. The current release candidate can be
+Axia/AxiaTest/Alphanet runtime or client. The current release candidate can be
 checked out with `git checkout release-{{ env.VERSION }}`
 
 ### Runtime Releases
@@ -33,16 +33,16 @@ candidate branch or started an additional release candidate branch (rc-2, rc-3, 
 - [ ] Verify [new migrations](#new-migrations) complete successfully, and the
     runtime state is correctly updated for any public (non-private/test)
     networks.
-- [ ] Verify [Polkadot JS API](#polkadot-js) are up to date with the latest
+- [ ] Verify [Axia JS API](#axia-js) are up to date with the latest
     runtime changes.
-- [ ] Push runtime upgrade to Westend and verify network stability.
+- [ ] Push runtime upgrade to Alphanet and verify network stability.
 
 ### All Releases
 
 - [ ] Check that the new client versions have [run on the network](#burn-in)
     without issue for 12 hours.
 - [ ] Check that a draft release has been created at
-    https://github.com/paritytech/polkadot/releases with relevant [release
+    https://github.com/paritytech/axia/releases with relevant [release
     notes](#release-notes)
 - [ ] Check that [build artifacts](#build-artifacts) have been added to the
     draft-release
@@ -51,8 +51,8 @@ candidate branch or started an additional release candidate branch (rc-2, rc-3, 
 
 ### Burn In
 
-Ensure that Parity DevOps has run the new release on Westend, AxiaTest, and
-Polkadot validators for at least 12 hours prior to publishing the release.
+Ensure that Parity DevOps has run the new release on Alphanet, AxiaTest, and
+Axia validators for at least 12 hours prior to publishing the release.
 
 ### Build Artifacts
 
@@ -105,7 +105,7 @@ functions. Compare the metadata of the current and new runtimes and ensure that
 the `module index, call index` tuples map to the same set of functions. In case
 of a breaking change, increase `transaction_version`.
 
-To verify the order has not changed, you may manually start the following [Github Action](https://github.com/paritytech/polkadot/actions/workflows/extrinsic-ordering-check-from-bin.yml). It takes around a minute to run and will produce the report as artifact you need to manually check.
+To verify the order has not changed, you may manually start the following [Github Action](https://github.com/paritytech/axia/actions/workflows/extrinsic-ordering-check-from-bin.yml). It takes around a minute to run and will produce the report as artifact you need to manually check.
 
 The things to look for in the output are lines like:
   - `[Identity] idx 28 -> 25 (calls 15)` - indicates the index for `Identity` has changed
@@ -125,12 +125,12 @@ date to include them.
 
 There are three benchmarking machines reserved for updating the weights at
 release-time. To initialise a benchmark run for each production runtime
-(westend, axctest, polkadot):
-* Go to https://gitlab.parity.io/parity/polkadot/-/pipelines?page=1&scope=branches&ref=master
+(alphanet, axctest, axia):
+* Go to https://gitlab.parity.io/parity/axia/-/pipelines?page=1&scope=branches&ref=master
 * Click the link to the last pipeline run for master
 * Start each of the manual jobs:
   * 'update_westend_weights'
-  * 'update_polkadot_weights'
+  * 'update_axia_weights'
   * 'update_axctest_weights'
 * When these jobs have completed (it takes a few hours), a git PATCH file will
     be available to download as an artifact. 
@@ -140,7 +140,7 @@ release-time. To initialise a benchmark run for each production runtime
 * The weights should be (Currently manually) checked to make sure there are no
     big outliers (i.e., twice or half the weight).
 
-### Polkadot JS
+### Axia JS
 
-Ensure that a release of [Polkadot JS API]() contains any new types or
+Ensure that a release of [Axia JS API]() contains any new types or
 interfaces necessary to interact with the new runtime.

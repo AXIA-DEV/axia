@@ -1,18 +1,18 @@
 // Copyright 2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
 //! Support data structures for `MultiLocation`, primarily the `Junction` datatype.
 
@@ -27,8 +27,8 @@ pub enum NetworkId {
 	Any,
 	/// Some named network.
 	Named(Vec<u8>),
-	/// The Polkadot Relay chain
-	Polkadot,
+	/// The Axia Relay chain
+	Axia,
 	/// AxiaTest.
 	AxiaTest,
 }
@@ -42,14 +42,14 @@ pub enum BodyId {
 	Named(Vec<u8>),
 	/// An indexed body.
 	Index(#[codec(compact)] u32),
-	/// The unambiguous executive body (for Polkadot, this would be the Polkadot council).
+	/// The unambiguous executive body (for Axia, this would be the Axia council).
 	Executive,
-	/// The unambiguous technical body (for Polkadot, this would be the Technical Committee).
+	/// The unambiguous technical body (for Axia, this would be the Technical Committee).
 	Technical,
-	/// The unambiguous legislative body (for Polkadot, this could be considered the opinion of a majority of
+	/// The unambiguous legislative body (for Axia, this could be considered the opinion of a majority of
 	/// lock-voters).
 	Legislative,
-	/// The unambiguous judicial body (this doesn't exist on Polkadot, but if it were to get a "grand oracle", it
+	/// The unambiguous judicial body (this doesn't exist on Axia, but if it were to get a "grand oracle", it
 	/// may be considered as that).
 	Judicial,
 }
@@ -109,10 +109,10 @@ pub enum Junction {
 	/// NOTE: This item is *not* a sub-consensus item: a consensus system may not identify itself trustlessly as
 	/// a location that includes this junction.
 	Parent,
-	/// An indexed parachain belonging to and operated by the context.
+	/// An indexed allychain belonging to and operated by the context.
 	///
-	/// Generally used when the context is a Polkadot Relay-chain.
-	Parachain(#[codec(compact)] u32),
+	/// Generally used when the context is a Axia Relay-chain.
+	Allychain(#[codec(compact)] u32),
 	/// A 32-byte identifier for an account of a specific network that is respected as a sovereign endpoint within
 	/// the context.
 	///
@@ -163,7 +163,7 @@ impl From<crate::v1::Junction> for Junction {
 	fn from(v1: crate::v1::Junction) -> Junction {
 		use crate::v1::Junction::*;
 		match v1 {
-			Parachain(id) => Self::Parachain(id),
+			Allychain(id) => Self::Allychain(id),
 			AccountId32 { network, id } => Self::AccountId32 { network, id },
 			AccountIndex64 { network, index } => Self::AccountIndex64 { network, index },
 			AccountKey20 { network, key } => Self::AccountKey20 { network, key },
@@ -191,7 +191,7 @@ impl Junction {
 		match self {
 			Junction::Parent => false,
 
-			Junction::Parachain(..) |
+			Junction::Allychain(..) |
 			Junction::AccountId32 { .. } |
 			Junction::AccountIndex64 { .. } |
 			Junction::AccountKey20 { .. } |

@@ -1,24 +1,24 @@
 // Copyright 2019-2020 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Parathread and parachains leasing system. Allows para IDs to be claimed, the code and data to be initialized and
-//! parachain slots (i.e. continuous scheduling) to be leased. Also allows for parachains and parathreads to be
+//! Parathread and allychains leasing system. Allows para IDs to be claimed, the code and data to be initialized and
+//! allychain slots (i.e. continuous scheduling) to be leased. Also allows for allychains and parathreads to be
 //! swapped.
 //!
-//! This doesn't handle the mechanics of determining which para ID actually ends up with a parachain lease. This
+//! This doesn't handle the mechanics of determining which para ID actually ends up with a allychain lease. This
 //! must handled by a separately, through the trait interface that this pallet provides or the root dispatchables.
 
 use crate::traits::{LeaseError, Leaser, Registrar};
@@ -76,7 +76,7 @@ pub mod pallet {
 		/// The currency type used for bidding.
 		type Currency: ReservableCurrency<Self::AccountId>;
 
-		/// The parachain registrar type.
+		/// The allychain registrar type.
 		type Registrar: Registrar<AccountId = Self::AccountId>;
 
 		/// The number of blocks over which a single period lasts.
@@ -91,7 +91,7 @@ pub mod pallet {
 		type WeightInfo: WeightInfo;
 	}
 
-	/// Amounts held on deposit for each (possibly future) leased parachain.
+	/// Amounts held on deposit for each (possibly future) leased allychain.
 	///
 	/// The actual amount locked on its behalf by any account at any time is the maximum of the second values
 	/// of the items in this list whose first value is the account.
@@ -99,10 +99,10 @@ pub mod pallet {
 	/// The first item in the list is the amount locked for the current Lease Period. Following
 	/// items are for the subsequent lease periods.
 	///
-	/// The default value (an empty list) implies that the parachain no longer exists (or never
+	/// The default value (an empty list) implies that the allychain no longer exists (or never
 	/// existed) as far as this pallet is concerned.
 	///
-	/// If a parachain doesn't exist *yet* but is scheduled to exist in the future, then it
+	/// If a allychain doesn't exist *yet* but is scheduled to exist in the future, then it
 	/// will be left-padded with one or more `None`s to denote the fact that nothing is held on
 	/// deposit for the non-existent chain currently, but is held at some point in the future.
 	///
@@ -117,7 +117,7 @@ pub mod pallet {
 	pub enum Event<T: Config> {
 		/// A new `[lease_period]` is beginning.
 		NewLeasePeriod(LeasePeriodOf<T>),
-		/// A para has won the right to a continuous set of lease periods as a parachain.
+		/// A para has won the right to a continuous set of lease periods as a allychain.
 		/// First balance is any extra amount reserved on top of the para's existing deposit.
 		/// Second balance is the total amount reserved.
 		/// `[parachain_id, leaser, period_begin, period_count, extra_reserved, total_amount]`
@@ -133,7 +133,7 @@ pub mod pallet {
 
 	#[pallet::error]
 	pub enum Error<T> {
-		/// The parachain ID is not onboarding.
+		/// The allychain ID is not onboarding.
 		ParaNotOnboarding,
 		/// There was an error with the lease.
 		LeaseError,
@@ -193,7 +193,7 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Try to onboard a parachain that has a lease for the current lease period.
+		/// Try to onboard a allychain that has a lease for the current lease period.
 		///
 		/// This function can be useful if there was some state issue with a para that should
 		/// have onboarded, but was unable to. As long as they have a lease period, we can
@@ -219,15 +219,15 @@ pub mod pallet {
 impl<T: Config> Pallet<T> {
 	/// A new lease period is beginning. We're at the start of the first block of it.
 	///
-	/// We need to on-board and off-board parachains as needed. We should also handle reducing/
+	/// We need to on-board and off-board allychains as needed. We should also handle reducing/
 	/// returning deposits.
 	fn manage_lease_period_start(lease_period_index: LeasePeriodOf<T>) -> Weight {
 		Self::deposit_event(Event::<T>::NewLeasePeriod(lease_period_index));
 
-		let old_parachains = T::Registrar::parachains();
+		let old_parachains = T::Registrar::allychains();
 
 		// Figure out what chains need bringing on.
-		let mut parachains = Vec::new();
+		let mut allychains = Vec::new();
 		for (para, mut lease_periods) in Leases::<T>::iter() {
 			if lease_periods.is_empty() {
 				continue
@@ -247,7 +247,7 @@ impl<T: Config> Pallet<T> {
 				// Remove the now-empty lease list.
 				Leases::<T>::remove(para);
 			} else {
-				// The parachain entry has leased future periods.
+				// The allychain entry has leased future periods.
 
 				// We need to pop the first deposit entry, which corresponds to the now-
 				// ended lease period.
@@ -258,7 +258,7 @@ impl<T: Config> Pallet<T> {
 				// If we *were* active in the last period and so have ended a lease...
 				if let Some(ended_lease) = maybe_ended_lease {
 					// Then we need to get the new amount that should continue to be held on
-					// deposit for the parachain.
+					// deposit for the allychain.
 					let now_held = Self::deposit_held(para, &ended_lease.0);
 
 					// If this is less than what we were holding for this leaser's now-ended lease, then
@@ -268,15 +268,15 @@ impl<T: Config> Pallet<T> {
 					}
 				}
 
-				// If we have an active lease in the new period, then add to the current parachains
+				// If we have an active lease in the new period, then add to the current allychains
 				if lease_periods[0].is_some() {
-					parachains.push(para);
+					allychains.push(para);
 				}
 			}
 		}
-		parachains.sort();
+		allychains.sort();
 
-		for para in parachains.iter() {
+		for para in allychains.iter() {
 			if old_parachains.binary_search(para).is_err() {
 				// incoming.
 				let res = T::Registrar::make_parachain(*para);
@@ -285,7 +285,7 @@ impl<T: Config> Pallet<T> {
 		}
 
 		for para in old_parachains.iter() {
-			if parachains.binary_search(para).is_err() {
+			if allychains.binary_search(para).is_err() {
 				// outgoing.
 				let res = T::Registrar::make_parathread(*para);
 				debug_assert!(res.is_ok());
@@ -294,12 +294,12 @@ impl<T: Config> Pallet<T> {
 
 		T::WeightInfo::manage_lease_period_start(
 			old_parachains.len() as u32,
-			parachains.len() as u32,
+			allychains.len() as u32,
 		)
 	}
 
-	// Return a vector of (user, balance) for all deposits for a parachain.
-	// Useful when trying to clean up a parachain leases, as this would tell
+	// Return a vector of (user, balance) for all deposits for a allychain.
+	// Useful when trying to clean up a allychain leases, as this would tell
 	// you all the balances you need to unreserve.
 	fn all_deposits_held(para: ParaId) -> Vec<(T::AccountId, BalanceOf<T>)> {
 		let mut tracker = sp_std::collections::btree_map::BTreeMap::new();
@@ -351,9 +351,9 @@ impl<T: Config> Leaser<T::BlockNumber> for Pallet<T> {
 		// offset is the amount into the `Deposits` items list that our lease begins. `period_count`
 		// is the number of items that it lasts for.
 
-		// The lease period index range (begin, end) that newly belongs to this parachain
+		// The lease period index range (begin, end) that newly belongs to this allychain
 		// ID. We need to ensure that it features in `Deposits` to prevent it from being
-		// reaped too early (any managed parachain whose `Deposits` set runs low will be
+		// reaped too early (any managed allychain whose `Deposits` set runs low will be
 		// removed).
 		Leases::<T>::try_mutate(para, |d| {
 			// Left-pad with `None`s as necessary.
@@ -396,7 +396,7 @@ impl<T: Config> Leaser<T::BlockNumber> for Pallet<T> {
 			let reserved = maybe_additional.unwrap_or_default();
 
 			// Check if current lease period is same as period begin, and onboard them directly.
-			// This will allow us to support onboarding new parachains in the middle of a lease period.
+			// This will allow us to support onboarding new allychains in the middle of a lease period.
 			if current_lease_period == period_begin {
 				// Best effort. Not much we can do if this fails.
 				let _ = T::Registrar::make_parachain(para);
@@ -1018,7 +1018,7 @@ mod benchmarking {
 			assert_last_event::<T>(Event::<T>::Leased(para, leaser, period_begin, period_count, amount, amount).into());
 		}
 
-		// Worst case scenario, T parathreads onboard, and C parachains offboard.
+		// Worst case scenario, T parathreads onboard, and C allychains offboard.
 		manage_lease_period_start {
 			// Assume reasonable maximum of 100 paras at any time
 			let c in 1 .. 100;
@@ -1034,7 +1034,7 @@ mod benchmarking {
 
 			T::Registrar::execute_pending_transitions();
 
-			// T parathread are upgrading to parachains
+			// T parathread are upgrading to allychains
 			for (para, leaser) in paras_info {
 				let amount = T::Currency::minimum_balance();
 
@@ -1043,7 +1043,7 @@ mod benchmarking {
 
 			T::Registrar::execute_pending_transitions();
 
-			// C parachains are downgrading to parathreads
+			// C allychains are downgrading to parathreads
 			for i in 200 .. 200 + c {
 				let (para, leaser) = register_a_parathread::<T>(i);
 				T::Registrar::make_parachain(para)?;
@@ -1071,7 +1071,7 @@ mod benchmarking {
 			}
 		}
 
-		// Assume that at most 8 people have deposits for leases on a parachain.
+		// Assume that at most 8 people have deposits for leases on a allychain.
 		// This would cover at least 4 years of leases in the worst case scenario.
 		clear_all_leases {
 			let max_people = 8;
@@ -1102,7 +1102,7 @@ mod benchmarking {
 		}
 
 		trigger_onboard {
-			// get a parachain into a bad state where they did not onboard
+			// get a allychain into a bad state where they did not onboard
 			let (para, _) = register_a_parathread::<T>(1);
 			Leases::<T>::insert(para, vec![Some((T::AccountId::default(), BalanceOf::<T>::default()))]);
 			assert!(T::Registrar::is_parathread(para));

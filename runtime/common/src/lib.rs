@@ -1,20 +1,20 @@
 // Copyright 2019-2021 Parity Technologies (UK) Ltd.
-// This file is part of Polkadot.
+// This file is part of Axia.
 
-// Polkadot is free software: you can redistribute it and/or modify
+// Axia is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// Polkadot is distributed in the hope that it will be useful,
+// Axia is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
 // You should have received a copy of the GNU General Public License
-// along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
+// along with Axia.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Common runtime code for Polkadot and AxiaTest.
+//! Common runtime code for Axia and AxiaTest.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
@@ -114,7 +114,7 @@ parameter_types! {
 }
 
 /// Parameterized slow adjusting fee updated based on
-/// https://w3f-research.readthedocs.io/en/latest/polkadot/Token%20Economics.html#-2.-slow-adjusting-mechanism
+/// https://w3f-research.readthedocs.io/en/latest/axia/Token%20Economics.html#-2.-slow-adjusting-mechanism
 pub type SlowAdjustingFeeUpdate<R> =
 	TargetedFeeAdjustment<R, TargetBlockFullness, AdjustmentVariable, MinimumMultiplier>;
 
@@ -124,7 +124,7 @@ pub type SlowAdjustingFeeUpdate<R> =
 pub type CurrencyToVote = frame_support::traits::U128CurrencyToVote;
 static_assertions::assert_eq_size!(primitives::v1::Balance, u128);
 
-/// A placeholder since there is currently no provided session key handler for parachain validator
+/// A placeholder since there is currently no provided session key handler for allychain validator
 /// keys.
 pub struct ParachainSessionKeyPlaceholder<T>(sp_std::marker::PhantomData<T>);
 impl<T> sp_runtime::BoundToRuntimeAppPublic for ParachainSessionKeyPlaceholder<T> {
@@ -153,7 +153,7 @@ impl<T: pallet_session::Config> OneSessionHandler<T::AccountId>
 	fn on_disabled(_: u32) {}
 }
 
-/// A placeholder since there is currently no provided session key handler for parachain validator
+/// A placeholder since there is currently no provided session key handler for allychain validator
 /// keys.
 pub struct AssignmentSessionKeyPlaceholder<T>(sp_std::marker::PhantomData<T>);
 impl<T> sp_runtime::BoundToRuntimeAppPublic for AssignmentSessionKeyPlaceholder<T> {
