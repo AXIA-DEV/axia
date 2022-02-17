@@ -5,7 +5,7 @@ authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
 
 [dependencies]
-# substrate primitives
+# axlib primitives
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-blockchain = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
@@ -14,7 +14,7 @@ sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "maste
 system = { package = "frame-system", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 balances = { package = "pallet-balances", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-# substrate client libs
+# axlib client libs
 sc-client-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 # polkadot deps

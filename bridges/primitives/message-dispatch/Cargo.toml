@@ -11,7 +11,7 @@ bp-runtime = { path = "../runtime", default-features = false }
 codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false }
 scale-info = { version = "1.0", default-features = false, features = ["derive"] }
 
-# Substrate Dependencies
+# Axlib Dependencies
 
 frame-support = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 sp-std = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }

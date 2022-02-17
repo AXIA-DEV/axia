@@ -23,8 +23,8 @@ use relay_ethereum_client::{
 	Client as EthereumClient, ConnectionParams as EthereumConnectionParams, SigningParams as EthereumSigningParams,
 };
 use relay_rialto_client::{HeaderId as RialtoHeaderId, Rialto};
-use relay_substrate_client::{
-	Client as SubstrateClient, ConnectionParams as SubstrateConnectionParams, OpaqueGrandpaAuthoritiesSet,
+use relay_axlib_client::{
+	Client as AxlibClient, ConnectionParams as AxlibConnectionParams, OpaqueGrandpaAuthoritiesSet,
 };
 use relay_utils::HeaderId;
 
@@ -37,8 +37,8 @@ pub struct EthereumDeployContractParams {
 	pub eth_sign: EthereumSigningParams,
 	/// Ethereum contract bytecode.
 	pub eth_contract_code: Vec<u8>,
-	/// Substrate connection params.
-	pub sub_params: SubstrateConnectionParams,
+	/// Axlib connection params.
+	pub sub_params: AxlibConnectionParams,
 	/// Initial authorities set id.
 	pub sub_initial_authorities_set_id: Option<u64>,
 	/// Initial authorities set.
@@ -61,7 +61,7 @@ pub async fn run(params: EthereumDeployContractParams) {
 
 	let result = async move {
 		let eth_client = EthereumClient::try_connect(eth_params).await.map_err(RpcError::Ethereum)?;
-		let sub_client = SubstrateClient::<Rialto>::try_connect(sub_params).await.map_err(RpcError::Substrate)?;
+		let sub_client = AxlibClient::<Rialto>::try_connect(sub_params).await.map_err(RpcError::Axlib)?;
 
 		let (initial_header_id, initial_header) = prepare_initial_header(&sub_client, sub_initial_header).await?;
 		let initial_set_id = sub_initial_authorities_set_id.unwrap_or(0);
@@ -98,7 +98,7 @@ pub async fn run(params: EthereumDeployContractParams) {
 
 /// Prepare initial header.
 async fn prepare_initial_header(
-	sub_client: &SubstrateClient<Rialto>,
+	sub_client: &AxlibClient<Rialto>,
 	sub_initial_header: Option<Vec<u8>>,
 ) -> Result<(RialtoHeaderId, Vec<u8>), String> {
 	match sub_initial_header {
@@ -113,14 +113,14 @@ async fn prepare_initial_header(
 			let initial_header = sub_client.header_by_number(Zero::zero()).await;
 			initial_header
 				.map(|header| (HeaderId(Zero::zero(), header.hash()), header.encode()))
-				.map_err(|error| format!("Error reading Substrate genesis header: {:?}", error))
+				.map_err(|error| format!("Error reading Axlib genesis header: {:?}", error))
 		}
 	}
 }
 
 /// Prepare initial GRANDPA authorities set.
 async fn prepare_initial_authorities_set(
-	sub_client: &SubstrateClient<Rialto>,
+	sub_client: &AxlibClient<Rialto>,
 	sub_initial_header_hash: rialto_runtime::Hash,
 	sub_initial_authorities_set: Option<Vec<u8>>,
 ) -> Result<OpaqueGrandpaAuthoritiesSet, String> {

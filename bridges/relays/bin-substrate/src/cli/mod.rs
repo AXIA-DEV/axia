@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Deal with CLI args of substrate-to-substrate relay.
+//! Deal with CLI args of axlib-to-axlib relay.
 
 use std::convert::TryInto;
 
@@ -41,9 +41,9 @@ pub fn parse_args() -> Command {
 	Command::from_args()
 }
 
-/// Substrate-to-Substrate bridge utilities.
+/// Axlib-to-Axlib bridge utilities.
 #[derive(StructOpt)]
-#[structopt(about = "Substrate-to-Substrate relay")]
+#[structopt(about = "Axlib-to-Axlib relay")]
 pub enum Command {
 	/// Start headers relay between two chains.
 	///
@@ -55,7 +55,7 @@ pub enum Command {
 	/// Ties up to `Messages` pallets on both chains and starts relaying messages.
 	/// Requires the header relay to be already running.
 	RelayMessages(relay_messages::RelayMessages),
-	/// Start headers and messages relay between two Substrate chains.
+	/// Start headers and messages relay between two Axlib chains.
 	///
 	/// This high-level relay internally starts four low-level relays: two `RelayHeaders`
 	/// and two `RelayMessages` relays. Headers are only relayed when they are required by
@@ -224,7 +224,7 @@ impl AccountId {
 /// Bridge-supported network definition.
 ///
 /// Used to abstract away CLI commands.
-pub trait CliChain: relay_substrate_client::Chain {
+pub trait CliChain: relay_axlib_client::Chain {
 	/// Chain's current version of the runtime.
 	const RUNTIME_VERSION: sp_version::RuntimeVersion;
 
@@ -397,11 +397,11 @@ macro_rules! declare_chain_options {
 			}
 
 			impl [<$chain ConnectionParams>] {
-				/// Convert connection params into Substrate client.
+				/// Convert connection params into Axlib client.
 				pub async fn to_client<Chain: CliChain>(
 					&self,
-				) -> anyhow::Result<relay_substrate_client::Client<Chain>> {
-					Ok(relay_substrate_client::Client::new(relay_substrate_client::ConnectionParams {
+				) -> anyhow::Result<relay_axlib_client::Client<Chain>> {
+					Ok(relay_axlib_client::Client::new(relay_axlib_client::ConnectionParams {
 						host: self.[<$chain_prefix _host>].clone(),
 						port: self.[<$chain_prefix _port>],
 						secure: self.[<$chain_prefix _secure>],

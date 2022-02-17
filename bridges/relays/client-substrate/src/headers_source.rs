@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Default generic implementation of headers source for basic Substrate client.
+//! Default generic implementation of headers source for basic Axlib client.
 
 use crate::chain::{BlockWithJustification, Chain};
 use crate::client::Client;
@@ -29,7 +29,7 @@ use relay_utils::relay_loop::Client as RelayClient;
 use sp_runtime::{traits::Header as HeaderT, EncodedJustification};
 use std::marker::PhantomData;
 
-/// Substrate node as headers source.
+/// Axlib node as headers source.
 pub struct HeadersSource<C: Chain, P> {
 	client: Client<C>,
 	_phantom: PhantomData<P>,

@@ -14,19 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate::messages_source::SubstrateMessagesProof;
-use crate::messages_target::SubstrateMessagesReceivingProof;
+use crate::messages_source::AxlibMessagesProof;
+use crate::messages_target::AxlibMessagesReceivingProof;
 use crate::on_demand_headers::OnDemandHeadersRelay;
 
 use bp_messages::{LaneId, MessageNonce};
 use frame_support::weights::Weight;
 use messages_relay::message_lane::{MessageLane, SourceHeaderIdOf, TargetHeaderIdOf};
-use relay_substrate_client::{BlockNumberOf, Chain, Client, HashOf};
+use relay_axlib_client::{BlockNumberOf, Chain, Client, HashOf};
 use relay_utils::{metrics::MetricsParams, BlockNumberBase};
 use sp_core::Bytes;
 use std::ops::RangeInclusive;
 
-/// Substrate <-> Substrate messages relay parameters.
+/// Axlib <-> Axlib messages relay parameters.
 pub struct MessagesRelayParams<SC: Chain, SS, TC: Chain, TS> {
 	/// Messages source client.
 	pub source_client: Client<SC>,
@@ -46,8 +46,8 @@ pub struct MessagesRelayParams<SC: Chain, SS, TC: Chain, TS> {
 	pub metrics_params: MetricsParams,
 }
 
-/// Message sync pipeline for Substrate <-> Substrate relays.
-pub trait SubstrateMessageLane: MessageLane {
+/// Message sync pipeline for Axlib <-> Axlib relays.
+pub trait AxlibMessageLane: MessageLane {
 	/// Name of the runtime method that returns dispatch weight of outbound messages at the source chain.
 	const OUTBOUND_LANE_MESSAGE_DETAILS_METHOD: &'static str;
 	/// Name of the runtime method that returns latest generated nonce at the source chain.
@@ -96,14 +96,14 @@ pub trait SubstrateMessageLane: MessageLane {
 	) -> Bytes;
 }
 
-/// Substrate-to-Substrate message lane.
+/// Axlib-to-Axlib message lane.
 #[derive(Debug)]
-pub struct SubstrateMessageLaneToSubstrate<Source: Chain, SourceSignParams, Target: Chain, TargetSignParams> {
-	/// Client for the source Substrate chain.
+pub struct AxlibMessageLaneToAxlib<Source: Chain, SourceSignParams, Target: Chain, TargetSignParams> {
+	/// Client for the source Axlib chain.
 	pub(crate) source_client: Client<Source>,
 	/// Parameters required to sign transactions for source chain.
 	pub(crate) source_sign: SourceSignParams,
-	/// Client for the target Substrate chain.
+	/// Client for the target Axlib chain.
 	pub(crate) target_client: Client<Target>,
 	/// Parameters required to sign transactions for target chain.
 	pub(crate) target_sign: TargetSignParams,
@@ -112,7 +112,7 @@ pub struct SubstrateMessageLaneToSubstrate<Source: Chain, SourceSignParams, Targ
 }
 
 impl<Source: Chain, SourceSignParams: Clone, Target: Chain, TargetSignParams: Clone> Clone
-	for SubstrateMessageLaneToSubstrate<Source, SourceSignParams, Target, TargetSignParams>
+	for AxlibMessageLaneToAxlib<Source, SourceSignParams, Target, TargetSignParams>
 {
 	fn clone(&self) -> Self {
 		Self {
@@ -126,7 +126,7 @@ impl<Source: Chain, SourceSignParams: Clone, Target: Chain, TargetSignParams: Cl
 }
 
 impl<Source: Chain, SourceSignParams, Target: Chain, TargetSignParams> MessageLane
-	for SubstrateMessageLaneToSubstrate<Source, SourceSignParams, Target, TargetSignParams>
+	for AxlibMessageLaneToAxlib<Source, SourceSignParams, Target, TargetSignParams>
 where
 	SourceSignParams: Clone + Send + Sync + 'static,
 	TargetSignParams: Clone + Send + Sync + 'static,
@@ -136,8 +136,8 @@ where
 	const SOURCE_NAME: &'static str = Source::NAME;
 	const TARGET_NAME: &'static str = Target::NAME;
 
-	type MessagesProof = SubstrateMessagesProof<Source>;
-	type MessagesReceivingProof = SubstrateMessagesReceivingProof<Target>;
+	type MessagesProof = AxlibMessagesProof<Source>;
+	type MessagesReceivingProof = AxlibMessagesReceivingProof<Target>;
 
 	type SourceChainBalance = Source::Balance;
 	type SourceHeaderNumber = BlockNumberOf<Source>;

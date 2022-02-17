@@ -37,9 +37,9 @@ pub enum Error {
 	IncompleteHeader,
 	/// We have received a transaction missing a `raw` field.
 	IncompleteTransaction,
-	/// An invalid Substrate block number was received from
+	/// An invalid Axlib block number was received from
 	/// an Ethereum node.
-	InvalidSubstrateBlockNumber,
+	InvalidAxlibBlockNumber,
 	/// An invalid index has been received from an Ethereum node.
 	InvalidIncompleteIndex,
 	/// The client we're connected to is not synced, so we can't rely on its state. Contains
@@ -76,7 +76,7 @@ impl ToString for Error {
 					.to_string()
 			}
 			Self::IncompleteTransaction => "Incomplete Ethereum Transaction (missing required field - raw)".to_string(),
-			Self::InvalidSubstrateBlockNumber => "Received an invalid Substrate block from Ethereum Node".to_string(),
+			Self::InvalidAxlibBlockNumber => "Received an invalid Axlib block from Ethereum Node".to_string(),
 			Self::InvalidIncompleteIndex => "Received an invalid incomplete index from Ethereum Node".to_string(),
 			Self::ClientNotSynced(missing_headers) => {
 				format!("Ethereum client is not synced: syncing {} headers", missing_headers)

@@ -17,7 +17,7 @@
 use polkadot_test_service::*;
 use sp_keyring::Sr25519Keyring::{Alice, Bob};
 
-#[substrate_test_utils::test]
+#[axlib_test_utils::test]
 async fn call_function_actually_work() {
 	let alice =
 		run_validator_node(tokio::runtime::Handle::current(), Alice, || {}, Vec::new(), None);

@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Service and ServiceFactory implementation. Specialized wrapper over substrate service.
+//! Service and ServiceFactory implementation. Specialized wrapper over axlib service.
 
 // =====================================================================================
 // =====================================================================================
 // =====================================================================================
 // UPDATE GUIDE:
-// 1) replace everything with node-template/src/service.rs contents (found in main Substrate repo);
+// 1) replace everything with node-template/src/service.rs contents (found in main Axlib repo);
 // 2) the only thing to keep from old code, is `rpc_extensions_builder` - we use our own custom RPCs;
 // 3) fix compilation errors;
 // 4) test :)
@@ -28,7 +28,7 @@
 // =====================================================================================
 // =====================================================================================
 
-//! Service and ServiceFactory implementation. Specialized wrapper over substrate service.
+//! Service and ServiceFactory implementation. Specialized wrapper over axlib service.
 
 use rialto_runtime::{self, opaque::Block, RuntimeApi};
 use sc_client_api::{ExecutorProvider, RemoteBackend};
@@ -223,7 +223,7 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
 		use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApi};
 		use sc_finality_grandpa_rpc::{GrandpaApi, GrandpaRpcHandler};
 		use sc_rpc::DenyUnsafe;
-		use substrate_frame_rpc_system::{FullSystem, SystemApi};
+		use axlib_frame_rpc_system::{FullSystem, SystemApi};
 
 		let backend = backend.clone();
 		let client = client.clone();

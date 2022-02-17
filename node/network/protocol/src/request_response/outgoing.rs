@@ -85,7 +85,7 @@ pub enum RequestError {
 	#[error("Response could not be decoded: {0}")]
 	InvalidResponse(#[source] DecodingError),
 
-	/// Some error in substrate/libp2p happened.
+	/// Some error in axlib/libp2p happened.
 	#[error("{0}")]
 	NetworkError(#[source] network::RequestFailure),
 

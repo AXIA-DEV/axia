@@ -327,7 +327,7 @@ pub enum NetworkBridgeMessage {
 	/// NOTE: Messages will be processed in order.
 	SendCollationMessages(Vec<(Vec<PeerId>, protocol_v1::CollationProtocol)>),
 
-	/// Send requests via substrate request/response.
+	/// Send requests via axlib request/response.
 	/// Second parameter, tells what to do if we are not yet connected to the peer.
 	SendRequests(Vec<Requests>, IfDisconnected),
 

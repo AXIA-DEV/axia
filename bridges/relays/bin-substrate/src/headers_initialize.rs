@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Initialize Substrate -> Substrate headers bridge.
+//! Initialize Axlib -> Axlib headers bridge.
 //!
 //! Initialization is a transaction that calls `initialize()` function of the
 //! `pallet-bridge-grandpa` pallet. This transaction brings initial header
@@ -29,7 +29,7 @@ use bp_header_chain::{
 use codec::Decode;
 use finality_grandpa::voter_set::VoterSet;
 use num_traits::{One, Zero};
-use relay_substrate_client::{Chain, Client};
+use relay_axlib_client::{Chain, Client};
 use sp_core::Bytes;
 use sp_finality_grandpa::AuthorityList as GrandpaAuthoritiesSet;
 use sp_runtime::traits::Header as HeaderT;

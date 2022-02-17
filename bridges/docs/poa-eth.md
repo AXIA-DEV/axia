@@ -49,18 +49,18 @@ are being worked on as well.
 
 ## Ethereum Node
 On the Ethereum side of things, we require two things. First, a Solidity smart contract to track the
-Substrate headers which have been submitted to the bridge (by the relay), and a built-in contract to
+Axlib headers which have been submitted to the bridge (by the relay), and a built-in contract to
 be able to verify that headers have been finalized by the GRANDPA finality gadget. Together this
-allows the Ethereum PoA chain to verify the integrity and finality of incoming Substrate headers.
+allows the Ethereum PoA chain to verify the integrity and finality of incoming Axlib headers.
 
 The Solidity smart contract is not part of this repo, but can be found
-[here](https://github.com/svyatonik/substrate-bridge-sol/blob/master/substrate-bridge.sol) if you're
+[here](https://github.com/svyatonik/axlib-bridge-sol/blob/master/axlib-bridge.sol) if you're
 curious. We have the contract ABI in the `ethereum/relays/res` directory.
 
 ## Rialto Runtime
 The node runtime consists of several runtime modules, however not all of them are used at the same
-time. When running an Ethereum PoA to Substrate bridge the modules required are the Ethereum module
-and the currency exchange module. When running a Substrate to Substrate bridge the Substrate and
+time. When running an Ethereum PoA to Axlib bridge the modules required are the Ethereum module
+and the currency exchange module. When running a Axlib to Axlib bridge the Axlib and
 currency exchange modules are required.
 
 Below is a brief description of each of the runtime modules.
@@ -68,4 +68,4 @@ Below is a brief description of each of the runtime modules.
 ## Bridge Relay
 The bridge relay is responsible for syncing the chains which are being bridged, and passing messages
 between them. The current implementation of the relay supportings syncing and interacting with
-Ethereum PoA and Substrate chains.
+Ethereum PoA and Axlib chains.

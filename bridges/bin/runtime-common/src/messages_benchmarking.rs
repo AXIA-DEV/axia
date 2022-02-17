@@ -138,7 +138,7 @@ where
 		.expect("record_all_keys should not fail in benchmarks");
 	let storage_proof = proof_recorder.drain().into_iter().map(|n| n.data.to_vec()).collect();
 
-	// prepare Bridged chain header and insert it into the Substrate pallet
+	// prepare Bridged chain header and insert it into the Axlib pallet
 	let bridged_header = make_bridged_header(root);
 	let bridged_header_hash = bridged_header.hash();
 	pallet_bridge_grandpa::initialize_for_benchmarks::<R, FI>(bridged_header);
@@ -191,7 +191,7 @@ where
 		.expect("record_all_keys should not fail in benchmarks");
 	let storage_proof = proof_recorder.drain().into_iter().map(|n| n.data.to_vec()).collect();
 
-	// prepare Bridged chain header and insert it into the Substrate pallet
+	// prepare Bridged chain header and insert it into the Axlib pallet
 	let bridged_header = make_bridged_header(root);
 	let bridged_header_hash = bridged_header.hash();
 	pallet_bridge_grandpa::initialize_for_benchmarks::<R, FI>(bridged_header);

@@ -172,8 +172,8 @@ a dispute is no longer live, we will clean up the state accordingly.
 
 Because we are not forwarding foreign statements, spam is less of an issue in
 comparison to gossip based systems. Rate limiting should be implemented at the
-substrate level, see
-[#7750](https://github.com/paritytech/substrate/issues/7750). Still we should
+axlib level, see
+[#7750](https://github.com/paritytech/axlib/issues/7750). Still we should
 make sure that it is not possible via spamming to prevent a dispute concluding
 or worse from getting noticed.
 
@@ -205,7 +205,7 @@ Importing/discarding redundant votes should be pretty quick, so measures with
 regards to 4 should suffice to prevent 3, from doing any real harm.
 
 For 4, full monopolization of the incoming queue should not be possible assuming
-substrate handles incoming requests in a somewhat fair way. Still we want some
+axlib handles incoming requests in a somewhat fair way. Still we want some
 defense mechanisms, at the very least we need to make sure to not exhaust
 resources.
 

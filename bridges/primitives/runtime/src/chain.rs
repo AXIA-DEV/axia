@@ -22,15 +22,15 @@ use sp_runtime::traits::{
 };
 use sp_std::str::FromStr;
 
-/// Minimal Substrate-based chain representation that may be used from no_std environment.
+/// Minimal Axlib-based chain representation that may be used from no_std environment.
 pub trait Chain: Send + Sync + 'static {
-	/// A type that fulfills the abstract idea of what a Substrate block number is.
+	/// A type that fulfills the abstract idea of what a Axlib block number is.
 	// Constraits come from the associated Number type of `sp_runtime::traits::Header`
 	// See here for more info:
 	// https://crates.parity.io/sp_runtime/traits/trait.Header.html#associatedtype.Number
 	//
 	// Note that the `AsPrimitive<usize>` trait is required by the GRANDPA justification
-	// verifier, and is not usually part of a Substrate Header's Number type.
+	// verifier, and is not usually part of a Axlib Header's Number type.
 	type BlockNumber: Parameter
 		+ Member
 		+ MaybeSerializeDeserialize
@@ -44,7 +44,7 @@ pub trait Chain: Send + Sync + 'static {
 		+ AsPrimitive<usize>
 		+ Default;
 
-	/// A type that fulfills the abstract idea of what a Substrate hash is.
+	/// A type that fulfills the abstract idea of what a Axlib hash is.
 	// Constraits come from the associated Hash type of `sp_runtime::traits::Header`
 	// See here for more info:
 	// https://crates.parity.io/sp_runtime/traits/trait.Header.html#associatedtype.Hash
@@ -61,14 +61,14 @@ pub trait Chain: Send + Sync + 'static {
 		+ AsMut<[u8]>
 		+ MaybeMallocSizeOf;
 
-	/// A type that fulfills the abstract idea of what a Substrate hasher (a type
+	/// A type that fulfills the abstract idea of what a Axlib hasher (a type
 	/// that produces hashes) is.
 	// Constraits come from the associated Hashing type of `sp_runtime::traits::Header`
 	// See here for more info:
 	// https://crates.parity.io/sp_runtime/traits/trait.Header.html#associatedtype.Hashing
 	type Hasher: HashT<Output = Self::Hash>;
 
-	/// A type that fulfills the abstract idea of what a Substrate header is.
+	/// A type that fulfills the abstract idea of what a Axlib header is.
 	// See here for more info:
 	// https://crates.parity.io/sp_runtime/traits/trait.Header.html
 	type Header: Parameter + HeaderT<Number = Self::BlockNumber, Hash = Self::Hash> + MaybeSerializeDeserialize;

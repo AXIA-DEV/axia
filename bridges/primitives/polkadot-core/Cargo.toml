@@ -15,7 +15,7 @@ scale-info = { version = "1.0", default-features = false, features = ["derive"] 
 bp-messages = { path = "../messages", default-features = false }
 bp-runtime = { path = "../runtime", default-features = false }
 
-# Substrate Based Dependencies
+# Axlib Based Dependencies
 
 frame-support = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 frame-system = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }

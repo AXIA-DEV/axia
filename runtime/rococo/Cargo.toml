@@ -84,7 +84,7 @@ frame-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default
 hex-literal = { version = "0.3.3", optional = true }
 
 [build-dependencies]
-substrate-wasm-builder = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+axlib-wasm-builder = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [features]
 default = ["std"]

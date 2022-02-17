@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! The most generic Substrate node RPC interface.
+//! The most generic Axlib node RPC interface.
 
 use crate::chain::Chain;
 
@@ -26,7 +26,7 @@ use sp_core::{
 use sp_version::RuntimeVersion;
 
 jsonrpsee_proc_macros::rpc_client_api! {
-	pub(crate) Substrate<C: Chain> {
+	pub(crate) Axlib<C: Chain> {
 		#[rpc(method = "system_health", positional_params)]
 		fn system_health() -> Health;
 		#[rpc(method = "chain_getHeader", positional_params)]

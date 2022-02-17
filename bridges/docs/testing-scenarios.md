@@ -102,7 +102,7 @@ kCharlie.
 1. The header sync informs the target chain about `B1..B3` blocks (see point 6).
 
 1. Relayer learns about missing finalization of `B1..B3` on the target chain, see
-   [finality maintenance code](https://github.com/paritytech/parity-bridges-common/blob/8b327a94595c4a6fae6d7866e24ecf2390501e32/relays/substrate/src/headers_maintain.rs#L107).
+   [finality maintenance code](https://github.com/paritytech/parity-bridges-common/blob/8b327a94595c4a6fae6d7866e24ecf2390501e32/relays/axlib/src/headers_maintain.rs#L107).
 
 1. Relayer submits justification for `B3` to the target chain (`finalize_header`).
     See [#421](https://github.com/paritytech/parity-bridges-common/issues/421) for multiple

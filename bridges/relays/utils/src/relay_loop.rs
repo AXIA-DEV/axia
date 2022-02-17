@@ -19,7 +19,7 @@ use crate::{FailedClient, MaybeConnectionError};
 
 use async_trait::async_trait;
 use std::{fmt::Debug, future::Future, net::SocketAddr, time::Duration};
-use substrate_prometheus_endpoint::{init_prometheus, Registry};
+use axlib_prometheus_endpoint::{init_prometheus, Registry};
 
 /// Default pause between reconnect attempts.
 pub const RECONNECT_DELAY: Duration = Duration::from_secs(10);

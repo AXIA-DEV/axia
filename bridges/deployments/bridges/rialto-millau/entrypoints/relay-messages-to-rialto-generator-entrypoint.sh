@@ -2,7 +2,7 @@
 
 # THIS SCRIPT IS NOT INTENDED FOR USE IN PRODUCTION ENVIRONMENT
 #
-# This scripts periodically calls the Substrate relay binary to generate messages. These messages
+# This scripts periodically calls the Axlib relay binary to generate messages. These messages
 # are sent from the Millau network to the Rialto network.
 
 set -eu
@@ -14,7 +14,7 @@ SECONDARY_MESSAGE_LANE=${MSG_EXCHANGE_GEN_SECONDARY_LANE}
 MAX_UNCONFIRMED_MESSAGES_AT_INBOUND_LANE=128
 FERDIE_ADDR=6ztG3jPnJTwgZnnYsgCDXbbQVR82M96hBZtPvkN56A9668ZC
 
-SHARED_CMD=" /home/user/substrate-relay send-message MillauToRialto"
+SHARED_CMD=" /home/user/axlib-relay send-message MillauToRialto"
 SHARED_HOST="--source-host millau-node-bob --source-port 9944"
 DAVE_SIGNER="--target-signer //Dave --source-signer //Dave"
 

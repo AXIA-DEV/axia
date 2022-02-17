@@ -20,6 +20,6 @@ serde_json = "1.0"
 sysinfo = "0.15"
 time = "0.2"
 
-# Substrate dependencies
+# Axlib dependencies
 
-substrate-prometheus-endpoint = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+axlib-prometheus-endpoint = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

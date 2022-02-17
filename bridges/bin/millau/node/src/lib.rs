@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Substrate Node Template CLI library.
+//! Axlib Node Template CLI library.
 #![warn(missing_docs)]
 
 mod chain_spec;

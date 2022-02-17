@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Submitting Ethereum -> Substrate exchange transactions.
+//! Submitting Ethereum -> Axlib exchange transactions.
 
 use bp_eth_poa::{
 	signatures::{secret_to_address, SignTransaction},
@@ -37,11 +37,11 @@ pub struct EthereumExchangeSubmitParams {
 	pub eth_nonce: Option<U256>,
 	/// Amount of Ethereum tokens to lock.
 	pub eth_amount: U256,
-	/// Funds recipient on Substrate side.
+	/// Funds recipient on Axlib side.
 	pub sub_recipient: [u8; 32],
 }
 
-/// Submit single Ethereum -> Substrate exchange transaction.
+/// Submit single Ethereum -> Axlib exchange transaction.
 pub async fn run(params: EthereumExchangeSubmitParams) {
 	let EthereumExchangeSubmitParams {
 		eth_params,

@@ -1,6 +1,6 @@
 [package]
 name = "pallet-bridge-eth-poa"
-description = "A Substrate Runtime module that is able to verify PoA headers and their finality."
+description = "A Axlib Runtime module that is able to verify PoA headers and their finality."
 version = "0.1.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -16,7 +16,7 @@ serde = { version = "1.0", optional = true }
 
 bp-eth-poa = { path = "../../primitives/ethereum-poa", default-features = false }
 
-# Substrate Dependencies
+# Axlib Dependencies
 
 frame-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false, optional = true , branch = "master" }
 frame-support = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }

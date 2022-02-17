@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Polkadot service. Specialized wrapper over substrate service.
+//! Polkadot service. Specialized wrapper over axlib service.
 
 #![deny(unused_results)]
 
@@ -100,7 +100,7 @@ use sc_executor::NativeElseWasmExecutor;
 pub use sc_executor::NativeExecutionDispatch;
 pub use service::{
 	config::{DatabaseSource, PrometheusConfig},
-	ChainSpec, Configuration, Error as SubstrateServiceError, PruningMode, Role, RuntimeGenesis,
+	ChainSpec, Configuration, Error as AxlibServiceError, PruningMode, Role, RuntimeGenesis,
 	TFullBackend, TFullCallExecutor, TFullClient, TLightBackend, TLightCallExecutor, TLightClient,
 	TaskManager, TransactionPoolOptions,
 };
@@ -202,7 +202,7 @@ pub enum Error {
 	AddrFormatInvalid(#[from] std::net::AddrParseError),
 
 	#[error(transparent)]
-	Sub(#[from] SubstrateServiceError),
+	Sub(#[from] AxlibServiceError),
 
 	#[error(transparent)]
 	Blockchain(#[from] sp_blockchain::Error),
@@ -754,7 +754,7 @@ where
 
 	// Note: GrandPa is pushed before the Polkadot-specific protocols. This doesn't change
 	// anything in terms of behaviour, but makes the logs more consistent with the other
-	// Substrate nodes.
+	// Axlib nodes.
 	config.network.extra_sets.push(grandpa::grandpa_peers_set_config());
 
 	if chain_spec.is_rococo() || chain_spec.is_wococo() {
@@ -1068,7 +1068,7 @@ where
 	}
 
 	let config = grandpa::Config {
-		// FIXME substrate#1578 make this available through chainspec
+		// FIXME axlib#1578 make this available through chainspec
 		gossip_duration: Duration::from_millis(1000),
 		justification_period: 512,
 		name: Some(name),
@@ -1081,7 +1081,7 @@ where
 	let enable_grandpa = !disable_grandpa;
 	if enable_grandpa {
 		// start the full GRANDPA voter
-		// NOTE: unlike in substrate we are currently running the full
+		// NOTE: unlike in axlib we are currently running the full
 		// GRANDPA voter protocol for all full nodes (regardless of whether
 		// they're validators or not). at this point the full voter should
 		// provide better guarantees of block and vote data availability than

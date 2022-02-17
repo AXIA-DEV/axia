@@ -16,19 +16,19 @@
 
 //! Millau-to-Rialto headers sync entrypoint.
 
-use crate::finality_pipeline::{SubstrateFinalitySyncPipeline, SubstrateFinalityToSubstrate};
+use crate::finality_pipeline::{AxlibFinalitySyncPipeline, AxlibFinalityToAxlib};
 
 use bp_header_chain::justification::GrandpaJustification;
 use codec::Encode;
 use relay_millau_client::{Millau, SyncHeader as MillauSyncHeader};
 use relay_rialto_client::{Rialto, SigningParams as RialtoSigningParams};
-use relay_substrate_client::{Chain, TransactionSignScheme};
+use relay_axlib_client::{Chain, TransactionSignScheme};
 use sp_core::{Bytes, Pair};
 
 /// Millau-to-Rialto finality sync pipeline.
-pub(crate) type MillauFinalityToRialto = SubstrateFinalityToSubstrate<Millau, Rialto, RialtoSigningParams>;
+pub(crate) type MillauFinalityToRialto = AxlibFinalityToAxlib<Millau, Rialto, RialtoSigningParams>;
 
-impl SubstrateFinalitySyncPipeline for MillauFinalityToRialto {
+impl AxlibFinalitySyncPipeline for MillauFinalityToRialto {
 	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_millau::BEST_FINALIZED_MILLAU_HEADER_METHOD;
 
 	type TargetChain = Rialto;

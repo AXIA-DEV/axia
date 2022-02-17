@@ -1,13 +1,13 @@
 # How to send messages
 
-The Substrate-to-Substrate relay comes with a command line interface (CLI) which is implemented
-by the `substrate-relay` binary.
+The Axlib-to-Axlib relay comes with a command line interface (CLI) which is implemented
+by the `axlib-relay` binary.
 
 ```
-Substrate-to-Substrate relay
+Axlib-to-Axlib relay
 
 USAGE:
-    substrate-relay <SUBCOMMAND>
+    axlib-relay <SUBCOMMAND>
 
 FLAGS:
     -h, --help
@@ -38,7 +38,7 @@ Allows interacting with the bridge by sending messages over `Messages` component
 source chain, delivered to the target chain and dispatched there.
 
 USAGE:
-    substrate-relay send-message <SUBCOMMAND>
+    axlib-relay send-message <SUBCOMMAND>
 
 FLAGS:
     -h, --help       Prints help information
@@ -61,7 +61,7 @@ for both submit message commands, hence only the output for `MillauToRialto` is 
 Submit message to given Millau -> Rialto lane
 
 USAGE:
-    substrate-relay send-message MillauToRialto [OPTIONS] --lane <lane> --source-host <source-host> --source-port <source-port> --source-signer <source-signer> --origin <origin> --target-signer <target-signer> <SUBCOMMAND>
+    axlib-relay send-message MillauToRialto [OPTIONS] --lane <lane> --source-host <source-host> --source-port <source-port> --source-signer <source-signer> --origin <origin> --target-signer <target-signer> <SUBCOMMAND>
 
 FLAGS:
     -h, --help       Prints help information
@@ -104,7 +104,7 @@ Usage of the arguments is best explained with an example. Below you can see, how
 would look like:
 
 ```
-substrate-relay send-message MillauToRialto \
+axlib-relay send-message MillauToRialto \
 		--source-host=127.0.0.1 \
 		--source-port=10946 \
 		--source-signer=//Dave \

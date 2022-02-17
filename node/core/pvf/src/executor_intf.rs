@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Polkadot.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Interface to the Substrate Executor
+//! Interface to the Axlib Executor
 
 use sc_executor_common::{
 	runtime_blob::RuntimeBlob,
@@ -28,7 +28,7 @@ use std::any::{Any, TypeId};
 const CONFIG: Config = Config {
 	// Memory configuration
 	//
-	// When Substrate Runtime is instantiated, a number of wasm pages are mounted for the Substrate
+	// When Axlib Runtime is instantiated, a number of wasm pages are mounted for the Axlib
 	// Runtime instance. The number of pages is specified by `heap_pages`.
 	//
 	// Besides `heap_pages` linear memory requests an initial number of pages. Those pages are

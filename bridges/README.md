@@ -2,11 +2,11 @@
 
 This is a collection of components for building bridges.
 
-These components include Substrate pallets for syncing headers, passing arbitrary messages, as well
+These components include Axlib pallets for syncing headers, passing arbitrary messages, as well
 as libraries for building relayers to provide cross-chain communication capabilities.
 
 Three bridge nodes are also available. The nodes can be used to run test networks which bridge other
-Substrate chains or Ethereum Proof-of-Authority chains.
+Axlib chains or Ethereum Proof-of-Authority chains.
 
 🚧 The bridges are currently under construction - a hardhat is recommended beyond this point 🚧
 
@@ -38,16 +38,16 @@ cargo build --all
 cargo test --all
 ```
 
-If you need more information about setting up your development environment Substrate's
-[Getting Started](https://substrate.dev/docs/en/knowledgebase/getting-started/) page is a good
+If you need more information about setting up your development environment Axlib's
+[Getting Started](https://axlib.dev/docs/en/knowledgebase/getting-started/) page is a good
 resource.
 
 ## High-Level Architecture
 
-This repo has support for bridging foreign chains together using a combination of Substrate pallets
+This repo has support for bridging foreign chains together using a combination of Axlib pallets
 and external processes called relayers. A bridge chain is one that is able to follow the consensus
 of a foreign chain independently. For example, consider the case below where we want to bridge two
-Substrate based chains.
+Axlib based chains.
 
 ```
 +---------------+                 +---------------+
@@ -78,13 +78,13 @@ Here's an overview of how the project is laid out. The main bits are the `node`,
 the `relays` which are used to pass messages between chains.
 
 ```
-├── bin             // Node and Runtime for the various Substrate chains
+├── bin             // Node and Runtime for the various Axlib chains
 │  └── ...
 ├── deployments     // Useful tools for deploying test networks
 │  └──  ...
 ├── diagrams        // Pretty pictures of the project architecture
 │  └──  ...
-├── modules         // Substrate Runtime Modules (a.k.a Pallets)
+├── modules         // Axlib Runtime Modules (a.k.a Pallets)
 │  ├── ethereum     // Ethereum PoA Header Sync Module
 │  ├── grandpa      // On-Chain GRANDPA Light Client
 │  ├── messages     // Cross Chain Message Passing
@@ -116,14 +116,14 @@ First you'll need to build the bridge nodes and relay. This can be done as follo
 # In `parity-bridges-common` folder
 cargo build -p rialto-bridge-node
 cargo build -p millau-bridge-node
-cargo build -p substrate-relay
+cargo build -p axlib-relay
 ```
 
 ### Running
 
 To run a simple dev network you'll can use the scripts located in
 [the `deployments/local-scripts` folder](./deployments/local-scripts). Since the relayer connects to
-both Substrate chains it must be run last.
+both Axlib chains it must be run last.
 
 ```bash
 # In `parity-bridges-common` folder
@@ -132,8 +132,8 @@ both Substrate chains it must be run last.
 ./deployments/local-scripts/relay-millau-to-rialto.sh
 ```
 
-At this point you should see the relayer submitting headers from the Millau Substrate chain to the
-Rialto Substrate chain.
+At this point you should see the relayer submitting headers from the Millau Axlib chain to the
+Rialto Axlib chain.
 
 ### Local Docker Setup
 
@@ -152,14 +152,14 @@ docker run -p 30334:30333 -p 9934:9933 -p 9945:9944 \
            --rpc-cors=all --unsafe-rpc-external --unsafe-ws-external
 ```
 
-Notice that the `docker run` command will accept all the normal Substrate flags. For local
+Notice that the `docker run` command will accept all the normal Axlib flags. For local
 development you should at minimum run with the `--dev` flag or else no blocks will be produced.
 
 Then we need to initialize and run the relayer:
 
 ```bash
 docker run --network=host -it \
-        paritytech/substrate-relay init-bridge RialtoToMillau \
+        paritytech/axlib-relay init-bridge RialtoToMillau \
         --target-host localhost \
         --target-port 9945 \
         --source-host localhost \
@@ -167,7 +167,7 @@ docker run --network=host -it \
         --target-signer //Alice
 
 docker run --network=host -it \
-        paritytech/substrate-relay relay-headers RialtoToMillau \
+        paritytech/axlib-relay relay-headers RialtoToMillau \
         --target-host localhost \
         --target-port 9945 \
         --source-host localhost \
@@ -184,7 +184,7 @@ by running the following commands at the top level of the repository.
 # In `parity-bridges-common` folder
 docker build . -t local/rialto-bridge-node --build-arg PROJECT=rialto-bridge-node
 docker build . -t local/millau-bridge-node --build-arg PROJECT=millau-bridge-node
-docker build . -t local/substrate-relay --build-arg PROJECT=substrate-relay
+docker build . -t local/axlib-relay --build-arg PROJECT=axlib-relay
 ```
 
 _Note: Building the node images will take a long time, so make sure you have some coffee handy._
@@ -205,12 +205,12 @@ in the [send message](./docs/send-message.md) document.
 ## Community
 
 Main hangout for the community is [Element](https://element.io/) (formerly Riot). Element is a chat
-server like, for example, Discord. Most discussions around Polkadot and Substrate happen
+server like, for example, Discord. Most discussions around Polkadot and Axlib happen
 in various Element "rooms" (channels). So, joining Element might be a good idea, anyway.
 
 If you are interested in information exchange and development of Polkadot related bridges please
 feel free to join the [Polkadot Bridges](https://app.element.io/#/room/#bridges:web3.foundation)
 Element channel.
 
-The [Substrate Technical](https://app.element.io/#/room/#substrate-technical:matrix.org) Element
-channel is most suited for discussions regarding Substrate itself.
+The [Axlib Technical](https://app.element.io/#/room/#axlib-technical:matrix.org) Element
+channel is most suited for discussions regarding Axlib itself.

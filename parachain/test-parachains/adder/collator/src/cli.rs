@@ -16,7 +16,7 @@
 
 //! Polkadot CLI library.
 
-use sc_cli::{RuntimeVersion, SubstrateCli};
+use sc_cli::{RuntimeVersion, AxlibCli};
 use structopt::StructOpt;
 
 /// Sub-commands supported by the collator.
@@ -61,7 +61,7 @@ pub struct Cli {
 	pub run: RunCmd,
 }
 
-impl SubstrateCli for Cli {
+impl AxlibCli for Cli {
 	fn impl_name() -> String {
 		"Parity Polkadot".into()
 	}

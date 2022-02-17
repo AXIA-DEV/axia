@@ -1,5 +1,5 @@
 [package]
-name = "substrate-relay"
+name = "axlib-relay"
 version = "0.1.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -44,12 +44,12 @@ relay-polkadot-client = { path = "../client-polkadot" }
 relay-rialto-client = { path = "../client-rialto" }
 relay-rococo-client = { path = "../client-rococo" }
 relay-wococo-client = { path = "../client-wococo" }
-relay-substrate-client = { path = "../client-substrate" }
+relay-axlib-client = { path = "../client-axlib" }
 relay-utils = { path = "../utils" }
 relay-westend-client = { path = "../client-westend" }
 rialto-runtime = { path = "../../bin/rialto/runtime" }
 
-# Substrate Dependencies
+# Axlib Dependencies
 
 frame-support = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

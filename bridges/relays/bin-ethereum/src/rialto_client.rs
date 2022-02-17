@@ -19,12 +19,12 @@ use crate::instances::BridgeInstance;
 use crate::rpc_errors::RpcError;
 
 use async_trait::async_trait;
-use bp_eth_poa::AuraHeader as SubstrateEthereumHeader;
+use bp_eth_poa::AuraHeader as AxlibEthereumHeader;
 use codec::{Decode, Encode};
 use headers_relay::sync_types::SubmittedHeaders;
 use relay_ethereum_client::types::HeaderId as EthereumHeaderId;
 use relay_rialto_client::{Rialto, SigningParams as RialtoSigningParams};
-use relay_substrate_client::{Client as SubstrateClient, TransactionSignScheme};
+use relay_axlib_client::{Client as AxlibClient, TransactionSignScheme};
 use relay_utils::HeaderId;
 use sp_core::{crypto::Pair, Bytes};
 use std::{collections::VecDeque, sync::Arc};
@@ -40,19 +40,19 @@ type RpcResult<T> = std::result::Result<T, RpcError>;
 /// A trait which contains methods that work by using multiple low-level RPCs, or more complicated
 /// interactions involving, for example, an Ethereum bridge module.
 #[async_trait]
-pub trait SubstrateHighLevelRpc {
-	/// Returns best Ethereum block that Substrate runtime knows of.
+pub trait AxlibHighLevelRpc {
+	/// Returns best Ethereum block that Axlib runtime knows of.
 	async fn best_ethereum_block(&self) -> RpcResult<EthereumHeaderId>;
-	/// Returns best finalized Ethereum block that Substrate runtime knows of.
+	/// Returns best finalized Ethereum block that Axlib runtime knows of.
 	async fn best_ethereum_finalized_block(&self) -> RpcResult<EthereumHeaderId>;
 	/// Returns whether or not transactions receipts are required for Ethereum header submission.
-	async fn ethereum_receipts_required(&self, header: SubstrateEthereumHeader) -> RpcResult<bool>;
-	/// Returns whether or not the given Ethereum header is known to the Substrate runtime.
+	async fn ethereum_receipts_required(&self, header: AxlibEthereumHeader) -> RpcResult<bool>;
+	/// Returns whether or not the given Ethereum header is known to the Axlib runtime.
 	async fn ethereum_header_known(&self, header_id: EthereumHeaderId) -> RpcResult<bool>;
 }
 
 #[async_trait]
-impl SubstrateHighLevelRpc for SubstrateClient<Rialto> {
+impl AxlibHighLevelRpc for AxlibClient<Rialto> {
 	async fn best_ethereum_block(&self) -> RpcResult<EthereumHeaderId> {
 		let call = ETH_API_BEST_BLOCK.to_string();
 		let data = Bytes(Vec::new());
@@ -75,7 +75,7 @@ impl SubstrateHighLevelRpc for SubstrateClient<Rialto> {
 		Ok(best_header_id)
 	}
 
-	async fn ethereum_receipts_required(&self, header: SubstrateEthereumHeader) -> RpcResult<bool> {
+	async fn ethereum_receipts_required(&self, header: AxlibEthereumHeader) -> RpcResult<bool> {
 		let call = ETH_API_IMPORT_REQUIRES_RECEIPTS.to_string();
 		let data = Bytes(header.encode());
 
@@ -85,10 +85,10 @@ impl SubstrateHighLevelRpc for SubstrateClient<Rialto> {
 		Ok(receipts_required)
 	}
 
-	// The Substrate module could prune old headers. So this function could return false even
+	// The Axlib module could prune old headers. So this function could return false even
 	// if header is synced. And we'll mark corresponding Ethereum header as Orphan.
 	//
-	// But when we read the best header from Substrate next time, we will know that
+	// But when we read the best header from Axlib next time, we will know that
 	// there's a better header. This Orphan will either be marked as synced, or
 	// eventually pruned.
 	async fn ethereum_header_known(&self, header_id: EthereumHeaderId) -> RpcResult<bool> {
@@ -102,12 +102,12 @@ impl SubstrateHighLevelRpc for SubstrateClient<Rialto> {
 	}
 }
 
-/// A trait for RPC calls which are used to submit Ethereum headers to a Substrate
+/// A trait for RPC calls which are used to submit Ethereum headers to a Axlib
 /// runtime. These are typically calls which use a combination of other low-level RPC
 /// calls.
 #[async_trait]
 pub trait SubmitEthereumHeaders {
-	/// Submits Ethereum header to Substrate runtime.
+	/// Submits Ethereum header to Axlib runtime.
 	async fn submit_ethereum_headers(
 		&self,
 		params: RialtoSigningParams,
@@ -116,7 +116,7 @@ pub trait SubmitEthereumHeaders {
 		sign_transactions: bool,
 	) -> SubmittedHeaders<EthereumHeaderId, RpcError>;
 
-	/// Submits signed Ethereum header to Substrate runtime.
+	/// Submits signed Ethereum header to Axlib runtime.
 	async fn submit_signed_ethereum_headers(
 		&self,
 		params: RialtoSigningParams,
@@ -124,7 +124,7 @@ pub trait SubmitEthereumHeaders {
 		headers: Vec<QueuedEthereumHeader>,
 	) -> SubmittedHeaders<EthereumHeaderId, RpcError>;
 
-	/// Submits unsigned Ethereum header to Substrate runtime.
+	/// Submits unsigned Ethereum header to Axlib runtime.
 	async fn submit_unsigned_ethereum_headers(
 		&self,
 		instance: Arc<dyn BridgeInstance>,
@@ -133,7 +133,7 @@ pub trait SubmitEthereumHeaders {
 }
 
 #[async_trait]
-impl SubmitEthereumHeaders for SubstrateClient<Rialto> {
+impl SubmitEthereumHeaders for AxlibClient<Rialto> {
 	async fn submit_ethereum_headers(
 		&self,
 		params: RialtoSigningParams,
@@ -218,7 +218,7 @@ impl SubmitEthereumHeaders for SubstrateClient<Rialto> {
 }
 
 /// A trait for RPC calls which are used to submit proof of Ethereum exchange transaction to a
-/// Substrate runtime. These are typically calls which use a combination of other low-level RPC
+/// Axlib runtime. These are typically calls which use a combination of other low-level RPC
 /// calls.
 #[async_trait]
 pub trait SubmitEthereumExchangeTransactionProof {
@@ -227,7 +227,7 @@ pub trait SubmitEthereumExchangeTransactionProof {
 		&self,
 		proof: rialto_runtime::exchange::EthereumTransactionInclusionProof,
 	) -> RpcResult<bool>;
-	/// Submits Ethereum exchange transaction proof to Substrate runtime.
+	/// Submits Ethereum exchange transaction proof to Axlib runtime.
 	async fn submit_exchange_transaction_proof(
 		&self,
 		params: RialtoSigningParams,
@@ -237,7 +237,7 @@ pub trait SubmitEthereumExchangeTransactionProof {
 }
 
 #[async_trait]
-impl SubmitEthereumExchangeTransactionProof for SubstrateClient<Rialto> {
+impl SubmitEthereumExchangeTransactionProof for AxlibClient<Rialto> {
 	async fn verify_exchange_transaction_proof(
 		&self,
 		proof: rialto_runtime::exchange::EthereumTransactionInclusionProof,
@@ -273,7 +273,7 @@ impl SubmitEthereumExchangeTransactionProof for SubstrateClient<Rialto> {
 	}
 }
 
-/// Create unsigned Substrate transaction for submitting Ethereum header.
+/// Create unsigned Axlib transaction for submitting Ethereum header.
 fn create_unsigned_submit_transaction(call: rialto_runtime::Call) -> rialto_runtime::UncheckedExtrinsic {
 	rialto_runtime::UncheckedExtrinsic::new_unsigned(call)
 }

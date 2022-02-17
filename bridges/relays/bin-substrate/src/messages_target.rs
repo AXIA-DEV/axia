@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Substrate client as Substrate messages target. The chain we connect to should have
+//! Axlib client as Axlib messages target. The chain we connect to should have
 //! runtime that implements `<BridgedChainName>HeaderApi` to allow bridging with
 //! <BridgedName> chain.
 
-use crate::messages_lane::SubstrateMessageLane;
+use crate::messages_lane::AxlibMessageLane;
 use crate::messages_source::read_client_state;
 use crate::on_demand_headers::OnDemandHeadersRelay;
 
@@ -32,20 +32,20 @@ use messages_relay::{
 	message_lane::{SourceHeaderIdOf, TargetHeaderIdOf},
 	message_lane_loop::{TargetClient, TargetClientState},
 };
-use relay_substrate_client::{Chain, Client, Error as SubstrateError, HashOf};
+use relay_axlib_client::{Chain, Client, Error as AxlibError, HashOf};
 use relay_utils::{relay_loop::Client as RelayClient, BlockNumberBase};
 use sp_core::Bytes;
 use sp_runtime::{traits::Header as HeaderT, DeserializeOwned};
 use std::{marker::PhantomData, ops::RangeInclusive};
 
-/// Message receiving proof returned by the target Substrate node.
-pub type SubstrateMessagesReceivingProof<C> = (
+/// Message receiving proof returned by the target Axlib node.
+pub type AxlibMessagesReceivingProof<C> = (
 	UnrewardedRelayersState,
 	FromBridgedChainMessagesDeliveryProof<HashOf<C>>,
 );
 
-/// Substrate client as Substrate messages target.
-pub struct SubstrateMessagesTarget<C: Chain, P: SubstrateMessageLane, I> {
+/// Axlib client as Axlib messages target.
+pub struct AxlibMessagesTarget<C: Chain, P: AxlibMessageLane, I> {
 	client: Client<C>,
 	lane: P,
 	lane_id: LaneId,
@@ -54,8 +54,8 @@ pub struct SubstrateMessagesTarget<C: Chain, P: SubstrateMessageLane, I> {
 	_phantom: PhantomData<I>,
 }
 
-impl<C: Chain, P: SubstrateMessageLane, I> SubstrateMessagesTarget<C, P, I> {
-	/// Create new Substrate headers target.
+impl<C: Chain, P: AxlibMessageLane, I> AxlibMessagesTarget<C, P, I> {
+	/// Create new Axlib headers target.
 	pub fn new(
 		client: Client<C>,
 		lane: P,
@@ -63,7 +63,7 @@ impl<C: Chain, P: SubstrateMessageLane, I> SubstrateMessagesTarget<C, P, I> {
 		instance: ChainId,
 		source_to_target_headers_relay: Option<OnDemandHeadersRelay<P::SourceChain>>,
 	) -> Self {
-		SubstrateMessagesTarget {
+		AxlibMessagesTarget {
 			client,
 			lane,
 			lane_id,
@@ -74,7 +74,7 @@ impl<C: Chain, P: SubstrateMessageLane, I> SubstrateMessagesTarget<C, P, I> {
 	}
 }
 
-impl<C: Chain, P: SubstrateMessageLane, I> Clone for SubstrateMessagesTarget<C, P, I> {
+impl<C: Chain, P: AxlibMessageLane, I> Clone for AxlibMessagesTarget<C, P, I> {
 	fn clone(&self) -> Self {
 		Self {
 			client: self.client.clone(),
@@ -88,29 +88,29 @@ impl<C: Chain, P: SubstrateMessageLane, I> Clone for SubstrateMessagesTarget<C, 
 }
 
 #[async_trait]
-impl<C, P, I> RelayClient for SubstrateMessagesTarget<C, P, I>
+impl<C, P, I> RelayClient for AxlibMessagesTarget<C, P, I>
 where
 	C: Chain,
-	P: SubstrateMessageLane,
+	P: AxlibMessageLane,
 	I: Send + Sync + Instance,
 {
-	type Error = SubstrateError;
+	type Error = AxlibError;
 
-	async fn reconnect(&mut self) -> Result<(), SubstrateError> {
+	async fn reconnect(&mut self) -> Result<(), AxlibError> {
 		self.client.reconnect().await
 	}
 }
 
 #[async_trait]
-impl<C, P, I> TargetClient<P> for SubstrateMessagesTarget<C, P, I>
+impl<C, P, I> TargetClient<P> for AxlibMessagesTarget<C, P, I>
 where
 	C: Chain,
 	C::Header: DeserializeOwned,
 	C::Index: DeserializeOwned,
 	<C::Header as HeaderT>::Number: BlockNumberBase,
-	P: SubstrateMessageLane<
+	P: AxlibMessageLane<
 		TargetChain = C,
-		MessagesReceivingProof = SubstrateMessagesReceivingProof<C>,
+		MessagesReceivingProof = AxlibMessagesReceivingProof<C>,
 		TargetHeaderNumber = <C::Header as HeaderT>::Number,
 		TargetHeaderHash = <C::Header as HeaderT>::Hash,
 	>,
@@ -119,7 +119,7 @@ where
 	P::SourceHeaderHash: Decode,
 	I: Send + Sync + Instance,
 {
-	async fn state(&self) -> Result<TargetClientState<P>, SubstrateError> {
+	async fn state(&self) -> Result<TargetClientState<P>, AxlibError> {
 		// we can't continue to deliver messages if target node is out of sync, because
 		// it may have already received (some of) messages that we're going to deliver
 		self.client.ensure_synced().await?;
@@ -134,7 +134,7 @@ where
 	async fn latest_received_nonce(
 		&self,
 		id: TargetHeaderIdOf<P>,
-	) -> Result<(TargetHeaderIdOf<P>, MessageNonce), SubstrateError> {
+	) -> Result<(TargetHeaderIdOf<P>, MessageNonce), AxlibError> {
 		let encoded_response = self
 			.client
 			.state_call(
@@ -144,14 +144,14 @@ where
 			)
 			.await?;
 		let latest_received_nonce: MessageNonce =
-			Decode::decode(&mut &encoded_response.0[..]).map_err(SubstrateError::ResponseParseFailed)?;
+			Decode::decode(&mut &encoded_response.0[..]).map_err(AxlibError::ResponseParseFailed)?;
 		Ok((id, latest_received_nonce))
 	}
 
 	async fn latest_confirmed_received_nonce(
 		&self,
 		id: TargetHeaderIdOf<P>,
-	) -> Result<(TargetHeaderIdOf<P>, MessageNonce), SubstrateError> {
+	) -> Result<(TargetHeaderIdOf<P>, MessageNonce), AxlibError> {
 		let encoded_response = self
 			.client
 			.state_call(
@@ -161,14 +161,14 @@ where
 			)
 			.await?;
 		let latest_received_nonce: MessageNonce =
-			Decode::decode(&mut &encoded_response.0[..]).map_err(SubstrateError::ResponseParseFailed)?;
+			Decode::decode(&mut &encoded_response.0[..]).map_err(AxlibError::ResponseParseFailed)?;
 		Ok((id, latest_received_nonce))
 	}
 
 	async fn unrewarded_relayers_state(
 		&self,
 		id: TargetHeaderIdOf<P>,
-	) -> Result<(TargetHeaderIdOf<P>, UnrewardedRelayersState), SubstrateError> {
+	) -> Result<(TargetHeaderIdOf<P>, UnrewardedRelayersState), AxlibError> {
 		let encoded_response = self
 			.client
 			.state_call(
@@ -178,14 +178,14 @@ where
 			)
 			.await?;
 		let unrewarded_relayers_state: UnrewardedRelayersState =
-			Decode::decode(&mut &encoded_response.0[..]).map_err(SubstrateError::ResponseParseFailed)?;
+			Decode::decode(&mut &encoded_response.0[..]).map_err(AxlibError::ResponseParseFailed)?;
 		Ok((id, unrewarded_relayers_state))
 	}
 
 	async fn prove_messages_receiving(
 		&self,
 		id: TargetHeaderIdOf<P>,
-	) -> Result<(TargetHeaderIdOf<P>, P::MessagesReceivingProof), SubstrateError> {
+	) -> Result<(TargetHeaderIdOf<P>, P::MessagesReceivingProof), AxlibError> {
 		let (id, relayers_state) = self.unrewarded_relayers_state(id).await?;
 		let inbound_data_key = pallet_bridge_messages::storage_keys::inbound_lane_data_key::<I>(&self.lane_id);
 		let proof = self
@@ -207,7 +207,7 @@ where
 		generated_at_header: SourceHeaderIdOf<P>,
 		nonces: RangeInclusive<MessageNonce>,
 		proof: P::MessagesProof,
-	) -> Result<RangeInclusive<MessageNonce>, SubstrateError> {
+	) -> Result<RangeInclusive<MessageNonce>, AxlibError> {
 		self.client
 			.submit_signed_extrinsic(self.lane.target_transactions_author(), |transaction_nonce| {
 				self.lane.make_messages_delivery_transaction(

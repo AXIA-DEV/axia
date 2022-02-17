@@ -103,7 +103,7 @@ pub enum SubsystemError {
 	Infallible(#[from] std::convert::Infallible),
 
 	#[error(transparent)]
-	Prometheus(#[from] substrate_prometheus_endpoint::PrometheusError),
+	Prometheus(#[from] axlib_prometheus_endpoint::PrometheusError),
 
 	#[error(transparent)]
 	Jaeger(#[from] JaegerError),

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Contains several Substrate-specific metrics that may be exposed by relay.
+//! Contains several Axlib-specific metrics that may be exposed by relay.
 
 pub use float_storage_value::FloatStorageValueMetric;
 pub use storage_proof_overhead::StorageProofOverheadMetric;

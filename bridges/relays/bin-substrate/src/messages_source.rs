@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Substrate client as Substrate messages source. The chain we connect to should have
+//! Axlib client as Axlib messages source. The chain we connect to should have
 //! runtime that implements `<BridgedChainName>HeaderApi` to allow bridging with
 //! <BridgedName> chain.
 
-use crate::messages_lane::SubstrateMessageLane;
+use crate::messages_lane::AxlibMessageLane;
 use crate::on_demand_headers::OnDemandHeadersRelay;
 
 use async_trait::async_trait;
@@ -33,19 +33,19 @@ use messages_relay::{
 		ClientState, MessageDetails, MessageDetailsMap, MessageProofParameters, SourceClient, SourceClientState,
 	},
 };
-use relay_substrate_client::{Chain, Client, Error as SubstrateError, HashOf, HeaderIdOf};
+use relay_axlib_client::{Chain, Client, Error as AxlibError, HashOf, HeaderIdOf};
 use relay_utils::{relay_loop::Client as RelayClient, BlockNumberBase, HeaderId};
 use sp_core::Bytes;
 use sp_runtime::{traits::Header as HeaderT, DeserializeOwned};
 use std::{marker::PhantomData, ops::RangeInclusive};
 
-/// Intermediate message proof returned by the source Substrate node. Includes everything
+/// Intermediate message proof returned by the source Axlib node. Includes everything
 /// required to submit to the target node: cumulative dispatch weight of bundled messages and
 /// the proof itself.
-pub type SubstrateMessagesProof<C> = (Weight, FromBridgedChainMessagesProof<HashOf<C>>);
+pub type AxlibMessagesProof<C> = (Weight, FromBridgedChainMessagesProof<HashOf<C>>);
 
-/// Substrate client as Substrate messages source.
-pub struct SubstrateMessagesSource<C: Chain, P: SubstrateMessageLane, I> {
+/// Axlib client as Axlib messages source.
+pub struct AxlibMessagesSource<C: Chain, P: AxlibMessageLane, I> {
 	client: Client<C>,
 	lane: P,
 	lane_id: LaneId,
@@ -54,8 +54,8 @@ pub struct SubstrateMessagesSource<C: Chain, P: SubstrateMessageLane, I> {
 	_phantom: PhantomData<I>,
 }
 
-impl<C: Chain, P: SubstrateMessageLane, I> SubstrateMessagesSource<C, P, I> {
-	/// Create new Substrate headers source.
+impl<C: Chain, P: AxlibMessageLane, I> AxlibMessagesSource<C, P, I> {
+	/// Create new Axlib headers source.
 	pub fn new(
 		client: Client<C>,
 		lane: P,
@@ -63,7 +63,7 @@ impl<C: Chain, P: SubstrateMessageLane, I> SubstrateMessagesSource<C, P, I> {
 		instance: ChainId,
 		target_to_source_headers_relay: Option<OnDemandHeadersRelay<P::TargetChain>>,
 	) -> Self {
-		SubstrateMessagesSource {
+		AxlibMessagesSource {
 			client,
 			lane,
 			lane_id,
@@ -74,7 +74,7 @@ impl<C: Chain, P: SubstrateMessageLane, I> SubstrateMessagesSource<C, P, I> {
 	}
 }
 
-impl<C: Chain, P: SubstrateMessageLane, I> Clone for SubstrateMessagesSource<C, P, I> {
+impl<C: Chain, P: AxlibMessageLane, I> Clone for AxlibMessagesSource<C, P, I> {
 	fn clone(&self) -> Self {
 		Self {
 			client: self.client.clone(),
@@ -88,28 +88,28 @@ impl<C: Chain, P: SubstrateMessageLane, I> Clone for SubstrateMessagesSource<C, 
 }
 
 #[async_trait]
-impl<C, P, I> RelayClient for SubstrateMessagesSource<C, P, I>
+impl<C, P, I> RelayClient for AxlibMessagesSource<C, P, I>
 where
 	C: Chain,
-	P: SubstrateMessageLane,
+	P: AxlibMessageLane,
 	I: Send + Sync + Instance,
 {
-	type Error = SubstrateError;
+	type Error = AxlibError;
 
-	async fn reconnect(&mut self) -> Result<(), SubstrateError> {
+	async fn reconnect(&mut self) -> Result<(), AxlibError> {
 		self.client.reconnect().await
 	}
 }
 
 #[async_trait]
-impl<C, P, I> SourceClient<P> for SubstrateMessagesSource<C, P, I>
+impl<C, P, I> SourceClient<P> for AxlibMessagesSource<C, P, I>
 where
 	C: Chain,
 	C::Header: DeserializeOwned,
 	C::Index: DeserializeOwned,
 	C::BlockNumber: BlockNumberBase,
-	P: SubstrateMessageLane<
-		MessagesProof = SubstrateMessagesProof<C>,
+	P: AxlibMessageLane<
+		MessagesProof = AxlibMessagesProof<C>,
 		SourceChainBalance = C::Balance,
 		SourceHeaderNumber = <C::Header as HeaderT>::Number,
 		SourceHeaderHash = <C::Header as HeaderT>::Hash,
@@ -120,7 +120,7 @@ where
 	P::TargetHeaderHash: Decode,
 	I: Send + Sync + Instance,
 {
-	async fn state(&self) -> Result<SourceClientState<P>, SubstrateError> {
+	async fn state(&self) -> Result<SourceClientState<P>, AxlibError> {
 		// we can't continue to deliver confirmations if source node is out of sync, because
 		// it may have already received confirmations that we're going to deliver
 		self.client.ensure_synced().await?;
@@ -135,7 +135,7 @@ where
 	async fn latest_generated_nonce(
 		&self,
 		id: SourceHeaderIdOf<P>,
-	) -> Result<(SourceHeaderIdOf<P>, MessageNonce), SubstrateError> {
+	) -> Result<(SourceHeaderIdOf<P>, MessageNonce), AxlibError> {
 		let encoded_response = self
 			.client
 			.state_call(
@@ -145,14 +145,14 @@ where
 			)
 			.await?;
 		let latest_generated_nonce: MessageNonce =
-			Decode::decode(&mut &encoded_response.0[..]).map_err(SubstrateError::ResponseParseFailed)?;
+			Decode::decode(&mut &encoded_response.0[..]).map_err(AxlibError::ResponseParseFailed)?;
 		Ok((id, latest_generated_nonce))
 	}
 
 	async fn latest_confirmed_received_nonce(
 		&self,
 		id: SourceHeaderIdOf<P>,
-	) -> Result<(SourceHeaderIdOf<P>, MessageNonce), SubstrateError> {
+	) -> Result<(SourceHeaderIdOf<P>, MessageNonce), AxlibError> {
 		let encoded_response = self
 			.client
 			.state_call(
@@ -162,7 +162,7 @@ where
 			)
 			.await?;
 		let latest_received_nonce: MessageNonce =
-			Decode::decode(&mut &encoded_response.0[..]).map_err(SubstrateError::ResponseParseFailed)?;
+			Decode::decode(&mut &encoded_response.0[..]).map_err(AxlibError::ResponseParseFailed)?;
 		Ok((id, latest_received_nonce))
 	}
 
@@ -170,7 +170,7 @@ where
 		&self,
 		id: SourceHeaderIdOf<P>,
 		nonces: RangeInclusive<MessageNonce>,
-	) -> Result<MessageDetailsMap<P::SourceChainBalance>, SubstrateError> {
+	) -> Result<MessageDetailsMap<P::SourceChainBalance>, AxlibError> {
 		let encoded_response = self
 			.client
 			.state_call(
@@ -181,7 +181,7 @@ where
 			.await?;
 
 		make_message_details_map::<C>(
-			Decode::decode(&mut &encoded_response.0[..]).map_err(SubstrateError::ResponseParseFailed)?,
+			Decode::decode(&mut &encoded_response.0[..]).map_err(AxlibError::ResponseParseFailed)?,
 			nonces,
 		)
 	}
@@ -191,7 +191,7 @@ where
 		id: SourceHeaderIdOf<P>,
 		nonces: RangeInclusive<MessageNonce>,
 		proof_parameters: MessageProofParameters,
-	) -> Result<(SourceHeaderIdOf<P>, RangeInclusive<MessageNonce>, P::MessagesProof), SubstrateError> {
+	) -> Result<(SourceHeaderIdOf<P>, RangeInclusive<MessageNonce>, P::MessagesProof), AxlibError> {
 		let mut storage_keys = Vec::with_capacity(nonces.end().saturating_sub(*nonces.start()) as usize + 1);
 		let mut message_nonce = *nonces.start();
 		while message_nonce <= *nonces.end() {
@@ -225,7 +225,7 @@ where
 		&self,
 		generated_at_block: TargetHeaderIdOf<P>,
 		proof: P::MessagesReceivingProof,
-	) -> Result<(), SubstrateError> {
+	) -> Result<(), AxlibError> {
 		self.client
 			.submit_signed_extrinsic(self.lane.source_transactions_author(), move |transaction_nonce| {
 				self.lane
@@ -249,7 +249,7 @@ where
 pub async fn read_client_state<SelfChain, BridgedHeaderHash, BridgedHeaderNumber>(
 	self_client: &Client<SelfChain>,
 	best_finalized_header_id_method_name: &str,
-) -> Result<ClientState<HeaderIdOf<SelfChain>, HeaderId<BridgedHeaderHash, BridgedHeaderNumber>>, SubstrateError>
+) -> Result<ClientState<HeaderIdOf<SelfChain>, HeaderId<BridgedHeaderHash, BridgedHeaderNumber>>, AxlibError>
 where
 	SelfChain: Chain,
 	SelfChain::Header: DeserializeOwned,
@@ -276,7 +276,7 @@ where
 		)
 		.await?;
 	let decoded_best_finalized_peer_on_self: (BridgedHeaderNumber, BridgedHeaderHash) =
-		Decode::decode(&mut &encoded_best_finalized_peer_on_self.0[..]).map_err(SubstrateError::ResponseParseFailed)?;
+		Decode::decode(&mut &encoded_best_finalized_peer_on_self.0[..]).map_err(AxlibError::ResponseParseFailed)?;
 	let peer_on_self_best_finalized_id = HeaderId(
 		decoded_best_finalized_peer_on_self.0,
 		decoded_best_finalized_peer_on_self.1,
@@ -292,9 +292,9 @@ where
 fn make_message_details_map<C: Chain>(
 	weights: Vec<bp_messages::MessageDetails<C::Balance>>,
 	nonces: RangeInclusive<MessageNonce>,
-) -> Result<MessageDetailsMap<C::Balance>, SubstrateError> {
+) -> Result<MessageDetailsMap<C::Balance>, AxlibError> {
 	let make_missing_nonce_error = |expected_nonce| {
-		Err(SubstrateError::Custom(format!(
+		Err(AxlibError::Custom(format!(
 			"Missing nonce {} in messages_dispatch_weight call result. Expected all nonces from {:?}",
 			expected_nonce, nonces,
 		)))
@@ -450,7 +450,7 @@ mod tests {
 		message_details_from_rpc.remove(1);
 		assert!(matches!(
 			make_message_details_map::<relay_rialto_client::Rialto>(message_details_from_rpc, 1..=3,),
-			Err(SubstrateError::Custom(_))
+			Err(AxlibError::Custom(_))
 		));
 	}
 
@@ -458,7 +458,7 @@ mod tests {
 	fn make_message_details_map_fails_if_tail_messages_are_missing() {
 		assert!(matches!(
 			make_message_details_map::<relay_rialto_client::Rialto>(message_details_from_rpc(1..=2), 1..=3,),
-			Err(SubstrateError::Custom(_))
+			Err(AxlibError::Custom(_))
 		));
 	}
 
@@ -466,7 +466,7 @@ mod tests {
 	fn make_message_details_map_fails_if_all_messages_are_missing() {
 		assert!(matches!(
 			make_message_details_map::<relay_rialto_client::Rialto>(vec![], 1..=3),
-			Err(SubstrateError::Custom(_))
+			Err(AxlibError::Custom(_))
 		));
 	}
 }

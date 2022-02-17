@@ -16,20 +16,20 @@
 
 //! Westend-to-Millau headers sync entrypoint.
 
-use crate::finality_pipeline::{SubstrateFinalitySyncPipeline, SubstrateFinalityToSubstrate};
+use crate::finality_pipeline::{AxlibFinalitySyncPipeline, AxlibFinalityToAxlib};
 
 use bp_header_chain::justification::GrandpaJustification;
 use codec::Encode;
 use relay_millau_client::{Millau, SigningParams as MillauSigningParams};
-use relay_substrate_client::{Chain, TransactionSignScheme};
+use relay_axlib_client::{Chain, TransactionSignScheme};
 use relay_utils::metrics::MetricsParams;
 use relay_westend_client::{SyncHeader as WestendSyncHeader, Westend};
 use sp_core::{Bytes, Pair};
 
 /// Westend-to-Millau finality sync pipeline.
-pub(crate) type WestendFinalityToMillau = SubstrateFinalityToSubstrate<Westend, Millau, MillauSigningParams>;
+pub(crate) type WestendFinalityToMillau = AxlibFinalityToAxlib<Westend, Millau, MillauSigningParams>;
 
-impl SubstrateFinalitySyncPipeline for WestendFinalityToMillau {
+impl AxlibFinalitySyncPipeline for WestendFinalityToMillau {
 	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_westend::BEST_FINALIZED_WESTEND_HEADER_METHOD;
 
 	type TargetChain = Millau;

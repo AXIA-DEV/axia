@@ -29,11 +29,11 @@ sc-cli = { git = "https://github.com/AXIA-DEV/axlib-axtend", optional = true , b
 sc-service = { git = "https://github.com/AXIA-DEV/axlib-axtend", optional = true , branch = "master" }
 
 # this crate is used only to enable `trie-memory-tracker` feature
-# see https://github.com/paritytech/substrate/pull/6745
+# see https://github.com/paritytech/axlib/pull/6745
 sp-trie = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 
 [build-dependencies]
-substrate-build-script-utils = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+axlib-build-script-utils = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [features]
 default = [ "wasmtime", "db", "cli", "full-node", "trie-memory-tracker", "polkadot-native" ]

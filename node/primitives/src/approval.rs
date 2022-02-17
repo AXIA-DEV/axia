@@ -182,7 +182,7 @@ impl UnsafeVRFOutput {
 /// Extract the slot number and relay VRF from a header.
 ///
 /// This fails if either there is no BABE `PreRuntime` digest or
-/// the digest has type `SecondaryPlain`, which Substrate nodes do
+/// the digest has type `SecondaryPlain`, which Axlib nodes do
 /// not produce or accept anymore.
 pub fn babe_unsafe_vrf_info(header: &Header) -> Option<UnsafeVRFOutput> {
 	use babe_primitives::digests::{CompatibleDigestItem, PreDigest};

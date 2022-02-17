@@ -25,7 +25,7 @@ use bp_message_dispatch::{CallOrigin, MessagePayload};
 use bp_runtime::messages::DispatchFeePayment;
 use codec::Encode;
 use frame_support::weights::Weight;
-use relay_substrate_client::{Chain, TransactionSignScheme};
+use relay_axlib_client::{Chain, TransactionSignScheme};
 use sp_core::{Bytes, Pair};
 use sp_runtime::{traits::IdentifyAccount, AccountId32, MultiSignature, MultiSigner};
 use std::fmt::Debug;

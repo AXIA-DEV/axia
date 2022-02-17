@@ -5,7 +5,7 @@ authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
 
 [dependencies]
-# Substrate Client
+# Axlib Client
 sc-authority-discovery = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 babe = { package = "sc-consensus-babe", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 beefy-primitives = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
@@ -27,7 +27,7 @@ sc-basic-authorship = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch
 service = { package = "sc-service", git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
 telemetry = { package = "sc-telemetry", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-# Substrate Primitives
+# Axlib Primitives
 sp-authority-discovery = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 consensus_common = { package = "sp-consensus", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 grandpa_primitives = { package = "sp-finality-grandpa", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
@@ -48,16 +48,16 @@ sp-timestamp = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "mas
 sp-consensus-babe = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-state-machine = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-# Substrate Pallets
+# Axlib Pallets
 pallet-babe = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 pallet-im-online = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 pallet-staking = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 pallet-transaction-payment-rpc-runtime-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 pallet-mmr-primitives = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
-# Substrate Other
+# Axlib Other
 frame-system-rpc-runtime-api = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
-prometheus-endpoint = { package = "substrate-prometheus-endpoint", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+prometheus-endpoint = { package = "axlib-prometheus-endpoint", git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 # External Crates
 futures = "0.3.17"

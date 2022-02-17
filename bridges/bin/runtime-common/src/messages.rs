@@ -309,7 +309,7 @@ pub mod source {
 			return Err("Incorrect message weight declared");
 		}
 
-		// The maximal size of extrinsic at Substrate-based chain depends on the
+		// The maximal size of extrinsic at Axlib-based chain depends on the
 		// `frame_system::Config::MaximumBlockLength` and `frame_system::Config::AvailableBlockRatio`
 		// constants. This check is here to be sure that the lane won't stuck because message is too
 		// large to fit into delivery transaction.

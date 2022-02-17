@@ -111,7 +111,7 @@ skip_if_companion_pr() {
   echo "[+] PR title: $pr_title"
 
   if echo "$pr_title" | grep -qi '^companion'; then
-    echo "[!] PR is a companion PR. Build is already done in substrate"
+    echo "[!] PR is a companion PR. Build is already done in axlib"
     exit 0
   else
     echo "[+] PR is not a companion PR. Proceeding test"

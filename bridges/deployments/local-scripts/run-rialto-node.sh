@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Run a development instance of the Rialto Substrate bridge node.
+# Run a development instance of the Rialto Axlib bridge node.
 # To override the default port just export RIALTO_PORT=9944
 
 RIALTO_PORT="${RIALTO_PORT:-9944}"

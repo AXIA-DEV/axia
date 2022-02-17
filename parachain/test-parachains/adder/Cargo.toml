@@ -13,11 +13,11 @@ sp-std = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = 
 tiny-keccak = { version = "2.0.2", features = ["keccak"] }
 dlmalloc = { version = "0.2.1", features = [ "global" ] }
 
-# We need to make sure the global allocator is disabled until we have support of full substrate externalities
+# We need to make sure the global allocator is disabled until we have support of full axlib externalities
 sp-io = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false, features = [ "disable_allocator" ] , branch = "master" }
 
 [build-dependencies]
-substrate-wasm-builder = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+axlib-wasm-builder = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [features]
 default = [ "std" ]

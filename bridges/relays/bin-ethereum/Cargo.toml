@@ -34,15 +34,15 @@ headers-relay = { path = "../headers" }
 messages-relay = { path = "../messages" }
 relay-ethereum-client = { path = "../client-ethereum" }
 relay-rialto-client = { path = "../client-rialto" }
-relay-substrate-client = { path = "../client-substrate" }
+relay-axlib-client = { path = "../client-axlib" }
 relay-utils = { path = "../utils" }
 rialto-runtime = { path = "../../bin/rialto/runtime" }
 
-# Substrate Dependencies
+# Axlib Dependencies
 
 frame-system = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 pallet-transaction-payment = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-core = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-keyring = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
-substrate-prometheus-endpoint = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+axlib-prometheus-endpoint = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

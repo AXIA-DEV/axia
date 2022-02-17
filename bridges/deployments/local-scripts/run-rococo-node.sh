@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Run a development instance of the Rococo Substrate bridge node.
+# Run a development instance of the Rococo Axlib bridge node.
 # To override the default port just export ROCOCO_PORT=9955
 #
 # Note: This script will not work out of the box with the bridges

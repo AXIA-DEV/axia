@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Types used to connect to the Rialto-Substrate chain.
+//! Types used to connect to the Rialto-Axlib chain.
 
 use codec::Encode;
-use relay_substrate_client::{Chain, ChainBase, ChainWithBalances, TransactionSignScheme};
+use relay_axlib_client::{Chain, ChainBase, ChainWithBalances, TransactionSignScheme};
 use sp_core::{storage::StorageKey, Pair};
 use sp_runtime::{generic::SignedPayload, traits::IdentifyAccount};
 use std::time::Duration;
@@ -100,4 +100,4 @@ impl TransactionSignScheme for Rialto {
 pub type SigningParams = sp_core::sr25519::Pair;
 
 /// Rialto header type used in headers sync.
-pub type SyncHeader = relay_substrate_client::SyncHeader<rialto_runtime::Header>;
+pub type SyncHeader = relay_axlib_client::SyncHeader<rialto_runtime::Header>;

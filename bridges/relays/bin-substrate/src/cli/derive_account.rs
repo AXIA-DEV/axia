@@ -16,7 +16,7 @@
 
 use crate::cli::{bridge::FullBridge, AccountId};
 use crate::select_full_bridge;
-use relay_substrate_client::Chain;
+use relay_axlib_client::Chain;
 use structopt::StructOpt;
 
 /// Given a source chain `AccountId`, derive the corresponding `AccountId` for the target chain.

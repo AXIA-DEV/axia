@@ -18,7 +18,7 @@ use crate::cli::bridge::FullBridge;
 use crate::cli::{AccountId, Balance, CliChain, ExplicitOrMaximal, HexBytes, HexLaneId};
 use crate::select_full_bridge;
 use frame_support::weights::DispatchInfo;
-use relay_substrate_client::Chain;
+use relay_axlib_client::Chain;
 use structopt::StructOpt;
 
 /// Encode source chain runtime call.
@@ -31,7 +31,7 @@ pub struct EncodeCall {
 	call: Call,
 }
 
-/// All possible messages that may be delivered to generic Substrate chain.
+/// All possible messages that may be delivered to generic Axlib chain.
 ///
 /// Note this enum may be used in the context of both Source (as part of `encode-call`)
 /// and Target chain (as part of `encode-message/send-message`).

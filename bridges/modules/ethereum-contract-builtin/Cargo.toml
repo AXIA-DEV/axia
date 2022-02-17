@@ -17,7 +17,7 @@ log = "0.4.14"
 
 rialto-runtime = { path = "../../bin/rialto/runtime" }
 
-# Substrate Dependencies
+# Axlib Dependencies
 
 sc-finality-grandpa = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-blockchain = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

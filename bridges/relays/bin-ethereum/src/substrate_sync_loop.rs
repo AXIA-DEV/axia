@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Rialto-Substrate -> Ethereum PoA synchronization.
+//! Rialto-Axlib -> Ethereum PoA synchronization.
 
 use crate::ethereum_client::EthereumHighLevelRpc;
 use crate::rpc_errors::RpcError;
@@ -31,9 +31,9 @@ use relay_ethereum_client::{
 	SigningParams as EthereumSigningParams,
 };
 use relay_rialto_client::{HeaderId as RialtoHeaderId, Rialto, SyncHeader as RialtoSyncHeader};
-use relay_substrate_client::{
-	headers_source::HeadersSource, Chain as SubstrateChain, Client as SubstrateClient,
-	ConnectionParams as SubstrateConnectionParams,
+use relay_axlib_client::{
+	headers_source::HeadersSource, Chain as AxlibChain, Client as AxlibClient,
+	ConnectionParams as AxlibConnectionParams,
 };
 use relay_utils::{metrics::MetricsParams, relay_loop::Client as RelayClient};
 use sp_runtime::EncodedJustification;
@@ -54,11 +54,11 @@ pub mod consts {
 	pub const PRUNE_DEPTH: u32 = 256;
 }
 
-/// Substrate synchronization parameters.
+/// Axlib synchronization parameters.
 #[derive(Debug)]
-pub struct SubstrateSyncParams {
-	/// Substrate connection params.
-	pub sub_params: SubstrateConnectionParams,
+pub struct AxlibSyncParams {
+	/// Axlib connection params.
+	pub sub_params: AxlibConnectionParams,
 	/// Ethereum connection params.
 	pub eth_params: EthereumConnectionParams,
 	/// Ethereum signing params.
@@ -71,13 +71,13 @@ pub struct SubstrateSyncParams {
 	pub metrics_params: MetricsParams,
 }
 
-/// Substrate synchronization pipeline.
+/// Axlib synchronization pipeline.
 #[derive(Clone, Copy, Debug)]
 #[cfg_attr(test, derive(PartialEq))]
-pub struct SubstrateHeadersSyncPipeline;
+pub struct AxlibHeadersSyncPipeline;
 
-impl HeadersSyncPipeline for SubstrateHeadersSyncPipeline {
-	const SOURCE_NAME: &'static str = "Substrate";
+impl HeadersSyncPipeline for AxlibHeadersSyncPipeline {
+	const SOURCE_NAME: &'static str = "Axlib";
 	const TARGET_NAME: &'static str = "Ethereum";
 
 	type Hash = rialto_runtime::Hash;
@@ -91,13 +91,13 @@ impl HeadersSyncPipeline for SubstrateHeadersSyncPipeline {
 	}
 }
 
-/// Queued substrate header ID.
-pub type QueuedRialtoHeader = QueuedHeader<SubstrateHeadersSyncPipeline>;
+/// Queued axlib header ID.
+pub type QueuedRialtoHeader = QueuedHeader<AxlibHeadersSyncPipeline>;
 
 /// Rialto node as headers source.
-type SubstrateHeadersSource = HeadersSource<Rialto, SubstrateHeadersSyncPipeline>;
+type AxlibHeadersSource = HeadersSource<Rialto, AxlibHeadersSyncPipeline>;
 
-/// Ethereum client as Substrate headers target.
+/// Ethereum client as Axlib headers target.
 #[derive(Clone)]
 struct EthereumHeadersTarget {
 	/// Ethereum node client.
@@ -128,27 +128,27 @@ impl RelayClient for EthereumHeadersTarget {
 }
 
 #[async_trait]
-impl TargetClient<SubstrateHeadersSyncPipeline> for EthereumHeadersTarget {
+impl TargetClient<AxlibHeadersSyncPipeline> for EthereumHeadersTarget {
 	async fn best_header_id(&self) -> Result<RialtoHeaderId, RpcError> {
 		// we can't continue to relay headers if Ethereum node is out of sync, because
 		// it may have already received (some of) headers that we're going to relay
 		self.client.ensure_synced().await?;
 
-		self.client.best_substrate_block(self.contract).await
+		self.client.best_axlib_block(self.contract).await
 	}
 
 	async fn is_known_header(&self, id: RialtoHeaderId) -> Result<(RialtoHeaderId, bool), RpcError> {
-		self.client.substrate_header_known(self.contract, id).await
+		self.client.axlib_header_known(self.contract, id).await
 	}
 
 	async fn submit_headers(&self, headers: Vec<QueuedRialtoHeader>) -> SubmittedHeaders<RialtoHeaderId, RpcError> {
 		self.client
-			.submit_substrate_headers(self.sign_params.clone(), self.contract, headers)
+			.submit_axlib_headers(self.sign_params.clone(), self.contract, headers)
 			.await
 	}
 
 	async fn incomplete_headers_ids(&self) -> Result<HashSet<RialtoHeaderId>, RpcError> {
-		self.client.incomplete_substrate_headers(self.contract).await
+		self.client.incomplete_axlib_headers(self.contract).await
 	}
 
 	async fn complete_header(
@@ -157,7 +157,7 @@ impl TargetClient<SubstrateHeadersSyncPipeline> for EthereumHeadersTarget {
 		completion: EncodedJustification,
 	) -> Result<RialtoHeaderId, RpcError> {
 		self.client
-			.complete_substrate_header(self.sign_params.clone(), self.contract, id, completion)
+			.complete_axlib_header(self.sign_params.clone(), self.contract, id, completion)
 			.await
 	}
 
@@ -166,9 +166,9 @@ impl TargetClient<SubstrateHeadersSyncPipeline> for EthereumHeadersTarget {
 	}
 }
 
-/// Run Substrate headers synchronization.
-pub async fn run(params: SubstrateSyncParams) -> Result<(), RpcError> {
-	let SubstrateSyncParams {
+/// Run Axlib headers synchronization.
+pub async fn run(params: AxlibSyncParams) -> Result<(), RpcError> {
+	let AxlibSyncParams {
 		sub_params,
 		eth_params,
 		eth_sign,
@@ -178,10 +178,10 @@ pub async fn run(params: SubstrateSyncParams) -> Result<(), RpcError> {
 	} = params;
 
 	let eth_client = EthereumClient::new(eth_params).await;
-	let sub_client = SubstrateClient::<Rialto>::new(sub_params).await;
+	let sub_client = AxlibClient::<Rialto>::new(sub_params).await;
 
 	let target = EthereumHeadersTarget::new(eth_client, eth_contract_address, eth_sign);
-	let source = SubstrateHeadersSource::new(sub_client);
+	let source = AxlibHeadersSource::new(sub_client);
 
 	headers_relay::sync_loop::run(
 		source,

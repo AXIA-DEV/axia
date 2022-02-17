@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Ethereum PoA -> Rialto-Substrate synchronization.
+//! Ethereum PoA -> Rialto-Axlib synchronization.
 
 use crate::ethereum_client::EthereumHighLevelRpc;
 use crate::instances::BridgeInstance;
-use crate::rialto_client::{SubmitEthereumHeaders, SubstrateHighLevelRpc};
+use crate::rialto_client::{SubmitEthereumHeaders, AxlibHighLevelRpc};
 use crate::rpc_errors::RpcError;
-use crate::substrate_types::{into_substrate_ethereum_header, into_substrate_ethereum_receipts};
+use crate::axlib_types::{into_axlib_ethereum_header, into_axlib_ethereum_receipts};
 
 use async_trait::async_trait;
 use codec::Encode;
@@ -34,8 +34,8 @@ use relay_ethereum_client::{
 	Client as EthereumClient, ConnectionParams as EthereumConnectionParams,
 };
 use relay_rialto_client::{Rialto, SigningParams as RialtoSigningParams};
-use relay_substrate_client::{
-	Chain as SubstrateChain, Client as SubstrateClient, ConnectionParams as SubstrateConnectionParams,
+use relay_axlib_client::{
+	Chain as AxlibChain, Client as AxlibClient, ConnectionParams as AxlibConnectionParams,
 };
 use relay_utils::{metrics::MetricsParams, relay_loop::Client as RelayClient};
 
@@ -65,9 +65,9 @@ pub mod consts {
 pub struct EthereumSyncParams {
 	/// Ethereum connection params.
 	pub eth_params: EthereumConnectionParams,
-	/// Substrate connection params.
-	pub sub_params: SubstrateConnectionParams,
-	/// Substrate signing params.
+	/// Axlib connection params.
+	pub sub_params: AxlibConnectionParams,
+	/// Axlib signing params.
 	pub sub_sign: RialtoSigningParams,
 	/// Synchronization parameters.
 	pub sync_params: HeadersSyncParams,
@@ -97,7 +97,7 @@ pub struct EthereumHeadersSyncPipeline;
 
 impl HeadersSyncPipeline for EthereumHeadersSyncPipeline {
 	const SOURCE_NAME: &'static str = "Ethereum";
-	const TARGET_NAME: &'static str = "Substrate";
+	const TARGET_NAME: &'static str = "Axlib";
 
 	type Hash = HeaderHash;
 	type Number = u64;
@@ -106,8 +106,8 @@ impl HeadersSyncPipeline for EthereumHeadersSyncPipeline {
 	type Completion = ();
 
 	fn estimate_size(source: &QueuedHeader<Self>) -> usize {
-		into_substrate_ethereum_header(source.header()).encode().len()
-			+ into_substrate_ethereum_receipts(source.extra())
+		into_axlib_ethereum_header(source.header()).encode().len()
+			+ into_axlib_ethereum_receipts(source.extra())
 				.map(|extra| extra.encode().len())
 				.unwrap_or(0)
 	}
@@ -142,7 +142,7 @@ impl RelayClient for EthereumHeadersSource {
 impl SourceClient<EthereumHeadersSyncPipeline> for EthereumHeadersSource {
 	async fn best_block_number(&self) -> Result<u64, RpcError> {
 		// we **CAN** continue to relay headers if Ethereum node is out of sync, because
-		// Substrate node may be missing headers that are already available at the Ethereum
+		// Axlib node may be missing headers that are already available at the Ethereum
 
 		self.client.best_block_number().await.map_err(Into::into)
 	}
@@ -179,20 +179,20 @@ impl SourceClient<EthereumHeadersSyncPipeline> for EthereumHeadersSource {
 }
 
 #[derive(Clone)]
-struct SubstrateHeadersTarget {
-	/// Substrate node client.
-	client: SubstrateClient<Rialto>,
+struct AxlibHeadersTarget {
+	/// Axlib node client.
+	client: AxlibClient<Rialto>,
 	/// Whether we want to submit signed (true), or unsigned (false) transactions.
 	sign_transactions: bool,
-	/// Substrate signing params.
+	/// Axlib signing params.
 	sign_params: RialtoSigningParams,
-	/// Bridge instance used in Ethereum to Substrate sync.
+	/// Bridge instance used in Ethereum to Axlib sync.
 	bridge_instance: Arc<dyn BridgeInstance>,
 }
 
-impl SubstrateHeadersTarget {
+impl AxlibHeadersTarget {
 	fn new(
-		client: SubstrateClient<Rialto>,
+		client: AxlibClient<Rialto>,
 		sign_transactions: bool,
 		sign_params: RialtoSigningParams,
 		bridge_instance: Arc<dyn BridgeInstance>,
@@ -207,7 +207,7 @@ impl SubstrateHeadersTarget {
 }
 
 #[async_trait]
-impl RelayClient for SubstrateHeadersTarget {
+impl RelayClient for AxlibHeadersTarget {
 	type Error = RpcError;
 
 	async fn reconnect(&mut self) -> Result<(), RpcError> {
@@ -216,9 +216,9 @@ impl RelayClient for SubstrateHeadersTarget {
 }
 
 #[async_trait]
-impl TargetClient<EthereumHeadersSyncPipeline> for SubstrateHeadersTarget {
+impl TargetClient<EthereumHeadersSyncPipeline> for AxlibHeadersTarget {
 	async fn best_header_id(&self) -> Result<EthereumHeaderId, RpcError> {
-		// we can't continue to relay headers if Substrate node is out of sync, because
+		// we can't continue to relay headers if Axlib node is out of sync, because
 		// it may have already received (some of) headers that we're going to relay
 		self.client.ensure_synced().await?;
 
@@ -254,7 +254,7 @@ impl TargetClient<EthereumHeadersSyncPipeline> for SubstrateHeadersTarget {
 		// logs bloom here, but it may give us false positives (when authorities
 		// source is contract, we never need any logs)
 		let id = header.header().id();
-		let sub_eth_header = into_substrate_ethereum_header(header.header());
+		let sub_eth_header = into_axlib_ethereum_header(header.header());
 		Ok((id, self.client.ethereum_receipts_required(sub_eth_header).await?))
 	}
 }
@@ -271,7 +271,7 @@ pub async fn run(params: EthereumSyncParams) -> Result<(), RpcError> {
 	} = params;
 
 	let eth_client = EthereumClient::new(eth_params).await;
-	let sub_client = SubstrateClient::<Rialto>::new(sub_params).await;
+	let sub_client = AxlibClient::<Rialto>::new(sub_params).await;
 
 	let sign_sub_transactions = match sync_params.target_tx_mode {
 		TargetTransactionMode::Signed | TargetTransactionMode::Backup => true,
@@ -279,7 +279,7 @@ pub async fn run(params: EthereumSyncParams) -> Result<(), RpcError> {
 	};
 
 	let source = EthereumHeadersSource::new(eth_client);
-	let target = SubstrateHeadersTarget::new(sub_client, sign_sub_transactions, sub_sign, instance);
+	let target = AxlibHeadersTarget::new(sub_client, sign_sub_transactions, sub_sign, instance);
 
 	headers_relay::sync_loop::run(
 		source,

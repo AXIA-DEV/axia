@@ -1,11 +1,11 @@
 # Polkadot
 
-Implementation of a <https://polkadot.network> node in Rust based on the Substrate framework.
+Implementation of a <https://polkadot.network> node in Rust based on the Axlib framework.
 
 > **NOTE:** In 2018, we split our implementation of "Polkadot" from its development framework
-> "Substrate". See the [Substrate][substrate-repo] repo for git history prior to 2018.
+> "Axlib". See the [Axlib][axlib-repo] repo for git history prior to 2018.
 
-[substrate-repo]: https://github.com/paritytech/substrate
+[axlib-repo]: https://github.com/paritytech/axlib
 
 This repo contains runtimes for the Polkadot, Kusama, and Westend networks. The README provides
 information about installing the `polkadot` binary and developing on the codebase. For more
@@ -179,7 +179,7 @@ Rust and the support software installed. This script will install or update Rust
 required dependencies (this may take up to 30 minutes on Mac machines):
 
 ```bash
-curl https://getsubstrate.io -sSf | bash -s -- --fast
+curl https://getaxlib.io -sSf | bash -s -- --fast
 ```
 
 Then, grab the Polkadot source code:

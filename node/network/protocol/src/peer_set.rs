@@ -96,7 +96,7 @@ impl PeerSet {
 		}
 	}
 
-	/// Convert a peer set into a protocol name as understood by Substrate.
+	/// Convert a peer set into a protocol name as understood by Axlib.
 	pub fn into_protocol_name(self) -> Cow<'static, str> {
 		self.get_protocol_name_static().into()
 	}

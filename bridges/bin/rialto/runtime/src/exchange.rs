@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Support for PoA -> Substrate native tokens exchange.
+//! Support for PoA -> Axlib native tokens exchange.
 //!
-//! If you want to exchange native PoA tokens for native Substrate
+//! If you want to exchange native PoA tokens for native Axlib
 //! chain tokens, you need to:
 //! 1) send some PoA tokens to `LOCK_FUNDS_ADDRESS` address on PoA chain. Data field of
-//!    the transaction must be SCALE-encoded id of Substrate account that will receive
-//!    funds on Substrate chain;
+//!    the transaction must be SCALE-encoded id of Axlib account that will receive
+//!    funds on Axlib chain;
 //! 2) wait until the 'lock funds' transaction is mined on PoA chain;
 //! 3) wait until the block containing the 'lock funds' transaction is finalized on PoA chain;
 //! 4) wait until the required PoA header and its finality are provided
-//!    to the PoA -> Substrate bridge module (it can be provided by you);
+//!    to the PoA -> Axlib bridge module (it can be provided by you);
 //! 5) receive tokens by providing proof-of-inclusion of PoA transaction.
 
 use bp_currency_exchange::{

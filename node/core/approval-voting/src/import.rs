@@ -154,7 +154,7 @@ async fn imported_block_info(
 		// want to use the block hash itself, and here's why:
 		//
 		// First off, 'epoch' in BABE means 'session' in other places. 'epoch' is the terminology from
-		// the paper, which we fulfill using 'session's, which are a Substrate consensus concept.
+		// the paper, which we fulfill using 'session's, which are a Axlib consensus concept.
 		//
 		// In BABE, the on-chain and off-chain view of the current epoch can differ at epoch boundaries
 		// because epochs change precisely at a slot. When a block triggers a new epoch, the state of

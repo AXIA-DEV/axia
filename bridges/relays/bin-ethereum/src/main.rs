@@ -24,8 +24,8 @@ mod ethereum_sync_loop;
 mod instances;
 mod rialto_client;
 mod rpc_errors;
-mod substrate_sync_loop;
-mod substrate_types;
+mod axlib_sync_loop;
+mod axlib_types;
 
 use ethereum_deploy_contract::EthereumDeployContractParams;
 use ethereum_exchange::EthereumExchangeParams;
@@ -40,12 +40,12 @@ use relay_utils::{
 };
 use secp256k1::SecretKey;
 use sp_core::crypto::Pair;
-use substrate_sync_loop::SubstrateSyncParams;
+use axlib_sync_loop::AxlibSyncParams;
 
 use headers_relay::sync::HeadersSyncParams;
 use relay_ethereum_client::{ConnectionParams as EthereumConnectionParams, SigningParams as EthereumSigningParams};
 use relay_rialto_client::SigningParams as RialtoSigningParams;
-use relay_substrate_client::ConnectionParams as SubstrateConnectionParams;
+use relay_axlib_client::ConnectionParams as AxlibConnectionParams;
 use std::sync::Arc;
 
 fn main() {
@@ -70,13 +70,13 @@ async fn run_command(matches: &clap::ArgMatches<'_>) {
 			.await
 			.is_err()
 			{
-				log::error!(target: "bridge", "Unable to get Substrate genesis block for Ethereum sync.");
+				log::error!(target: "bridge", "Unable to get Axlib genesis block for Ethereum sync.");
 			};
 		}
 		("sub-to-eth", Some(sub_to_eth_matches)) => {
 			log::info!(target: "bridge", "Starting SUB ➡ ETH relay.");
-			if substrate_sync_loop::run(match substrate_sync_params(sub_to_eth_matches) {
-				Ok(substrate_sync_params) => substrate_sync_params,
+			if axlib_sync_loop::run(match axlib_sync_params(sub_to_eth_matches) {
+				Ok(axlib_sync_params) => axlib_sync_params,
 				Err(err) => {
 					log::error!(target: "bridge", "Error parsing parameters: {}", err);
 					return;
@@ -85,7 +85,7 @@ async fn run_command(matches: &clap::ArgMatches<'_>) {
 			.await
 			.is_err()
 			{
-				log::error!(target: "bridge", "Unable to get Substrate genesis block for Substrate sync.");
+				log::error!(target: "bridge", "Unable to get Axlib genesis block for Axlib sync.");
 			};
 		}
 		("eth-deploy-contract", Some(eth_deploy_matches)) => {
@@ -156,8 +156,8 @@ fn ethereum_signing_params(matches: &clap::ArgMatches) -> Result<EthereumSigning
 	Ok(params)
 }
 
-fn substrate_connection_params(matches: &clap::ArgMatches) -> Result<SubstrateConnectionParams, String> {
-	let mut params = SubstrateConnectionParams::default();
+fn axlib_connection_params(matches: &clap::ArgMatches) -> Result<AxlibConnectionParams, String> {
+	let mut params = AxlibConnectionParams::default();
 	if let Some(sub_host) = matches.value_of("sub-host") {
 		params.host = sub_host.into();
 	}
@@ -207,7 +207,7 @@ fn ethereum_sync_params(matches: &clap::ArgMatches) -> Result<EthereumSyncParams
 
 	let params = EthereumSyncParams {
 		eth_params: ethereum_connection_params(matches)?,
-		sub_params: substrate_connection_params(matches)?,
+		sub_params: axlib_connection_params(matches)?,
 		sub_sign: rialto_signing_params(matches)?,
 		metrics_params: metrics_params(matches)?,
 		instance: instance_params(matches)?,
@@ -219,8 +219,8 @@ fn ethereum_sync_params(matches: &clap::ArgMatches) -> Result<EthereumSyncParams
 	Ok(params)
 }
 
-fn substrate_sync_params(matches: &clap::ArgMatches) -> Result<SubstrateSyncParams, String> {
-	use crate::substrate_sync_loop::consts::*;
+fn axlib_sync_params(matches: &clap::ArgMatches) -> Result<AxlibSyncParams, String> {
+	use crate::axlib_sync_loop::consts::*;
 
 	let eth_contract_address: relay_ethereum_client::types::Address =
 		if let Some(eth_contract) = matches.value_of("eth-contract") {
@@ -231,8 +231,8 @@ fn substrate_sync_params(matches: &clap::ArgMatches) -> Result<SubstrateSyncPara
 				.expect("address is hardcoded, thus valid; qed")
 		};
 
-	let params = SubstrateSyncParams {
-		sub_params: substrate_connection_params(matches)?,
+	let params = AxlibSyncParams {
+		sub_params: axlib_connection_params(matches)?,
 		eth_params: ethereum_connection_params(matches)?,
 		eth_sign: ethereum_signing_params(matches)?,
 		metrics_params: metrics_params(matches)?,
@@ -247,14 +247,14 @@ fn substrate_sync_params(matches: &clap::ArgMatches) -> Result<SubstrateSyncPara
 		eth_contract_address,
 	};
 
-	log::debug!(target: "bridge", "Substrate sync params: {:?}", params);
+	log::debug!(target: "bridge", "Axlib sync params: {:?}", params);
 
 	Ok(params)
 }
 
 fn ethereum_deploy_contract_params(matches: &clap::ArgMatches) -> Result<EthereumDeployContractParams, String> {
 	let eth_contract_code = parse_hex_argument(matches, "eth-contract-code")?.unwrap_or_else(|| {
-		hex::decode(include_str!("../res/substrate-bridge-bytecode.hex")).expect("code is hardcoded, thus valid; qed")
+		hex::decode(include_str!("../res/axlib-bridge-bytecode.hex")).expect("code is hardcoded, thus valid; qed")
 	});
 	let sub_initial_authorities_set_id = matches
 		.value_of("sub-authorities-set-id")
@@ -269,7 +269,7 @@ fn ethereum_deploy_contract_params(matches: &clap::ArgMatches) -> Result<Ethereu
 	let params = EthereumDeployContractParams {
 		eth_params: ethereum_connection_params(matches)?,
 		eth_sign: ethereum_signing_params(matches)?,
-		sub_params: substrate_connection_params(matches)?,
+		sub_params: axlib_connection_params(matches)?,
 		sub_initial_authorities_set_id,
 		sub_initial_authorities_set,
 		sub_initial_header,
@@ -303,7 +303,7 @@ fn ethereum_exchange_submit_params(matches: &clap::ArgMatches) -> Result<Ethereu
 			1_000_000_000_000_000_000_u64.into()
 		});
 
-	// This is the well-known Substrate account of Ferdie
+	// This is the well-known Axlib account of Ferdie
 	let default_recepient = hex!("1cbd2d43530a44705ad088af313e18f80b53ef16b36177cd4b77b846f2a5f07c");
 
 	let sub_recipient = if let Some(sub_recipient) = matches.value_of("sub-recipient") {
@@ -358,7 +358,7 @@ fn ethereum_exchange_params(matches: &clap::ArgMatches) -> Result<EthereumExchan
 
 	let params = EthereumExchangeParams {
 		eth_params: ethereum_connection_params(matches)?,
-		sub_params: substrate_connection_params(matches)?,
+		sub_params: axlib_connection_params(matches)?,
 		sub_sign: rialto_signing_params(matches)?,
 		metrics_params: metrics_params(matches)?,
 		instance: instance_params(matches)?,

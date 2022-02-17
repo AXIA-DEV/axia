@@ -16,12 +16,12 @@
 
 //! Wococo-to-Rococo headers sync entrypoint.
 
-use crate::finality_pipeline::{SubstrateFinalitySyncPipeline, SubstrateFinalityToSubstrate};
+use crate::finality_pipeline::{AxlibFinalitySyncPipeline, AxlibFinalityToAxlib};
 
 use bp_header_chain::justification::GrandpaJustification;
 use codec::Encode;
 use relay_rococo_client::{Rococo, SigningParams as RococoSigningParams};
-use relay_substrate_client::{Chain, TransactionSignScheme};
+use relay_axlib_client::{Chain, TransactionSignScheme};
 use relay_utils::metrics::MetricsParams;
 use relay_wococo_client::{SyncHeader as WococoSyncHeader, Wococo};
 use sp_core::{Bytes, Pair};
@@ -34,9 +34,9 @@ use sp_core::{Bytes, Pair};
 pub(crate) const MAXIMAL_BALANCE_DECREASE_PER_DAY: bp_rococo::Balance = 1_500_000_000_000_000;
 
 /// Wococo-to-Rococo finality sync pipeline.
-pub(crate) type WococoFinalityToRococo = SubstrateFinalityToSubstrate<Wococo, Rococo, RococoSigningParams>;
+pub(crate) type WococoFinalityToRococo = AxlibFinalityToAxlib<Wococo, Rococo, RococoSigningParams>;
 
-impl SubstrateFinalitySyncPipeline for WococoFinalityToRococo {
+impl AxlibFinalitySyncPipeline for WococoFinalityToRococo {
 	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str = bp_wococo::BEST_FINALIZED_WOCOCO_HEADER_METHOD;
 
 	type TargetChain = Rococo;
@@ -46,11 +46,11 @@ impl SubstrateFinalitySyncPipeline for WococoFinalityToRococo {
 	}
 
 	fn start_relay_guards(&self) {
-		relay_substrate_client::guard::abort_on_spec_version_change(
+		relay_axlib_client::guard::abort_on_spec_version_change(
 			self.target_client.clone(),
 			bp_rococo::VERSION.spec_version,
 		);
-		relay_substrate_client::guard::abort_when_account_balance_decreased(
+		relay_axlib_client::guard::abort_when_account_balance_decreased(
 			self.target_client.clone(),
 			self.transactions_author(),
 			MAXIMAL_BALANCE_DECREASE_PER_DAY,

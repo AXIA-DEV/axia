@@ -1,11 +1,11 @@
 [package]
 name = "millau-bridge-node"
-description = "Substrate node compatible with Millau runtime"
+description = "Axlib node compatible with Millau runtime"
 version = "0.1.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
 build = "build.rs"
-homepage = "https://substrate.dev"
+homepage = "https://axlib.dev"
 repository = "https://github.com/paritytech/parity-bridges-common/"
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
 
@@ -22,7 +22,7 @@ bp-runtime = { path = "../../../primitives/runtime" }
 millau-runtime = { path = "../runtime" }
 pallet-bridge-messages = { path = "../../../modules/messages" }
 
-# Substrate Dependencies
+# Axlib Dependencies
 
 frame-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 frame-benchmarking-cli = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
@@ -48,10 +48,10 @@ sp-finality-grandpa = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch
 sp-inherents = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-runtime = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sp-timestamp = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
-substrate-frame-rpc-system = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+axlib-frame-rpc-system = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [build-dependencies]
-substrate-build-script-utils = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+axlib-build-script-utils = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 frame-benchmarking-cli = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 
 [features]

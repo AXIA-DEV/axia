@@ -17,7 +17,7 @@
 //! Types used to connect to the Westend chain.
 
 use codec::Encode;
-use relay_substrate_client::{Chain, ChainBase, ChainWithBalances, TransactionSignScheme};
+use relay_axlib_client::{Chain, ChainBase, ChainWithBalances, TransactionSignScheme};
 use sp_core::{storage::StorageKey, Pair};
 use sp_runtime::{generic::SignedPayload, traits::IdentifyAccount};
 use std::time::Duration;
@@ -26,7 +26,7 @@ use std::time::Duration;
 pub type HeaderId = relay_utils::HeaderId<bp_westend::Hash, bp_westend::BlockNumber>;
 
 /// Westend header type used in headers sync.
-pub type SyncHeader = relay_substrate_client::SyncHeader<bp_westend::Header>;
+pub type SyncHeader = relay_axlib_client::SyncHeader<bp_westend::Header>;
 
 /// Westend chain definition
 #[derive(Debug, Clone, Copy)]

@@ -35,7 +35,7 @@ pub struct HeadersSyncParams {
 	/// Maximal total headers size in single submit request.
 	pub max_headers_size_in_single_submit: usize,
 	/// We only may store and accept (from Ethereum node) headers that have
-	/// number >= than best_substrate_header.number - prune_depth.
+	/// number >= than best_axlib_header.number - prune_depth.
 	pub prune_depth: u32,
 	/// Target transactions mode.
 	pub target_tx_mode: TargetTransactionMode,
@@ -231,7 +231,7 @@ impl<P: HeadersSyncPipeline> HeadersSync<P> {
 			return false;
 		}
 
-		// remember that this header is now known to the Substrate runtime
+		// remember that this header is now known to the Axlib runtime
 		self.headers.target_best_header_response(&best_header);
 
 		// prune ancient headers
@@ -365,7 +365,7 @@ pub mod tests {
 		// ethereum reports best header #102
 		eth_sync.source_best_header_number_response(102);
 
-		// substrate reports that it is at block #100
+		// axlib reports that it is at block #100
 		eth_sync.target_best_header_response(id(100));
 
 		// block #101 is downloaded first
@@ -392,14 +392,14 @@ pub mod tests {
 		assert_eq!(eth_sync.headers.header(HeaderStatus::Ready), Some(&header(102)));
 		assert_eq!(eth_sync.select_headers_to_submit(false), None);
 
-		// substrate reports that it has imported block #101
+		// axlib reports that it has imported block #101
 		eth_sync.target_best_header_response(id(101));
 
 		// and we are ready to submit #102
 		assert_eq!(eth_sync.select_headers_to_submit(false), Some(vec![&header(102)]));
 		eth_sync.headers.headers_submitted(vec![id(102)]);
 
-		// substrate reports that it has imported block #102
+		// axlib reports that it has imported block #102
 		eth_sync.target_best_header_response(id(102));
 
 		// and we have nothing to download
@@ -413,7 +413,7 @@ pub mod tests {
 		// ethereum reports best header #102
 		eth_sync.source_best_header_number_response(102);
 
-		// substrate reports that it is at block #100, but it isn't part of best chain
+		// axlib reports that it is at block #100, but it isn't part of best chain
 		eth_sync.target_best_header_response(HeaderId(100, side_hash(100)));
 
 		// block #101 is downloaded first
@@ -476,7 +476,7 @@ pub mod tests {
 		// ethereum reports best header #102
 		eth_sync.source_best_header_number_response(102);
 
-		// substrate reports that it is at block #100
+		// axlib reports that it is at block #100
 		eth_sync.target_best_header_response(id(100));
 
 		// block #101 is downloaded first
@@ -495,7 +495,7 @@ pub mod tests {
 		let mut eth_sync = HeadersSync::new(default_sync_params());
 		eth_sync.params.max_headers_in_submitted_status = 1;
 
-		// ethereum reports best header #102 and substrate is at #100
+		// ethereum reports best header #102 and axlib is at #100
 		eth_sync.source_best_header_number_response(102);
 		eth_sync.target_best_header_response(id(100));
 
@@ -512,7 +512,7 @@ pub mod tests {
 		eth_sync.pause_submit();
 		assert_eq!(eth_sync.select_headers_to_submit(false), None);
 
-		// if best header on substrate node isn't updated, we still not submitting anything
+		// if best header on axlib node isn't updated, we still not submitting anything
 		eth_sync.target_best_header_response(id(100));
 		assert_eq!(eth_sync.select_headers_to_submit(false), None);
 

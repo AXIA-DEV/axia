@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Run a development instance of the Westend Substrate bridge node.
+# Run a development instance of the Westend Axlib bridge node.
 # To override the default port just export WESTEND_PORT=9945
 #
 # Note: This script will not work out of the box with the bridges

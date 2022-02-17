@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! On-demand Substrate -> Substrate headers relay.
+//! On-demand Axlib -> Axlib headers relay.
 
 use crate::finality_pipeline::{
-	SubstrateFinalitySyncPipeline, SubstrateFinalityToSubstrate, RECENT_FINALITY_PROOFS_LIMIT, STALL_TIMEOUT,
+	AxlibFinalitySyncPipeline, AxlibFinalityToAxlib, RECENT_FINALITY_PROOFS_LIMIT, STALL_TIMEOUT,
 };
-use crate::finality_target::SubstrateFinalityTarget;
+use crate::finality_target::AxlibFinalityTarget;
 
 use async_std::sync::{Arc, Mutex};
 use bp_header_chain::justification::GrandpaJustification;
@@ -29,8 +29,8 @@ use finality_relay::{
 };
 use futures::{select, FutureExt};
 use num_traits::{CheckedSub, One, Zero};
-use relay_substrate_client::{
-	finality_source::{FinalitySource as SubstrateFinalitySource, RequiredHeaderNumberRef},
+use relay_axlib_client::{
+	finality_source::{FinalitySource as AxlibFinalitySource, RequiredHeaderNumberRef},
 	BlockNumberOf, Chain, Client, HashOf, HeaderIdOf, SyncHeader,
 };
 use relay_utils::{
@@ -38,7 +38,7 @@ use relay_utils::{
 };
 use std::fmt::Debug;
 
-/// On-demand Substrate <-> Substrate headers relay.
+/// On-demand Axlib <-> Axlib headers relay.
 ///
 /// This relay may be requested to sync more headers, whenever some other relay (e.g. messages relay) needs
 /// it to continue its regular work. When enough headers are relayed, on-demand stops syncing headers.
@@ -55,7 +55,7 @@ impl<SourceChain: Chain> OnDemandHeadersRelay<SourceChain> {
 	pub fn new<TargetChain: Chain, TargetSign>(
 		source_client: Client<SourceChain>,
 		target_client: Client<TargetChain>,
-		pipeline: SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>,
+		pipeline: AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>,
 		maximal_headers_difference: SourceChain::BlockNumber,
 	) -> Self
 	where
@@ -64,15 +64,15 @@ impl<SourceChain: Chain> OnDemandHeadersRelay<SourceChain> {
 		TargetChain: Chain + Debug,
 		TargetChain::BlockNumber: BlockNumberBase,
 		TargetSign: Clone + Send + Sync + 'static,
-		SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>: SubstrateFinalitySyncPipeline<
+		AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>: AxlibFinalitySyncPipeline<
 			Hash = HashOf<SourceChain>,
 			Number = BlockNumberOf<SourceChain>,
 			Header = SyncHeader<SourceChain::Header>,
 			FinalityProof = GrandpaJustification<SourceChain::Header>,
 			TargetChain = TargetChain,
 		>,
-		SubstrateFinalityTarget<TargetChain, SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>>:
-			FinalityTargetClient<SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>>,
+		AxlibFinalityTarget<TargetChain, AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>>:
+			FinalityTargetClient<AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>>,
 	{
 		let required_header_number = Arc::new(Mutex::new(Zero::zero()));
 		let this = OnDemandHeadersRelay {
@@ -114,7 +114,7 @@ impl<SourceChain: Chain> OnDemandHeadersRelay<SourceChain> {
 async fn background_task<SourceChain, TargetChain, TargetSign>(
 	source_client: Client<SourceChain>,
 	target_client: Client<TargetChain>,
-	pipeline: SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>,
+	pipeline: AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>,
 	maximal_headers_difference: SourceChain::BlockNumber,
 	required_header_number: RequiredHeaderNumberRef<SourceChain>,
 ) where
@@ -123,22 +123,22 @@ async fn background_task<SourceChain, TargetChain, TargetSign>(
 	TargetChain: Chain + Debug,
 	TargetChain::BlockNumber: BlockNumberBase,
 	TargetSign: Clone + Send + Sync + 'static,
-	SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>: SubstrateFinalitySyncPipeline<
+	AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>: AxlibFinalitySyncPipeline<
 		Hash = HashOf<SourceChain>,
 		Number = BlockNumberOf<SourceChain>,
 		Header = SyncHeader<SourceChain::Header>,
 		FinalityProof = GrandpaJustification<SourceChain::Header>,
 		TargetChain = TargetChain,
 	>,
-	SubstrateFinalityTarget<TargetChain, SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>>:
-		FinalityTargetClient<SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>>,
+	AxlibFinalityTarget<TargetChain, AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>>:
+		FinalityTargetClient<AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>>,
 {
 	let relay_task_name = on_demand_headers_relay_name::<SourceChain, TargetChain>();
-	let mut finality_source = SubstrateFinalitySource::<
+	let mut finality_source = AxlibFinalitySource::<
 		_,
-		SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>,
+		AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>,
 	>::new(source_client.clone(), Some(required_header_number.clone()));
-	let mut finality_target = SubstrateFinalityTarget::new(target_client.clone(), pipeline.clone());
+	let mut finality_target = AxlibFinalityTarget::new(target_client.clone(), pipeline.clone());
 	let mut latest_non_mandatory_at_source = Zero::zero();
 
 	let mut restart_relay = true;
@@ -299,14 +299,14 @@ async fn mandatory_headers_scan_range<C: Chain>(
 ///
 /// Returns `true` if header was found and (asked to be) relayed and `false` otherwise.
 async fn relay_mandatory_header_from_range<SourceChain: Chain, P>(
-	finality_source: &SubstrateFinalitySource<SourceChain, P>,
+	finality_source: &AxlibFinalitySource<SourceChain, P>,
 	required_header_number: &RequiredHeaderNumberRef<SourceChain>,
 	best_finalized_source_header_at_target: String,
 	range: (SourceChain::BlockNumber, SourceChain::BlockNumber),
 	relay_task_name: &str,
-) -> Result<bool, relay_substrate_client::Error>
+) -> Result<bool, relay_axlib_client::Error>
 where
-	SubstrateFinalitySource<SourceChain, P>: FinalitySourceClient<P>,
+	AxlibFinalitySource<SourceChain, P>: FinalitySourceClient<P>,
 	P: FinalitySyncPipeline<Number = SourceChain::BlockNumber>,
 {
 	// search for mandatory header first
@@ -343,11 +343,11 @@ where
 ///
 /// Returns `None` if we have failed to read the number.
 async fn best_finalized_source_header_at_source<SourceChain: Chain, P>(
-	finality_source: &SubstrateFinalitySource<SourceChain, P>,
+	finality_source: &AxlibFinalitySource<SourceChain, P>,
 	relay_task_name: &str,
-) -> Result<SourceChain::BlockNumber, relay_substrate_client::Error>
+) -> Result<SourceChain::BlockNumber, relay_axlib_client::Error>
 where
-	SubstrateFinalitySource<SourceChain, P>: FinalitySourceClient<P>,
+	AxlibFinalitySource<SourceChain, P>: FinalitySourceClient<P>,
 	P: FinalitySyncPipeline<Number = SourceChain::BlockNumber>,
 {
 	finality_source
@@ -369,11 +369,11 @@ where
 ///
 /// Returns `None` if we have failed to read the number.
 async fn best_finalized_source_header_at_target<SourceChain: Chain, TargetChain: Chain, P>(
-	finality_target: &SubstrateFinalityTarget<TargetChain, P>,
+	finality_target: &AxlibFinalityTarget<TargetChain, P>,
 	relay_task_name: &str,
-) -> Result<SourceChain::BlockNumber, <SubstrateFinalityTarget<TargetChain, P> as RelayClient>::Error>
+) -> Result<SourceChain::BlockNumber, <AxlibFinalityTarget<TargetChain, P> as RelayClient>::Error>
 where
-	SubstrateFinalityTarget<TargetChain, P>: FinalityTargetClient<P>,
+	AxlibFinalityTarget<TargetChain, P>: FinalityTargetClient<P>,
 	P: FinalitySyncPipeline<Number = SourceChain::BlockNumber>,
 {
 	finality_target
@@ -395,11 +395,11 @@ where
 ///
 /// Returns `Ok(None)` if there were no mandatory headers in the range.
 async fn find_mandatory_header_in_range<SourceChain: Chain, P>(
-	finality_source: &SubstrateFinalitySource<SourceChain, P>,
+	finality_source: &AxlibFinalitySource<SourceChain, P>,
 	range: (SourceChain::BlockNumber, SourceChain::BlockNumber),
-) -> Result<Option<SourceChain::BlockNumber>, relay_substrate_client::Error>
+) -> Result<Option<SourceChain::BlockNumber>, relay_axlib_client::Error>
 where
-	SubstrateFinalitySource<SourceChain, P>: FinalitySourceClient<P>,
+	AxlibFinalitySource<SourceChain, P>: FinalitySourceClient<P>,
 	P: FinalitySyncPipeline<Number = SourceChain::BlockNumber>,
 {
 	let mut current = range.0;

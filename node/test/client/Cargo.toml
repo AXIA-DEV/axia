@@ -13,8 +13,8 @@ polkadot-test-service = { path = "../service" }
 polkadot-primitives = { path = "../../../primitives" }
 polkadot-node-subsystem = { path = "../../subsystem" }
 
-# Substrate dependencies
-substrate-test-client = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
+# Axlib dependencies
+axlib-test-client = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sc-service = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sc-block-builder = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 sc-consensus = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }

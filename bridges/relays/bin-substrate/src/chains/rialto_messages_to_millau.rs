@@ -17,10 +17,10 @@
 //! Rialto-to-Millau messages sync entrypoint.
 
 use crate::messages_lane::{
-	select_delivery_transaction_limits, MessagesRelayParams, SubstrateMessageLane, SubstrateMessageLaneToSubstrate,
+	select_delivery_transaction_limits, MessagesRelayParams, AxlibMessageLane, AxlibMessageLaneToAxlib,
 };
-use crate::messages_source::SubstrateMessagesSource;
-use crate::messages_target::SubstrateMessagesTarget;
+use crate::messages_source::AxlibMessagesSource;
+use crate::messages_target::AxlibMessagesTarget;
 
 use bp_messages::MessageNonce;
 use bp_runtime::{MILLAU_CHAIN_ID, RIALTO_CHAIN_ID};
@@ -30,7 +30,7 @@ use frame_support::dispatch::GetDispatchInfo;
 use messages_relay::message_lane::MessageLane;
 use relay_millau_client::{HeaderId as MillauHeaderId, Millau, SigningParams as MillauSigningParams};
 use relay_rialto_client::{HeaderId as RialtoHeaderId, Rialto, SigningParams as RialtoSigningParams};
-use relay_substrate_client::{
+use relay_axlib_client::{
 	metrics::{FloatStorageValueMetric, StorageProofOverheadMetric},
 	Chain, TransactionSignScheme,
 };
@@ -39,9 +39,9 @@ use std::{ops::RangeInclusive, time::Duration};
 
 /// Rialto-to-Millau message lane.
 pub type RialtoMessagesToMillau =
-	SubstrateMessageLaneToSubstrate<Rialto, RialtoSigningParams, Millau, MillauSigningParams>;
+	AxlibMessageLaneToAxlib<Rialto, RialtoSigningParams, Millau, MillauSigningParams>;
 
-impl SubstrateMessageLane for RialtoMessagesToMillau {
+impl AxlibMessageLane for RialtoMessagesToMillau {
 	const OUTBOUND_LANE_MESSAGE_DETAILS_METHOD: &'static str = bp_millau::TO_MILLAU_MESSAGE_DETAILS_METHOD;
 	const OUTBOUND_LANE_LATEST_GENERATED_NONCE_METHOD: &'static str =
 		bp_millau::TO_MILLAU_LATEST_GENERATED_NONCE_METHOD;
@@ -127,11 +127,11 @@ impl SubstrateMessageLane for RialtoMessagesToMillau {
 
 /// Rialto node as messages source.
 type RialtoSourceClient =
-	SubstrateMessagesSource<Rialto, RialtoMessagesToMillau, rialto_runtime::WithMillauMessagesInstance>;
+	AxlibMessagesSource<Rialto, RialtoMessagesToMillau, rialto_runtime::WithMillauMessagesInstance>;
 
 /// Millau node as messages target.
 type MillauTargetClient =
-	SubstrateMessagesTarget<Millau, RialtoMessagesToMillau, millau_runtime::WithRialtoMessagesInstance>;
+	AxlibMessagesTarget<Millau, RialtoMessagesToMillau, millau_runtime::WithRialtoMessagesInstance>;
 
 /// Run Rialto-to-Millau messages sync.
 pub async fn run(

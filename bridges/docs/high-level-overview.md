@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Trustless connecting between two Substrate-based chains using GRANDPA finality.
+Trustless connecting between two Axlib-based chains using GRANDPA finality.
 
 ## Overview
 
@@ -46,9 +46,9 @@ A standalone application handling delivery of the messages from source chain to 
 
 High level sequence charts of the process can be found in [a separate document](./high-level.html).
 
-### Substrate (GRANDPA) Header Sync
+### Axlib (GRANDPA) Header Sync
 
-The header sync pallet (`pallet-substrate-bridge`) is an on-chain light client for chains which use
+The header sync pallet (`pallet-axlib-bridge`) is an on-chain light client for chains which use
 GRANDPA finality. It is part of the target chain's runtime, and accepts headers from the source
 chain. Its main goals are to accept valid headers, track GRANDPA finality set changes, and verify
 GRANDPA finality proofs (a.k.a justifications).
@@ -68,7 +68,7 @@ support tracking multiple authority set changes across forks. Each fork can have
 authority set change. This is done to prevent DoS attacks if GRANDPA on the source chain were to
 stall for a long time (the pallet would have to do a lot of expensive ancestry checks to catch up).
 
-Referer to the [pallet documentation](../modules/substrate/src/lib.rs) for more details.
+Referer to the [pallet documentation](../modules/axlib/src/lib.rs) for more details.
 
 #### Header Relayer strategy
 
@@ -132,7 +132,7 @@ require bi-directional header sync (i.e. you can't use message delivery with one
 #### Dispatching Messages
 
 The [Message dispatch pallet](../modules/dispatch/src/lib.rs) is used to perform the actions
-specified by messages which have come over the bridge. For Substrate-based chains this means
+specified by messages which have come over the bridge. For Axlib-based chains this means
 interpreting the source chain's message as a `Call` on the target chain.
 
 An example `Call` of the target chain would look something like this:

@@ -28,7 +28,7 @@ use sp_runtime::{
 };
 use std::{fmt::Debug, time::Duration};
 
-/// Substrate-based chain from minimal relay-client point of view.
+/// Axlib-based chain from minimal relay-client point of view.
 pub trait Chain: ChainBase + Clone {
 	/// Chain name.
 	const NAME: &'static str;
@@ -61,7 +61,7 @@ pub trait Chain: ChainBase + Clone {
 	type Balance: Parameter + Member + DeserializeOwned + Clone + Copy + CheckedSub + PartialOrd + SaturatingAdd + Zero;
 }
 
-/// Substrate-based chain with `frame_system::Config::AccountData` set to
+/// Axlib-based chain with `frame_system::Config::AccountData` set to
 /// the `pallet_balances::AccountData<Balance>`.
 pub trait ChainWithBalances: Chain {
 	/// Return runtime storage key for getting `frame_system::AccountInfo` of given account.
@@ -76,7 +76,7 @@ pub trait BlockWithJustification<Header> {
 	fn justification(&self) -> Option<&EncodedJustification>;
 }
 
-/// Substrate-based chain transactions signing scheme.
+/// Axlib-based chain transactions signing scheme.
 pub trait TransactionSignScheme {
 	/// Chain that this scheme is to be used.
 	type Chain: Chain;

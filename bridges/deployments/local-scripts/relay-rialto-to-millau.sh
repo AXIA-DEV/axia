@@ -9,7 +9,7 @@ MILLAU_PORT="${MILLAU_PORT:-9945}"
 RIALTO_PORT="${RIALTO_PORT:-9944}"
 
 RUST_LOG=bridge=debug \
-./target/debug/substrate-relay init-bridge RialtoToMillau \
+./target/debug/axlib-relay init-bridge RialtoToMillau \
 	--target-host localhost \
 	--target-port $MILLAU_PORT \
 	--source-host localhost \
@@ -18,7 +18,7 @@ RUST_LOG=bridge=debug \
 
 sleep 5
 RUST_LOG=bridge=debug \
-./target/debug/substrate-relay relay-headers RialtoToMillau \
+./target/debug/axlib-relay relay-headers RialtoToMillau \
 	--target-host localhost \
 	--target-port $MILLAU_PORT \
 	--source-host localhost \

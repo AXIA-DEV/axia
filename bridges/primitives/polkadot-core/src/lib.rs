@@ -37,7 +37,7 @@ use sp_runtime::{
 };
 use sp_std::prelude::Vec;
 
-// Re-export's to avoid extra substrate dependencies in chain-specific crates.
+// Re-export's to avoid extra axlib dependencies in chain-specific crates.
 pub use frame_support::{weights::constants::ExtrinsicBaseWeight, Parameter};
 pub use sp_runtime::{traits::Convert, Perbill};
 
@@ -310,8 +310,8 @@ impl Convert<sp_core::H256, AccountId> for AccountIdConverter {
 
 /// Return a storage key for account data.
 ///
-/// This is based on FRAME storage-generation code from Substrate:
-/// https://github.com/paritytech/substrate/blob/c939ceba381b6313462d47334f775e128ea4e95d/frame/support/src/storage/generator/map.rs#L74
+/// This is based on FRAME storage-generation code from Axlib:
+/// https://github.com/paritytech/axlib/blob/c939ceba381b6313462d47334f775e128ea4e95d/frame/support/src/storage/generator/map.rs#L74
 /// The equivalent command to invoke in case full `Runtime` is known is this:
 /// `let key = frame_system::Account::<Runtime>::storage_map_final_key(&account_id);`
 pub fn account_info_storage_key(id: &AccountId) -> Vec<u8> {

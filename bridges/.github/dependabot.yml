@@ -23,7 +23,7 @@ updates:
   - dependency-name: sp-*
     versions:
     - ">= 0"
-  - dependency-name: substrate-*
+  - dependency-name: axlib-*
     versions:
     - ">= 0"
   - dependency-name: vergen

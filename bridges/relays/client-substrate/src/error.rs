@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Substrate node RPC errors.
+//! Axlib node RPC errors.
 
 use jsonrpsee_ws_client::Error as RpcError;
 use relay_utils::MaybeConnectionError;
 use sc_rpc_api::system::Health;
 
-/// Result type used by Substrate client.
+/// Result type used by Axlib client.
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Errors that can occur only when interacting with
-/// a Substrate node through RPC.
+/// a Axlib node through RPC.
 #[derive(Debug)]
 pub enum Error {
 	/// An error that can occur when making a request to
@@ -32,7 +32,7 @@ pub enum Error {
 	RpcError(RpcError),
 	/// The response from the server could not be SCALE decoded.
 	ResponseParseFailed(codec::Error),
-	/// The Substrate bridge pallet has not yet been initialized.
+	/// The Axlib bridge pallet has not yet been initialized.
 	UninitializedBridgePallet,
 	/// Account does not exist on the chain.
 	AccountDoesNotExist,
@@ -86,11 +86,11 @@ impl std::fmt::Display for Error {
 		let s = match self {
 			Self::RpcError(e) => e.to_string(),
 			Self::ResponseParseFailed(e) => e.to_string(),
-			Self::UninitializedBridgePallet => "The Substrate bridge pallet has not been initialized yet.".into(),
+			Self::UninitializedBridgePallet => "The Axlib bridge pallet has not been initialized yet.".into(),
 			Self::AccountDoesNotExist => "Account does not exist on the chain".into(),
 			Self::MissingMandatoryCodeEntry => "Mandatory :code: entry is missing from runtime storage".into(),
 			Self::StorageProofError(e) => format!("Error when parsing storage proof: {:?}", e),
-			Self::ClientNotSynced(health) => format!("Substrate client is not synced: {}", health),
+			Self::ClientNotSynced(health) => format!("Axlib client is not synced: {}", health),
 			Self::Custom(e) => e.clone(),
 		};
 

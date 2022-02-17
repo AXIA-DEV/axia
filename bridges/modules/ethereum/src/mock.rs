@@ -26,7 +26,7 @@ use bp_eth_poa::{Address, AuraHeader, H256, U256};
 use frame_support::{parameter_types, weights::Weight};
 use secp256k1::SecretKey;
 use sp_runtime::{
-	testing::Header as SubstrateHeader,
+	testing::Header as AxlibHeader,
 	traits::{BlakeTwo256, IdentityLookup},
 	Perbill,
 };
@@ -65,7 +65,7 @@ impl frame_system::Config for TestRuntime {
 	type Hashing = BlakeTwo256;
 	type AccountId = AccountId;
 	type Lookup = IdentityLookup<Self::AccountId>;
-	type Header = SubstrateHeader;
+	type Header = AxlibHeader;
 	type Event = Event;
 	type BlockHashCount = BlockHashCount;
 	type Version = ();

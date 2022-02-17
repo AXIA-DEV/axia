@@ -2,8 +2,8 @@
 
 The [`messages`](./src/messages.rs) module of this crate contains a bunch of helpers for integrating
 messages module into your runtime. Basic prerequisites of these helpers are:
-- we're going to bridge Substrate-based chain with another Substrate-based chain;
-- both chains have [messages module](../../modules/messages/README.md), Substrate bridge
+- we're going to bridge Axlib-based chain with another Axlib-based chain;
+- both chains have [messages module](../../modules/messages/README.md), Axlib bridge
   module and the [call dispatch module](../../modules/dispatch/README.md);
 - all message lanes are identical and may be used to transfer the same messages;
 - the messages sent over the bridge are dispatched using
@@ -19,7 +19,7 @@ messages module into your runtime. Basic prerequisites of these helpers are:
   inbound lane state (value from the `pallet_bridge_messages::Store::InboundLanes` map);
 - storage proofs are built at the finalized headers of the corresponding chain. So all message lane
   transactions with proofs are verifying storage proofs against finalized chain headers from
-  Substrate bridge module.
+  Axlib bridge module.
 
 **IMPORTANT NOTE**: after reading this document, you may refer to our test runtimes
 ([rialto_messages.rs](../millau/runtime/src/rialto_messages.rs) and/or
@@ -148,7 +148,7 @@ the target chain and relayer interest.
 inbound lane state at the bridged chain. This also holds the hash of the target chain header, that
 was used to generate this storage proof. The proof is verified by the
 `verify_messages_delivery_proof`, which simply checks that the target chain header is finalized
-(using Substrate bridge module) and then reads the inbound lane state from the proof.
+(using Axlib bridge module) and then reads the inbound lane state from the proof.
 
 `verify_chain_message` function checks that the message may be delivered to the bridged chain. There
 are two main checks:

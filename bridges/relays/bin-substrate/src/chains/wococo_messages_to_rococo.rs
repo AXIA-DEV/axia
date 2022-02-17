@@ -17,10 +17,10 @@
 //! Wococo-to-Rococo messages sync entrypoint.
 
 use crate::messages_lane::{
-	select_delivery_transaction_limits, MessagesRelayParams, SubstrateMessageLane, SubstrateMessageLaneToSubstrate,
+	select_delivery_transaction_limits, MessagesRelayParams, AxlibMessageLane, AxlibMessageLaneToAxlib,
 };
-use crate::messages_source::SubstrateMessagesSource;
-use crate::messages_target::SubstrateMessagesTarget;
+use crate::messages_source::AxlibMessagesSource;
+use crate::messages_target::AxlibMessagesTarget;
 
 use bp_messages::MessageNonce;
 use bp_runtime::{ROCOCO_CHAIN_ID, WOCOCO_CHAIN_ID};
@@ -28,16 +28,16 @@ use bridge_runtime_common::messages::target::FromBridgedChainMessagesProof;
 use codec::Encode;
 use messages_relay::message_lane::MessageLane;
 use relay_rococo_client::{HeaderId as RococoHeaderId, Rococo, SigningParams as RococoSigningParams};
-use relay_substrate_client::{metrics::StorageProofOverheadMetric, Chain, TransactionSignScheme};
+use relay_axlib_client::{metrics::StorageProofOverheadMetric, Chain, TransactionSignScheme};
 use relay_wococo_client::{HeaderId as WococoHeaderId, SigningParams as WococoSigningParams, Wococo};
 use sp_core::{Bytes, Pair};
 use std::{ops::RangeInclusive, time::Duration};
 
 /// Wococo-to-Rococo message lane.
 pub type WococoMessagesToRococo =
-	SubstrateMessageLaneToSubstrate<Wococo, WococoSigningParams, Rococo, RococoSigningParams>;
+	AxlibMessageLaneToAxlib<Wococo, WococoSigningParams, Rococo, RococoSigningParams>;
 
-impl SubstrateMessageLane for WococoMessagesToRococo {
+impl AxlibMessageLane for WococoMessagesToRococo {
 	const OUTBOUND_LANE_MESSAGE_DETAILS_METHOD: &'static str = bp_rococo::TO_ROCOCO_MESSAGE_DETAILS_METHOD;
 	const OUTBOUND_LANE_LATEST_GENERATED_NONCE_METHOD: &'static str =
 		bp_rococo::TO_ROCOCO_LATEST_GENERATED_NONCE_METHOD;
@@ -125,11 +125,11 @@ impl SubstrateMessageLane for WococoMessagesToRococo {
 
 /// Wococo node as messages source.
 type WococoSourceClient =
-	SubstrateMessagesSource<Wococo, WococoMessagesToRococo, relay_wococo_client::runtime::WithRococoMessagesInstance>;
+	AxlibMessagesSource<Wococo, WococoMessagesToRococo, relay_wococo_client::runtime::WithRococoMessagesInstance>;
 
 /// Rococo node as messages target.
 type RococoTargetClient =
-	SubstrateMessagesTarget<Rococo, WococoMessagesToRococo, relay_rococo_client::runtime::WithWococoMessagesInstance>;
+	AxlibMessagesTarget<Rococo, WococoMessagesToRococo, relay_rococo_client::runtime::WithWococoMessagesInstance>;
 
 /// Run Wococo-to-Rococo messages sync.
 pub async fn run(

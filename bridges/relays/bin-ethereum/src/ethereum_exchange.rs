@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Relaying proofs of PoA -> Substrate exchange transactions.
+//! Relaying proofs of PoA -> Axlib exchange transactions.
 
 use crate::instances::BridgeInstance;
-use crate::rialto_client::{SubmitEthereumExchangeTransactionProof, SubstrateHighLevelRpc};
+use crate::rialto_client::{SubmitEthereumExchangeTransactionProof, AxlibHighLevelRpc};
 use crate::rpc_errors::RpcError;
-use crate::substrate_types::into_substrate_ethereum_receipt;
+use crate::axlib_types::into_axlib_ethereum_receipt;
 
 use async_trait::async_trait;
 use bp_currency_exchange::MaybeLockFundsTransaction;
@@ -36,8 +36,8 @@ use relay_ethereum_client::{
 	Client as EthereumClient, ConnectionParams as EthereumConnectionParams,
 };
 use relay_rialto_client::{Rialto, SigningParams as RialtoSigningParams};
-use relay_substrate_client::{
-	Chain as SubstrateChain, Client as SubstrateClient, ConnectionParams as SubstrateConnectionParams,
+use relay_axlib_client::{
+	Chain as AxlibChain, Client as AxlibClient, ConnectionParams as AxlibConnectionParams,
 };
 use relay_utils::{metrics::MetricsParams, relay_loop::Client as RelayClient, HeaderId};
 use rialto_runtime::exchange::EthereumTransactionInclusionProof;
@@ -59,9 +59,9 @@ pub enum ExchangeRelayMode {
 pub struct EthereumExchangeParams {
 	/// Ethereum connection params.
 	pub eth_params: EthereumConnectionParams,
-	/// Substrate connection params.
-	pub sub_params: SubstrateConnectionParams,
-	/// Substrate signing params.
+	/// Axlib connection params.
+	pub sub_params: AxlibConnectionParams,
+	/// Axlib signing params.
 	pub sub_sign: RialtoSigningParams,
 	/// Relay working mode.
 	pub mode: ExchangeRelayMode,
@@ -84,12 +84,12 @@ impl std::fmt::Debug for EthereumExchangeParams {
 	}
 }
 
-/// Ethereum to Substrate exchange pipeline.
-struct EthereumToSubstrateExchange;
+/// Ethereum to Axlib exchange pipeline.
+struct EthereumToAxlibExchange;
 
-impl TransactionProofPipeline for EthereumToSubstrateExchange {
+impl TransactionProofPipeline for EthereumToAxlibExchange {
 	const SOURCE_NAME: &'static str = "Ethereum";
-	const TARGET_NAME: &'static str = "Substrate";
+	const TARGET_NAME: &'static str = "Axlib";
 
 	type Block = EthereumSourceBlock;
 	type TransactionProof = EthereumTransactionInclusionProof;
@@ -147,7 +147,7 @@ impl RelayClient for EthereumTransactionsSource {
 }
 
 #[async_trait]
-impl SourceClient<EthereumToSubstrateExchange> for EthereumTransactionsSource {
+impl SourceClient<EthereumToAxlibExchange> for EthereumTransactionsSource {
 	async fn tick(&self) {
 		async_std::task::sleep(ETHEREUM_TICK_INTERVAL).await;
 	}
@@ -204,7 +204,7 @@ impl SourceClient<EthereumToSubstrateExchange> for EthereumTransactionsSource {
 				.client
 				.transaction_receipt(tx.hash)
 				.await
-				.map(|receipt| into_substrate_ethereum_receipt(&receipt))
+				.map(|receipt| into_axlib_ethereum_receipt(&receipt))
 				.map(|receipt| receipt.rlp())?;
 			let raw_tx = tx.raw.clone().expect(TRANSACTION_HAS_RAW_FIELD_PROOF).0;
 			transaction_proof.push((raw_tx, raw_tx_receipt));
@@ -218,16 +218,16 @@ impl SourceClient<EthereumToSubstrateExchange> for EthereumTransactionsSource {
 	}
 }
 
-/// Substrate node as transactions proof target.
+/// Axlib node as transactions proof target.
 #[derive(Clone)]
-struct SubstrateTransactionsTarget {
-	client: SubstrateClient<Rialto>,
+struct AxlibTransactionsTarget {
+	client: AxlibClient<Rialto>,
 	sign_params: RialtoSigningParams,
 	bridge_instance: Arc<dyn BridgeInstance>,
 }
 
 #[async_trait]
-impl RelayClient for SubstrateTransactionsTarget {
+impl RelayClient for AxlibTransactionsTarget {
 	type Error = RpcError;
 
 	async fn reconnect(&mut self) -> Result<(), RpcError> {
@@ -236,7 +236,7 @@ impl RelayClient for SubstrateTransactionsTarget {
 }
 
 #[async_trait]
-impl TargetClient<EthereumToSubstrateExchange> for SubstrateTransactionsTarget {
+impl TargetClient<EthereumToAxlibExchange> for AxlibTransactionsTarget {
 	async fn tick(&self) {
 		async_std::task::sleep(Rialto::AVERAGE_BLOCK_INTERVAL).await;
 	}
@@ -247,7 +247,7 @@ impl TargetClient<EthereumToSubstrateExchange> for SubstrateTransactionsTarget {
 
 	async fn is_header_finalized(&self, id: &EthereumHeaderId) -> Result<bool, RpcError> {
 		// we check if header is finalized by simple comparison of the header number and
-		// number of best finalized PoA header known to Substrate node.
+		// number of best finalized PoA header known to Axlib node.
 		//
 		// this may lead to failure in tx proof import if PoA reorganization has happened
 		// after we have checked that our tx has been included into given block
@@ -259,7 +259,7 @@ impl TargetClient<EthereumToSubstrateExchange> for SubstrateTransactionsTarget {
 	}
 
 	async fn best_finalized_header_id(&self) -> Result<EthereumHeaderId, RpcError> {
-		// we can't continue to relay exchange proofs if Substrate node is out of sync, because
+		// we can't continue to relay exchange proofs if Axlib node is out of sync, because
 		// it may have already received (some of) proofs that we're going to relay
 		self.client.ensure_synced().await?;
 
@@ -293,7 +293,7 @@ impl TargetClient<EthereumToSubstrateExchange> for SubstrateTransactionsTarget {
 	}
 }
 
-/// Relay exchange transaction proof(s) to Substrate node.
+/// Relay exchange transaction proof(s) to Axlib node.
 pub async fn run(params: EthereumExchangeParams) {
 	match params.mode {
 		ExchangeRelayMode::Single(eth_tx_hash) => {
@@ -301,12 +301,12 @@ pub async fn run(params: EthereumExchangeParams) {
 			match result {
 				Ok(_) => log::info!(
 					target: "bridge",
-					"Ethereum transaction {} proof has been successfully submitted to Substrate node",
+					"Ethereum transaction {} proof has been successfully submitted to Axlib node",
 					eth_tx_hash,
 				),
 				Err(err) => log::error!(
 					target: "bridge",
-					"Error submitting Ethereum transaction {} proof to Substrate node: {}",
+					"Error submitting Ethereum transaction {} proof to Axlib node: {}",
 					eth_tx_hash,
 					err,
 				),
@@ -317,7 +317,7 @@ pub async fn run(params: EthereumExchangeParams) {
 			if let Err(err) = result {
 				log::error!(
 					target: "bridge",
-					"Error auto-relaying Ethereum transactions proofs to Substrate node: {}",
+					"Error auto-relaying Ethereum transactions proofs to Axlib node: {}",
 					err,
 				);
 			}
@@ -338,12 +338,12 @@ async fn run_single_transaction_relay(params: EthereumExchangeParams, eth_tx_has
 	let eth_client = EthereumClient::try_connect(eth_params)
 		.await
 		.map_err(RpcError::Ethereum)?;
-	let sub_client = SubstrateClient::<Rialto>::try_connect(sub_params)
+	let sub_client = AxlibClient::<Rialto>::try_connect(sub_params)
 		.await
-		.map_err(RpcError::Substrate)?;
+		.map_err(RpcError::Axlib)?;
 
 	let source = EthereumTransactionsSource { client: eth_client };
-	let target = SubstrateTransactionsTarget {
+	let target = AxlibTransactionsTarget {
 		client: sub_client,
 		sign_params: sub_sign,
 		bridge_instance: instance,
@@ -366,7 +366,7 @@ async fn run_auto_transactions_relay_loop(
 	} = params;
 
 	let eth_client = EthereumClient::new(eth_params).await;
-	let sub_client = SubstrateClient::<Rialto>::new(sub_params).await;
+	let sub_client = AxlibClient::<Rialto>::new(sub_params).await;
 
 	let eth_start_with_block_number = match eth_start_with_block_number {
 		Some(eth_start_with_block_number) => eth_start_with_block_number,
@@ -376,7 +376,7 @@ async fn run_auto_transactions_relay_loop(
 				.await
 				.map_err(|err| {
 					format!(
-						"Error retrieving best finalized Ethereum block from Substrate node: {:?}",
+						"Error retrieving best finalized Ethereum block from Axlib node: {:?}",
 						err
 					)
 				})?
@@ -387,7 +387,7 @@ async fn run_auto_transactions_relay_loop(
 	run_loop(
 		InMemoryStorage::new(eth_start_with_block_number),
 		EthereumTransactionsSource { client: eth_client },
-		SubstrateTransactionsTarget {
+		AxlibTransactionsTarget {
 			client: sub_client,
 			sign_params: sub_sign,
 			bridge_instance: instance,

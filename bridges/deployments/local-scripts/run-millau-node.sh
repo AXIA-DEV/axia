@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Run a development instance of the Millau Substrate bridge node.
+# Run a development instance of the Millau Axlib bridge node.
 # To override the default port just export MILLAU_PORT=9945
 
 MILLAU_PORT="${MILLAU_PORT:-9945}"

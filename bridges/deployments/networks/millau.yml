@@ -1,4 +1,4 @@
-# Compose file for quickly spinning up a local instance of the Millau Substrate network.
+# Compose file for quickly spinning up a local instance of the Millau Axlib network.
 #
 # Note that the Millau network is only used for testing, so the configuration settings you see here
 # are *not* recommended for a production environment.

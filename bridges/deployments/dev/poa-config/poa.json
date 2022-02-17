@@ -120,7 +120,7 @@
 		},
 		"0x0000000000000000000000000000000000000010": {
 			"builtin": {
-				"name": "parse_substrate_header",
+				"name": "parse_axlib_header",
 				"pricing": {
 					"linear": {
 						"base": 3000,
@@ -131,7 +131,7 @@
 		},
 		"0x0000000000000000000000000000000000000011": {
 			"builtin": {
-				"name": "get_substrate_header_signal",
+				"name": "get_axlib_header_signal",
 				"pricing": {
 					"linear": {
 						"base": 3000,
@@ -142,7 +142,7 @@
 		},
 		"0x0000000000000000000000000000000000000012": {
 			"builtin": {
-				"name": "verify_substrate_finality_proof",
+				"name": "verify_axlib_finality_proof",
 				"pricing": {
 					"linear": {
 						"base": 3000,

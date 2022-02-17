@@ -3,7 +3,7 @@
 ### ARGS FOR THIS SCRIPT ###
 # ./${SCRIPT_NAME} NAMESPACE IMAGE LOG_PATH
 # All args have default values, specify args to override
-# e.g: ./${SCRIPT_NAME} radu-test parity/substrate:some_feature /var/log/gurke 
+# e.g: ./${SCRIPT_NAME} radu-test parity/axlib:some_feature /var/log/gurke 
 
 set -eou pipefail
 SCRIPT_NAME="$0"

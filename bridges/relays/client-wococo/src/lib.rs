@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Types used to connect to the Wococo-Substrate chain.
+//! Types used to connect to the Wococo-Axlib chain.
 
 use codec::Encode;
-use relay_substrate_client::{Chain, ChainBase, ChainWithBalances, TransactionSignScheme};
+use relay_axlib_client::{Chain, ChainBase, ChainWithBalances, TransactionSignScheme};
 use sp_core::{storage::StorageKey, Pair};
 use sp_runtime::{generic::SignedPayload, traits::IdentifyAccount};
 use std::time::Duration;
@@ -28,7 +28,7 @@ pub mod runtime;
 pub type HeaderId = relay_utils::HeaderId<bp_wococo::Hash, bp_wococo::BlockNumber>;
 
 /// Wococo header type used in headers sync.
-pub type SyncHeader = relay_substrate_client::SyncHeader<bp_wococo::Header>;
+pub type SyncHeader = relay_axlib_client::SyncHeader<bp_wococo::Header>;
 
 /// Wococo chain definition
 #[derive(Debug, Clone, Copy)]

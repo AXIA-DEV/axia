@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Substrate node client.
+//! Axlib node client.
 
 use crate::chain::{Chain, ChainWithBalances};
-use crate::rpc::Substrate;
+use crate::rpc::Axlib;
 use crate::{ConnectionParams, Error, Result};
 
 use async_std::sync::{Arc, Mutex};
@@ -41,13 +41,13 @@ pub type JustificationsSubscription = Subscription<Bytes>;
 /// Opaque GRANDPA authorities set.
 pub type OpaqueGrandpaAuthoritiesSet = Vec<u8>;
 
-/// Substrate client type.
+/// Axlib client type.
 ///
 /// Cloning `Client` is a cheap operation.
 pub struct Client<C: Chain> {
 	/// Client connection params.
 	params: ConnectionParams,
-	/// Substrate RPC client.
+	/// Axlib RPC client.
 	client: Arc<RpcClient>,
 	/// Genesis block hash.
 	genesis_hash: C::Hash,
@@ -77,9 +77,9 @@ impl<C: Chain> std::fmt::Debug for Client<C> {
 }
 
 impl<C: Chain> Client<C> {
-	/// Returns client that is able to call RPCs on Substrate node over websocket connection.
+	/// Returns client that is able to call RPCs on Axlib node over websocket connection.
 	///
-	/// This function will keep connecting to given Substrate node until connection is established
+	/// This function will keep connecting to given Axlib node until connection is established
 	/// and is functional. If attempt fail, it will wait for `RECONNECT_DELAY` and retry again.
 	pub async fn new(params: ConnectionParams) -> Self {
 		loop {
@@ -98,13 +98,13 @@ impl<C: Chain> Client<C> {
 		}
 	}
 
-	/// Try to connect to Substrate node over websocket. Returns Substrate RPC client if connection
+	/// Try to connect to Axlib node over websocket. Returns Axlib RPC client if connection
 	/// has been established or error otherwise.
 	pub async fn try_connect(params: ConnectionParams) -> Result<Self> {
 		let client = Self::build_client(params.clone()).await?;
 
 		let number: C::BlockNumber = Zero::zero();
-		let genesis_hash = Substrate::<C>::chain_get_block_hash(&*client, number).await?;
+		let genesis_hash = Axlib::<C>::chain_get_block_hash(&*client, number).await?;
 
 		Ok(Self {
 			params,
@@ -140,7 +140,7 @@ impl<C: Chain> Client<C> {
 impl<C: Chain> Client<C> {
 	/// Returns true if client is connected to at least one peer and is in synced state.
 	pub async fn ensure_synced(&self) -> Result<()> {
-		let health = Substrate::<C>::system_health(&*self.client).await?;
+		let health = Axlib::<C>::system_health(&*self.client).await?;
 		let is_synced = !health.is_syncing && (!health.should_have_peers || health.peers > 0);
 		if is_synced {
 			Ok(())
@@ -156,36 +156,36 @@ impl<C: Chain> Client<C> {
 
 	/// Return hash of the best finalized block.
 	pub async fn best_finalized_header_hash(&self) -> Result<C::Hash> {
-		Ok(Substrate::<C>::chain_get_finalized_head(&*self.client).await?)
+		Ok(Axlib::<C>::chain_get_finalized_head(&*self.client).await?)
 	}
 
-	/// Returns the best Substrate header.
+	/// Returns the best Axlib header.
 	pub async fn best_header(&self) -> Result<C::Header>
 	where
 		C::Header: DeserializeOwned,
 	{
-		Ok(Substrate::<C>::chain_get_header(&*self.client, None).await?)
+		Ok(Axlib::<C>::chain_get_header(&*self.client, None).await?)
 	}
 
-	/// Get a Substrate block from its hash.
+	/// Get a Axlib block from its hash.
 	pub async fn get_block(&self, block_hash: Option<C::Hash>) -> Result<C::SignedBlock> {
-		Ok(Substrate::<C>::chain_get_block(&*self.client, block_hash).await?)
+		Ok(Axlib::<C>::chain_get_block(&*self.client, block_hash).await?)
 	}
 
-	/// Get a Substrate header by its hash.
+	/// Get a Axlib header by its hash.
 	pub async fn header_by_hash(&self, block_hash: C::Hash) -> Result<C::Header>
 	where
 		C::Header: DeserializeOwned,
 	{
-		Ok(Substrate::<C>::chain_get_header(&*self.client, block_hash).await?)
+		Ok(Axlib::<C>::chain_get_header(&*self.client, block_hash).await?)
 	}
 
-	/// Get a Substrate block hash by its number.
+	/// Get a Axlib block hash by its number.
 	pub async fn block_hash_by_number(&self, number: C::BlockNumber) -> Result<C::Hash> {
-		Ok(Substrate::<C>::chain_get_block_hash(&*self.client, number).await?)
+		Ok(Axlib::<C>::chain_get_block_hash(&*self.client, number).await?)
 	}
 
-	/// Get a Substrate header by its number.
+	/// Get a Axlib header by its number.
 	pub async fn header_by_number(&self, block_number: C::BlockNumber) -> Result<C::Header>
 	where
 		C::Header: DeserializeOwned,
@@ -196,12 +196,12 @@ impl<C: Chain> Client<C> {
 
 	/// Return runtime version.
 	pub async fn runtime_version(&self) -> Result<RuntimeVersion> {
-		Ok(Substrate::<C>::state_runtime_version(&*self.client).await?)
+		Ok(Axlib::<C>::state_runtime_version(&*self.client).await?)
 	}
 
 	/// Read value from runtime storage.
 	pub async fn storage_value<T: Decode>(&self, storage_key: StorageKey) -> Result<Option<T>> {
-		Substrate::<C>::state_get_storage(&*self.client, storage_key)
+		Axlib::<C>::state_get_storage(&*self.client, storage_key)
 			.await?
 			.map(|encoded_value| T::decode(&mut &encoded_value.0[..]).map_err(Error::ResponseParseFailed))
 			.transpose()
@@ -213,7 +213,7 @@ impl<C: Chain> Client<C> {
 		C: ChainWithBalances,
 	{
 		let storage_key = C::account_info_storage_key(&account);
-		let encoded_account_data = Substrate::<C>::state_get_storage(&*self.client, storage_key)
+		let encoded_account_data = Axlib::<C>::state_get_storage(&*self.client, storage_key)
 			.await?
 			.ok_or(Error::AccountDoesNotExist)?;
 		let decoded_account_data =
@@ -222,19 +222,19 @@ impl<C: Chain> Client<C> {
 		Ok(decoded_account_data.data.free)
 	}
 
-	/// Get the nonce of the given Substrate account.
+	/// Get the nonce of the given Axlib account.
 	///
 	/// Note: It's the caller's responsibility to make sure `account` is a valid SS58 address.
 	pub async fn next_account_index(&self, account: C::AccountId) -> Result<C::Index> {
-		Ok(Substrate::<C>::system_account_next_index(&*self.client, account).await?)
+		Ok(Axlib::<C>::system_account_next_index(&*self.client, account).await?)
 	}
 
 	/// Submit unsigned extrinsic for inclusion in a block.
 	///
 	/// Note: The given transaction needs to be SCALE encoded beforehand.
 	pub async fn submit_unsigned_extrinsic(&self, transaction: Bytes) -> Result<C::Hash> {
-		let tx_hash = Substrate::<C>::author_submit_extrinsic(&*self.client, transaction).await?;
-		log::trace!(target: "bridge", "Sent transaction to Substrate node: {:?}", tx_hash);
+		let tx_hash = Axlib::<C>::author_submit_extrinsic(&*self.client, transaction).await?;
+		log::trace!(target: "bridge", "Sent transaction to Axlib node: {:?}", tx_hash);
 		Ok(tx_hash)
 	}
 
@@ -253,7 +253,7 @@ impl<C: Chain> Client<C> {
 		let _guard = self.submit_signed_extrinsic_lock.lock().await;
 		let transaction_nonce = self.next_account_index(extrinsic_signer).await?;
 		let extrinsic = prepare_extrinsic(transaction_nonce);
-		let tx_hash = Substrate::<C>::author_submit_extrinsic(&*self.client, extrinsic).await?;
+		let tx_hash = Axlib::<C>::author_submit_extrinsic(&*self.client, extrinsic).await?;
 		log::trace!(target: "bridge", "Sent transaction to {} node: {:?}", C::NAME, tx_hash);
 		Ok(tx_hash)
 	}
@@ -263,7 +263,7 @@ impl<C: Chain> Client<C> {
 		let call = SUB_API_GRANDPA_AUTHORITIES.to_string();
 		let data = Bytes(Vec::new());
 
-		let encoded_response = Substrate::<C>::state_call(&*self.client, call, data, Some(block)).await?;
+		let encoded_response = Axlib::<C>::state_call(&*self.client, call, data, Some(block)).await?;
 		let authority_list = encoded_response.0;
 
 		Ok(authority_list)
@@ -271,14 +271,14 @@ impl<C: Chain> Client<C> {
 
 	/// Execute runtime call at given block.
 	pub async fn state_call(&self, method: String, data: Bytes, at_block: Option<C::Hash>) -> Result<Bytes> {
-		Substrate::<C>::state_call(&*self.client, method, data, at_block)
+		Axlib::<C>::state_call(&*self.client, method, data, at_block)
 			.await
 			.map_err(Into::into)
 	}
 
 	/// Returns storage proof of given storage keys.
 	pub async fn prove_storage(&self, keys: Vec<StorageKey>, at_block: C::Hash) -> Result<StorageProof> {
-		Substrate::<C>::state_prove_storage(&*self.client, keys, Some(at_block))
+		Axlib::<C>::state_prove_storage(&*self.client, keys, Some(at_block))
 			.await
 			.map(|proof| StorageProof::new(proof.proof.into_iter().map(|b| b.0).collect()))
 			.map_err(Into::into)

@@ -16,7 +16,7 @@
 
 //! Pallet for checking GRANDPA Finality Proofs.
 //!
-//! Adapted copy of `substrate/client/finality-grandpa/src/justification.rs`. If origin
+//! Adapted copy of `axlib/client/finality-grandpa/src/justification.rs`. If origin
 //! will ever be moved to the sp_finality_grandpa, we should reuse that implementation.
 
 use codec::{Decode, Encode};

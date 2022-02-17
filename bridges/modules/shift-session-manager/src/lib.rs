@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Substrate session manager that selects 2/3 validators from initial set,
+//! Axlib session manager that selects 2/3 validators from initial set,
 //! starting from session 2.
 
 #![cfg_attr(not(feature = "std"), no_std)]

@@ -16,7 +16,7 @@
 
 //! Types used to connect to the Kusama chain.
 
-use relay_substrate_client::{Chain, ChainBase};
+use relay_axlib_client::{Chain, ChainBase};
 use std::time::Duration;
 
 /// Kusama header id.
@@ -45,4 +45,4 @@ impl Chain for Kusama {
 }
 
 /// Kusama header type used in headers sync.
-pub type SyncHeader = relay_substrate_client::SyncHeader<bp_kusama::Header>;
+pub type SyncHeader = relay_axlib_client::SyncHeader<bp_kusama::Header>;

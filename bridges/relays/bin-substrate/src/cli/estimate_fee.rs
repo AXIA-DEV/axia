@@ -18,7 +18,7 @@ use crate::cli::bridge::FullBridge;
 use crate::cli::{Balance, CliChain, HexBytes, HexLaneId, SourceConnectionParams};
 use crate::select_full_bridge;
 use codec::{Decode, Encode};
-use relay_substrate_client::Chain;
+use relay_axlib_client::Chain;
 use structopt::StructOpt;
 
 /// Estimate Delivery & Dispatch Fee command.
@@ -64,7 +64,7 @@ impl EstimateFee {
 }
 
 pub(crate) async fn estimate_message_delivery_and_dispatch_fee<Fee: Decode, C: Chain, P: Encode>(
-	client: &relay_substrate_client::Client<C>,
+	client: &relay_axlib_client::Client<C>,
 	estimate_fee_method: &str,
 	lane: bp_messages::LaneId,
 	payload: P,
@@ -73,7 +73,7 @@ pub(crate) async fn estimate_message_delivery_and_dispatch_fee<Fee: Decode, C: C
 		.state_call(estimate_fee_method.into(), (lane, payload).encode().into(), None)
 		.await?;
 	let decoded_response: Option<Fee> =
-		Decode::decode(&mut &encoded_response.0[..]).map_err(relay_substrate_client::Error::ResponseParseFailed)?;
+		Decode::decode(&mut &encoded_response.0[..]).map_err(relay_axlib_client::Error::ResponseParseFailed)?;
 	let fee = decoded_response
 		.ok_or_else(|| anyhow::format_err!("Unable to decode fee from: {:?}", HexBytes(encoded_response.to_vec())))?;
 	Ok(fee)

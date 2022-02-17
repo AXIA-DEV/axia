@@ -80,12 +80,12 @@ bridged chain.
 Messages module doesn't simply accept transactions that are claiming that the bridged chain has
 some updated data for us. Instead of this, the module assumes that the bridged chain is able to
 prove that updated data in some way. The proof is abstracted from the module and may be of any kind.
-In our Substrate-to-Substrate bridge we're using runtime storage proofs. Other bridges may use
-transaction proofs, Substrate header digests or anything else that may be proved.
+In our Axlib-to-Axlib bridge we're using runtime storage proofs. Other bridges may use
+transaction proofs, Axlib header digests or anything else that may be proved.
 
 **IMPORTANT NOTE**: everything below in this chapter describes details of the messages module
 configuration. But if you interested in well-probed and relatively easy integration of two
-Substrate-based chains, you may want to look at the
+Axlib-based chains, you may want to look at the
 [bridge-runtime-common](../../bin/runtime-common/README.md) crate. This crate is providing a lot of
 helpers for integration, which may be directly used from within your runtime. Then if you'll decide
 to change something in this scheme, get back here for detailed information.
@@ -199,7 +199,7 @@ message needs to be read. So there's another
 `pallet_bridge_messages::Config::MaxUnconfirmedMessagesAtInboundLane` parameter for that.
 
 When choosing values for these parameters, you must also keep in mind that if proof in your scheme
-is based on finality of headers (and it is the most obvious option for Substrate-based chains with
+is based on finality of headers (and it is the most obvious option for Axlib-based chains with
 finality notion), then choosing too small values for these parameters may cause significant delays
 in message delivery. That's because there are too many actors involved in this scheme: 1) authorities
 that are finalizing headers of the target chain need to finalize header with non-empty map; 2) the

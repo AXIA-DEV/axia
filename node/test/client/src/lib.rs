@@ -31,7 +31,7 @@ pub use polkadot_test_service::{
 	construct_extrinsic, construct_transfer_extrinsic, Client, FullBackend,
 	PolkadotTestExecutorDispatch,
 };
-pub use substrate_test_client::*;
+pub use axlib_test_client::*;
 
 /// Test client executor.
 pub type Executor = client::LocalCallExecutor<
@@ -42,7 +42,7 @@ pub type Executor = client::LocalCallExecutor<
 
 /// Test client builder for Polkadot.
 pub type TestClientBuilder =
-	substrate_test_client::TestClientBuilder<Block, Executor, FullBackend, GenesisParameters>;
+	axlib_test_client::TestClientBuilder<Block, Executor, FullBackend, GenesisParameters>;
 
 /// `LongestChain` type for the test runtime/client.
 pub type LongestChain = sc_consensus::LongestChain<FullBackend, Block>;
@@ -51,7 +51,7 @@ pub type LongestChain = sc_consensus::LongestChain<FullBackend, Block>;
 #[derive(Default)]
 pub struct GenesisParameters;
 
-impl substrate_test_client::GenesisInit for GenesisParameters {
+impl axlib_test_client::GenesisInit for GenesisParameters {
 	fn genesis_storage(&self) -> Storage {
 		polkadot_test_service::chain_spec::polkadot_local_testnet_genesis()
 			.build_storage()

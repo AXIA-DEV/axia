@@ -26,7 +26,7 @@ use sp_finality_grandpa::{AuthorityList, ConsensusLog, GRANDPA_ENGINE_ID};
 pub enum Error {
 	/// Failed to decode block number.
 	BlockNumberDecode,
-	/// Failed to decode Substrate header.
+	/// Failed to decode Axlib header.
 	HeaderDecode(codec::Error),
 	/// Failed to decode best voters set.
 	BestSetDecode(codec::Error),
@@ -38,7 +38,7 @@ pub enum Error {
 	JustificationVerify(Box<ClientError>),
 }
 
-/// Substrate header.
+/// Axlib header.
 #[derive(Debug, PartialEq)]
 pub struct Header {
 	/// Header hash.
@@ -62,30 +62,30 @@ pub struct ValidatorsSetSignal {
 
 /// Convert from U256 to BlockNumber. Fails if `U256` value isn't fitting within `BlockNumber`
 /// limits (the runtime referenced by this module uses u32 as `BlockNumber`).
-pub fn to_substrate_block_number(number: U256) -> Result<BlockNumber, Error> {
-	let substrate_block_number = match number == number.low_u32().into() {
+pub fn to_axlib_block_number(number: U256) -> Result<BlockNumber, Error> {
+	let axlib_block_number = match number == number.low_u32().into() {
 		true => Ok(number.low_u32()),
 		false => Err(Error::BlockNumberDecode),
 	};
 
 	log::trace!(
 		target: "bridge-builtin",
-		"Parsed Substrate block number from {}: {:?}",
+		"Parsed Axlib block number from {}: {:?}",
 		number,
-		substrate_block_number,
+		axlib_block_number,
 	);
 
-	substrate_block_number
+	axlib_block_number
 }
 
 /// Convert from BlockNumber to U256.
-pub fn from_substrate_block_number(number: BlockNumber) -> Result<U256, Error> {
+pub fn from_axlib_block_number(number: BlockNumber) -> Result<U256, Error> {
 	Ok(U256::from(number as u64))
 }
 
-/// Parse Substrate header.
-pub fn parse_substrate_header(raw_header: &[u8]) -> Result<Header, Error> {
-	let substrate_header = RuntimeHeader::decode(&mut &*raw_header)
+/// Parse Axlib header.
+pub fn parse_axlib_header(raw_header: &[u8]) -> Result<Header, Error> {
+	let axlib_header = RuntimeHeader::decode(&mut &*raw_header)
 		.map(|header| Header {
 			hash: header.hash(),
 			parent_hash: header.parent_hash,
@@ -113,20 +113,20 @@ pub fn parse_substrate_header(raw_header: &[u8]) -> Result<Header, Error> {
 
 	log::debug!(
 		target: "bridge-builtin",
-		"Parsed Substrate header {}: {:?}",
-		if substrate_header.is_ok() {
+		"Parsed Axlib header {}: {:?}",
+		if axlib_header.is_ok() {
 			format!("<{}-bytes-blob>", raw_header.len())
 		} else {
 			hex::encode(raw_header)
 		},
-		substrate_header,
+		axlib_header,
 	);
 
-	substrate_header
+	axlib_header
 }
 
 /// Verify GRANDPA finality proof.
-pub fn verify_substrate_finality_proof(
+pub fn verify_axlib_finality_proof(
 	finality_target_number: BlockNumber,
 	finality_target_hash: Hash,
 	best_set_id: u64,
@@ -139,7 +139,7 @@ pub fn verify_substrate_finality_proof(
 
 	log::debug!(
 		target: "bridge-builtin",
-		"Parsed Substrate authorities set {}: {:?}",
+		"Parsed Axlib authorities set {}: {:?}",
 		if best_set.is_ok() {
 			format!("<{}-bytes-blob>", raw_best_set.len())
 		} else {
@@ -162,7 +162,7 @@ pub fn verify_substrate_finality_proof(
 
 	log::debug!(
 		target: "bridge-builtin",
-		"Verified Substrate finality proof {}: {:?}",
+		"Verified Axlib finality proof {}: {:?}",
 		if verify_result.is_ok() {
 			format!("<{}-bytes-blob>", raw_finality_proof.len())
 		} else {
@@ -183,33 +183,33 @@ mod tests {
 	use sp_runtime::generic::Digest;
 
 	#[test]
-	fn to_substrate_block_number_succeeds() {
-		assert_eq!(to_substrate_block_number(U256::zero()).unwrap(), 0);
+	fn to_axlib_block_number_succeeds() {
+		assert_eq!(to_axlib_block_number(U256::zero()).unwrap(), 0);
 		assert_eq!(
-			to_substrate_block_number(U256::from(std::u32::MAX as u64)).unwrap(),
+			to_axlib_block_number(U256::from(std::u32::MAX as u64)).unwrap(),
 			0xFFFFFFFF
 		);
 	}
 
 	#[test]
-	fn to_substrate_block_number_fails() {
+	fn to_axlib_block_number_fails() {
 		assert!(matches!(
-			to_substrate_block_number(U256::from(std::u32::MAX as u64 + 1)),
+			to_axlib_block_number(U256::from(std::u32::MAX as u64 + 1)),
 			Err(Error::BlockNumberDecode)
 		));
 	}
 
 	#[test]
-	fn from_substrate_block_number_succeeds() {
-		assert_eq!(from_substrate_block_number(0).unwrap(), U256::zero());
+	fn from_axlib_block_number_succeeds() {
+		assert_eq!(from_axlib_block_number(0).unwrap(), U256::zero());
 		assert_eq!(
-			from_substrate_block_number(std::u32::MAX).unwrap(),
+			from_axlib_block_number(std::u32::MAX).unwrap(),
 			U256::from(std::u32::MAX)
 		);
 	}
 
 	#[test]
-	fn substrate_header_without_signal_parsed() {
+	fn axlib_header_without_signal_parsed() {
 		let raw_header = RuntimeHeader {
 			parent_hash: [0u8; 32].into(),
 			number: 0,
@@ -228,7 +228,7 @@ mod tests {
 		);
 
 		assert_eq!(
-			parse_substrate_header(&raw_header).unwrap(),
+			parse_axlib_header(&raw_header).unwrap(),
 			Header {
 				hash: "afbbeb92bf6ff14f60bdef0aa89f043dd403659ae82665238810ace0d761f6d0"
 					.parse()
@@ -241,7 +241,7 @@ mod tests {
 	}
 
 	#[test]
-	fn substrate_header_with_signal_parsed() {
+	fn axlib_header_with_signal_parsed() {
 		let authorities = vec![
 			(AuthorityId::from_slice(&[1; 32]), 101),
 			(AuthorityId::from_slice(&[3; 32]), 103),
@@ -276,7 +276,7 @@ mod tests {
 		);
 
 		assert_eq!(
-			parse_substrate_header(&raw_header).unwrap(),
+			parse_axlib_header(&raw_header).unwrap(),
 			Header {
 				hash: "3dfebb280bd87a4640f89d7f2adecd62b88148747bff5b63af6e1634ee37a56e"
 					.parse()
@@ -308,13 +308,13 @@ mod tests {
 	const EXAMPLE_JUSTIFICATION: &str = "2600000000000000a2f45892db86b2ad133ce57d81b7e4375bb7035ce9883e6b68c358164f3437750800000010a2f45892db86b2ad133ce57d81b7e4375bb7035ce9883e6b68c358164f34377508000000d66b4ceb57ef8bcbc955071b597c8c5d2adcfdbb009c73f8438d342670fdeca9ac60686cbd58105b10f51d0a64a8e73b2e5829b2eab3248a008c472852130b00439660b36c6c03afafca027b910b4fecf99801834c62a5e6006f27d978de234fa2f45892db86b2ad133ce57d81b7e4375bb7035ce9883e6b68c358164f34377508000000f5730c14d3cd22b7661e2f5fcb3139dd5fef37f946314a441d01b40ce1200ef70d810525f23fd278b588cd67473c200bda83c338c407b479386aa83798e5970b5e639b43e0052c47447dac87d6fd2b6ec50bdd4d0f614e4299c665249bbd09d9a2f45892db86b2ad133ce57d81b7e4375bb7035ce9883e6b68c358164f34377508000000c78d6ec463f476461a695b4791d30e7626d16fdf72d7c252c2cad387495a97e8c2827ed4d5af853d6e05d31cb6fb7438c9481a7e9c6990d60a9bfaf6a6e1930988dc3417d5058ec4b4503e0c12ea1a0a89be200fe98922423d4334014fa6b0eea2f45892db86b2ad133ce57d81b7e4375bb7035ce9883e6b68c358164f3437750800000052b4fc52d430286b3e2d650aa6e01b6ff4fae8b968893a62be789209eb97ee6e23780d3f5af7042d85bb48f1b202890b22724dfebce138826f66a5e00324320fd17c2d7823ebf260fd138f2d7e27d114c0145d968b5ff5006125f2414fadae6900";
 
 	#[test]
-	fn substrate_header_parse_fails() {
-		assert!(matches!(parse_substrate_header(&[]), Err(_)));
+	fn axlib_header_parse_fails() {
+		assert!(matches!(parse_axlib_header(&[]), Err(_)));
 	}
 
 	#[test]
-	fn verify_substrate_finality_proof_succeeds() {
-		verify_substrate_finality_proof(
+	fn verify_axlib_finality_proof_succeeds() {
+		verify_axlib_finality_proof(
 			EXAMPLE_JUSTIFIED_BLOCK_NUMBER,
 			EXAMPLE_JUSTIFIED_BLOCK_HASH.parse().unwrap(),
 			EXAMPLE_AUTHORITIES_SET_ID,
@@ -325,8 +325,8 @@ mod tests {
 	}
 
 	#[test]
-	fn verify_substrate_finality_proof_fails_when_wrong_block_is_finalized() {
-		verify_substrate_finality_proof(
+	fn verify_axlib_finality_proof_fails_when_wrong_block_is_finalized() {
+		verify_axlib_finality_proof(
 			4,
 			Default::default(),
 			EXAMPLE_AUTHORITIES_SET_ID,
@@ -337,8 +337,8 @@ mod tests {
 	}
 
 	#[test]
-	fn verify_substrate_finality_proof_fails_when_wrong_set_is_provided() {
-		verify_substrate_finality_proof(
+	fn verify_axlib_finality_proof_fails_when_wrong_set_is_provided() {
+		verify_axlib_finality_proof(
 			EXAMPLE_JUSTIFIED_BLOCK_NUMBER,
 			EXAMPLE_JUSTIFIED_BLOCK_HASH.parse().unwrap(),
 			EXAMPLE_AUTHORITIES_SET_ID,
@@ -349,8 +349,8 @@ mod tests {
 	}
 
 	#[test]
-	fn verify_substrate_finality_proof_fails_when_wrong_set_id_is_provided() {
-		verify_substrate_finality_proof(
+	fn verify_axlib_finality_proof_fails_when_wrong_set_id_is_provided() {
+		verify_axlib_finality_proof(
 			EXAMPLE_JUSTIFIED_BLOCK_NUMBER,
 			EXAMPLE_JUSTIFIED_BLOCK_HASH.parse().unwrap(),
 			42,
@@ -361,8 +361,8 @@ mod tests {
 	}
 
 	#[test]
-	fn verify_substrate_finality_proof_fails_when_wrong_proof_is_provided() {
-		verify_substrate_finality_proof(
+	fn verify_axlib_finality_proof_fails_when_wrong_proof_is_provided() {
+		verify_axlib_finality_proof(
 			EXAMPLE_JUSTIFIED_BLOCK_NUMBER,
 			EXAMPLE_JUSTIFIED_BLOCK_HASH.parse().unwrap(),
 			0,

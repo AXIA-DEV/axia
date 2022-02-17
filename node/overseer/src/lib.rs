@@ -227,7 +227,7 @@ impl From<FinalityNotification<Block>> for BlockInfo {
 }
 
 /// An event from outside the overseer scope, such
-/// as the substrate framework or user interaction.
+/// as the axlib framework or user interaction.
 pub enum Event {
 	/// A new block was imported.
 	BlockImported(BlockInfo),

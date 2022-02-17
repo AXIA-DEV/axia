@@ -72,7 +72,7 @@ services:
       context: .
       dockerfile: ./bridges/poa-rialto/Front-end.Dockerfile
       args:
-        SUBSTRATE_PROVIDER: ${UI_SUBSTRATE_PROVIDER:-ws://localhost:9944}
+        AXLIB_PROVIDER: ${UI_AXLIB_PROVIDER:-ws://localhost:9944}
         ETHEREUM_PROVIDER: ${UI_ETHEREUM_PROVIDER:-http://localhost:8545}
         EXPECTED_ETHEREUM_NETWORK_ID: ${UI_EXPECTED_ETHEREUM_NETWORK_ID:-105}
     ports:

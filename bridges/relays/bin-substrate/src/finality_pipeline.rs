@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Substrate-to-Substrate headers sync entrypoint.
+//! Axlib-to-Axlib headers sync entrypoint.
 
-use crate::finality_target::SubstrateFinalityTarget;
+use crate::finality_target::AxlibFinalityTarget;
 
 use bp_header_chain::justification::GrandpaJustification;
 use finality_relay::{FinalitySyncParams, FinalitySyncPipeline};
-use relay_substrate_client::{finality_source::FinalitySource, BlockNumberOf, Chain, Client, HashOf, SyncHeader};
+use relay_axlib_client::{finality_source::FinalitySource, BlockNumberOf, Chain, Client, HashOf, SyncHeader};
 use relay_utils::{metrics::MetricsParams, BlockNumberBase};
 use sp_core::Bytes;
 use std::{fmt::Debug, marker::PhantomData, time::Duration};
@@ -30,11 +30,11 @@ pub(crate) const STALL_TIMEOUT: Duration = Duration::from_secs(120);
 /// Default limit of recent finality proofs.
 ///
 /// Finality delay of 4096 blocks is unlikely to happen in practice in
-/// Substrate+GRANDPA based chains (good to know).
+/// Axlib+GRANDPA based chains (good to know).
 pub(crate) const RECENT_FINALITY_PROOFS_LIMIT: usize = 4096;
 
-/// Headers sync pipeline for Substrate <-> Substrate relays.
-pub trait SubstrateFinalitySyncPipeline: FinalitySyncPipeline {
+/// Headers sync pipeline for Axlib <-> Axlib relays.
+pub trait AxlibFinalitySyncPipeline: FinalitySyncPipeline {
 	/// Name of the runtime method that returns id of best finalized source header at target chain.
 	const BEST_FINALIZED_SOURCE_HEADER_ID_AT_TARGET: &'static str;
 
@@ -65,9 +65,9 @@ pub trait SubstrateFinalitySyncPipeline: FinalitySyncPipeline {
 	) -> Bytes;
 }
 
-/// Substrate-to-Substrate finality proof pipeline.
+/// Axlib-to-Axlib finality proof pipeline.
 #[derive(Clone)]
-pub struct SubstrateFinalityToSubstrate<SourceChain, TargetChain: Chain, TargetSign> {
+pub struct AxlibFinalityToAxlib<SourceChain, TargetChain: Chain, TargetSign> {
 	/// Client for the target chain.
 	pub(crate) target_client: Client<TargetChain>,
 	/// Data required to sign target chain transactions.
@@ -77,19 +77,19 @@ pub struct SubstrateFinalityToSubstrate<SourceChain, TargetChain: Chain, TargetS
 }
 
 impl<SourceChain, TargetChain: Chain, TargetSign> Debug
-	for SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>
+	for AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>
 {
 	fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-		f.debug_struct("SubstrateFinalityToSubstrate")
+		f.debug_struct("AxlibFinalityToAxlib")
 			.field("target_client", &self.target_client)
 			.finish()
 	}
 }
 
-impl<SourceChain, TargetChain: Chain, TargetSign> SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign> {
-	/// Create new Substrate-to-Substrate headers pipeline.
+impl<SourceChain, TargetChain: Chain, TargetSign> AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign> {
+	/// Create new Axlib-to-Axlib headers pipeline.
 	pub fn new(target_client: Client<TargetChain>, target_sign: TargetSign) -> Self {
-		SubstrateFinalityToSubstrate {
+		AxlibFinalityToAxlib {
 			target_client,
 			target_sign,
 			_marker: Default::default(),
@@ -98,7 +98,7 @@ impl<SourceChain, TargetChain: Chain, TargetSign> SubstrateFinalityToSubstrate<S
 }
 
 impl<SourceChain, TargetChain, TargetSign> FinalitySyncPipeline
-	for SubstrateFinalityToSubstrate<SourceChain, TargetChain, TargetSign>
+	for AxlibFinalityToAxlib<SourceChain, TargetChain, TargetSign>
 where
 	SourceChain: Clone + Chain + Debug,
 	BlockNumberOf<SourceChain>: BlockNumberBase,
@@ -114,7 +114,7 @@ where
 	type FinalityProof = GrandpaJustification<SourceChain::Header>;
 }
 
-/// Run Substrate-to-Substrate finality sync.
+/// Run Axlib-to-Axlib finality sync.
 pub async fn run<SourceChain, TargetChain, P>(
 	pipeline: P,
 	source_client: Client<SourceChain>,
@@ -123,7 +123,7 @@ pub async fn run<SourceChain, TargetChain, P>(
 	metrics_params: MetricsParams,
 ) -> anyhow::Result<()>
 where
-	P: SubstrateFinalitySyncPipeline<
+	P: AxlibFinalitySyncPipeline<
 		Hash = HashOf<SourceChain>,
 		Number = BlockNumberOf<SourceChain>,
 		Header = SyncHeader<SourceChain::Header>,
@@ -143,7 +143,7 @@ where
 
 	finality_relay::run(
 		FinalitySource::new(source_client, None),
-		SubstrateFinalityTarget::new(target_client, pipeline),
+		AxlibFinalityTarget::new(target_client, pipeline),
 		FinalitySyncParams {
 			tick: std::cmp::max(SourceChain::AVERAGE_BLOCK_INTERVAL, TargetChain::AVERAGE_BLOCK_INTERVAL),
 			recent_finality_proofs_limit: RECENT_FINALITY_PROOFS_LIMIT,

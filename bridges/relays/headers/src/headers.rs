@@ -47,7 +47,7 @@ pub struct QueuedHeaders<P: HeadersSyncPipeline> {
 	/// never seen their parents. So we need to check if we can/should submit this header.
 	maybe_orphan: HeadersQueue<P>,
 	/// Headers that are received from source node, and we (native sync code) have
-	/// checked that Substrate runtime doesn't know their parents. So we need to submit parents
+	/// checked that Axlib runtime doesn't know their parents. So we need to submit parents
 	/// first.
 	orphan: HeadersQueue<P>,
 	/// Headers that are ready to be submitted to target node, but we need to check
@@ -1086,7 +1086,7 @@ pub(crate) mod tests {
 	}
 
 	#[test]
-	fn ancestors_are_synced_on_substrate_best_header_response() {
+	fn ancestors_are_synced_on_axlib_best_header_response() {
 		// let's say someone else has submitted transaction to bridge that changes
 		// its best block to #100. At this time we have:
 		// #100 in MaybeOrphan
@@ -1176,7 +1176,7 @@ pub(crate) mod tests {
 	}
 
 	#[test]
-	fn descendants_are_moved_on_substrate_best_header_response() {
+	fn descendants_are_moved_on_axlib_best_header_response() {
 		// let's say someone else has submitted transaction to bridge that changes
 		// its best block to #100. At this time we have:
 		// #101 in Orphan
@@ -1223,7 +1223,7 @@ pub(crate) mod tests {
 		// #101 in Orphan
 		// #102 in MaybeOrphan
 		// and we have asked for MaybeOrphan status of #100.parent (i.e. #99)
-		// and the response is: YES, #99 is known to the Substrate runtime
+		// and the response is: YES, #99 is known to the Axlib runtime
 		let mut queue = QueuedHeaders::<TestHeadersSyncPipeline>::default();
 		queue
 			.known_headers
@@ -1268,7 +1268,7 @@ pub(crate) mod tests {
 		// #100 in MaybeOrphan
 		// #101 in MaybeOrphan
 		// and we have asked for MaybeOrphan status of #100.parent (i.e. #99)
-		// and the response is: NO, #99 is NOT known to the Substrate runtime
+		// and the response is: NO, #99 is NOT known to the Axlib runtime
 		let mut queue = QueuedHeaders::<TestHeadersSyncPipeline>::default();
 		queue
 			.known_headers

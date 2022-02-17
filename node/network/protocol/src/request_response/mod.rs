@@ -237,7 +237,7 @@ impl Protocol {
 		}
 	}
 
-	/// Get the protocol name of this protocol, as understood by substrate networking.
+	/// Get the protocol name of this protocol, as understood by axlib networking.
 	pub fn into_protocol_name(self) -> Cow<'static, str> {
 		self.get_protocol_name_static().into()
 	}

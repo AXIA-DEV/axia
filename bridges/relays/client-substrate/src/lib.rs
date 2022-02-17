@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
-//! Tools to interact with Substrate node using RPC methods.
+//! Tools to interact with Axlib node using RPC methods.
 
 #![warn(missing_docs)]
 
@@ -38,7 +38,7 @@ pub use bp_runtime::{BlockNumberOf, Chain as ChainBase, HashOf, HeaderOf};
 /// Header id used by the chain.
 pub type HeaderIdOf<C> = relay_utils::HeaderId<HashOf<C>, BlockNumberOf<C>>;
 
-/// Substrate-over-websocket connection params.
+/// Axlib-over-websocket connection params.
 #[derive(Debug, Clone)]
 pub struct ConnectionParams {
 	/// Websocket server hostname.

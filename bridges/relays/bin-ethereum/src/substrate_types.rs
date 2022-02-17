@@ -17,16 +17,16 @@
 //! Converting between Ethereum headers and bridge module types.
 
 use bp_eth_poa::{
-	AuraHeader as SubstrateEthereumHeader, LogEntry as SubstrateEthereumLogEntry, Receipt as SubstrateEthereumReceipt,
-	TransactionOutcome as SubstrateEthereumTransactionOutcome,
+	AuraHeader as AxlibEthereumHeader, LogEntry as AxlibEthereumLogEntry, Receipt as AxlibEthereumReceipt,
+	TransactionOutcome as AxlibEthereumTransactionOutcome,
 };
 use relay_ethereum_client::types::{
 	Header as EthereumHeader, Receipt as EthereumReceipt, HEADER_ID_PROOF as ETHEREUM_HEADER_ID_PROOF,
 };
 
-/// Convert Ethereum header into Ethereum header for Substrate.
-pub fn into_substrate_ethereum_header(header: &EthereumHeader) -> SubstrateEthereumHeader {
-	SubstrateEthereumHeader {
+/// Convert Ethereum header into Ethereum header for Axlib.
+pub fn into_axlib_ethereum_header(header: &EthereumHeader) -> AxlibEthereumHeader {
+	AxlibEthereumHeader {
 		parent_hash: header.parent_hash,
 		timestamp: header.timestamp.as_u64(),
 		number: header.number.expect(ETHEREUM_HEADER_ID_PROOF).as_u64(),
@@ -44,33 +44,33 @@ pub fn into_substrate_ethereum_header(header: &EthereumHeader) -> SubstrateEther
 	}
 }
 
-/// Convert Ethereum transactions receipts into Ethereum transactions receipts for Substrate.
-pub fn into_substrate_ethereum_receipts(
+/// Convert Ethereum transactions receipts into Ethereum transactions receipts for Axlib.
+pub fn into_axlib_ethereum_receipts(
 	receipts: &Option<Vec<EthereumReceipt>>,
-) -> Option<Vec<SubstrateEthereumReceipt>> {
+) -> Option<Vec<AxlibEthereumReceipt>> {
 	receipts
 		.as_ref()
-		.map(|receipts| receipts.iter().map(into_substrate_ethereum_receipt).collect())
+		.map(|receipts| receipts.iter().map(into_axlib_ethereum_receipt).collect())
 }
 
-/// Convert Ethereum transactions receipt into Ethereum transactions receipt for Substrate.
-pub fn into_substrate_ethereum_receipt(receipt: &EthereumReceipt) -> SubstrateEthereumReceipt {
-	SubstrateEthereumReceipt {
+/// Convert Ethereum transactions receipt into Ethereum transactions receipt for Axlib.
+pub fn into_axlib_ethereum_receipt(receipt: &EthereumReceipt) -> AxlibEthereumReceipt {
+	AxlibEthereumReceipt {
 		gas_used: receipt.cumulative_gas_used,
 		log_bloom: receipt.logs_bloom.data().into(),
 		logs: receipt
 			.logs
 			.iter()
-			.map(|log_entry| SubstrateEthereumLogEntry {
+			.map(|log_entry| AxlibEthereumLogEntry {
 				address: log_entry.address,
 				topics: log_entry.topics.clone(),
 				data: log_entry.data.0.clone(),
 			})
 			.collect(),
 		outcome: match (receipt.status, receipt.root) {
-			(Some(status), None) => SubstrateEthereumTransactionOutcome::StatusCode(status.as_u64() as u8),
-			(None, Some(root)) => SubstrateEthereumTransactionOutcome::StateRoot(root),
-			_ => SubstrateEthereumTransactionOutcome::Unknown,
+			(Some(status), None) => AxlibEthereumTransactionOutcome::StatusCode(status.as_u64() as u8),
+			(None, Some(root)) => AxlibEthereumTransactionOutcome::StateRoot(root),
+			_ => AxlibEthereumTransactionOutcome::Unknown,
 		},
 	}
 }

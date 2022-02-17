@@ -15,7 +15,7 @@
 // along with Parity Bridges Common.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::cli::{PrometheusParams, SourceConnectionParams, TargetConnectionParams, TargetSigningParams};
-use crate::finality_pipeline::SubstrateFinalitySyncPipeline;
+use crate::finality_pipeline::AxlibFinalitySyncPipeline;
 use structopt::{clap::arg_enum, StructOpt};
 
 /// Start headers relayer process.

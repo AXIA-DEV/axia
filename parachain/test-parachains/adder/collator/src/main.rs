@@ -20,7 +20,7 @@ use polkadot_cli::{Error, Result};
 use polkadot_node_primitives::CollationGenerationConfig;
 use polkadot_node_subsystem::messages::{CollationGenerationMessage, CollatorProtocolMessage};
 use polkadot_primitives::v1::Id as ParaId;
-use sc_cli::{Error as SubstrateCliError, Role, SubstrateCli};
+use sc_cli::{Error as AxlibCliError, Role, AxlibCli};
 use sp_core::hexdisplay::HexDisplay;
 use test_parachain_adder_collator::Collator;
 
@@ -48,7 +48,7 @@ fn main() -> Result<()> {
 		},
 		None => {
 			let runner = cli.create_runner(&cli.run.base).map_err(|e| {
-				SubstrateCliError::Application(
+				AxlibCliError::Application(
 					Box::new(e) as Box<(dyn 'static + Send + Sync + std::error::Error)>
 				)
 			})?;

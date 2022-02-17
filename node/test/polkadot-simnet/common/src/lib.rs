@@ -370,7 +370,7 @@ where
 	F: FnOnce(Node<PolkadotChainInfo>) -> Fut,
 	Fut: Future<Output = Result<(), Box<dyn Error>>>,
 {
-	use sc_cli::{CliConfiguration, SubstrateCli};
+	use sc_cli::{CliConfiguration, AxlibCli};
 	use structopt::StructOpt;
 
 	let tokio_runtime = build_runtime()?;

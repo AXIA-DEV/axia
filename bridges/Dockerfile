@@ -1,10 +1,10 @@
 # Builds images used by the bridge.
 #
-# In particular, it can be used to build Substrate nodes and bridge relayers. The binary that gets
-# built can be specified with the `PROJECT` build-arg. For example, to build the `substrate-relay`
+# In particular, it can be used to build Axlib nodes and bridge relayers. The binary that gets
+# built can be specified with the `PROJECT` build-arg. For example, to build the `axlib-relay`
 # you would do the following:
 #
-# `docker build . -t local/substrate-relay --build-arg=PROJECT=substrate-relay`
+# `docker build . -t local/axlib-relay --build-arg=PROJECT=axlib-relay`
 #
 # See the `deployments/README.md` for all the available `PROJECT` values.
 

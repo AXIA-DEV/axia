@@ -1,6 +1,6 @@
 [package]
 name = "pallet-bridge-currency-exchange"
-description = "A Substrate Runtime module that accepts 'lock funds' transactions from a peer chain and grants an equivalent amount to a the appropriate Substrate account."
+description = "A Axlib Runtime module that accepts 'lock funds' transactions from a peer chain and grants an equivalent amount to a the appropriate Axlib account."
 version = "0.1.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -16,7 +16,7 @@ serde = { version = "1.0", optional = true }
 bp-currency-exchange = { path = "../../primitives/currency-exchange", default-features = false }
 bp-header-chain = { path = "../../primitives/header-chain", default-features = false }
 
-# Substrate Dependencies
+# Axlib Dependencies
 
 frame-benchmarking = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false, optional = true , branch = "master" }
 frame-support = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }

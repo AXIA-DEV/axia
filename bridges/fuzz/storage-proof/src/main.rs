@@ -19,7 +19,7 @@
 #![warn(missing_docs)]
 
 use honggfuzz::fuzz;
-// Logic for checking Substrate storage proofs.
+// Logic for checking Axlib storage proofs.
 
 use sp_core::{Blake2Hasher, H256};
 use sp_state_machine::{backend::Backend, prove_read, InMemoryBackend};
