@@ -58,6 +58,6 @@ axlib-test-client = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch =
 
 [dev-dependencies]
 pallet-balances = { git = "https://github.com/AXIA-DEV/axlib-axtend", default-features = false , branch = "master" }
-serde_json = "1.0.67"
+serde_json = "1.0.86"
 axlib-test-utils = { git = "https://github.com/AXIA-DEV/axlib-axtend", branch = "master" }
 tokio = { version = "1.12", features = ["macros"] }
